@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:flutter/widgets.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
 import 'package:realunit_wallet/packages/service/balance_service.dart';
+import 'package:realunit_wallet/packages/service/wallet_service.dart';
 import 'package:realunit_wallet/screens/pin/bloc/auth/pin_auth_cubit.dart';
 import 'package:realunit_wallet/setup/di.dart';
 
@@ -51,6 +53,29 @@ class _LifecycleInitializerState extends State<LifecycleInitializer> {
 
   void _onHidden() {
     getIt<PinAuthCubit>().onAppHidden();
+    // Drop the mnemonic the moment the app stops being visible. The
+    // 60 s post-unlock timer in [WalletService] is a best-effort safety net
+    // — iOS suspends Dart timers in the background, so a backgrounded app
+    // could otherwise keep an unlocked [SoftwareWallet] resident until the
+    // OS kills the process. The next sign re-decrypts via the OS-keystore-
+    // wrapped mnemonic key (sub-100 ms), invisible to the user.
+    unawaited(_lockWalletIfLoaded());
+  }
+
+  /// Backgrounding the app during onboarding (before [HomeBloc] populates
+  /// [AppStore.wallet]) makes [WalletService.lockCurrentWallet] dereference an
+  /// unset field, which raises `Exception('No Wallet set')`. Swallow that one
+  /// case so it doesn't surface as an unhandled async error; anything else
+  /// stays visible so a real regression doesn't hide.
+  Future<void> _lockWalletIfLoaded() async {
+    try {
+      await getIt<WalletService>().lockCurrentWallet();
+    } on Exception catch (e) {
+      developer.log(
+        'wallet lock on hidden skipped: $e',
+        name: 'LifecycleInitializer',
+      );
+    }
   }
 
   void _onPaused() {
