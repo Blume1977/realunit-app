@@ -44,6 +44,16 @@ void main() {
 
       expect(dto.transfer, isNull);
     });
+
+    test('parses a string category', () {
+      final dto = HistoryEventDto.fromJson({
+        'timestamp': '2026-05-15T10:00:00Z',
+        'txHash': '0xabc',
+        'category': 'transferIn',
+      });
+
+      expect(dto.category, 'transferIn');
+    });
   });
 
   group('$AccountHistoryDto.fromJson', () {

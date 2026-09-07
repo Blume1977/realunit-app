@@ -17,9 +17,10 @@ import 'package:realunit_wallet/screens/transaction_history/transaction_history_
 
 import '../../../helper/helper.dart';
 
-// Pins direction-only labels (inbound → Kauf, outbound → Verkauf) so a
-// follow-up PR can recategorise the same four rows and replace the same
-// `transaction_history_transfer_labels` PNG for a pixel before/after.
+// Recategorises the #967 baseline under the same fileName
+// `transaction_history_transfer_labels`: the four rows stay in place, but
+// inbound 10 is now Empfangen (transferIn) instead of Kauf, so GitHub's
+// pixel-diff shows Kauf/Empfangen/Gesendet/Verkauf.
 
 class _MockTransactionHistoryFilterCubit
     extends MockCubit<TransactionHistoryFilterState>
@@ -39,8 +40,12 @@ void main() {
   final transactionRepository = _MockTransactionRepository();
 
   // decimals of realUnitAsset is 0 → amounts are plain share counts.
-  // Direction alone drives the title today; no TransferCategory on this branch.
-  Transaction inbound(String txId, int shares, DateTime timestamp) =>
+  Transaction inbound(
+    String txId,
+    int shares,
+    DateTime timestamp, {
+    TransferCategory? category,
+  }) =>
       Transaction(
         height: 200,
         txId: txId,
@@ -50,12 +55,18 @@ void main() {
         amount: BigInt.from(shares),
         asset: realUnitAsset,
         type: TransactionTypes.tokenTransfer,
+        category: category,
         note: null,
         data: null,
         timestamp: timestamp,
       );
 
-  Transaction outbound(String txId, int shares, DateTime timestamp) =>
+  Transaction outbound(
+    String txId,
+    int shares,
+    DateTime timestamp, {
+    TransferCategory? category,
+  }) =>
       Transaction(
         height: 199,
         txId: txId,
@@ -65,21 +76,37 @@ void main() {
         amount: BigInt.from(shares),
         asset: realUnitAsset,
         type: TransactionTypes.tokenTransfer,
+        category: category,
         note: null,
         data: null,
         timestamp: timestamp,
       );
 
-  // Same four rows the fix PR will recategorise (order + timestamps fixed).
   final transactions = <Transaction>[
-    // looks like Kauf; later PR: purchase
-    inbound('0xtx1', 100, DateTime.utc(2026, 5, 20, 10, 30)),
-    // THE BUG (Bojan); later PR: transferIn / Empfangen
-    inbound('0xtx2', 10, DateTime.utc(2026, 5, 19, 12)),
-    // looks like Verkauf; later PR: transferOut / Gesendet
-    outbound('0xtx3', 10, DateTime.utc(2026, 5, 18, 14)),
-    // looks like Verkauf; later PR: sale
-    outbound('0xtx4', 20, DateTime.utc(2026, 5, 15, 9, 15)),
+    inbound(
+      '0xtx1',
+      100,
+      DateTime.utc(2026, 5, 20, 10, 30),
+      category: TransferCategory.purchase,
+    ),
+    inbound(
+      '0xtx2',
+      10,
+      DateTime.utc(2026, 5, 19, 12),
+      category: TransferCategory.transferIn,
+    ),
+    outbound(
+      '0xtx3',
+      10,
+      DateTime.utc(2026, 5, 18, 14),
+      category: TransferCategory.transferOut,
+    ),
+    outbound(
+      '0xtx4',
+      20,
+      DateTime.utc(2026, 5, 15, 9, 15),
+      category: TransferCategory.sale,
+    ),
   ];
 
   final pinnedClock = Clock.fixed(DateTime.utc(2026, 5, 23));
@@ -124,7 +151,7 @@ void main() {
         );
 
     goldenTest(
-      'inbound from an external wallet labelled Kauf',
+      'API category labels purchase, received, sent, sale',
       fileName: 'transaction_history_transfer_labels',
       constraints: phoneConstraints,
       builder: () {
