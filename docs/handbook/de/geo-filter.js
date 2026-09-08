@@ -52,6 +52,21 @@
     return fallback || symbol || '';
   }
 
+  function asBool(value) {
+    if (value === true || value === false) return value;
+    return null;
+  }
+
+  function residenceAllowed(value) {
+    if (value == null || value === '') return null;
+    return value === 'Allowed';
+  }
+
+  function nationalityAllowed(value) {
+    if (value == null || value === '') return null;
+    return value !== 'Blocked';
+  }
+
   function cell(value) {
     if (value === true) return 'ja';
     if (value === false) return 'nein';
@@ -61,18 +76,6 @@
 
   function tone(field, value) {
     if (value == null || value === '') return 'muted';
-    if (field === 'residence') {
-      if (value === 'Allowed') return 'ok';
-      if (value === 'Sanction') return 'bad';
-      if (value === 'Restricted') return 'warn';
-      return 'muted';
-    }
-    if (field === 'nationality') {
-      if (value === 'Ok') return 'ok';
-      if (value === 'Blocked') return 'bad';
-      if (value === 'Exception') return 'warn';
-      return 'muted';
-    }
     if (value === true) return 'ok';
     if (value === false) return 'bad';
     return 'muted';
@@ -85,14 +88,14 @@
       symbol: country.symbol,
       nameDe: regionName(displayDe, country.symbol, english),
       nameEn: regionName(displayEn, country.symbol, english),
-      residence: geo.residence,
-      nationality: geo.nationality,
-      residenceExisting: geo.residenceExisting,
-      nationalityExisting: geo.nationalityExisting,
-      ipEnable: geo.ipEnable,
-      ipExisting: geo.ipExisting,
-      taxEnable: geo.taxEnable,
-      taxExisting: geo.taxExisting,
+      residence: residenceAllowed(geo.residence),
+      nationality: nationalityAllowed(geo.nationality),
+      residenceExisting: asBool(geo.residenceExisting),
+      nationalityExisting: asBool(geo.nationalityExisting),
+      ipEnable: asBool(geo.ipEnable),
+      ipExisting: asBool(geo.ipExisting),
+      taxEnable: asBool(geo.taxEnable),
+      taxExisting: asBool(geo.taxExisting),
     };
   }
 
@@ -124,8 +127,10 @@
       ) {
         return false;
       }
-      if (residence && row.residence !== residence) return false;
-      if (nationality && row.nationality !== nationality) return false;
+      if (residence === 'true' && row.residence !== true) return false;
+      if (residence === 'false' && row.residence !== false) return false;
+      if (nationality === 'true' && row.nationality !== true) return false;
+      if (nationality === 'false' && row.nationality !== false) return false;
       return true;
     });
   }

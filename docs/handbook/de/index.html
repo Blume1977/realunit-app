@@ -8408,34 +8408,24 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Wohnsitz- und Nationalitäts-Filter für den RealUnit-Aktientoken, direkt
-            aus <code>GET /v1/country</code>. Die JSON-Felder sind
-            <code>realunit.residence</code> und <code>realunit.nationality</code>
-            (plus nullable Existing/IP/Tax unter demselben <code>realunit</code>-Objekt);
-            auf der country-Tabelle heissen die Spalten
-            <code>realunitResidence</code> / <code>realunitNationality</code>.
-            Ländernamen sind Deutsch und Englisch (ISO 3166 über
-            <code>Intl.DisplayNames</code>), nicht die native <code>foreignName</code>
-            der API. CSV, Excel und PDF laden die aktuell angezeigte Liste.
-            Die Tabelle kopiert keine Zeilen ins Repo. Onboarding prüft nur Residence
-            und Nationality; IP, Steueransässigkeit und Grandfathering bleiben leer,
-            bis Legal sie füllt.
+            Jede Zelle ausser Land und ISO ist <b>ja</b> oder <b>nein</b>
+            (leer nur, wenn die API keinen Wert liefert). Wohnsitz, Nationalität,
+            Bestand, IP und Steuer sind unabhängige Schalter. CSV, Excel und PDF
+            exportieren dieselbe ja/nein-Liste. Quelle:
+            <code>GET /v1/country</code>. Die Tabelle kopiert keine Zeilen ins Repo.
           </p>
           <div id="geo-filter-live">
             <div class="geo-toolbar">
               <input id="geo-filter-search" type="search" placeholder="Land oder ISO suchen" autocomplete="off" />
               <select id="geo-filter-residence" aria-label="Wohnsitz">
                 <option value="">Wohnsitz: alle</option>
-                <option value="Allowed">Allowed</option>
-                <option value="Sanction">Sanction</option>
-                <option value="Restricted">Restricted</option>
-                <option value="Other">Other</option>
+                <option value="true">ja</option>
+                <option value="false">nein</option>
               </select>
               <select id="geo-filter-nationality" aria-label="Nationalität">
                 <option value="">Nationalität: alle</option>
-                <option value="Ok">Ok</option>
-                <option value="Blocked">Blocked</option>
-                <option value="Exception">Exception</option>
+                <option value="true">ja</option>
+                <option value="false">nein</option>
               </select>
             </div>
             <div class="geo-downloads">
