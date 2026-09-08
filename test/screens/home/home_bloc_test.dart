@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:realunit_wallet/packages/hardware_wallet/bitbox.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
 import 'package:realunit_wallet/packages/service/balance_service.dart';
@@ -44,6 +45,9 @@ void main() {
   });
 
   setUp(() {
+    // The wallet-reset paths clear the pending referral code, which is
+    // persisted, so the store must exist in tests.
+    SharedPreferences.setMockInitialValues(const <String, Object>{});
     walletService = _MockWalletService();
     balanceService = _MockBalanceService();
     transactionHistoryService = _MockTransactionHistoryService();
@@ -169,6 +173,45 @@ void main() {
           verify(() => transactionHistoryService.apiBasedSync()).called(1);
         },
       );
+
+      test('historySyncFailed is set when apiBasedSync throws', () async {
+        final wallet = DebugWallet(1, 'Test', _debugAddress);
+        when(() => walletService.hasWallet()).thenReturn(true);
+        when(() => walletService.getCurrentWallet()).thenAnswer((_) async => wallet);
+        when(() => transactionHistoryService.apiBasedSync()).thenAnswer(
+          (_) => Future<void>.error(const FormatException('payout')),
+        );
+
+        final bloc = build();
+        await bloc.stream.firstWhere((s) => s.hasWallet);
+        bloc.add(const LoadCurrentWalletEvent());
+        await bloc.stream.firstWhere((s) => s.historySyncFailed);
+        expect(bloc.state.historySyncFailed, isTrue);
+        await bloc.close();
+      });
+
+      test('historySyncFailed clears on the next sync so a later failure can surface', () async {
+        final wallet = DebugWallet(1, 'Test', _debugAddress);
+        when(() => walletService.hasWallet()).thenReturn(true);
+        when(() => walletService.getCurrentWallet()).thenAnswer((_) async => wallet);
+        when(() => transactionHistoryService.apiBasedSync()).thenAnswer(
+          (_) => Future<void>.error(const FormatException('payout')),
+        );
+
+        final bloc = build();
+        await bloc.stream.firstWhere((s) => s.hasWallet);
+        bloc.add(const LoadCurrentWalletEvent());
+        await bloc.stream.firstWhere((s) => s.historySyncFailed);
+        expect(bloc.state.historySyncFailed, isTrue);
+
+        bloc.add(const HistorySyncStartedEvent());
+        await bloc.stream.firstWhere((s) => !s.historySyncFailed);
+        expect(bloc.state.historySyncFailed, isFalse);
+        bloc.add(const HistorySyncFailedEvent());
+        await bloc.stream.firstWhere((s) => s.historySyncFailed);
+        expect(bloc.state.historySyncFailed, isTrue);
+        await bloc.close();
+      });
 
       test('openWallet already set → early return, no second fetch', () async {
         final wallet = DebugWallet(1, 'Test', _debugAddress);

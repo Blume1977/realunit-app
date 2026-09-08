@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bitbox_flutter/bitbox_flutter.dart' as sdk;
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,12 +34,17 @@ import 'package:realunit_wallet/screens/kyc/cubits/kyc/kyc_cubit.dart';
 import 'package:realunit_wallet/screens/kyc/steps/registration/cubits/registration_step/kyc_registration_step_cubit.dart';
 import 'package:realunit_wallet/screens/kyc/steps/registration/cubits/registration_submit/kyc_registration_submit_cubit.dart';
 import 'package:realunit_wallet/screens/kyc/steps/registration/kyc_registration_page.dart';
+import 'package:realunit_wallet/screens/kyc/steps/registration/stash_resolved_referral_code.dart';
 import 'package:realunit_wallet/screens/kyc/steps/registration/steps/kyc_registration_address_step.dart';
 import 'package:realunit_wallet/screens/kyc/steps/registration/steps/kyc_registration_personal_step.dart';
+import 'package:realunit_wallet/screens/kyc/steps/registration/steps/kyc_registration_referral_step.dart';
 import 'package:realunit_wallet/screens/kyc/steps/registration/steps/kyc_registration_tax_step.dart';
+import 'package:realunit_wallet/setup/routing/referral_pending_code.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
+import 'package:realunit_wallet/widgets/buttons/app_text_button.dart';
 import 'package:realunit_wallet/widgets/form/labeled_text_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../helper/helper.dart';
 
@@ -116,6 +123,7 @@ void main() {
   late HomeBloc homeBloc;
 
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     registrationStepCubit = MockRegistrationStepCubit();
     registrationSubmitCubit = MockRegistrationSubmitCubit();
     kycCubit = MockKycCubit();
@@ -211,7 +219,115 @@ void main() {
       await tester.pump();
 
       expect(find.byType(KycRegistrationPersonalStep).hitTestable(), findsOne);
+      expect(
+        find.text('Einladungs- oder Promo-Code (optional)'),
+        findsNothing,
+      );
     });
+
+    testWidgets(
+      'Skip after a typed code discards the prefs stash',
+      (tester) async {
+        debugSetPendingReferralCodeSync(null);
+        addTearDown(clearPendingReferralCode);
+        const state = KycRegistrationStepState(
+          step: KycRegistrationStep.referral,
+          steps: [
+            KycRegistrationStep.referral,
+            KycRegistrationStep.personal,
+          ],
+        );
+        when(() => registrationStepCubit.state).thenReturn(state);
+
+        await tester.pumpApp(buildSubject(const KycRegistrationView()));
+        await tester.pump();
+        (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(state.index);
+        await tester.pump();
+
+        await tester.enterText(find.byType(TextField), 'AB12CD');
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(await peekPendingReferralCode(), 'AB12CD');
+
+        await tester.tap(find.byType(AppTextButton));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(await peekPendingReferralCode(), isNull);
+      },
+    );
+
+    testWidgets('renders $KycRegistrationReferralStep with skip', (tester) async {
+      final state = const KycRegistrationStepState(
+        step: KycRegistrationStep.referral,
+        steps: [
+          KycRegistrationStep.referral,
+          KycRegistrationStep.personal,
+        ],
+      );
+      when(() => registrationStepCubit.state).thenReturn(state);
+
+      await tester.pumpApp(buildSubject(const KycRegistrationView()));
+      await tester.pump();
+
+      (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(state.index);
+      await tester.pump();
+
+      expect(find.byType(KycRegistrationReferralStep).hitTestable(), findsOne);
+      expect(
+        tester
+            .widget<KycRegistrationReferralStep>(
+              find.byType(KycRegistrationReferralStep),
+            )
+            .autoPasteOnEmpty,
+        isTrue,
+      );
+      expect(find.byType(AppTextButton), findsOneWidget);
+    });
+
+    testWidgets('prefills a stashed invite code on the referral step', (
+      tester,
+    ) async {
+      addTearDown(clearPendingReferralCode);
+      await stashPendingReferralCode('AB12CD');
+      const state = KycRegistrationStepState(
+        step: KycRegistrationStep.referral,
+        steps: [
+          KycRegistrationStep.referral,
+          KycRegistrationStep.personal,
+        ],
+      );
+      when(() => registrationStepCubit.state).thenReturn(state);
+
+      await tester.pumpApp(buildSubject(const KycRegistrationView()));
+      await tester.pump();
+      (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(state.index);
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('AB12CD'), findsOneWidget);
+    });
+
+    testWidgets(
+      'does not prefill a stashed code after leaving the referral step',
+      (tester) async {
+        addTearDown(clearPendingReferralCode);
+        await stashPendingReferralCode('AB12CD');
+        const state = KycRegistrationStepState(
+          step: KycRegistrationStep.personal,
+          steps: [
+            KycRegistrationStep.referral,
+            KycRegistrationStep.personal,
+          ],
+        );
+        when(() => registrationStepCubit.state).thenReturn(state);
+
+        await tester.pumpApp(buildSubject(const KycRegistrationView()));
+        await tester.pump();
+        await tester.pump();
+
+        expect(find.text('AB12CD'), findsNothing);
+      },
+    );
 
     testWidgets('renders $KycRegistrationAddressStep', (tester) async {
       final state = const KycRegistrationStepState(
@@ -232,8 +348,7 @@ void main() {
       expect(find.byType(KycRegistrationAddressStep), findsOne);
     });
 
-    testWidgets('postal code field uses a text keyboard for alphanumeric codes',
-        (tester) async {
+    testWidgets('postal code field uses a text keyboard for alphanumeric codes', (tester) async {
       // Regression guard: foreign postal codes are alphanumeric (NL "1011 AB",
       // UK "EC1A 1BB"). A number-only keyboard blocked customers from entering
       // them even though the validator + backend accept letters and spaces.
@@ -258,8 +373,7 @@ void main() {
       expect(postalField.keyboardType, TextInputType.text);
     });
 
-    testWidgets('dismisses the keyboard when tapping outside the address fields',
-        (tester) async {
+    testWidgets('dismisses the keyboard when tapping outside the address fields', (tester) async {
       final state = const KycRegistrationStepState(
         step: KycRegistrationStep.address,
         steps: [
@@ -527,7 +641,10 @@ void main() {
         await tester.pumpApp(const KycRegistrationPage(initialUserData: _fixtureUserData));
         // Scalars seed synchronously in initState; the two country lookups
         // resolve through the fixture-backed DfxCountryService and setState on
-        // completion.
+        // completion. The live pager starts on the optional referral step.
+        await tester.pumpAndSettle();
+        // Live cubit order: referral, personal, address, tax.
+        (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(1);
         await tester.pumpAndSettle();
 
         expect(find.text('Ada'), findsOneWidget);
@@ -556,7 +673,7 @@ void main() {
 
         // Reveal the address step and confirm its residence field resolved the
         // address country too.
-        (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(1);
+        (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(2);
         await tester.pumpAndSettle();
         final resField = tester.widget<DropdownButtonFormField<Country>>(
           find.descendant(
@@ -583,6 +700,8 @@ void main() {
       });
 
       await tester.pumpApp(const KycRegistrationPage(initialUserData: _fixtureUserData));
+      await tester.pumpAndSettle();
+      (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(1);
       await tester.pumpAndSettle();
 
       // The scalar prefill still applies. The lookup failure is swallowed by
@@ -696,6 +815,7 @@ void main() {
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
           ),
@@ -1074,6 +1194,215 @@ void main() {
         expect(tins, hasLength(1));
         expect(tins.single.country, 'DE');
         expect(tins.single.tin, 'DE123');
+      },
+    );
+
+    Future<void> primeTypedCode(WidgetTester tester) async {
+      when(() => registrationStepCubit.state).thenReturn(
+        const KycRegistrationStepState(
+          step: KycRegistrationStep.taxResidence,
+          steps: [
+            KycRegistrationStep.referral,
+            KycRegistrationStep.personal,
+            KycRegistrationStep.address,
+            KycRegistrationStep.taxResidence,
+          ],
+        ),
+      );
+      await showTaxStep(tester);
+      (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(
+        0,
+      );
+      await tester.pump();
+      await tester.enterText(
+        find.descendant(
+          of: find.byType(KycRegistrationReferralStep),
+          matching: find.byType(TextField),
+        ),
+        'AB12CD',
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(await peekPendingReferralCode(), 'AB12CD');
+      (tester.widget(find.byType(PageView)) as PageView).controller?.jumpToPage(
+        registrationStepCubit.state.index,
+      );
+      await tester.pumpAndSettle();
+    }
+
+    Future<Finder> completeButton(WidgetTester tester) async {
+      final button = find.descendant(
+        of: find.byType(KycRegistrationTaxStep),
+        matching: find.byType(AppFilledButton),
+      );
+      await tester.scrollUntilVisible(
+        button,
+        100,
+        scrollable: taxScrollable(),
+      );
+      return button;
+    }
+
+    testWidgets(
+      'stashes the typed code before submit is called',
+      (tester) async {
+        addTearDown(() async {
+          debugStashResolvedReferralCode = null;
+          await clearPendingReferralCode();
+        });
+        await primeTypedCode(tester);
+
+        final stashGate = Completer<void>();
+        debugStashResolvedReferralCode = (_) => stashGate.future;
+
+        await tester.tap(await completeButton(tester));
+        await tester.pump();
+
+        verifyNever(
+          () => registrationSubmitCubit.submit(
+            type: any(named: 'type'),
+            firstName: any(named: 'firstName'),
+            lastName: any(named: 'lastName'),
+            phoneNumber: any(named: 'phoneNumber'),
+            birthday: any(named: 'birthday'),
+            nationality: any(named: 'nationality'),
+            addressStreet: any(named: 'addressStreet'),
+            addressStreetNumber: any(named: 'addressStreetNumber'),
+            addressPostalCode: any(named: 'addressPostalCode'),
+            addressCity: any(named: 'addressCity'),
+            addressCountry: any(named: 'addressCountry'),
+            swissTaxResidence: any(named: 'swissTaxResidence'),
+            countryAndTINs: any(named: 'countryAndTINs'),
+          ),
+        );
+
+        stashGate.complete();
+        await tester.pump();
+        await tester.pump();
+
+        verify(
+          () => registrationSubmitCubit.submit(
+            type: any(named: 'type'),
+            firstName: any(named: 'firstName'),
+            lastName: any(named: 'lastName'),
+            phoneNumber: any(named: 'phoneNumber'),
+            birthday: any(named: 'birthday'),
+            nationality: any(named: 'nationality'),
+            addressStreet: any(named: 'addressStreet'),
+            addressStreetNumber: any(named: 'addressStreetNumber'),
+            addressPostalCode: any(named: 'addressPostalCode'),
+            addressCity: any(named: 'addressCity'),
+            addressCountry: any(named: 'addressCountry'),
+            swissTaxResidence: any(named: 'swissTaxResidence'),
+            countryAndTINs: any(named: 'countryAndTINs'),
+          ),
+        ).called(1);
+      },
+    );
+
+    testWidgets(
+      'a second complete tap while stash I/O is in flight submits once',
+      (tester) async {
+        addTearDown(() async {
+          debugStashResolvedReferralCode = null;
+          await clearPendingReferralCode();
+        });
+        await primeTypedCode(tester);
+
+        final stashGate = Completer<void>();
+        debugStashResolvedReferralCode = (_) => stashGate.future;
+
+        final button = await completeButton(tester);
+        await tester.tap(button);
+        await tester.tap(button);
+        stashGate.complete();
+        await tester.pump();
+        await tester.pump();
+
+        verify(
+          () => registrationSubmitCubit.submit(
+            type: any(named: 'type'),
+            firstName: any(named: 'firstName'),
+            lastName: any(named: 'lastName'),
+            phoneNumber: any(named: 'phoneNumber'),
+            birthday: any(named: 'birthday'),
+            nationality: any(named: 'nationality'),
+            addressStreet: any(named: 'addressStreet'),
+            addressStreetNumber: any(named: 'addressStreetNumber'),
+            addressPostalCode: any(named: 'addressPostalCode'),
+            addressCity: any(named: 'addressCity'),
+            addressCountry: any(named: 'addressCountry'),
+            swissTaxResidence: any(named: 'swissTaxResidence'),
+            countryAndTINs: any(named: 'countryAndTINs'),
+          ),
+        ).called(1);
+      },
+    );
+
+    testWidgets(
+      'submit does not overwrite a newer deeplink stash',
+      (tester) async {
+        addTearDown(() async {
+          debugTypedReferralAfterPeek = null;
+          await clearPendingReferralCode();
+        });
+        await primeTypedCode(tester);
+        debugTypedReferralAfterPeek = () => stashPendingReferralCode('NEWER1');
+
+        await tapComplete(tester);
+
+        expect(await peekPendingReferralCode(), 'NEWER1');
+        verify(
+          () => registrationSubmitCubit.submit(
+            type: any(named: 'type'),
+            firstName: any(named: 'firstName'),
+            lastName: any(named: 'lastName'),
+            phoneNumber: any(named: 'phoneNumber'),
+            birthday: any(named: 'birthday'),
+            nationality: any(named: 'nationality'),
+            addressStreet: any(named: 'addressStreet'),
+            addressStreetNumber: any(named: 'addressStreetNumber'),
+            addressPostalCode: any(named: 'addressPostalCode'),
+            addressCity: any(named: 'addressCity'),
+            addressCountry: any(named: 'addressCountry'),
+            swissTaxResidence: any(named: 'swissTaxResidence'),
+            countryAndTINs: any(named: 'countryAndTINs'),
+          ),
+        ).called(1);
+      },
+    );
+
+    testWidgets(
+      'submit still runs when pre-submit stash I/O throws',
+      (tester) async {
+        addTearDown(() async {
+          debugStashResolvedReferralCode = null;
+          await clearPendingReferralCode();
+        });
+        await primeTypedCode(tester);
+        debugStashResolvedReferralCode = (_) async {
+          throw Exception('prefs down');
+        };
+
+        await tapComplete(tester);
+
+        verify(
+          () => registrationSubmitCubit.submit(
+            type: any(named: 'type'),
+            firstName: any(named: 'firstName'),
+            lastName: any(named: 'lastName'),
+            phoneNumber: any(named: 'phoneNumber'),
+            birthday: any(named: 'birthday'),
+            nationality: any(named: 'nationality'),
+            addressStreet: any(named: 'addressStreet'),
+            addressStreetNumber: any(named: 'addressStreetNumber'),
+            addressPostalCode: any(named: 'addressPostalCode'),
+            addressCity: any(named: 'addressCity'),
+            addressCountry: any(named: 'addressCountry'),
+            swissTaxResidence: any(named: 'swissTaxResidence'),
+            countryAndTINs: any(named: 'countryAndTINs'),
+          ),
+        ).called(1);
       },
     );
   });

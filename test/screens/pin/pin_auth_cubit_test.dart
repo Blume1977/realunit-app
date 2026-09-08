@@ -2,6 +2,8 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:realunit_wallet/setup/routing/referral_pending_code.dart';
 import 'package:realunit_wallet/packages/storage/secure_storage.dart';
 import 'package:realunit_wallet/screens/pin/bloc/auth/pin_auth_cubit.dart';
 import 'package:realunit_wallet/screens/pin/constants/pin_constants.dart';
@@ -13,6 +15,7 @@ void main() {
   late _MockSecureStorage storage;
 
   setUp(() {
+    SharedPreferences.setMockInitialValues(const <String, Object>{});
     storage = _MockSecureStorage();
   });
 
@@ -263,5 +266,19 @@ void main() {
       },
       expect: () => const [PinAuthState()],
     );
+
+    test('drops a pending referral code so the next wallet cannot claim it', () async {
+      when(() => storage.deletePinHash()).thenAnswer((_) async {});
+      when(() => storage.deleteBiometricEnabled()).thenAnswer((_) async {});
+      when(() => storage.resetPinLockout()).thenAnswer((_) async {});
+      await stashPendingReferralCode('AB12CD');
+      expect(await peekPendingReferralCode(), 'AB12CD');
+
+      await build().reset();
+
+      // Binding a referral code is irreversible, so a code stashed by the
+      // previous owner must never be credited to whoever onboards next.
+      expect(await peekPendingReferralCode(), isNull);
+    });
   });
 }

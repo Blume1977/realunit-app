@@ -40,10 +40,16 @@ class KycRegistrationSubmitCubit extends Cubit<KycRegistrationSubmitState> {
     required bool swissTaxResidence,
     List<CountryAndTin>? countryAndTINs,
   }) async {
+    if (isClosed ||
+        state is KycRegistrationSubmitLoading ||
+        state is KycRegistrationSubmitSuccess) {
+      return;
+    }
     try {
-      emit(KycRegistrationSubmitLoading());
+      _emitIfOpen(KycRegistrationSubmitLoading());
 
       final user = await _kycService.getUser();
+      if (isClosed) return;
       final mail = user.mail;
       if (mail != null) {
         final registration = Registration(
@@ -65,43 +71,51 @@ class KycRegistrationSubmitCubit extends Cubit<KycRegistrationSubmitState> {
 
         await _doCompleteRegistration(registration);
       } else {
-        emit(const KycRegistrationSubmitFailure('Mail could not be fetched'));
+        _emitIfOpen(const KycRegistrationSubmitFailure('Mail could not be fetched'));
       }
     } on ApiException catch (e) {
       developer.log(e.toString());
-      emit(KycRegistrationSubmitFailure(e.message, cause: e));
+      _emitIfOpen(KycRegistrationSubmitFailure(e.message, cause: e));
       return;
     } catch (e) {
       developer.log(e.toString());
-      emit(KycRegistrationSubmitFailure(e.toString(), cause: e));
+      _emitIfOpen(KycRegistrationSubmitFailure(e.toString(), cause: e));
       return;
     }
   }
 
   Future<void> _doCompleteRegistration(Registration registration) async {
+    if (isClosed) return;
     try {
       final status = await _registrationService.completeRegistration(registration);
+      if (isClosed) return;
       // The API returns a structured `RegistrationStatus` in every
       // success case — including `alreadyRegistered`
       // (DFXswiss/api#3733). We forward whatever the backend says and
       // let `KycCubit.checkKyc()` resolve the next step on the listener
       // side; no more swallowing of generic ApiExceptions as success.
-      emit(KycRegistrationSubmitSuccess(status));
+      _emitIfOpen(KycRegistrationSubmitSuccess(status));
     } on BitboxNotConnectedException {
-      emit(
+      _emitIfOpen(
         KycRegistrationSubmitBitboxRequired(registration: registration),
       );
     } on ApiException catch (e) {
       developer.log(e.toString());
-      emit(KycRegistrationSubmitFailure(e.message, cause: e));
+      _emitIfOpen(KycRegistrationSubmitFailure(e.message, cause: e));
     } catch (e) {
       developer.log(e.toString());
-      emit(KycRegistrationSubmitFailure(e.toString(), cause: e));
+      _emitIfOpen(KycRegistrationSubmitFailure(e.toString(), cause: e));
     }
   }
 
   Future<void> retrySubmit(Registration registration) async {
-    emit(KycRegistrationSubmitLoading());
+    if (isClosed) return;
+    _emitIfOpen(KycRegistrationSubmitLoading());
     await _doCompleteRegistration(registration);
+  }
+
+  void _emitIfOpen(KycRegistrationSubmitState next) {
+    if (isClosed) return;
+    emit(next);
   }
 }

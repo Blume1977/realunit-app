@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
+import 'package:realunit_wallet/setup/routing/referral_bind.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/setup/routing/routes/onboarding_routes.dart';
 import 'package:realunit_wallet/setup/routing/routes/pin_routes.dart';
+
+export 'package:realunit_wallet/setup/routing/effective_location.dart';
 
 /// The outcome of the boot/lock navigation decision (see
 /// [resolveBootNavigation]) driven by `main.dart`'s `_navigate`. The decision
@@ -42,21 +46,6 @@ final class BootNavRestore extends BootNavAction {
 /// them exactly where they are, never yank them to the dashboard.
 final class BootNavStay extends BootNavAction {
   const BootNavStay();
-}
-
-/// The location the user actually sees, including imperatively pushed routes.
-///
-/// `RouteMatchList.uri` only reflects declarative (`go`) matches — after a
-/// `push` (how the KYC flow is entered from Buy/Sell) it still reports the
-/// base route underneath. Everything that judges or captures "where the user
-/// is" (the boot machine's `currentLocation`, the background capture, the
-/// scheme-open redirect) must read this helper instead, or a pushed flow is
-/// invisible to it.
-String effectiveLocation(RouteMatchList configuration) {
-  final matches = configuration.matches;
-  final last = matches.isEmpty ? null : matches.last;
-  if (last is ImperativeRouteMatch) return last.matches.uri.toString();
-  return configuration.uri.toString();
 }
 
 /// Locations that are boot/lock gates: `_navigate` re-derives them from state
@@ -222,6 +211,7 @@ void applyBootNavAction(
         if (payload != null) {
           router.goNamed(routeName);
           unawaited(router.pushNamed(AppRoutes.pay, extra: payload));
+          unawaited(bindPendingReferralCode(router));
           return;
         }
       }
@@ -231,6 +221,9 @@ void applyBootNavAction(
       // locked-warm-resume payment deeplinks can still replay. Do NOT clear
       // the pending-payment stash here.
       router.goNamed(routeName);
+      if (routeName == AppRoutes.dashboard) {
+        unawaited(bindPendingReferralCode(router));
+      }
       return;
     case BootNavRestore(:final location):
       // Return to the in-flight route the user was on before the re-lock,
@@ -244,7 +237,8 @@ void applyBootNavAction(
       // push on top of the restored location (same post-unlock terminal
       // consumption as the dashboard branch).
       onClearResume();
-      if (Uri.parse(location).path == '/dashboard') {
+      final restorePath = Uri.parse(location).path;
+      if (restorePath == '/dashboard') {
         router.go(location);
       } else {
         router.goNamed(AppRoutes.dashboard);
@@ -253,6 +247,17 @@ void applyBootNavAction(
       final payload = takePendingPaymentDeeplink();
       if (payload != null) {
         unawaited(router.pushNamed(AppRoutes.pay, extra: payload));
+      }
+      // Bind after this frame so the restored location is current. Do not
+      // wait for the pushed route to pop — staying on /settings would
+      // otherwise never bind. Restored KYC (even with /pay on top) stays
+      // unbound; `_isKycLocation` walks the whole match list.
+      final restoreIsKyc =
+          restorePath == '/kyc' || restorePath.startsWith('/kyc/');
+      if (!restoreIsKyc) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          unawaited(bindPendingReferralCode(router));
+        });
       }
       return;
     case BootNavStay():
@@ -266,6 +271,7 @@ void applyBootNavAction(
       if (payload != null) {
         unawaited(router.pushNamed(AppRoutes.pay, extra: payload));
       }
+      unawaited(bindPendingReferralCode(router));
       return;
   }
 }

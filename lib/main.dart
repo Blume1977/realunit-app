@@ -121,6 +121,15 @@ class _WalletAppState extends State<WalletApp> {
                 }
               },
             ),
+            BlocListener<HomeBloc, HomeState>(
+              listenWhen: (previous, current) =>
+                  !previous.historySyncFailed && current.historySyncFailed,
+              listener: (context, _) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(S.of(context).historySyncFailed)),
+                );
+              },
+            ),
             BlocListener<PinAuthCubit, PinAuthState>(
               listener: (context, pinState) {
                 if (pinState.isPinVerified) {

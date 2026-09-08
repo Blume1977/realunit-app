@@ -47,12 +47,69 @@
                  realunit-wallet://open). Opening the app via the scheme only
                  foregrounds it; go_router redirects any scheme URL to the normal
                  entry. A custom scheme needs no autoVerify / Digital Asset
-                 Links. -->
+                 Links. Multiple <data> in one filter are sets (scheme × host ×
+                 path), not tuples: a pathPrefix here would require a path and
+                 drop realunit-wallet://open. Opaque URIs (lightning, invite/code
+                 without //) have no host and need a scheme-only filter. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="realunit-wallet" android:host="open"/>
+                <data android:scheme="realunit-wallet" android:host="invite"/>
+                <data android:scheme="realunit-wallet" android:host="promo"/>
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="realunit-wallet"/>
+            </intent-filter>
+            <!-- HTTPS App Links for invite and promo codes (verified against
+                 Digital Asset Links). autoVerify checks every host in this
+                 filter: a missing assetlinks.json on any of them fails the
+                 whole filter, so release only lists realunit.app / www.
+                 Trailing slash on pathPrefix is required: "/invite" as a
+                 prefix would also match "/invitee". Exact android:path
+                 covers bare /invite?code=. Custom-scheme filter above still
+                 covers realunit-wallet://invite|promo/{code}. Staging
+                 host lives in debug/profile manifests. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="https"
+                    android:host="realunit.app"
+                    android:pathPrefix="/invite/"/>
+                <data
+                    android:scheme="https"
+                    android:host="realunit.app"
+                    android:pathPrefix="/promo/"/>
+                <data
+                    android:scheme="https"
+                    android:host="realunit.app"
+                    android:path="/invite"/>
+                <data
+                    android:scheme="https"
+                    android:host="realunit.app"
+                    android:path="/promo"/>
+                <data
+                    android:scheme="https"
+                    android:host="www.realunit.app"
+                    android:pathPrefix="/invite/"/>
+                <data
+                    android:scheme="https"
+                    android:host="www.realunit.app"
+                    android:pathPrefix="/promo/"/>
+                <data
+                    android:scheme="https"
+                    android:host="www.realunit.app"
+                    android:path="/invite"/>
+                <data
+                    android:scheme="https"
+                    android:host="www.realunit.app"
+                    android:path="/promo"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/country/country.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/registration/dto/real_unit_registration_request_dto.dart';
+import 'package:realunit_wallet/screens/kyc/steps/registration/cubits/registration_submit/kyc_registration_submit_cubit.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import 'package:realunit_wallet/widgets/buttons/app_text_button.dart';
@@ -90,6 +94,7 @@ class KycRegistrationTaxStep extends StatefulWidget {
 class _KycRegistrationTaxStepState extends State<KycRegistrationTaxStep> {
   final _formKey = GlobalKey<FormState>();
   late List<_TaxRow> _rows;
+  bool _submitting = false;
 
   @override
   void initState() {
@@ -209,6 +214,40 @@ class _KycRegistrationTaxStepState extends State<KycRegistrationTaxStep> {
     );
   }
 
+  void _onCompletePressed() {
+    if (_submitting) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    _submitting = true;
+    setState(() {});
+    unawaited(() async {
+      try {
+        await widget.onSubmit(_buildResult());
+      } catch (_) {
+        _submitting = false;
+        if (mounted) setState(() {});
+        return;
+      }
+      if (!mounted) return;
+      // Success: keep the CTA disabled. The page overlay stays until
+      // this route is disposed. Failure/BitBox re-enable. Isolated
+      // tax-step tests have no submit cubit and must re-enable.
+      try {
+        if (context.read<KycRegistrationSubmitCubit>().state
+            is KycRegistrationSubmitSuccess) {
+          return;
+        }
+      } catch (_) {
+        // No submit cubit in the tree. `context.read` throws
+        // ProviderNotFoundException, which implements Exception and is not a
+        // FlutterError, so this catch stays untyped: `provider` is not a direct
+        // dependency and must not be imported just to name the type.
+      }
+      _submitting = false;
+      setState(() {});
+    }());
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -238,12 +277,10 @@ class _KycRegistrationTaxStepState extends State<KycRegistrationTaxStep> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: AppFilledButton(
-                    onPressed: () async {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      if (_formKey.currentState?.validate() ?? false) {
-                        await widget.onSubmit(_buildResult());
-                      }
-                    },
+                    onPressed: _submitting ? null : _onCompletePressed,
+                    state: _submitting
+                        ? FilledButtonState.loading
+                        : FilledButtonState.idle,
                     label: s.complete,
                   ),
                 ),

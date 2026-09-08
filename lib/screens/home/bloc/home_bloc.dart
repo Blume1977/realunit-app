@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:equatable/equatable.dart';
@@ -10,6 +11,7 @@ import 'package:realunit_wallet/packages/service/transaction_history_service.dar
 import 'package:realunit_wallet/packages/service/wallet_service.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/setup/routing/boot_navigation.dart';
+import 'package:realunit_wallet/setup/routing/referral_pending_code.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -31,6 +33,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<CompleteOnboardingEvent>(_onCompleteOnboarding);
     on<AcceptSoftwareTermsEvent>(_onAcceptSoftwareTerms);
     on<DebugAuthCompleteEvent>(_onDebugAuthComplete);
+    on<HistorySyncStartedEvent>(_onHistorySyncStarted);
+    on<HistorySyncFailedEvent>(_onHistorySyncFailed);
 
     add(const CheckWalletExistsEvent());
   }
@@ -88,7 +92,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     _balanceService.updateBalance(_appStore.primaryAddress);
     _balanceService.startSync(_appStore.primaryAddress);
-    _transactionHistoryService.apiBasedSync();
+    _syncHistory();
   }
 
   Future<void> _onDeleteCurrentWallet(
@@ -107,6 +111,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     // wallet. Covers every DeleteCurrentWalletEvent path (settings delete and
     // BitBox recovery cancel), including those that never call PinAuthCubit.reset().
     clearPendingPaymentDeeplink();
+    // A pending referral code must not be credited to the next wallet either;
+    // unlike the deeplink that binding cannot be undone.
+    await clearPendingReferralCode();
     emit(
       HomeState(
         hasWallet: false,
@@ -157,6 +164,39 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _appStore.wallet = wallet;
     _balanceService.updateBalance(_appStore.primaryAddress);
     _balanceService.startSync(_appStore.primaryAddress);
-    _transactionHistoryService.apiBasedSync();
+    _syncHistory();
+  }
+
+  void _syncHistory() {
+    unawaited(() async {
+      add(const HistorySyncStartedEvent());
+      try {
+        await _transactionHistoryService.apiBasedSync();
+      } catch (e, st) {
+        developer.log(
+          'Transaction history sync failed',
+          error: e,
+          stackTrace: st,
+        );
+        add(const HistorySyncFailedEvent());
+      }
+    }());
+  }
+
+  void _onHistorySyncStarted(
+    HistorySyncStartedEvent event,
+    Emitter<HomeState> emit,
+  ) {
+    // Only emit when a previous failure is actually being cleared: every sync
+    // start would otherwise push an identical state and rebuild the home tree.
+    if (!state.historySyncFailed) return;
+    emit(state.copyWith(historySyncFailed: false));
+  }
+
+  void _onHistorySyncFailed(
+    HistorySyncFailedEvent event,
+    Emitter<HomeState> emit,
+  ) {
+    emit(state.copyWith(historySyncFailed: true));
   }
 }

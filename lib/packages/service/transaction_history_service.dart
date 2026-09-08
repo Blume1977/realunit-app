@@ -1,14 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:http/http.dart' as http;
+import 'package:web3dart/credentials.dart';
 import 'package:realunit_wallet/models/dfx_transaction.dart';
 import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/config/api_config.dart';
+import 'package:realunit_wallet/packages/io/format_frozen_chf.dart';
 import 'package:realunit_wallet/packages/repository/transaction_repository.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_auth_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/history/dto/account_history_dto.dart';
+import 'package:realunit_wallet/packages/service/dfx/models/referral/dto/referral_payout_dto.dart';
+import 'package:realunit_wallet/packages/service/dfx/models/referral/referral_json_list.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/transactions/dto/transactions_dto.dart';
-import 'package:web3dart/credentials.dart';
+import 'package:realunit_wallet/packages/service/dfx/real_unit_referral_service.dart';
 
 class TransactionHistoryService extends DFXAuthService {
   static String _accountHistoryPath(String address) => '/v1/realunit/account/$address/history';
@@ -16,7 +22,11 @@ class TransactionHistoryService extends DFXAuthService {
 
   final TransactionRepository _transactionRepository;
 
-  TransactionHistoryService(super.appStore, super.walletService, this._transactionRepository);
+  TransactionHistoryService(
+    super.appStore,
+    super.walletService,
+    this._transactionRepository,
+  );
 
   Future<void> apiBasedSync() async {
     final results = await Future.wait([
@@ -27,65 +37,147 @@ class TransactionHistoryService extends DFXAuthService {
     final accountHistory = results.elementAt(0) as AccountHistoryDto?;
     final transactions = results.elementAt(1) as List<TransactionDto>;
 
-    if (accountHistory == null) return;
+    if (accountHistory != null) {
+      for (final entry in accountHistory.history) {
+        final transfer = entry.transfer;
+        if (transfer == null) continue;
 
-    for (final entry in accountHistory.history) {
-      final transfer = entry.transfer;
-      if (transfer == null) continue;
-
-      final txId = entry.txHash;
-      final exists = await _transactionRepository.existsTransaction(txId);
-      final matchingTransaction = transactions.firstWhereOrNull(
-        (t) => t.inputTxId == txId || t.outputTxId == txId,
-      );
-
-      if (matchingTransaction != null && matchingTransaction.id != null) {
-        final dfxTransaction = DfxTransaction(
-          dfxId: matchingTransaction.id!,
-          rate: matchingTransaction.rate,
-          inputTxId: matchingTransaction.inputTxId,
-          outputTxId: matchingTransaction.outputTxId,
-          height: 0, // TODO
-          txId: txId,
-          chainId: appStore.apiConfig.asset.chainId,
-          senderAddress: transfer.from,
-          receiverAddress: transfer.to,
-          amount: BigInt.parse(transfer.value),
-          asset: appStore.apiConfig.asset,
-          type: TransactionTypes.tokenTransfer,
-          category: TransferCategory.fromValue(entry.category),
-          note: '',
-          data: null,
-          timestamp: entry.timestamp,
-        );
-
-        if (exists) {
-          await _transactionRepository.updateDfxTransaction(dfxTransaction);
-        } else {
-          await _transactionRepository.insertDfxTransaction(dfxTransaction);
+        var txId = entry.txHash;
+        if (await _transactionRepository.isReferralPayoutIgnoreCase(txId)) {
+          continue;
         }
-      } else {
-        final transaction = Transaction(
-          height: 0, // TODO
-          txId: txId,
-          chainId: appStore.apiConfig.asset.chainId,
-          senderAddress: transfer.from,
-          receiverAddress: transfer.to,
-          amount: BigInt.parse(transfer.value),
-          asset: appStore.apiConfig.asset,
-          type: TransactionTypes.tokenTransfer,
-          category: TransferCategory.fromValue(entry.category),
-          note: '',
-          data: null,
-          timestamp: entry.timestamp,
+        final storedTxId = await _transactionRepository.findTxIdIgnoreCase(txId);
+        final exists = storedTxId != null;
+        if (storedTxId != null) txId = storedTxId;
+        final matchingTransaction = transactions.firstWhereOrNull(
+          (t) => t.inputTxId == txId || t.outputTxId == txId,
         );
 
-        if (exists) {
-          await _transactionRepository.updateTransaction(transaction);
+        if (matchingTransaction != null && matchingTransaction.id != null) {
+          final dfxTransaction = DfxTransaction(
+            dfxId: matchingTransaction.id!,
+            rate: matchingTransaction.rate,
+            inputTxId: matchingTransaction.inputTxId,
+            outputTxId: matchingTransaction.outputTxId,
+            height: 0, // TODO
+            txId: txId,
+            chainId: appStore.apiConfig.asset.chainId,
+            senderAddress: transfer.from,
+            receiverAddress: transfer.to,
+            amount: BigInt.parse(transfer.value),
+            asset: appStore.apiConfig.asset,
+            type: TransactionTypes.tokenTransfer,
+            category: TransferCategory.fromValue(entry.category),
+            note: '',
+            data: null,
+            timestamp: entry.timestamp,
+          );
+
+          if (exists) {
+            await _transactionRepository.updateDfxTransaction(dfxTransaction);
+          } else {
+            await _transactionRepository.insertDfxTransaction(dfxTransaction);
+          }
         } else {
-          await _transactionRepository.insertTransaction(transaction);
+          final transaction = Transaction(
+            height: 0, // TODO
+            txId: txId,
+            chainId: appStore.apiConfig.asset.chainId,
+            senderAddress: transfer.from,
+            receiverAddress: transfer.to,
+            amount: BigInt.parse(transfer.value),
+            asset: appStore.apiConfig.asset,
+            type: TransactionTypes.tokenTransfer,
+            category: TransferCategory.fromValue(entry.category),
+            note: '',
+            data: null,
+            timestamp: entry.timestamp,
+          );
+
+          if (exists) {
+            await _transactionRepository.updateTransaction(transaction);
+          } else {
+            await _transactionRepository.insertTransaction(transaction);
+          }
         }
       }
+    }
+
+    await _syncReferralPayouts();
+  }
+
+  Future<void> _syncReferralPayouts() async {
+    final http.Response response;
+    try {
+      final uri = buildUri(host, '/v1/realunit/referral/payouts');
+      response = await authenticatedGet(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(RealUnitReferralService.lookupTimeout);
+    } catch (_) {
+      return;
+    }
+    if (response.statusCode != 200) return;
+
+    final decoded = jsonDecode(response.body);
+    final rows = referralJsonList(decoded);
+    if (rows.isEmpty) return;
+
+    final asset = appStore.apiConfig.asset;
+    final walletAddress = appStore.primaryAddress;
+    final seenIds = <int>{};
+    final seenHashes = <String>{};
+    Object? parseError;
+    StackTrace? parseStack;
+    for (final raw in rows) {
+      final status = referralJsonString(raw['status']) ?? '';
+      if (!referralPayoutStatusIsSettled(status)) continue;
+      final ReferralPayoutDto payout;
+      try {
+        payout = ReferralPayoutDto.fromJson(raw);
+      } catch (e, st) {
+        parseError ??= e;
+        parseStack ??= st;
+        continue;
+      }
+      final hash = payout.txHash;
+      final hashKey = hash != null && hash.isNotEmpty ? hash.toLowerCase() : null;
+      if (payout.id == 0 && hashKey == null) continue;
+      if (payout.id != 0 && !seenIds.add(payout.id)) continue;
+      if (hashKey != null && !seenHashes.add(hashKey)) continue;
+      var txId = hashKey ?? 'referral-payout-${payout.id}';
+      final storedTxId = await _transactionRepository.findTxIdIgnoreCase(txId);
+      var exists = storedTxId != null;
+      if (storedTxId != null) txId = storedTxId;
+      final synthetic = payout.id != 0 ? 'referral-payout-${payout.id}' : null;
+      if (hashKey != null && synthetic != null && txId != synthetic) {
+        final leftover = await _transactionRepository.findTxIdIgnoreCase(synthetic);
+        if (leftover != null) {
+          await _transactionRepository.deleteTransaction(leftover);
+        }
+      }
+      await _transactionRepository.deleteDfxTransactionDetailsIgnoreCase(txId);
+      final transaction = Transaction(
+        height: 0,
+        txId: txId,
+        chainId: asset.chainId,
+        senderAddress: kReferralPayoutSenderAddress,
+        receiverAddress: walletAddress,
+        amount: BigInt.from(payout.amount.truncate()),
+        asset: asset,
+        type: TransactionTypes.referralPayout,
+        note: '',
+        data: formatFrozenChfAmount(payout.chfValue.toString()),
+        timestamp: payout.created,
+      );
+      if (exists) {
+        await _transactionRepository.updateTransaction(transaction);
+      } else {
+        await _transactionRepository.insertTransaction(transaction);
+      }
+    }
+    if (parseError != null) {
+      Error.throwWithStackTrace(parseError, parseStack ?? StackTrace.current);
     }
   }
 

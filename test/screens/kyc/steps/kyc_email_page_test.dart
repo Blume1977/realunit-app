@@ -169,8 +169,8 @@ void main() {
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
             navigatorObservers: [_AutoPopObserver(value: true)],
@@ -199,8 +199,8 @@ void main() {
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
             // Pop with `null` (e.g. user backs out of the verification page).

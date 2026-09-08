@@ -140,7 +140,7 @@ Rules for PRs:
 - Interactive widget tests must prefer `tester.tap` / `expectFullyTappable` over calling `onPressed` on the widget.
 - Worst-case content: longest locale you ship (`de`), longest dynamic strings (e.g. real channel-hash shape), not golden-friendly short stubs alone.
 
-Reference implementation: `test/screens/hardware_connect_bitbox/connect_bitbox_responsive_matrix_test.dart` (7 devices × 5 text scales × 5 button states + focused regressions). 29 surfaces are catalogued in [`responsive_surface_catalog.dart`](../test/helper/responsive_surface_catalog.dart) (living list — not a completeness proof; see above).
+Reference implementation: `test/screens/hardware_connect_bitbox/connect_bitbox_responsive_matrix_test.dart` (7 devices × 5 text scales × 5 button states + focused regressions). Surfaces are catalogued in [`responsive_surface_catalog.dart`](../test/helper/responsive_surface_catalog.dart) (living list — not a completeness proof; see above).
 
 ### Scanner navigation (required)
 

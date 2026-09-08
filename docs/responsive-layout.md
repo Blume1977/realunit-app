@@ -68,7 +68,7 @@ Helpers:
 
 ## Rollout
 
-The migration is repo-wide. **29 surfaces** are on `ScrollableActionsLayout` and
+The migration is repo-wide. Surfaces on `ScrollableActionsLayout` are
 registered in [`kResponsiveSurfaceCatalog`](../test/helper/responsive_surface_catalog.dart)
 — the BitBox connect sheet plus dashboard, create wallet, verify pin, the three KYC status
 pages, KYC account-merge / merge-processing / link-wallet, KYC financial-data questions,

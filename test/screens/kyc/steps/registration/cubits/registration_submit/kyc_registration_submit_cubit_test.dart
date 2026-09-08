@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -233,6 +235,26 @@ void main() {
         isA<KycRegistrationSubmitFailure>().having((s) => s.message, 'message', 'Unauthorized'),
       ],
     );
+
+    test('ignores a second submit while Loading', () async {
+      final gate = Completer<UserDto>();
+      when(() => kycService.getUser()).thenAnswer((_) => gate.future);
+      when(
+        () => registrationService.completeRegistration(any()),
+      ).thenAnswer((_) async => RegistrationStatus.completed);
+
+      final cubit = buildCubit();
+      final first = _submitFromRegistration(cubit, _registration());
+      await Future<void>.delayed(Duration.zero);
+      expect(cubit.state, isA<KycRegistrationSubmitLoading>());
+      await _submitFromRegistration(cubit, _registration());
+      gate.complete(_user());
+      await first;
+
+      verify(() => kycService.getUser()).called(1);
+      expect(cubit.state, isA<KycRegistrationSubmitSuccess>());
+      await cubit.close();
+    });
 
     blocTest<KycRegistrationSubmitCubit, KycRegistrationSubmitState>(
       'emits Failure when getUser itself throws',

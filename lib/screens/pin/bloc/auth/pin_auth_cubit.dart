@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/packages/storage/secure_storage.dart';
 import 'package:realunit_wallet/screens/pin/constants/pin_constants.dart';
 import 'package:realunit_wallet/setup/routing/boot_navigation.dart';
+import 'package:realunit_wallet/setup/routing/referral_pending_code.dart';
 
 part 'pin_auth_state.dart';
 
@@ -81,8 +82,11 @@ class PinAuthCubit extends Cubit<PinAuthState> {
     ]);
     _resumeLocation = null;
     // A stashed payment deeplink must not survive into a freshly reset /
-    // re-onboarded wallet (Forgot PIN / Delete Wallet).
+    // re-onboarded wallet (Forgot PIN / Delete Wallet). The same holds for a
+    // pending referral code: binding is irreversible, so it must never be
+    // credited to whoever onboards next on this device.
     clearPendingPaymentDeeplink();
+    await clearPendingReferralCode();
     emit(const PinAuthState());
   }
 }
