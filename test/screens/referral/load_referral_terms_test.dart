@@ -56,7 +56,7 @@ void main() {
     expect(result, isNull);
   });
 
-  test('bundled fallback is the 14.08 TB, not a paraphrase', () {
+  test('bundled fallback is the 26.08 TB, not a paraphrase', () {
     final de = File('assets/legal/referral_terms_de.md').readAsStringSync();
     expect(de, contains('im eigenen Wallet'));
     expect(de, contains('registriert und verifiziert'));

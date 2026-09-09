@@ -285,7 +285,7 @@ void main() {
   });
 
   testWidgets(
-    'keeps the accept error while the retry POST is in flight',
+    'keeps the accept error while the retry PUT is in flight',
     (tester) async {
       when(() => cubit.state).thenReturn(
         const ReferralTermsAccepting(
@@ -341,7 +341,7 @@ void main() {
   );
 
   testWidgets(
-    'falls back to bundled TB 14.08 when the terms API is unreachable',
+    'falls back to bundled TB 26.08 when the terms API is unreachable',
     (tester) async {
       final service = _MockReferralService();
       when(() => service.getTerms()).thenThrow(Exception('down'));

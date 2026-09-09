@@ -153,7 +153,7 @@ void main() {
   );
 
   blocTest<ReferralCubit, ReferralState>(
-    'acceptTerms keeps the previous error while the retry POST is in flight',
+    'acceptTerms keeps the previous error while the retry PUT is in flight',
     build: () {
       when(() => service.acceptTerms(version: any(named: 'version'))).thenAnswer((_) async {});
       when(() => service.getSummary()).thenAnswer((_) async => _eligible);
@@ -169,7 +169,7 @@ void main() {
   );
 
   blocTest<ReferralCubit, ReferralState>(
-    'acceptTerms ignores a second call while the POST is in flight',
+    'acceptTerms ignores a second call while the PUT is in flight',
     build: () {
       acceptRelease = Completer<void>();
       when(
@@ -977,7 +977,7 @@ void main() {
   );
 
   blocTest<ReferralCubit, ReferralState>(
-    'acceptTerms maps a timed-out POST back to the checkbox',
+    'acceptTerms maps a timed-out PUT back to the checkbox',
     build: () {
       when(
         () => service.acceptTerms(version: any(named: 'version')),
