@@ -401,9 +401,12 @@ void main() {
               'AB12',
               timeout: const Duration(milliseconds: 20),
             )
-            .then<void>((_) {}, onError: (Object e, StackTrace _) {
-          caught = e;
-        });
+            .then<void>(
+              (_) {},
+              onError: (Object e, StackTrace _) {
+                caught = e;
+              },
+            );
 
         async.elapse(const Duration(milliseconds: 20));
         expect(caught, isA<TimeoutException>());
@@ -530,9 +533,12 @@ void main() {
               code: 'XY',
               timeout: const Duration(milliseconds: 20),
             )
-            .then<void>((_) {}, onError: (Object e, StackTrace _) {
-          caught = e;
-        });
+            .then<void>(
+              (_) {},
+              onError: (Object e, StackTrace _) {
+                caught = e;
+              },
+            );
 
         async.elapse(const Duration(milliseconds: 20));
         expect(caught, isA<TimeoutException>());
@@ -552,10 +558,11 @@ void main() {
   });
 
   group('$RealUnitReferralService.acceptTerms', () {
-    test('POSTs accepted:true with the rendered version and accepts 200 or 201', () async {
+    test('PUTs accepted:true with the rendered version and accepts 200 or 201', () async {
       Map<String, dynamic>? body;
       final client = MockClient((request) async {
         body = jsonDecode(request.body) as Map<String, dynamic>;
+        expect(request.method, 'PUT');
         expect(request.url.path, '/v1/realunit/referral/terms/accept');
         expect(request.headers['Authorization'], 'Bearer jwt-1');
         return http.Response('{}', 201);
@@ -736,7 +743,7 @@ void main() {
         path = request.url.path;
         return http.Response(
           jsonEncode({
-            'version': '2026-08-14',
+            'version': '2026-08-26',
             'markdown': '# TB',
             'markdownEn': '# Terms',
           }),
@@ -746,7 +753,7 @@ void main() {
 
       final terms = await build(client).getTerms();
       expect(path, '/v1/realunit/referral/terms');
-      expect(terms.version, '2026-08-14');
+      expect(terms.version, '2026-08-26');
       expect(terms.textForLang('de'), '# TB');
       expect(terms.textForLang('en'), '# Terms');
     });
@@ -761,9 +768,12 @@ void main() {
         Object? caught;
         build(client)
             .getTerms(timeout: const Duration(milliseconds: 20))
-            .then<void>((_) {}, onError: (Object e, StackTrace _) {
-          caught = e;
-        });
+            .then<void>(
+              (_) {},
+              onError: (Object e, StackTrace _) {
+                caught = e;
+              },
+            );
 
         async.elapse(const Duration(milliseconds: 20));
         expect(caught, isA<TimeoutException>());

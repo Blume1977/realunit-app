@@ -1,6 +1,6 @@
 # Teilnahmebedingungen Referral-Programm RealUnit App
 
-*Stand: 14.08.2026*
+*Stand: 26.08.2026*
 
 ## 1. Veranstalterin
 
@@ -16,7 +16,7 @@ Der Empfehler erstellt in der App eine Einladung und teilt den Einladungslink. D
 
 ## 4. Prämie und Qualifikation
 
-Der Empfehler erhält 20 RealUnit-Aktientoken, sobald die eingeladene Person registriert und verifiziert ist und ihren ersten Kauf erfolgreich abgeschlossen hat. Die Prämie wird dem Wallet des Empfehlers gutgeschrieben und in der Transaktionshistorie mit Frankenwert ausgewiesen. Die Prämie ist Entgelt für die Vermittlung der eingeladenen Person. Ein Anspruch entsteht erst mit vollständiger Erfüllung dieser Voraussetzungen.
+Der Empfehler erhält 20 RealUnit-Aktientoken, sobald die eingeladene Person registriert und verifiziert ist und ihren ersten Kauf über mindestens 200 RealUnit-Aktientoken erfolgreich abgeschlossen hat. Die Prämie wird dem Wallet des Empfehlers gutgeschrieben und in der Transaktionshistorie mit dem im Zeitpunkt der Gutschrift fixierten Frankenwert ausgewiesen. Die Prämie ist Entgelt für die Vermittlung der eingeladenen Person. Ein Anspruch entsteht erst mit vollständiger Erfüllung dieser Voraussetzungen.
 
 ## 5. Obergrenze
 

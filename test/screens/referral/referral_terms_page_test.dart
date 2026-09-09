@@ -370,7 +370,7 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('14.08.2026'), findsWidgets);
+      expect(find.textContaining('26.08.2026'), findsWidgets);
       expect(find.textContaining('70 RealUnit-Aktientoken'), findsWidgets);
     },
   );
@@ -532,7 +532,7 @@ void main() {
 
       second.complete(
         const ReferralTermsDto(
-          version: '2026-08-14',
+          version: '2026-08-26',
           markdown: '# Alte TB',
           markdownEn: '# New terms',
         ),
@@ -542,7 +542,7 @@ void main() {
 
       first.complete(
         const ReferralTermsDto(
-          version: '2026-08-14',
+          version: '2026-08-26',
           markdown: '# Stale DE',
           markdownEn: '# Stale EN',
         ),

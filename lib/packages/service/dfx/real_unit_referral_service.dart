@@ -60,7 +60,7 @@ class RealUnitReferralService extends DFXAuthService {
   }) async {
     final uri = buildUri(host, '$_basePath/terms/accept');
     final response = await _timed(
-      authenticatedPost(
+      authenticatedPut(
         uri,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'accepted': true, 'version': version}),

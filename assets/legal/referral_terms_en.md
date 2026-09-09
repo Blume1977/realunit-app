@@ -1,6 +1,6 @@
 # Terms of Participation — Referral Programme RealUnit App
 
-*As of: 14 August 2026*
+*As of: 26 August 2026*
 
 ## 1. Organiser
 
@@ -16,7 +16,7 @@ The referrer creates an invitation in the app and shares the invitation link. Th
 
 ## 4. Reward and qualification
 
-The referrer receives 20 RealUnit share tokens once the invited person is registered and verified and has successfully completed their first purchase. The reward is credited to the referrer’s wallet and shown in the transaction history with its Swiss-franc value. The reward is remuneration for introducing the invited person. A claim arises only once these conditions are fully met.
+The referrer receives 20 RealUnit share tokens once the invited person is registered and verified and has successfully completed their first purchase of at least 200 RealUnit share tokens. The reward is credited to the referrer’s wallet and shown in the transaction history with the Swiss-franc value fixed at the time of crediting. The reward is remuneration for introducing the invited person. A claim arises only once these conditions are fully met.
 
 ## 5. Cap
 
