@@ -9164,7 +9164,11 @@
             die Karte <b>Empfehlungen</b> («Erhalte 20 REALU pro Weiterempfehlung»)
             und denselben Einstieg in den Einstellungen. Sichtbarkeit, Mindestbestand
             und Auszahlung entscheidet die DFX API; die App rendert
-            <code>eligible</code> 1:1. Nach einem fehlgeschlagenen ersten
+            <code>eligible</code> 1:1. Die Prämie von 20 REALU wird dem Empfehler
+            gutgeschrieben, sobald die eingeladene Person verifiziert ist und
+            ihren ersten Kauf von mindestens N REALU abgeschlossen hat
+            (Vorgabe 200, durch die API gesetzt; Teilnahmebedingungen vom
+            26.08.2026, Ziff. 4). Nach einem fehlgeschlagenen ersten
             Summary-GET (unmounted, 503, Timeout) blendet die Karte aus;
             solange die Route aktuell und die App im Vordergrund ist, wird
             die Gate erneut geladen, ohne eine bereits sichtbare Karte zu
