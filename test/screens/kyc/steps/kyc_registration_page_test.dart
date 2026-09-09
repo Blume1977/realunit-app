@@ -1112,9 +1112,9 @@ void main() {
       },
     );
 
-    // S5 — Address DE, tax: DE + FR + US → swiss=false, three TINs
+    // S5 — Address DE, tax: DE + FR + IT → swiss=false, three TINs
     testWidgets(
-      'S5 DE + FR + US: multi non-CH residences forward all countryAndTINs',
+      'S5 DE + FR + IT: multi non-CH residences forward all countryAndTINs',
       (tester) async {
         await showTaxStep(tester, dto: initialUserDataDe);
 
@@ -1123,8 +1123,8 @@ void main() {
         await selectFreeCountry(tester, 'France');
         await enterTinAt(tester, 1, 'FR999');
         await addTaxResidence(tester);
-        await selectFreeCountry(tester, 'United States');
-        await enterTinAt(tester, 2, 'US123');
+        await selectFreeCountry(tester, 'Italy');
+        await enterTinAt(tester, 2, 'IT123');
         await tapComplete(tester);
 
         final captured = captureSubmit();
@@ -1136,8 +1136,8 @@ void main() {
         expect(tins[0].tin, 'DE111');
         expect(tins[1].country, 'FR');
         expect(tins[1].tin, 'FR999');
-        expect(tins[2].country, 'US');
-        expect(tins[2].tin, 'US123');
+        expect(tins[2].country, 'IT');
+        expect(tins[2].tin, 'IT123');
       },
     );
 

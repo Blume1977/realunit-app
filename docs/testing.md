@@ -200,7 +200,7 @@ The shared helper is [`test/helper/country_fixture.dart`](../test/helper/country
 - `countryServiceWithClient(client)` — an escape hatch for bespoke `MockClient` behaviour (a `Completer`-gated response for the loading state, or a fail-then-recover client for the retry path).
 - `countriesFixtureResponse()` — a ready-made `200` fixture response, for converted tests that resolve the loading and retry paths with their own `MockClient`.
 
-The fixture holds both KYC-allowed (e.g. Switzerland) and disallowed (e.g. Afghanistan, United States) countries, so purpose filtering (`residence` vs `nationality`) can be asserted against real data. See `test/widgets/form/country_field_test.dart`.
+The fixture holds both KYC-allowed (e.g. Switzerland) and disallowed (e.g. Afghanistan, United States) countries, so purpose filtering (`residence` vs `nationality`) can be asserted against real data. Nested `realunit.taxEnable` is present too: tax pickers drop `false` (United States) and keep `true` (Switzerland, Italy). See `test/widgets/form/country_field_test.dart`.
 
 ### Mocktail gotchas
 

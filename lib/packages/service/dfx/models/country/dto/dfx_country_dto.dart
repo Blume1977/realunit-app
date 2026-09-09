@@ -11,6 +11,7 @@ class DfxCountryDto {
   final bool bankAllowed;
   final bool cardAllowed;
   final bool cryptoAllowed;
+  final bool? taxEnable;
 
   const DfxCountryDto({
     required this.id,
@@ -25,9 +26,11 @@ class DfxCountryDto {
     required this.bankAllowed,
     required this.cardAllowed,
     required this.cryptoAllowed,
+    this.taxEnable,
   });
 
   factory DfxCountryDto.fromJson(Map<String, dynamic> json) {
+    final realunit = json['realunit'] as Map<String, dynamic>?;
     return DfxCountryDto(
       id: json['id'] as int,
       symbol: json['symbol'] as String,
@@ -41,6 +44,7 @@ class DfxCountryDto {
       bankAllowed: json['bankAllowed'] as bool,
       cardAllowed: json['cardAllowed'] as bool,
       cryptoAllowed: json['cryptoAllowed'] as bool,
+      taxEnable: realunit?['taxEnable'] as bool?,
     );
   }
 }

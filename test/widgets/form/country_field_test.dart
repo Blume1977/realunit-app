@@ -19,6 +19,27 @@ void main() {
   // present in the committed country fixture.
   const switzerland = Country(id: 41, symbol: 'CH', name: 'Switzerland', kycAllowed: true);
   const afghanistan = Country(id: 3, symbol: 'AF', name: 'Afghanistan', kycAllowed: false);
+  const switzerlandTaxEnabled = Country(
+    id: 41,
+    symbol: 'CH',
+    name: 'Switzerland',
+    kycAllowed: true,
+    taxEnable: true,
+  );
+  const afghanistanTaxDisabled = Country(
+    id: 3,
+    symbol: 'AF',
+    name: 'Afghanistan',
+    kycAllowed: false,
+    taxEnable: false,
+  );
+  const taxEnableNull = Country(
+    id: 99,
+    symbol: 'XX',
+    name: 'Somewhere',
+    kycAllowed: true,
+    taxEnable: null,
+  );
 
   tearDown(() async => GetIt.instance.reset());
 
@@ -51,6 +72,12 @@ void main() {
     test('residence reads kycAllowed', () {
       expect(CountryFieldPurpose.residence.allows(switzerland), isTrue);
       expect(CountryFieldPurpose.residence.allows(afghanistan), isFalse);
+    });
+
+    test('tax reads taxEnable (false dropped; null/true allowed)', () {
+      expect(CountryFieldPurpose.tax.allows(switzerlandTaxEnabled), isTrue);
+      expect(CountryFieldPurpose.tax.allows(afghanistanTaxDisabled), isFalse);
+      expect(CountryFieldPurpose.tax.allows(taxEnableNull), isTrue);
     });
   });
 
@@ -95,6 +122,31 @@ void main() {
       expect(names, isNotEmpty);
       expect(names, contains('Switzerland'));
       expect(names, isNot(contains('Afghanistan')));
+    });
+
+    testWidgets('tax purpose drops countries with taxEnable false', (tester) async {
+      registerCountryService(fixtureCountryService());
+
+      await tester.pumpApp(
+        host(
+          CountryField(
+            label: 'Tax residence',
+            purpose: CountryFieldPurpose.tax,
+            onChanged: (_) {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final countries = renderedCountries(tester);
+      final names = countries.map((c) => c.name);
+      expect(names, isNotEmpty);
+      expect(names, contains('Switzerland'));
+      expect(names, contains('Italy'));
+      expect(names, isNot(contains('Afghanistan')));
+      expect(names, isNot(contains('United States')));
+      expect(countries.any((c) => c.taxEnable == true), isTrue);
+      expect(countries.any((c) => c.taxEnable == false), isFalse);
     });
   });
 

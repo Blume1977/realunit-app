@@ -10,7 +10,8 @@ import 'package:realunit_wallet/widgets/form/dropdown_field.dart';
 /// Selects how a [CountryField] gates its country list.
 enum CountryFieldPurpose {
   nationality,
-  residence
+  residence,
+  tax,
   ;
 
   bool allows(Country country) => switch (this) {
@@ -19,6 +20,9 @@ enum CountryFieldPurpose {
     // so the picker must offer every country.
     CountryFieldPurpose.nationality => true,
     CountryFieldPurpose.residence => country.kycAllowed,
+    // Backend rejects tax residence when taxEnable == false (realunit.taxEnable);
+    // the picker hides those countries. Null/true remain selectable.
+    CountryFieldPurpose.tax => country.taxEnable != false,
   };
 }
 

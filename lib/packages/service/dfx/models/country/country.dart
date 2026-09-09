@@ -10,6 +10,9 @@ class Country extends Equatable {
   // country (DTO alias `kycAllowed`, backed by `dfxEnable`). A non-allowed
   // address country is rejected with HTTP 400 on registration submit.
   final bool kycAllowed;
+  // Nested wire flag `realunit.taxEnable`. Backend rejects tax residence when
+  // this is false; null/true remain selectable in the tax picker.
+  final bool? taxEnable;
 
   const Country({
     required this.id,
@@ -17,6 +20,7 @@ class Country extends Equatable {
     required this.name,
     required this.kycAllowed,
     this.foreignName,
+    this.taxEnable,
   });
 
   @override
@@ -33,6 +37,7 @@ extension DfxCountryDtoMapper on DfxCountryDto {
       name: name,
       foreignName: foreignName,
       kycAllowed: kycAllowed,
+      taxEnable: taxEnable,
     );
   }
 }

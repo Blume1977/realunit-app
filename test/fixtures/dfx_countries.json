@@ -11,7 +11,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 2,
@@ -25,7 +35,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 3,
@@ -39,7 +59,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 4,
@@ -53,7 +83,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 5,
@@ -67,7 +107,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 6,
@@ -81,7 +131,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 7,
@@ -95,7 +155,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 8,
@@ -109,7 +179,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 9,
@@ -123,7 +203,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 10,
@@ -137,7 +227,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Blocked",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 11,
@@ -151,7 +251,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Exception",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 12,
@@ -165,7 +275,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 13,
@@ -179,7 +299,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 14,
@@ -193,7 +323,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 15,
@@ -207,7 +347,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 16,
@@ -221,7 +371,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 17,
@@ -235,7 +395,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 18,
@@ -249,7 +419,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 19,
@@ -263,7 +443,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 20,
@@ -277,7 +467,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 21,
@@ -291,7 +491,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 22,
@@ -305,7 +515,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 23,
@@ -319,7 +539,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 24,
@@ -333,7 +563,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 25,
@@ -347,7 +587,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 26,
@@ -361,7 +611,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 27,
@@ -375,7 +635,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 28,
@@ -389,7 +659,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 29,
@@ -403,7 +683,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 30,
@@ -417,7 +707,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 31,
@@ -431,7 +731,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 32,
@@ -445,7 +755,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 33,
@@ -459,7 +779,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 34,
@@ -473,7 +803,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Sanction",
+      "nationality": "Ok",
+      "residenceExisting": false,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": false,
+      "taxEnable": false,
+      "taxExisting": false
+    }
   },
   {
     "id": 35,
@@ -487,7 +827,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 36,
@@ -501,7 +851,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 37,
@@ -515,7 +875,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 38,
@@ -529,7 +899,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 39,
@@ -543,7 +923,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 40,
@@ -557,7 +947,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 41,
@@ -571,7 +971,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Exception",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 42,
@@ -585,7 +995,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 43,
@@ -599,7 +1019,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 44,
@@ -613,7 +1043,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 45,
@@ -627,7 +1067,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 46,
@@ -641,7 +1091,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 47,
@@ -655,7 +1115,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 48,
@@ -669,7 +1139,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 49,
@@ -683,7 +1163,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Sanction",
+      "nationality": "Ok",
+      "residenceExisting": false,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": false,
+      "taxEnable": false,
+      "taxExisting": false
+    }
   },
   {
     "id": 50,
@@ -697,7 +1187,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 51,
@@ -711,7 +1211,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 52,
@@ -725,7 +1235,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 53,
@@ -739,7 +1259,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 54,
@@ -753,7 +1283,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 55,
@@ -767,7 +1307,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Exception",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 56,
@@ -781,7 +1331,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 57,
@@ -795,7 +1355,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 58,
@@ -809,7 +1379,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 59,
@@ -823,7 +1403,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 60,
@@ -837,7 +1427,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 61,
@@ -851,7 +1451,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 62,
@@ -865,7 +1475,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 63,
@@ -879,7 +1499,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 64,
@@ -893,7 +1523,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 65,
@@ -907,7 +1547,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 66,
@@ -921,7 +1571,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 67,
@@ -935,7 +1595,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 68,
@@ -949,7 +1619,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 69,
@@ -963,7 +1643,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 70,
@@ -977,7 +1667,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 71,
@@ -991,7 +1691,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 72,
@@ -1005,7 +1715,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 73,
@@ -1019,7 +1739,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 74,
@@ -1033,7 +1763,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 75,
@@ -1047,7 +1787,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 76,
@@ -1061,7 +1811,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 77,
@@ -1075,7 +1835,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 78,
@@ -1089,7 +1859,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 79,
@@ -1103,7 +1883,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 80,
@@ -1117,7 +1907,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 81,
@@ -1131,7 +1931,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 82,
@@ -1145,7 +1955,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 83,
@@ -1159,7 +1979,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 84,
@@ -1173,7 +2003,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 85,
@@ -1187,7 +2027,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 86,
@@ -1201,7 +2051,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 87,
@@ -1215,7 +2075,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 88,
@@ -1229,7 +2099,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 89,
@@ -1243,7 +2123,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Blocked",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 90,
@@ -1257,7 +2147,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 91,
@@ -1271,7 +2171,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 92,
@@ -1285,7 +2195,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 93,
@@ -1299,7 +2219,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 94,
@@ -1313,7 +2243,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 95,
@@ -1327,7 +2267,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 96,
@@ -1341,7 +2291,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 97,
@@ -1355,7 +2315,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 98,
@@ -1369,7 +2339,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 99,
@@ -1383,7 +2363,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 100,
@@ -1397,7 +2387,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 101,
@@ -1411,7 +2411,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 102,
@@ -1425,7 +2435,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 103,
@@ -1439,7 +2459,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 104,
@@ -1453,7 +2483,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Sanction",
+      "nationality": "Ok",
+      "residenceExisting": false,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": false,
+      "taxEnable": false,
+      "taxExisting": false
+    }
   },
   {
     "id": 105,
@@ -1467,7 +2507,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 106,
@@ -1481,7 +2531,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 107,
@@ -1495,7 +2555,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 108,
@@ -1509,7 +2579,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 109,
@@ -1523,7 +2603,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 110,
@@ -1537,7 +2627,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 111,
@@ -1551,7 +2651,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 112,
@@ -1565,7 +2675,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 113,
@@ -1579,7 +2699,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 114,
@@ -1593,7 +2723,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 115,
@@ -1607,7 +2747,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 116,
@@ -1621,7 +2771,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 117,
@@ -1635,7 +2795,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Sanction",
+      "nationality": "Ok",
+      "residenceExisting": false,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": false,
+      "taxEnable": false,
+      "taxExisting": false
+    }
   },
   {
     "id": 118,
@@ -1649,7 +2819,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 119,
@@ -1663,7 +2843,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 120,
@@ -1677,7 +2867,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 121,
@@ -1691,7 +2891,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 122,
@@ -1705,7 +2915,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 123,
@@ -1719,7 +2939,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 124,
@@ -1733,7 +2963,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 125,
@@ -1747,7 +2987,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Exception",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 126,
@@ -1761,7 +3011,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 127,
@@ -1775,7 +3035,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 128,
@@ -1789,7 +3059,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 129,
@@ -1803,7 +3083,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 130,
@@ -1817,7 +3107,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 131,
@@ -1831,7 +3131,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 132,
@@ -1845,7 +3155,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 133,
@@ -1859,7 +3179,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 134,
@@ -1873,7 +3203,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 135,
@@ -1887,7 +3227,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 136,
@@ -1901,7 +3251,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 137,
@@ -1915,7 +3275,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 138,
@@ -1929,7 +3299,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 139,
@@ -1943,7 +3323,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 140,
@@ -1957,7 +3347,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 141,
@@ -1971,7 +3371,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 142,
@@ -1985,7 +3395,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Sanction",
+      "nationality": "Ok",
+      "residenceExisting": false,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": false,
+      "taxEnable": false,
+      "taxExisting": false
+    }
   },
   {
     "id": 143,
@@ -1999,7 +3419,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 144,
@@ -2013,7 +3443,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 145,
@@ -2027,7 +3467,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Blocked",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 146,
@@ -2041,7 +3491,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 147,
@@ -2055,7 +3515,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 148,
@@ -2069,7 +3539,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 149,
@@ -2083,7 +3563,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 150,
@@ -2097,7 +3587,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 151,
@@ -2111,7 +3611,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 152,
@@ -2125,7 +3635,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 153,
@@ -2139,7 +3659,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 154,
@@ -2153,7 +3683,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 155,
@@ -2167,7 +3707,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 156,
@@ -2181,7 +3731,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 157,
@@ -2195,7 +3755,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 158,
@@ -2209,7 +3779,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 159,
@@ -2223,7 +3803,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 160,
@@ -2237,7 +3827,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 161,
@@ -2251,7 +3851,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 162,
@@ -2265,7 +3875,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 163,
@@ -2279,7 +3899,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 164,
@@ -2293,7 +3923,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 165,
@@ -2307,7 +3947,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 166,
@@ -2321,7 +3971,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 167,
@@ -2335,7 +3995,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 168,
@@ -2349,7 +4019,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 169,
@@ -2363,7 +4043,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 170,
@@ -2377,7 +4067,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 171,
@@ -2391,7 +4091,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 172,
@@ -2405,7 +4115,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 173,
@@ -2419,7 +4139,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 174,
@@ -2433,7 +4163,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 175,
@@ -2447,7 +4187,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 176,
@@ -2461,7 +4211,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 177,
@@ -2475,7 +4235,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Blocked",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 178,
@@ -2489,7 +4259,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 179,
@@ -2503,7 +4283,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 180,
@@ -2517,7 +4307,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 181,
@@ -2531,7 +4331,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 182,
@@ -2545,7 +4355,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 183,
@@ -2559,7 +4379,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 184,
@@ -2573,7 +4403,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 185,
@@ -2587,7 +4427,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 186,
@@ -2601,7 +4451,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Sanction",
+      "nationality": "Ok",
+      "residenceExisting": false,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": false,
+      "taxEnable": false,
+      "taxExisting": false
+    }
   },
   {
     "id": 187,
@@ -2615,7 +4475,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 188,
@@ -2629,7 +4499,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 189,
@@ -2643,7 +4523,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 190,
@@ -2657,7 +4547,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 191,
@@ -2671,7 +4571,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 192,
@@ -2685,7 +4595,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 193,
@@ -2699,7 +4619,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 194,
@@ -2713,7 +4643,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 195,
@@ -2727,7 +4667,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 196,
@@ -2741,7 +4691,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 197,
@@ -2755,7 +4715,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 198,
@@ -2769,7 +4739,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 199,
@@ -2783,7 +4763,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 200,
@@ -2797,7 +4787,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 201,
@@ -2811,7 +4811,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 202,
@@ -2825,7 +4835,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 203,
@@ -2839,7 +4859,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 204,
@@ -2853,7 +4883,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 205,
@@ -2867,7 +4907,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 206,
@@ -2881,7 +4931,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 207,
@@ -2895,7 +4955,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 208,
@@ -2909,7 +4979,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 209,
@@ -2923,7 +5003,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 210,
@@ -2937,7 +5027,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 211,
@@ -2951,7 +5051,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 212,
@@ -2965,7 +5075,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 213,
@@ -2979,7 +5099,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 214,
@@ -2993,7 +5123,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 215,
@@ -3007,7 +5147,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 216,
@@ -3021,7 +5171,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 217,
@@ -3035,7 +5195,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 218,
@@ -3049,7 +5219,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 219,
@@ -3063,7 +5243,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 220,
@@ -3077,7 +5267,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 221,
@@ -3091,7 +5291,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 222,
@@ -3105,7 +5315,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 223,
@@ -3119,7 +5339,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 224,
@@ -3133,7 +5363,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Sanction",
+      "nationality": "Ok",
+      "residenceExisting": false,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": false,
+      "taxEnable": false,
+      "taxExisting": false
+    }
   },
   {
     "id": 225,
@@ -3147,7 +5387,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 227,
@@ -3161,7 +5411,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 228,
@@ -3175,7 +5435,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 229,
@@ -3189,7 +5459,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 230,
@@ -3203,7 +5483,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 231,
@@ -3217,7 +5507,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Sanction",
+      "nationality": "Ok",
+      "residenceExisting": false,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": false,
+      "taxEnable": false,
+      "taxExisting": false
+    }
   },
   {
     "id": 232,
@@ -3231,7 +5531,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 233,
@@ -3245,7 +5555,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Blocked",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 234,
@@ -3259,7 +5579,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 235,
@@ -3273,7 +5603,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 236,
@@ -3287,7 +5627,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 237,
@@ -3301,7 +5651,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 238,
@@ -3315,7 +5675,17 @@
     "nationalityAllowed": true,
     "bankAllowed": true,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 239,
@@ -3329,7 +5699,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 240,
@@ -3343,7 +5723,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Allowed",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": true,
+      "taxExisting": true
+    }
   },
   {
     "id": 241,
@@ -3357,7 +5747,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 242,
@@ -3371,7 +5771,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 243,
@@ -3385,7 +5795,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": false,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 244,
@@ -3399,7 +5819,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 245,
@@ -3413,7 +5843,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 246,
@@ -3427,7 +5867,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 247,
@@ -3441,7 +5891,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 248,
@@ -3455,7 +5915,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 249,
@@ -3469,7 +5939,17 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Other",
+      "nationality": "Ok",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": true,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 226,
@@ -3483,7 +5963,17 @@
     "nationalityAllowed": false,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Blocked",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   },
   {
     "id": 250,
@@ -3497,6 +5987,16 @@
     "nationalityAllowed": true,
     "bankAllowed": false,
     "cardAllowed": true,
-    "cryptoAllowed": true
+    "cryptoAllowed": true,
+    "realunit": {
+      "residence": "Restricted",
+      "nationality": "Blocked",
+      "residenceExisting": true,
+      "nationalityExisting": true,
+      "ipEnable": false,
+      "ipExisting": true,
+      "taxEnable": false,
+      "taxExisting": true
+    }
   }
 ]

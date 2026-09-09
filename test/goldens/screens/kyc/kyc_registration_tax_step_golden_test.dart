@@ -237,10 +237,10 @@ void main() {
       builder: () => buildSubject(residenceCountry: _germany),
     );
 
-    // S5 — DE + FR + US all TINs filled
+    // S5 — DE + FR + IT all TINs filled (US is taxEnable false, not selectable)
     goldenTest(
-      'S5 DE + FR + US — all three TINs filled',
-      fileName: 'kyc_tax_scenario_s5_de_fr_us',
+      'S5 DE + FR + IT — all three TINs filled',
+      fileName: 'kyc_tax_scenario_s5_de_fr_it',
       constraints: tallPhoneConstraints,
       pumpBeforeTest: (tester) async {
         await tester.pumpAndSettle();
@@ -249,16 +249,16 @@ void main() {
         await selectFreeCountry(tester, 'France');
         await enterTinAt(tester, 1, 'FR999');
         await addTaxResidence(tester);
-        await selectFreeCountry(tester, 'United States');
-        await enterTinAt(tester, 2, 'US123');
+        await selectFreeCountry(tester, 'Italy');
+        await enterTinAt(tester, 2, 'IT123');
       },
       builder: () => buildSubject(residenceCountry: _germany),
     );
 
     // S5 — missing one TIN → error
     goldenTest(
-      'S5 DE + FR + US — partial TIN missing shows error',
-      fileName: 'kyc_tax_scenario_s5_de_fr_us_partial_tin_error',
+      'S5 DE + FR + IT — partial TIN missing shows error',
+      fileName: 'kyc_tax_scenario_s5_de_fr_it_partial_tin_error',
       constraints: tallPhoneConstraints,
       pumpBeforeTest: (tester) async {
         await tester.pumpAndSettle();
@@ -267,8 +267,8 @@ void main() {
         await selectFreeCountry(tester, 'France');
         await enterTinAt(tester, 1, 'FR999');
         await addTaxResidence(tester);
-        await selectFreeCountry(tester, 'United States');
-        // US TIN deliberately left empty
+        await selectFreeCountry(tester, 'Italy');
+        // IT TIN deliberately left empty
         await tapComplete(tester);
       },
       builder: () => buildSubject(residenceCountry: _germany),

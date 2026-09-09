@@ -317,7 +317,7 @@ class _KycRegistrationTaxStepState extends State<KycRegistrationTaxStep> {
               '${_usedSymbols(excludingIndex: index).join(',')}',
             ),
             label: s.taxResidenceCountry,
-            purpose: CountryFieldPurpose.nationality,
+            purpose: CountryFieldPurpose.tax,
             initialValue: row.country,
             // Already-selected countries cannot be picked again — prevents model
             // vs FormField desync and silent payload loss on duplicate picks.

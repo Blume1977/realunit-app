@@ -56,8 +56,8 @@ void main() {
     await tester.tap(dropdown);
     await tester.pumpAndSettle();
 
-    // Priority-sorted near the top: CH, DE, IT, FR. United States is far down
-    // the alphabetical tail — scroll the open menu until the name is present.
+    // Priority-sorted near the top: CH, DE, IT, FR. Other allowed tax
+    // countries sit further down — scroll the open menu until the name is present.
     final nameFinder = find.text(name);
     if (nameFinder.evaluate().isEmpty || find.text(name).hitTestable().evaluate().isEmpty) {
       final menuScrollable = find.byType(Scrollable).last;
@@ -342,30 +342,31 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // S5 — Address DE, tax residences: DE + FR + US
-  // Expected: swissTaxResidence=false, countryAndTINs=[{DE},{FR},{US}]
+  // S5 — Address DE, tax residences: DE + FR + IT
+  // Expected: swissTaxResidence=false, countryAndTINs=[{DE},{FR},{IT}]
+  // US is taxEnable false and is not offered in the free-row picker.
   // ---------------------------------------------------------------------------
-  group('S5 DE + FR + US (locked German + free FR + free US)', () {
+  group('S5 DE + FR + IT (locked German + free FR + free IT)', () {
     Future<_Harness> pumpS5WithCountries(WidgetTester tester) async {
       final harness = await pump(tester, residenceCountry: _germany);
       await addTaxResidence(tester);
       await selectFreeCountry(tester, 'France');
       await addTaxResidence(tester);
-      await selectFreeCountry(tester, 'United States');
+      await selectFreeCountry(tester, 'Italy');
       return harness;
     }
 
-    testWidgets('locked UI shows Germany; FR and US free rows present', (tester) async {
+    testWidgets('locked UI shows Germany; FR and IT free rows present', (tester) async {
       await pumpS5WithCountries(tester);
 
       expect(find.text('Germany'), findsWidgets);
       expect(find.text('France'), findsWidgets);
-      expect(find.text('United States'), findsWidgets);
-      // Two free country dropdowns (FR, US); locked primary has none.
+      expect(find.text('Italy'), findsWidgets);
+      // Two free country dropdowns (FR, IT); locked primary has none.
       expect(find.byType(DropdownButtonFormField<Country>), findsNWidgets(2));
     });
 
-    testWidgets('TIN visibility: three TIN fields for DE, FR, US', (tester) async {
+    testWidgets('TIN visibility: three TIN fields for DE, FR, IT', (tester) async {
       await pumpS5WithCountries(tester);
 
       expect(find.text(sOf(tester).taxIdentificationNumber), findsNWidgets(3));
@@ -380,13 +381,13 @@ void main() {
       expect(find.text(sOf(tester).tinRequired), findsNWidgets(3));
       expect(harness.submitCount, 0);
 
-      // Fill DE only → FR + US still error.
+      // Fill DE only → FR + IT still error.
       await enterTinAt(tester, 0, 'DE111');
       await tapComplete(tester);
       expect(find.text(sOf(tester).tinRequired), findsNWidgets(2));
       expect(harness.submitCount, 0);
 
-      // Fill DE + FR → US still error.
+      // Fill DE + FR → IT still error.
       await enterTinAt(tester, 1, 'FR999');
       await tapComplete(tester);
       expect(find.text(sOf(tester).tinRequired), findsOneWidget);
@@ -406,13 +407,13 @@ void main() {
     });
 
     testWidgets(
-      'happy-path submit: swissTaxResidence=false, countryAndTINs=[{DE},{FR},{US}]',
+      'happy-path submit: swissTaxResidence=false, countryAndTINs=[{DE},{FR},{IT}]',
       (tester) async {
         final harness = await pumpS5WithCountries(tester);
 
         await enterTinAt(tester, 0, '  DE111  ');
         await enterTinAt(tester, 1, '  FR999  ');
-        await enterTinAt(tester, 2, '  US123  ');
+        await enterTinAt(tester, 2, '  IT123  ');
         await tapComplete(tester);
 
         expect(harness.submitCount, 1);
@@ -423,8 +424,8 @@ void main() {
         expect(tins[0].tin, 'DE111');
         expect(tins[1].country, 'FR');
         expect(tins[1].tin, 'FR999');
-        expect(tins[2].country, 'US');
-        expect(tins[2].tin, 'US123');
+        expect(tins[2].country, 'IT');
+        expect(tins[2].tin, 'IT123');
       },
     );
   });

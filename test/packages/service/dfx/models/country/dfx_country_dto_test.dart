@@ -6,20 +6,29 @@ Map<String, dynamic> _wire({
   String? foreignName,
   bool ibanAllowed = true,
   bool kycAllowed = true,
-}) => {
-  'id': 41,
-  'symbol': 'CH',
-  'name': 'Switzerland',
-  'foreignName': foreignName,
-  'locationAllowed': true,
-  'ibanAllowed': ibanAllowed,
-  'kycAllowed': kycAllowed,
-  'kycOrganizationAllowed': true,
-  'nationalityAllowed': true,
-  'bankAllowed': true,
-  'cardAllowed': true,
-  'cryptoAllowed': true,
-};
+  Object? realunit = _absent,
+}) {
+  final map = <String, dynamic>{
+    'id': 41,
+    'symbol': 'CH',
+    'name': 'Switzerland',
+    'foreignName': foreignName,
+    'locationAllowed': true,
+    'ibanAllowed': ibanAllowed,
+    'kycAllowed': kycAllowed,
+    'kycOrganizationAllowed': true,
+    'nationalityAllowed': true,
+    'bankAllowed': true,
+    'cardAllowed': true,
+    'cryptoAllowed': true,
+  };
+  if (!identical(realunit, _absent)) {
+    map['realunit'] = realunit;
+  }
+  return map;
+}
+
+const Object _absent = Object();
 
 void main() {
   group('$DfxCountryDto.fromJson', () {
@@ -38,6 +47,7 @@ void main() {
       expect(dto.bankAllowed, isTrue);
       expect(dto.cardAllowed, isTrue);
       expect(dto.cryptoAllowed, isTrue);
+      expect(dto.taxEnable, isNull);
     });
 
     test('foreignName is optional (null on the wire stays null)', () {
@@ -51,6 +61,34 @@ void main() {
 
       expect(dto.ibanAllowed, isFalse);
     });
+
+    test('missing realunit leaves taxEnable null', () {
+      final dto = DfxCountryDto.fromJson(_wire());
+
+      expect(dto.taxEnable, isNull);
+      expect(dto.toCountry().taxEnable, isNull);
+    });
+
+    test('realunit.taxEnable false is preserved', () {
+      final dto = DfxCountryDto.fromJson(_wire(realunit: {'taxEnable': false}));
+
+      expect(dto.taxEnable, isFalse);
+      expect(dto.toCountry().taxEnable, isFalse);
+    });
+
+    test('realunit.taxEnable true is preserved', () {
+      final dto = DfxCountryDto.fromJson(_wire(realunit: {'taxEnable': true}));
+
+      expect(dto.taxEnable, isTrue);
+      expect(dto.toCountry().taxEnable, isTrue);
+    });
+
+    test('realunit.taxEnable null stays null', () {
+      final dto = DfxCountryDto.fromJson(_wire(realunit: {'taxEnable': null}));
+
+      expect(dto.taxEnable, isNull);
+      expect(dto.toCountry().taxEnable, isNull);
+    });
   });
 
   group('DfxCountryDtoMapper.toCountry', () {
@@ -63,6 +101,7 @@ void main() {
       expect(country.name, 'Switzerland');
       expect(country.foreignName, 'Schweiz');
       expect(country.kycAllowed, isTrue);
+      expect(country.taxEnable, isNull);
     });
 
     test('passes kycAllowed false through unchanged', () {
