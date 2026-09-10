@@ -76,11 +76,14 @@ auf `https://api.dfx.swiss/v1/country`; eine lokale HTML-Vorschau fällt auf die
 ## Einen neuen Handbook-Eintrag hinzufügen
 
 1. **Page + Golden-Test**: `lib/screens/<feature>/<name>_page.dart` + zugehörigen
-   Golden-Test unter `test/goldens/screens/<feature>/`. Pattern siehe
+   Golden-Test unter `test/goldens/screens/<feature>/`. Widget-Goldens liegen unter
+   `test/goldens/widgets/<widget>/` (siehe
+   [`../visual-regression-tests.md`](../visual-regression-tests.md)). Pattern siehe
    [`../visual-regression-tests.md`](../visual-regression-tests.md) und bestehende
    Tests in `test/goldens/screens/`.
 2. **Screenshot-Mapping**: in `scripts/assemble-handbook-screenshots.sh` eine neue
-   Zeile in der `MAPPING`-Tabelle ergänzen — `"NN-<name>=<feature>/goldens/macos/<file>.png"`.
+   Zeile in der `MAPPING`-Tabelle ergänzen — `"NN-<name>=screens/<feature>/goldens/macos/<file>.png"`
+   oder `widgets/<widget>/goldens/macos/<file>.png`.
    Die Nummer NN ist der Sortierschlüssel im Handbook (keine direkte Bindung mehr
    an einen Maestro-Flow). Damit ändert sich die Screenshot-Anzahl: den
    Count-Guard in `.github/workflows/handbook-build-check.yaml` (der

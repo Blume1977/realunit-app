@@ -1,7 +1,7 @@
 # Visual Regression Tests
 
 Pixel-exact baseline tests for every page in the app. 57 `lib/screens/**/*_page.dart`
-files mapped to 350 Golden PNGs under `test/goldens/screens/` (page renderings
+files mapped to 350 Golden PNGs under `test/goldens/` (`screens/` and `widgets/`) (page renderings
 plus state variants: Buy/Sell error banners, KYC loading/failure, Dashboard
 with-balance, RestoreWallet valid/invalid, Legal-Disclaimer steps, etc.),
 validated on each PR by the `Visual Regression` job (required status check
@@ -29,7 +29,7 @@ One test file per `lib/screens/<feature>/<feature>_page.dart` under
 have multiple state variants (e.g. Welcome has iOS + Android theme,
 Buy has initial + payment-info-loaded, Settings has default +
 confirm-logout-sheet) — those produce more than one PNG each. All
-baselines live under `test/goldens/screens/<feature>/goldens/macos/*.png`.
+baselines live under `test/goldens/screens/<feature>/goldens/macos/*.png` or `test/goldens/widgets/<widget>/goldens/macos/*.png`.
 
 ### Skipped: `web_view_page.dart`
 
