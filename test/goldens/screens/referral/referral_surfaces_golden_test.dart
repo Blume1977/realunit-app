@@ -240,7 +240,7 @@ void main() {
 
 const _termsMarkdownStub = '''# Teilnahmebedingungen Referral-Programm RealUnit App
 
-*Stand: 14.08.2026*
+*Stand: 26.08.2026*
 
 ## 1. Veranstalterin
 
@@ -248,5 +248,5 @@ RealUnit Schweiz AG, Schochenmühlestrasse 6, 6340 Baar. Das Referral-Programm w
 
 ## 2. Teilnahmeberechtigung
 
-Teilnahmeberechtigt sind natürliche Personen, die in der RealUnit App registriert und verifiziert sind und mindestens 70 RealUnit-Aktientoken im eigenen Wallet halten.
+Teilnahmeberechtigt sind natürliche Personen, die in der RealUnit App registriert und verifiziert sind und mindestens 70 RealUnit-Aktientoken im eigenen Wallet halten. Der Mindestbestand muss im Zeitpunkt der Erstellung der Einladung und im Zeitpunkt der Qualifikation nach Ziff. 4 erfüllt sein. Von der Teilnahme ausgeschlossen sind Mitarbeitende und Organe der Veranstalterin.
 ''';
