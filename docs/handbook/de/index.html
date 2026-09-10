@@ -1132,7 +1132,7 @@
               <a href="#spec-78"><span class="spec-num">78</span>Telefonnummer-Eingabe</a>
             </li>
             <li>
-              <a href="#spec-79"><span class="spec-num">79</span>Insider-Freischaltung — Bezahlen &amp; Senden</a>
+              <a href="#spec-79"><span class="spec-num">79</span>Insider-Freischaltung — Bezahlen</a>
             </li>
             <li>
               <a href="#spec-80"><span class="spec-num">80</span>Testkunden — Bestandsentwicklung</a>
@@ -1549,7 +1549,7 @@
                 zurückgesetzt, Titel und Hilfstext ändern sich auf
                 <b>Bestätigen Sie Ihre PIN</b>. Die Seite ist dieselbe — keine Navigation.
                 Eine abweichende PIN zeigt die Meldung <b>Die PINs stimmen nicht überein.
-                Versuchen Sie es erneut.</b> mit roten Dots; die Eingabe wird geleert und der Bestätigungsschritt bleibt
+                Versuchen Sie es erneut.</b> mit roten Dots; die Eingabe wird geleert und die App bleibt im Bestätigungsschritt
                 (siehe 74).
               </div>
             </div>
@@ -1672,7 +1672,7 @@
               </div>
               <div class="desc">
                 Vollständige Settings-Liste: Sprachen, Währung, Netzwerk (nur in
-                Entwickler-Builds sichtbar, siehe 58), Steuerbericht, Nutzerdaten,
+                Entwickler-Builds sichtbar, siehe Spec 58), Steuerbericht, Nutzerdaten,
                 Rechtsdokumente, Kontakt, Sicherheit, Wallet-Adresse, Wallet-Sicherung,
                 Wallet zurücksetzen. Aktive Auswahlen (Sprache, Währung, Netzwerk)
                 werden inline als trailing Text rechts angezeigt.
@@ -1754,7 +1754,7 @@
                 (<code>0x…</code>) mit QR-Code, Copy-Button, Hinweistext und dem CTA
                 <b>Senden</b>. Der QR-Code enthält die Adresse als EIP-681-URI
                 (<code>ethereum:0x…</code>). Die eigentliche Empfangen-Seite mit QR-Code
-                ist in 35 beschrieben.
+                ist in Spec 35 beschrieben.
               </div>
             </div>
             <div class="test" id="20-settings-legal-documents">
@@ -1901,7 +1901,7 @@
                 <code>VerifyPinPage</code>-Modus. Titel <b>Geben Sie Ihre PIN ein</b>,
                 Subtitle erläutert, dass dieser Schritt die Wiederherstellungs-Phrase
                 schützt. Einen Ausweg <b>PIN vergessen?</b> gibt es hier nicht; den bietet
-                nur die App-Sperre (siehe 28).
+                nur die App-Sperre (siehe Spec 28).
               </div>
             </div>
             <div class="test" id="18-settings-seed-hidden">
@@ -2033,7 +2033,7 @@
             zuerst einen zweistufigen <em>Disclaimer</em>, dann die Zustimmung zu den
             <em>Rechtsdokumenten</em> in drei Schritten (RealUnit Schweiz AG, Aktionariat,
             DFX); jeder Schritt wird mit <b>Zustimmen</b> bestätigt oder mit
-            <b>Ablehnen</b> abgebrochen. Erst nach Bestätigung aller fünf Schritte geht es
+            <b>Ablehnen</b> abgebrochen. Erst nach Bestätigung aller fünf Schritte (zwei Hinweisseiten und drei Dokumentschritte) geht es
             weiter in die Seed-Generierung.
           </p>
 
@@ -2350,7 +2350,7 @@
             States <em>Loading</em>, <em>Mismatch</em> (eingegebene E-Mail-Adresse
             stimmt nicht mit der bereits verifizierten überein) und <em>Unknown
             Error</em> (Backend-Fehler). Die Einzelzustände von E-Mail, 2FA und
-            Registrierung sind in 52 und 53 beschrieben; dieser Abschnitt konzentriert
+            Registrierung sind in Spec 52 und 53 beschrieben; dieser Abschnitt konzentriert
             sich auf die Steuer-Szenarien S1 bis S5.
           </p>
 
@@ -2438,7 +2438,7 @@
               <div class="img">
                 <img
                   src="../screenshots/54-kyc-registration-personal-dropdown.png"
-                  alt="KYC Registrierung — Nationalitäts-Auswahl"
+                  alt="KYC Registrierung — Staatsangehörigkeits-Auswahl"
                 />
               </div>
               <div class="desc">
@@ -2984,7 +2984,7 @@
                 wichtigen Verwendungszweck und zeigt Referenz sowie die vollständige
                 Bankverbindung (IBAN/BIC/Empfänger). Der Golden endet beim
                 Adressblock; QR-Code-Reiter und der Abschluss über <b>Zurück zum
-                Hauptbereich</b> sind in 39 vollständig dokumentiert.
+                Hauptbereich</b> sind in Spec 39 vollständig dokumentiert.
               </div>
             </div>
           </div>
@@ -4028,7 +4028,7 @@
                 />
               </div>
               <div class="desc">
-                Dieselbe Bestandsansicht mit maskierten Beträgen (Zustand <code>hideAmounts</code> im SettingsBloc): Der Bestandswert und alle Transaktionsbeträge sind durch <b>\*\*\*.\*\</b>* ersetzt, während Struktur, Anzahl <b>100 × 1.53 CHF</b> und Beschriftungen sichtbar bleiben. Einen Schalter dafür gibt es in der App derzeit nicht; der Zustand ist nur über den Bloc erreichbar.
+                Dieselbe Bestandsansicht mit maskierten Beträgen (Zustand <code>hideAmounts</code> im SettingsBloc): Der Bestandswert und alle Transaktionsbeträge sind durch <b>***.**</b> ersetzt, während Struktur, Anzahl <b>100 × 1.53 CHF</b> und Beschriftungen sichtbar bleiben. Einen Schalter dafür gibt es in der App derzeit nicht; der Zustand ist nur über den Bloc erreichbar.
               </div>
             </div>
           </div>
@@ -7427,7 +7427,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Der Disclaimer wird als fünfstufiger Ablauf im Software-Wallet-Onboarding angezeigt (zwei Hinweisseiten, Rechtsdokumente RealUnit, Aktionariat, DFX; siehe 09). Ein Fortschrittsbalken oben zeigt, an welcher Stelle der Schritte man sich befindet; unten führen die Buttons Ablehnen und Zustimmen weiter.
+            Der Disclaimer wird als fünfstufiger Ablauf im Software-Wallet-Onboarding angezeigt (zwei Hinweisseiten, Rechtsdokumente RealUnit, Aktionariat, DFX; siehe Spec 09). Ein Fortschrittsbalken oben zeigt, an welcher Stelle der Schritte man sich befindet; unten führen die Buttons Ablehnen und Zustimmen weiter.
           </p>
 
           <div class="tests cols-2">
@@ -8525,7 +8525,7 @@
             wird zuerst der Visual-Regression-Test im web-Repo rot, bevor die
             Baseline sich ändert. Bei jedem Handbook-Build werden die aktuell
             akzeptierten Baselines aus <code>develop</code> automatisch ins Image
-            gezogen — Single Source of Truth ist das web-Repo, dieses Handbook spiegelt nur den aktuellen Stand. Mehrere Baselines der Invite- und Promo-Landings (u.a. Mobile gültig, Mobile und Desktop nicht erreichbar) sind oben beschnitten: Das Layout im web-Repo zentriert die Karte per Flexbox, und ist sie höher als der Viewport, liegt ihr oberer Teil ausserhalb des Screenshots. Diese Baselines beginnen deshalb unterhalb der Kartenoberkante.
+            gezogen — Single Source of Truth ist das web-Repo, dieses Handbook spiegelt nur den aktuellen Stand. Mehrere Baselines der Invite- und Promo-Landings (z.B. web-invite-ok-mobile-ios, web-promo-ok-desktop-de, web-invite-unavailable-mobile) sind oben beschnitten: Das Layout im web-Repo zentriert die Karte per Flexbox, und ist sie höher als der Viewport, liegt ihr oberer Teil ausserhalb des Screenshots. Diese Baselines beginnen deshalb unterhalb der Kartenoberkante.
           </p>
 
           <h3>Startseite <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
@@ -9231,7 +9231,7 @@
               <div class="img">
                 <img
                   src="../web/desktop-chromium/invite-ok-fallback.png"
-                  alt="Empfehlung Store-Fallback — Desktop (DE)"
+                  alt="Empfehlung gültig ohne Namen — Desktop (DE)"
                 />
               </div>
               <div class="desc">
@@ -9247,7 +9247,7 @@
               <div class="img">
                 <img
                   src="../web/desktop-chromium/invite-ok-fallback-en.png"
-                  alt="Empfehlung Store-Fallback — Desktop (EN)"
+                  alt="Empfehlung gültig ohne Namen — Desktop (EN)"
                 />
               </div>
               <div class="desc">
@@ -9263,7 +9263,7 @@
               <div class="img">
                 <img
                   src="../web/tablet-chromium/invite-ok-fallback.png"
-                  alt="Empfehlung Store-Fallback — Tablet"
+                  alt="Empfehlung gültig ohne Namen — Tablet"
                 />
               </div>
               <div class="desc">
@@ -9279,7 +9279,7 @@
               <div class="img">
                 <img
                   src="../web/tablet-chromium/invite-ok-fallback-en.png"
-                  alt="Empfehlung Store-Fallback — Tablet (EN)"
+                  alt="Empfehlung gültig ohne Namen — Tablet (EN)"
                 />
               </div>
               <div class="desc">
@@ -9295,7 +9295,7 @@
               <div class="img">
                 <img
                   src="../web/mobile-safari/invite-ok-fallback.png"
-                  alt="Empfehlung Store-Fallback — Mobile"
+                  alt="Empfehlung gültig ohne Namen — Mobile"
                 />
               </div>
               <div class="desc">
@@ -9311,7 +9311,7 @@
               <div class="img">
                 <img
                   src="../web/mobile-safari/invite-ok-fallback-android.png"
-                  alt="Empfehlung Store-Fallback — Mobile (Android)"
+                  alt="Empfehlung gültig ohne Namen — Mobile (Android)"
                 />
               </div>
               <div class="desc">
@@ -9327,7 +9327,7 @@
               <div class="img">
                 <img
                   src="../web/mobile-safari/invite-ok-fallback-en.png"
-                  alt="Empfehlung Store-Fallback — Mobile (EN)"
+                  alt="Empfehlung gültig ohne Namen — Mobile (EN)"
                 />
               </div>
               <div class="desc">
@@ -10150,7 +10150,7 @@
               <div class="img">
                 <img
                   src="../web/desktop-chromium/promo-ok-fallback.png"
-                  alt="Promo Store-Fallback — Desktop (DE)"
+                  alt="Promo gültig ohne Aktionstext — Desktop (DE)"
                 />
               </div>
               <div class="desc">
@@ -10166,7 +10166,7 @@
               <div class="img">
                 <img
                   src="../web/desktop-chromium/promo-ok-fallback-en.png"
-                  alt="Promo Store-Fallback — Desktop (EN)"
+                  alt="Promo gültig ohne Aktionstext — Desktop (EN)"
                 />
               </div>
               <div class="desc">
@@ -10182,7 +10182,7 @@
               <div class="img">
                 <img
                   src="../web/tablet-chromium/promo-ok-fallback.png"
-                  alt="Promo Store-Fallback — Tablet"
+                  alt="Promo gültig ohne Aktionstext — Tablet"
                 />
               </div>
               <div class="desc">
@@ -10198,7 +10198,7 @@
               <div class="img">
                 <img
                   src="../web/tablet-chromium/promo-ok-fallback-en.png"
-                  alt="Promo Store-Fallback — Tablet (EN)"
+                  alt="Promo gültig ohne Aktionstext — Tablet (EN)"
                 />
               </div>
               <div class="desc">
@@ -10214,7 +10214,7 @@
               <div class="img">
                 <img
                   src="../web/mobile-safari/promo-ok-fallback.png"
-                  alt="Promo Store-Fallback — Mobile"
+                  alt="Promo gültig ohne Aktionstext — Mobile"
                 />
               </div>
               <div class="desc">
@@ -10230,7 +10230,7 @@
               <div class="img">
                 <img
                   src="../web/mobile-safari/promo-ok-fallback-android.png"
-                  alt="Promo Store-Fallback — Mobile (Android)"
+                  alt="Promo gültig ohne Aktionstext — Mobile (Android)"
                 />
               </div>
               <div class="desc">
@@ -10246,7 +10246,7 @@
               <div class="img">
                 <img
                   src="../web/mobile-safari/promo-ok-fallback-en.png"
-                  alt="Promo Store-Fallback — Mobile (EN)"
+                  alt="Promo gültig ohne Aktionstext — Mobile (EN)"
                 />
               </div>
               <div class="desc">
@@ -11126,7 +11126,7 @@
             und höchstens 32 Zeichen (Limit von App und Landing; die API nimmt
             benannte Promo-Codes bis 256 Zeichen an, Serien-Codes haben die Form
             <code>PREFIX-XXXXXXXX</code>); ein angehängtes
-            Satzzeichen (`!`, `?`, `/`) fällt weg. Steckt
+            Satzzeichen (<code>!</code>, <code>?</code>, <code>/</code>) fällt weg. Steckt
             <code>invite/</code> oder <code>promo/</code> im Token,
             bleibt nur der Code. Unsichtbare
             Steuerzeichen (ZWSP) und Vollbreite-Zeichen aus Messenger-URLs
@@ -11155,7 +11155,7 @@
             Tab-Titel, Open-Graph, Twitter und die Standard-Beschreibung folgen
             Laden / ungültig / bereits eingelöst / nicht erreichbar; ein Pfad ohne
             Code gilt als ungültig. Ungültige Überschrift und Text sind statusrot;
-            die Browser-Themenfarbe folgt (`#E02523` ungültig, sonst `#1988C6`).
+            die Browser-Themenfarbe folgt (<code>#E02523</code> ungültig, sonst <code>#1988C6</code>).
             og:locale:alternate nennt die andere Sprache (de_CH / en_GB).
             Crawler lesen Smart-App-Banner <code>app-argument</code>,
             <code>og:image:alt</code> / <code>twitter:image:alt</code>,
