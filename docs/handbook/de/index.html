@@ -1156,16 +1156,16 @@
               <a href="#spec-balance"><span class="spec-num">V</span>Vermögensübersicht</a>
             </li>
             <li>
-              <a href="#spec-store-listing"><span class="spec-num">S</span>Store-Listing</a>
+              <a href="#spec-store-listing"><span class="spec-num">S</span>App Store / Play Store Listing</a>
             </li>
             <li>
-              <a href="#spec-legal-downloads"><span class="spec-num">L</span>Rechtsdokumente</a>
+              <a href="#spec-legal-downloads"><span class="spec-num">L</span>Rechtsdokumente — Downloads</a>
             </li>
             <li>
-              <a href="#spec-downloads"><span class="spec-num">D</span>Download / Test</a>
+              <a href="#spec-downloads"><span class="spec-num">D</span>Download / Test-Zugang</a>
             </li>
             <li>
-              <a href="#spec-tasks"><span class="spec-num">A</span>Aufgaben</a>
+              <a href="#spec-tasks"><span class="spec-num">A</span>Aufgaben — Projektübersicht</a>
             </li>
           </ol>
         </nav>
@@ -1175,8 +1175,9 @@
         <section class="hero" id="intro">
           <h1>RealUnit Wallet — Handbook</h1>
           <p class="lede">
-            User-Doku und Test-Doku in einem. Jeder Screenshot auf dieser Seite ist eine
-            Visual-Regression-Golden-Baseline aus <code>test/goldens/screens/</code> — eine
+            User-Doku und Test-Doku in einem. Jeder App-Screenshot auf dieser Seite ist eine
+            Visual-Regression-Golden-Baseline aus <code>test/goldens/screens/</code> bzw.
+            <code>test/goldens/widgets/</code> — eine
             pixel-genaue Aufnahme des Page-Widgets, validiert vor jedem Merge auf dem
             self-hosted Hardware-Runner. Wenn das Handbook aktuell aussieht, ist die App es auch —
             und umgekehrt.
@@ -1185,15 +1186,15 @@
             <span>📱 <b>App:</b> RealUnit Wallet (Flutter)</span>
             <span>📂 <b>Code:</b>
               <a href="https://github.com/RealUnitCH/app">RealUnitCH/app</a></span>
-            <span>🧪 <b>Tests:</b> ~1100 (Tier 0/1) · 94 Visual-Regression Goldens · 26 Tier-3 Smoke-Flows</span>
+            <span>🧪 <b>Tests:</b> 350 Visual-Regression Goldens (299 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
           </div>
         </section>
 
         <section id="architecture" style="margin-top: 40px">
           <h3 style="margin-top: 0">Single Source of Truth</h3>
           <p>
-            Die 52 Bilder dieser Seite sind ausgewählte Goldens aus
-            <code>test/goldens/screens/&lt;feature&gt;/goldens/macos/&lt;file&gt;.png</code>.
+            Die 299 App-Screenshots dieser Seite sind Goldens aus
+            <code>test/goldens/{screens,widgets}/&lt;feature&gt;/goldens/macos/&lt;file&gt;.png</code>.
             Welcher Golden welcher Handbook-Slot ist, definiert die Mapping-Tabelle in
             <code>scripts/assemble-handbook-screenshots.sh</code>. Der Docker-Build
             <code>Dockerfile.handbook</code> assembliert sie in einem Multi-Stage-Build in
@@ -1232,7 +1233,7 @@
               <b>Pipeline:</b> Page-Edit → <code>flutter test --update-goldens test/goldens/screens/&lt;feature&gt;</code>
               auf dem self-hosted Runner (Hardware-Determinismus) → neue Baseline committen →
               <code>handbook-deploy.yaml</code> baut das Docker-Image aus dem gepushten Branch
-              und assembliert die 52 Slots aus <code>test/goldens/screens/</code> → Push auf
+              und assembliert die 299 Slots aus <code>test/goldens/</code> → Push auf
               <code>staging</code> deployt das Handbook-Image nach Produktion, via
               Cloudflare Tunnel.
             </p>
@@ -1282,7 +1283,7 @@
               </div>
               <div class="desc">
                 Der Splash-Screen mit RealUnit-Logo, dem Claim
-                <b>„Bankenunabhängig. Sicher."</b>, einem Bergpanorama im Hintergrund und dem
+                <b>«Sicher. Einfach. Bankenunabhängig.»</b>, einem Bergpanorama im Hintergrund und dem
                 <b>Start</b>-CTA. Unter dem Button steht der i18n-Disclaimer, dass die Nutzung
                 der App die Annahme der <em>Nutzungsbedingungen</em> impliziert.
               </div>
@@ -1356,8 +1357,9 @@
             BIP-39-Seed-Backup-Flow. Drei Schritte: Seed-Phrase wird zuerst verschleiert
             angezeigt mit einer Aufforderung sie aufzuschreiben, dann durch Tap enthüllt
             (12 Wörter), und schliesslich verifiziert (4 zufällige Wörter müssen wieder
-            eingegeben werden). Im Debug-Build sind die Verify-Felder vorausgefüllt, damit
-            E2E-Tests nicht den BIP-39-Wortlisten-Match laufen müssen.
+            eingegeben werden). Im Debug-Build trägt der <code>VerifySeedCubit</code> die
+            Verify-Wörter selbst ein, damit E2E-Tests nicht den BIP-39-Wortlisten-Match
+            laufen müssen; der Golden 06 zeigt die Felder leer, der Golden 34 gefüllt.
           </p>
 
           <div class="callout warn">
@@ -1384,11 +1386,11 @@
                 />
               </div>
               <div class="desc">
-                Die <b>Wallet-Sicherung</b>-Seite mit dem Hinweistext „Notieren Sie Ihre
-                Wiederherstellungs-Wörter auf einem Blatt Papier..." und der verschleierten
+                Die <b>Wallet-Sicherung</b>-Seite mit dem Hinweistext «Notieren Sie Ihre
+                Wiederherstellungs-Wörter auf einem Blatt Papier...» und der verschleierten
                 SeedBlurCard. Die Wörter sind als unscharfe Lozenges sichtbar, in der Mitte
                 steht <em>Hier tippen, um anzuzeigen</em>. Der CTA <b>Ich habe es gesichert</b>
-                ist disabled, bis der User mindestens einmal die Phrase aufgedeckt hat.
+                ist immer aktiv; die App erzwingt kein Aufdecken vor dem Weitergehen.
               </div>
             </div>
             <div class="test" id="05-seed-revealed">
@@ -1406,8 +1408,8 @@
               <div class="desc">
                 Nach dem Tap zeigt die Karte alle <b>12 BIP-39-Wörter</b> in einem
                 2-Spalten-Grid mit Index. Der Hintergrund ist klar lesbar, der CTA ist
-                aktiviert. Im echten Release-Build wechselt die Karte nach einigen Sekunden
-                automatisch zurück in den verschleierten Zustand.
+                aktiviert. Ein erneuter Tap auf die Karte verschleiert die Wörter wieder;
+                einen automatischen Rückfall gibt es nicht.
               </div>
             </div>
             <div class="test" id="06-verify-seed">
@@ -1424,10 +1426,10 @@
               </div>
               <div class="desc">
                 <b>Sicherung überprüfen</b>: vier zufällig gewählte Indizes (im Screenshot:
-                Wort 4, 5, 10, 12) müssen vom User wieder eingetippt werden. In
-                <code>kDebugMode</code> trägt der <code>VerifySeedCubit</code> die korrekten
-                Wörter aus der gerade generierten Seed-Phrase direkt ein — daher die
-                ausgefüllten Felder im Screenshot. Im Release-Build sind die Felder leer.
+                Wort 2, 4, 6, 8) müssen vom User wieder eingetippt werden. Die Felder sind
+                leer, der CTA <b>Bestätigen</b> ist disabled, bis alle vier Wörter
+                eingetragen sind. In <code>kDebugMode</code> trägt der
+                <code>VerifySeedCubit</code> die korrekten Wörter selbst ein (siehe 34).
               </div>
             </div>
           </div>
@@ -1474,7 +1476,7 @@
               </div>
               <div class="desc">
                 Vollbild-Bestätigung mit RealU-Token-Hexagon, Headline
-                <b>„Ihre Wallet ist bereit"</b> und dem Hinweis, dass im nächsten Schritt
+                <b>«Ihre Wallet ist bereit»</b> und dem Hinweis, dass im nächsten Schritt
                 der Zugriff auf die Mobile-App gesichert wird (PIN). <b>Weiter</b>-CTA
                 triggert <code>HomeBloc.CompleteOnboardingEvent</code>, was die Navigation
                 in die PIN-Setup-Route auflöst.
@@ -1546,8 +1548,9 @@
                 Nach 6 Ziffern wechselt der Cubit in <code>confirm</code>, die Dots werden
                 zurückgesetzt, Titel und Hilfstext ändern sich auf
                 <b>Bestätigen Sie Ihre PIN</b>. Die Seite ist dieselbe — keine Navigation.
-                Eingabe einer abweichenden PIN würde <code>pinConfirmFailed</code> auslösen
-                und zurück in <code>create</code> springen.
+                Eine abweichende PIN zeigt die Meldung <b>Die PINs stimmen nicht überein.
+                Versuchen Sie es erneut.</b> mit roten Dots; die Eingabe wird geleert und der Bestätigungsschritt bleibt
+                (siehe 74).
               </div>
             </div>
             <div class="test" id="10-biometric-prompt">
@@ -1564,10 +1567,10 @@
               </div>
               <div class="desc">
                 Modal-Sheet mit Fingerprint-Icon, Headline
-                <b>„Biometrische Authentifizierung aktivieren"</b>, und zwei Aktionen:
+                <b>«Biometrische Authentifizierung aktivieren»</b>, und zwei Aktionen:
                 <b>Aktivieren</b> (Face ID / Touch ID einrichten) oder
-                <b>Überspringen</b>. Der Hintergrund bleibt sichtbar — der PIN-Screen mit
-                gefüllten Dots ist abgedunkelt. Auf dem Simulator gibt es kein echtes
+                <b>Überspringen</b>. Der Golden rendert das Sheet ohne die dahinterliegende
+                PIN-Seite. Auf dem Simulator gibt es kein echtes
                 Face ID, deshalb verwendet die E2E-Pipeline <b>Überspringen</b>.
               </div>
             </div>
@@ -1668,8 +1671,9 @@
                 />
               </div>
               <div class="desc">
-                Vollständige Settings-Liste: Sprachen, Währung, Netzwerk, Steuerbericht,
-                Nutzerdaten, Rechtsdokumente, Kontakt, Wallet-Adresse, Wallet-Sicherung,
+                Vollständige Settings-Liste: Sprachen, Währung, Netzwerk (nur in
+                Entwickler-Builds sichtbar, siehe 58), Steuerbericht, Nutzerdaten,
+                Rechtsdokumente, Kontakt, Sicherheit, Wallet-Adresse, Wallet-Sicherung,
                 Wallet zurücksetzen. Aktive Auswahlen (Sprache, Währung, Netzwerk)
                 werden inline als trailing Text rechts angezeigt.
                 Die Kachel <b>Wallet-Sicherung</b> erscheint nur bei einer Software-Wallet
@@ -1746,11 +1750,11 @@
                 />
               </div>
               <div class="desc">
-                EVM-Adresse der Wallet (<code>0x…</code>) mit QR-Code und Copy-Button —
-                der „Receive"-Punkt der App, auch wenn er nicht so heisst. Beim Buy-Flow
-                kommt die gleiche Information in einem Bottom-Sheet zum Vorschein. QR ist
-                der vom <code>qr_flutter</code>-Package gerenderte Standard-EIP-3770-Frame
-                ohne EIP-681-Payload.
+                Seite <b>RealUnit Wallet Adresse</b>: EVM-Adresse der Wallet
+                (<code>0x…</code>) mit QR-Code, Copy-Button, Hinweistext und dem CTA
+                <b>Senden</b>. Der QR-Code enthält die Adresse als EIP-681-URI
+                (<code>ethereum:0x…</code>). Die eigentliche Empfangen-Seite mit QR-Code
+                ist in 35 beschrieben.
               </div>
             </div>
             <div class="test" id="20-settings-legal-documents">
@@ -1766,9 +1770,12 @@
                 />
               </div>
               <div class="desc">
-                Die <b>Rechtsdokumente</b>-Übersichtsseite in den Einstellungen. Bündelt
-                die rechtlich relevanten Dokumente in zwei Gruppen — <b>Aktionariat</b> und
-                <b>DFX</b> — die jeweils auf eine eigene Unterseite führen.
+                Die <b>Rechtsdokumente</b>-Übersichtsseite in den Einstellungen listet
+                Nutzungsbedingungen, Datenschutzbestimmungen, Registrierungsvereinbarung,
+                EU-Wertpapierprospekt (Inhaber-/Namensaktie), CH-Börsenprospekt, RealUnit
+                Statuten, Anlagereglement, die Untergruppen <b>Dokumente der Aktionariat
+                AG</b> und <b>Dokumente der DFX AG</b> sowie als letzten Eintrag die
+                Teilnahmebedingungen Referral-Programm (siehe 286).
               </div>
             </div>
             <div class="test" id="21-settings-aktionariat-documents">
@@ -1821,10 +1828,9 @@
               </div>
               <div class="desc">
                 Die <b>Kontakt</b>-Seite in den Einstellungen bündelt die Support- und
-                Kontaktwege: ein Link zum <b>Support</b> (FAQ, Tickets &amp; Chat) sowie
-                Telefonnummer, E-Mail und Website des Anbieters. Darunter steht das
-                <b>Impressum</b> mit Firmenname und Adresse. Die Firmendaten kommen vom
-                <code>DfxCompanyInfoService</code>.
+                Kontaktwege: der Eintrag <b>Support kontaktieren</b> (FAQ, Tickets &amp; Chat)
+                sowie Telefonnummer, E-Mail und Website des Anbieters. Darunter steht das
+                <b>Impressum</b> mit Firmenname und Adresse.
               </div>
             </div>
             <div class="test" id="24-settings-delete-wallet">
@@ -1840,7 +1846,7 @@
                 />
               </div>
               <div class="desc">
-                Das Bestätigungs-Sheet <b>„REALU Wallet zurücksetzen"</b>, ausgelöst über
+                Das Bestätigungs-Sheet <b>«RealUnit Wallet zurücksetzen»</b>, ausgelöst über
                 den Einstellungs-Eintrag <b>Wallet zurücksetzen</b>. Der User muss
                 per Checkbox bestätigen, dass er seine Wiederherstellungsphrase gesichert
                 hat — erst dann wird der <b>Zurücksetzen</b>-Button aktiv. Das Zurücksetzen löscht die
@@ -1894,8 +1900,8 @@
                 Selber Numpad wie <code>SetupPinPage</code>, aber im
                 <code>VerifyPinPage</code>-Modus. Titel <b>Geben Sie Ihre PIN ein</b>,
                 Subtitle erläutert, dass dieser Schritt die Wiederherstellungs-Phrase
-                schützt. <b>PIN vergessen?</b> als sekundäre Aktion am unteren Rand —
-                führt aktuell zurück in den Restore-Flow.
+                schützt. Einen Ausweg <b>PIN vergessen?</b> gibt es hier nicht; den bietet
+                nur die App-Sperre (siehe 28).
               </div>
             </div>
             <div class="test" id="18-settings-seed-hidden">
@@ -1932,8 +1938,8 @@
               <div class="desc">
                 Wörter werden nach Tap angezeigt. Im Gegensatz zum Onboarding-Flow gibt es
                 hier keinen <em>Verify-Schritt</em> — der User hat die Phrase bereits
-                einmal verifiziert. Nach kurzer Zeit kehrt die Karte automatisch in den
-                Blur-Zustand zurück (Code: <code>SettingsSeedBloc</code>).
+                einmal verifiziert. Ein erneuter Tap verschleiert die Karte wieder
+                (Code: <code>SettingsSeedCubit</code>).
               </div>
             </div>
           </div>
@@ -1961,7 +1967,7 @@
           </summary>
           <p class="spec-intro">
             Zwei eigenständige Screens ausserhalb des linearen Onboarding-Pfads: die
-            Wiederherstellung einer bestehenden Wallet aus dem „restore"-Zweig des
+            Wiederherstellung einer bestehenden Wallet aus dem «restore»-Zweig des
             Onboardings, und die Nutzungsbedingungen, die direkt vom Splash-Screen aus
             geöffnet werden können.
           </p>
@@ -1980,7 +1986,7 @@
                 />
               </div>
               <div class="desc">
-                Der <b>Wallet wiederherstellen</b>-Screen aus dem „restore"-Zweig des
+                Der <b>Wallet wiederherstellen</b>-Screen aus dem «restore»-Zweig des
                 Onboardings. Hier gibt der User seine bestehende
                 <b>12-Wort-Recovery-Phrase</b> ein, um eine bereits vorhandene Wallet auf
                 dem Gerät zu reaktivieren — etwa nach einem Geräte-Wechsel oder einer
@@ -2025,8 +2031,10 @@
           <p class="spec-intro">
             Innerhalb des App-Wallet-Zweigs durchläuft der User mehrere rechtliche Schritte:
             zuerst einen zweistufigen <em>Disclaimer</em>, dann die Zustimmung zu den
-            <em>Rechtsdokumenten</em> in zwei Gruppen (Aktionariat und DFX). Erst nach
-            Bestätigung aller Schritte geht es weiter in die Seed-Generierung.
+            <em>Rechtsdokumenten</em> in drei Schritten (RealUnit Schweiz AG, Aktionariat,
+            DFX); jeder Schritt wird mit <b>Zustimmen</b> bestätigt oder mit
+            <b>Ablehnen</b> abgebrochen. Erst nach Bestätigung aller fünf Schritte geht es
+            weiter in die Seed-Generierung.
           </p>
 
           <div class="tests cols-2">
@@ -2043,9 +2051,9 @@
                 />
               </div>
               <div class="desc">
-                Erste Stufe des Software-Wallet-Disclaimers. Macht klar, dass der User
-                seine Wiederherstellungs-Wörter selbst verwahren muss und im Verlust-Fall
-                kein Zugriff mehr auf die Wallet möglich ist.
+                Erste Stufe des Software-Wallet-Disclaimers: <b>Wichtige rechtliche
+                Hinweise für Investoren &amp; Bestätigung des Wohnsitzes</b> (kein Angebot,
+                eingeschränkte Jurisdiktionen, Bestätigung des Wohnsitzes).
               </div>
             </div>
             <div class="test" id="28-software-wallet-disclaimer-step-1">
@@ -2061,9 +2069,9 @@
                 />
               </div>
               <div class="desc">
-                Zweite Stufe des Disclaimers. Zusätzlicher Hinweis auf das Risiko bei
-                Verlust des Geräts und die Verantwortung des Users für die sichere
-                Aufbewahrung der Recovery-Phrase.
+                Zweite Stufe des Disclaimers: <b>Weitere rechtliche Hinweise</b>
+                (Registrierungsvereinbarung, Steuerdomizil, automatischer
+                Informationsaustausch).
               </div>
             </div>
             <div class="test" id="29-legal-documents-step">
@@ -2079,9 +2087,10 @@
                 />
               </div>
               <div class="desc">
-                Übersichtsschritt im Onboarding mit beiden Dokument-Gruppen
-                (<b>Aktionariat</b> und <b>DFX</b>). Der User muss beide einzeln öffnen
-                und akzeptieren, bevor der Weiter-CTA aktiv wird.
+                Erster Dokumentschritt <b>Informationen der RealUnit Schweiz AG</b>
+                (Datenschutzbestimmungen, Registrierungsvereinbarung, Weitere
+                Informationen). <b>Zustimmen</b> führt zum nächsten Schritt,
+                <b>Ablehnen</b> bricht ab.
               </div>
             </div>
             <div class="test" id="30-legal-aktionariat-step">
@@ -2098,8 +2107,8 @@
               </div>
               <div class="desc">
                 Onboarding-Schritt mit den <b>Aktionariat</b>-Aktionärsdokumenten. Liste
-                der zu akzeptierenden Unterlagen rund um die RealUnit-Aktie. Checkbox
-                aktiviert den Weiter-CTA.
+                der Unterlagen rund um die RealUnit-Aktie; <b>Zustimmen</b> führt zum
+                nächsten Schritt.
               </div>
             </div>
             <div class="test" id="31-legal-dfx-step">
@@ -2116,8 +2125,8 @@
               </div>
               <div class="desc">
                 Onboarding-Schritt mit den <b>DFX</b>-Rechtsdokumenten (AGB und
-                Datenschutz für Buy/Sell und KYC). Checkbox aktiviert den Weiter-CTA und
-                schliesst den Legal-Block des Onboardings ab.
+                Datenschutz für Buy/Sell und KYC). <b>Zustimmen</b> schliesst den
+                Legal-Block des Onboardings ab.
               </div>
             </div>
           </div>
@@ -2141,7 +2150,8 @@
             Zustände der Seed-Eingabe auf der <code>RestoreWalletPage</code>. Der
             Validierungs-Cubit prüft die eingegebenen 12 Wörter gegen die BIP-39-Wortliste
             und die Checksum — der Submit-Button ist erst aktiv, wenn die Eingabe gültig
-            ist. Bei ungültiger Eingabe wird der Fehler inline angezeigt.
+            ist. Bei ungültiger Eingabe wird der Rahmen rot und der Button selbst zeigt
+            die Fehlermeldung.
           </p>
 
           <div class="tests cols-2">
@@ -2158,9 +2168,11 @@
                 />
               </div>
               <div class="desc">
-                Alle 12 Wörter sind eingegeben, BIP-39-Validierung erfolgreich. Der
-                <b>Wiederherstellen</b>-CTA ist aktiv. Im Tap-Anschluss generiert die App
-                das Wallet aus der Phrase und navigiert in den PIN-Setup-Schritt.
+                Zustand <code>valid</code> nach erfolgreicher BIP-39-Validierung: grüner
+                Rahmen, der <b>Weiter</b>-Button zeigt den Ladeindikator, während die App
+                das Wallet aus der Phrase generiert und in den PIN-Setup-Schritt
+                navigiert. Der Golden rendert die Wortfelder dabei leer; die ausgefüllte
+                Eingabe mit aktivem Button zeigt 69.
               </div>
             </div>
             <div class="test" id="33-restore-wallet-invalid">
@@ -2177,8 +2189,8 @@
               </div>
               <div class="desc">
                 Eingabe enthält ein Wort ausserhalb der BIP-39-Liste oder die Checksum
-                ist falsch. Der CTA bleibt disabled, der Inline-Fehler weist den User
-                darauf hin, seine Eingabe zu korrigieren.
+                ist falsch. Der Rahmen wird rot und der Button zeigt
+                <b>Wiederherstellungs-Wörter ungültig</b>, bis die Eingabe korrigiert ist.
               </div>
             </div>
           </div>
@@ -2220,7 +2232,7 @@
               </div>
               <div class="desc">
                 Alle vier zufällig ausgewählten Verifikations-Wörter sind eingetragen.
-                Der <b>Weiter</b>-CTA ist aktiv. Tap löst die Validierung im
+                Der <b>Bestätigen</b>-CTA ist aktiv. Tap löst die Validierung im
                 <code>VerifySeedCubit</code> aus — bei Übereinstimmung mit der
                 ursprünglichen Phrase folgt der Onboarding-Abschluss-Screen.
               </div>
@@ -2262,9 +2274,11 @@
                 />
               </div>
               <div class="desc">
-                Aktienkurs und Performance-Chart oben, darunter die eigene RealUnit-Position
-                mit Anzahl Aktien, Gegenwert in der Anzeigewährung und Performance seit
-                Kauf. Verlinkt auf Buy/Sell sowie die Transaktionshistorie.
+                Aktienkurs und Bestandsentwicklung oben, darunter die eigene
+                RealUnit-Position mit Anzahl Aktientoken und Gegenwert in der
+                Anzeigewährung sowie die Aktionen Kaufen und Verkaufen. Der Golden
+                ist mit Kurs 0 aufgenommen und zeigt deshalb <code>--.--</code> und die
+                Roh-Stückzahl; ein Dashboard mit echten Werten zeigt 93.
               </div>
             </div>
           </div>
@@ -2286,8 +2300,8 @@
           </summary>
           <p class="spec-intro">
             Liste der bisherigen Käufe und Verkäufe der RealUnit-Aktie. Erreichbar aus
-            dem Dashboard und aus den Einstellungen. Jeder Eintrag zeigt Datum,
-            Richtung (Kauf/Verkauf), Aktien-Menge, Preis und Status.
+            dem Dashboard. Jeder Eintrag zeigt Datum, Richtung (Kauf/Verkauf),
+            Aktien-Menge und Gegenwert.
           </p>
 
           <div class="tests cols-1">
@@ -2304,10 +2318,10 @@
                 />
               </div>
               <div class="desc">
-                Die Transaktionsliste mit mehreren Einträgen. Jede Zeile bündelt Richtung,
-                Betrag in Aktien, Gegenwert in der Anzeigewährung sowie den Status (z.B.
-                <em>Abgeschlossen</em>, <em>In Bearbeitung</em>). Tap auf eine Zeile öffnet
-                die Detailansicht der jeweiligen Transaktion.
+                Transaktionshistorie mit Datumsfilter und PDF-Export. Jede Zeile bündelt
+                Richtung, Betrag in Aktien und Gegenwert in der Anzeigewährung; einen
+                Status oder eine Detailansicht gibt es nicht. Der Golden zeigt die Liste
+                leer (Test-Fixture ohne gerenderte Einträge); eine gefüllte Liste zeigt 96.
               </div>
             </div>
           </div>
@@ -2323,18 +2337,21 @@
                 <div class="file">test/goldens/screens/kyc/</div>
               </div>
               <div class="rhs">
-                <b>13 Screens</b>
+                <b>23 Screens</b>
               </div>
             </div>
           </summary>
           <p class="spec-intro">
             KYC-Onboarding für Buy/Sell — Pflicht ab definierten Volumen-Schwellen. Der
-            Registrierungs-Wizard umfasst zwei Stammdaten-Schritte (persönlich + Adresse)
-            und als finalen Schritt die Steueransässigkeit; der Submit der KYC-Anfrage an
-            das DFX-Backend erfolgt erst auf diesem Steuer-Schritt. Dazu kommt der
-            E-Mail-Verifizierungs-Schritt mit den Fehler-States <em>Loading</em>,
-            <em>Mismatch</em> (eingegebener Code stimmt nicht) und <em>Unknown Error</em>
-            (Backend-Fehler).
+            Registrierungs-Wizard umfasst vier Schritte: Empfehlungscode (optional, siehe
+            277), persönliche Daten, Adresse und als finalen Schritt die
+            Steueransässigkeit; der Submit der KYC-Anfrage an das DFX-Backend erfolgt
+            erst auf diesem Steuer-Schritt. Davor liegt die E-Mail-Registrierung mit den
+            States <em>Loading</em>, <em>Mismatch</em> (eingegebene E-Mail-Adresse
+            stimmt nicht mit der bereits verifizierten überein) und <em>Unknown
+            Error</em> (Backend-Fehler). Die Einzelzustände von E-Mail, 2FA und
+            Registrierung sind in 52 und 53 beschrieben; dieser Abschnitt konzentriert
+            sich auf die Steuer-Szenarien S1 bis S5.
           </p>
 
           <div class="tests cols-2">
@@ -2351,9 +2368,9 @@
                 />
               </div>
               <div class="desc">
-                Ladezustand der E-Mail-Verifizierung. Der vom User eingegebene Code wird
-                gegen das DFX-Backend geprüft, die Eingabefelder sind während des Calls
-                disabled.
+                Ladezustand der E-Mail-Registrierung. Die eingegebene E-Mail-Adresse
+                wird beim DFX-Backend registriert; der <b>Weiter</b>-Button zeigt den
+                Spinner, das Feld bleibt editierbar.
               </div>
             </div>
             <div class="test" id="38-kyc-email-mismatch">
@@ -2369,9 +2386,10 @@
                 />
               </div>
               <div class="desc">
-                Der eingegebene Bestätigungs-Code stimmt nicht mit dem per E-Mail
-                gesendeten überein. Inline-Fehler unter dem Eingabefeld, der User kann
-                den Code erneut eingeben oder eine neue Mail anfordern.
+                Die eingegebene E-Mail-Adresse stimmt nicht mit der bereits verifizierten
+                überein. Die App zeigt die Meldung als rote SnackBar (siehe 149); der
+                Golden hält nur den Formularzustand fest und sieht deshalb aus wie der
+                Ausgangszustand.
               </div>
             </div>
             <div class="test" id="39-kyc-email-error">
@@ -2388,8 +2406,8 @@
               </div>
               <div class="desc">
                 Generischer Fehler-State, wenn das Backend keinen verwertbaren Statuscode
-                liefert (z.B. Netzwerk-Timeout, 5xx). Der User wird gebeten, es später
-                noch einmal zu probieren.
+                liefert (z.B. Netzwerk-Timeout, 5xx). Die Meldung erscheint als rote
+                SnackBar (siehe 150); der Golden hält nur den Formularzustand fest.
               </div>
             </div>
             <div class="test" id="40-kyc-registration-personal">
@@ -2405,9 +2423,10 @@
                 />
               </div>
               <div class="desc">
-                Eingabe-Schritt für die persönlichen Stammdaten (Anrede, Vorname,
-                Nachname, Geburtsdatum, Nationalität). Pflichtfelder werden inline
-                validiert, der Weiter-CTA ist disabled bis die Eingabe vollständig ist.
+                Eingabe-Schritt für die persönlichen Stammdaten (Kontotyp, Vorname,
+                Nachname, Geburtstag, Telefonnummer, Staatsangehörigkeit). Der
+                Weiter-CTA ist immer aktiv; Pflichtfelder werden beim Antippen von
+                Weiter validiert (siehe 165).
               </div>
             </div>
             <div class="test" id="54-kyc-registration-personal-dropdown">
@@ -2424,7 +2443,7 @@
               </div>
               <div class="desc">
                 Persönliche-Daten-Schritt mit geöffnetem Länder-Picker: Der User wählt
-                seine Nationalität (Staatsbürgerschaft) aus der scrollbaren Länderliste.
+                seine Staatsangehörigkeit aus der scrollbaren Länderliste.
               </div>
             </div>
             <div class="test" id="41-kyc-registration-address">
@@ -2440,8 +2459,8 @@
                 />
               </div>
               <div class="desc">
-                Adress-Schritt der KYC-Registrierung (Strasse, Nummer, PLZ, Ort, Land).
-                Der Schritt ist nicht mehr final: „Weiter" führt den User zum
+                Adress-Schritt der KYC-Registrierung (Strasse, Nummer, PLZ, Stadt, Land).
+                Der Schritt ist nicht mehr final: «Weiter» führt den User zum
                 abschliessenden Steueransässigkeits-Schritt — die KYC-Anfrage wird erst
                 dort an das DFX-Backend übermittelt.
               </div>
@@ -2481,7 +2500,7 @@
                 Weitere Steuerwohnsitze können hinzugefügt werden; bei Nicht-CH ist die
                 TIN Pflicht. Die Abbildung zeigt den unbelegten Fallback-Zustand (kein
                 Wohnsitzland vorhanden), in dem der User mindestens ein Land wählen muss.
-                Der „Abschliessen"-CTA übermittelt die vollständige KYC-Anfrage an das
+                Der «Abschliessen»-CTA übermittelt die vollständige KYC-Anfrage an das
                 DFX-Backend.
               </div>
             </div>
@@ -2536,7 +2555,7 @@
               </div>
               <div class="desc">
                 Bei Nicht-CH-Wohnsitz (z. B. DE) ist dieses Land als Steuerwohnsitz
-                locked und die TIN ist Pflicht. Über „Weiteren Steuerwohnsitz hinzufügen"
+                locked und die TIN ist Pflicht. Über «Weiteren Steuerwohnsitz hinzufügen»
                 können weitere Länder ergänzt werden (jeweils mit TIN, ausser CH).
               </div>
             </div>
@@ -2590,7 +2609,7 @@
               </div>
               <div class="desc">
                 Wohnsitz DE ist locked inkl. TIN-Feld; ein zweiter Steuerwohnsitz
-                (z. B. CH) wurde über „Weiteren Steuerwohnsitz hinzufügen"
+                (z. B. CH) wurde über «Weiteren Steuerwohnsitz hinzufügen»
                 ergänzt. Beliebig viele zusätzliche Länder sind möglich.
               </div>
             </div>
@@ -2618,7 +2637,7 @@
               <div class="desc">
                 <strong>S1:</strong> Wohnsitz CH, nur CH als Steuerwohnsitz.
                 Keine TIN. Submit: <code>swissTaxResidence=true</code>,
-                <code>countryAndTINs=null</code>.
+                <code>countryAndTINs=null</code>. Gleicher Golden wie 58.
               </div>
             </div>
 
@@ -2636,6 +2655,7 @@
               </div>
               <div class="desc">
                 <strong>S2 (leer):</strong> Wohnsitz DE locked, TIN-Feld sichtbar und noch leer.
+                Gleicher Golden wie 59.
               </div>
             </div>
 
@@ -2672,6 +2692,7 @@
               </div>
               <div class="desc">
                 <strong>S2 (Fehler):</strong> Abschliessen ohne TIN — Validierungsfehler am TIN-Feld.
+                Gleicher Golden wie 61.
               </div>
             </div>
 
@@ -2803,9 +2824,9 @@
                 />
               </div>
               <div class="desc">
-                Ladezustand während das Backend den Steuerbericht generiert. Spinner
-                und Hinweistext informieren den User, dass die Erstellung einige
-                Sekunden dauern kann.
+                Ladezustand während das Backend den Steuerbericht generiert. Der
+                PDF-Button zeigt einen Spinner und ist gesperrt, bis der Bericht
+                vorliegt.
               </div>
             </div>
             <div class="test" id="43-settings-tax-report-failure">
@@ -2821,9 +2842,11 @@
                 />
               </div>
               <div class="desc">
-                Fehler-State, wenn die Generierung scheitert. Der User erhält eine
-                erklärende Meldung und einen Retry-CTA. Häufigste Ursachen sind
-                Backend-Timeouts oder noch nicht abgeschlossene KYC.
+                Fehler-State, wenn die Generierung scheitert. Die Backend-Meldung
+                erscheint als rote Snackbar (siehe 226), der PDF-Button bleibt für einen
+                neuen Versuch aktiv; der Golden hält nur den Formularzustand fest.
+                Häufigste Ursachen sind Backend-Timeouts oder noch nicht abgeschlossene
+                KYC.
               </div>
             </div>
           </div>
@@ -2868,8 +2891,8 @@
               </div>
               <div class="desc">
                 Loading-State während die Zahlungsinformationen (Bank-Verbindung,
-                Referenz, IBAN) vom DFX-Backend geholt werden. CTA disabled, Spinner
-                zentral.
+                Referenz, IBAN) vom DFX-Backend geholt werden. Spinner unter dem
+                Umrechner, noch keine Schaltfläche.
               </div>
             </div>
             <div class="test" id="45-buy-registration-required">
@@ -2921,8 +2944,8 @@
               </div>
               <div class="desc">
                 Validierungs-Fehler, wenn der eingegebene Betrag unter der vom Backend
-                vorgegebenen Mindest-Kaufsumme liegt. Inline-Fehler unter dem
-                Eingabefeld.
+                vorgegebenen Mindest-Kaufsumme liegt. Hinweis <b>Mindestbetrag: 10 CHF</b>
+                über dem deaktivierten <b>Weiter</b>-Button (Betrag aus den Testdaten).
               </div>
             </div>
             <div class="test" id="48-buy-unknown-error">
@@ -2939,8 +2962,8 @@
               </div>
               <div class="desc">
                 Generischer Fehler-State, wenn das Backend keinen spezifischen Statuscode
-                liefert. Retry-CTA und kurze Erklärung — keine technischen Details für
-                den User.
+                liefert. Info-Block mit der unveränderten API-Meldung (im Golden
+                englisch), darunter <b>Wiederholen</b> (siehe 109).
               </div>
             </div>
             <div class="test" id="53-buy-payment-details">
@@ -2959,8 +2982,9 @@
                 Zahlungsdetails-Seite nach dem verbindlichen Kauf. Sie weist auf die
                 zusätzlich per E-Mail zugestellte Zahlungsanweisung hin, betont den
                 wichtigen Verwendungszweck und zeigt Referenz sowie die vollständige
-                Bankverbindung (IBAN/BIC/Empfänger) mit optionalem QR-Code. Abschluss
-                über »Zurück zum Hauptbereich«.
+                Bankverbindung (IBAN/BIC/Empfänger). Der Golden endet beim
+                Adressblock; QR-Code-Reiter und der Abschluss über <b>Zurück zum
+                Hauptbereich</b> sind in 39 vollständig dokumentiert.
               </div>
             </div>
           </div>
@@ -2981,9 +3005,9 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Zustände des Verkauf-Flows. Spiegelbildlich zu Spec 16, ohne separaten
-            <em>Registration Required</em>-State — der Verkauf ist nur für bereits
-            registrierte User aufrufbar.
+            Zustände des Verkauf-Flows. Spiegelbildlich zu Spec 16; <em>Registration
+            Required</em> und <em>KYC Required</em> werden ohne eigenen Hinweis-State
+            behandelt, die App springt direkt in den KYC-Flow.
           </p>
 
           <div class="tests cols-2">
@@ -3001,8 +3025,8 @@
               </div>
               <div class="desc">
                 Loading-State während die Auszahlungs-Informationen (Bank-Verbindung
-                des Users) vom DFX-Backend geholt werden. CTA disabled, Spinner
-                zentral.
+                des Users) vom DFX-Backend geholt werden. Der Button <b>REALU
+                verkaufen</b> zeigt den Spinner und ist gesperrt.
               </div>
             </div>
             <div class="test" id="50-sell-kyc-required">
@@ -3018,8 +3042,9 @@
                 />
               </div>
               <div class="desc">
-                Hinweis-State, wenn die geplante Verkauf-Summe das Volumen ohne KYC
-                überschreitet. CTA verlinkt in den KYC-Flow (siehe Spec 14).
+                Der Server meldet <code>kycRequired</code>: die App zeigt keinen
+                Hinweis, sondern springt direkt in den KYC-Flow (siehe Spec 14). Der
+                Golden zeigt deshalb nur die leere Maske mit deaktiviertem Button.
               </div>
             </div>
             <div class="test" id="51-sell-min-amount">
@@ -3036,8 +3061,8 @@
               </div>
               <div class="desc">
                 Validierungs-Fehler, wenn die eingegebene Verkauf-Menge unter der vom
-                Backend vorgegebenen Mindest-Summe liegt. Inline-Fehler unter dem
-                Eingabefeld.
+                Backend vorgegebenen Mindest-Summe liegt. Hinweis <b>Mindestbetrag</b>
+                über dem deaktivierten Verkaufsbutton.
               </div>
             </div>
             <div class="test" id="52-sell-unknown-error">
@@ -3054,8 +3079,8 @@
               </div>
               <div class="desc">
                 Generischer Fehler-State, wenn das Backend keinen spezifischen Statuscode
-                liefert. Retry-CTA und kurze Erklärung — keine technischen Details für
-                den User.
+                liefert. Die Backend-Meldung erscheint als rote Snackbar, einen eigenen
+                Retry-Button gibt es nicht; der Golden hält nur die Maske fest.
               </div>
             </div>
           </div>
@@ -3126,7 +3151,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Der Bildschirm „Wallet erstellen" generiert beim Öffnen im Hintergrund eine neue Seed-Phrase. Bis diese vorliegt, zeigt die App einen kurzen Ladezustand, bevor die Wiederherstellungswörter erscheinen.
+            Der Bildschirm «Wallet erstellen» generiert beim Öffnen im Hintergrund eine neue Seed-Phrase. Bis diese vorliegt, zeigt die App einen kurzen Ladezustand, bevor die Wiederherstellungswörter erscheinen.
           </p>
 
           <div class="tests cols-2">
@@ -3143,7 +3168,7 @@
                 />
               </div>
               <div class="desc">
-                Dieser Zustand zeigt einen <b>zentrierten Ladeindikator</b> auf leerer, hellblauer Fläche mit oberer App-Leiste, solange noch <b>keine Wallet generiert</b> wurde. Der Nutzer sieht ihn kurz direkt nach dem Öffnen des Bildschirms „Wallet erstellen", während im Hintergrund die neue Seed-Phrase erzeugt wird. Sobald das Wallet bereitsteht, wird der Spinner durch Titel, Erklärtext und die verdeckte Seed-Karte ersetzt.
+                Dieser Zustand zeigt einen <b>zentrierten Ladeindikator</b> auf leerer, hellblauer Fläche (die App-Leiste ist leer), solange noch <b>keine Wallet generiert</b> wurde. Der Nutzer sieht ihn kurz direkt nach dem Öffnen des Bildschirms «Wallet erstellen», während im Hintergrund die neue Seed-Phrase erzeugt wird. Sobald das Wallet bereitsteht, wird der Spinner durch Titel, Erklärtext und die verdeckte Seed-Karte ersetzt.
               </div>
             </div>
           </div>
@@ -3687,7 +3712,7 @@
                 />
               </div>
               <div class="desc">
-                Nach zu vielen Fehlversuchen ist der Ziffernblock <b>gesperrt</b> und die Meldung <b>Zu viele Fehlversuche. Versuchen Sie es in 1h 5m erneut.</b> zeigt die verbleibende Wartezeit. Der Countdown zählt herunter, bis die Eingabe wieder freigegeben wird.
+                Nach zu vielen Fehlversuchen ist der Ziffernblock <b>gesperrt</b> und die Meldung <b>Zu viele Fehlversuche. Versuchen Sie es in 1h 5m erneut.</b> zeigt die verbleibende Wartezeit (Beispielwert aus dem Golden; die reale Sperre dauert 5 Minuten). Der Countdown zählt herunter, bis die Eingabe wieder freigegeben wird.
               </div>
             </div>
             <div class="test" id="84-verify-pin-page-locked">
@@ -3703,7 +3728,7 @@
                 />
               </div>
               <div class="desc">
-                Der Ziffernblock ist <b>gesperrt</b> und die Meldung lautet <b>Zu viele Fehlversuche. Nutzen Sie 'PIN vergessen?', um zurückzusetzen.</b> Dieser Endzustand nach dem Ausschöpfen aller Versuche lässt nur noch das Zurücksetzen der Wallet zu.
+                Der Ziffernblock ist <b>gesperrt</b> und die Meldung lautet <b>Zu viele Fehlversuche. Schließen Sie die App und starten Sie sie neu; auf dem Sperrbildschirm setzen Sie die Wallet über 'PIN vergessen?' zurück.</b> Dieser Endzustand nach dem Ausschöpfen aller Versuche lässt nur noch das Zurücksetzen der Wallet zu.
               </div>
             </div>
             <div class="test" id="85-verify-pin-page-unverifiable">
@@ -3719,7 +3744,7 @@
                 />
               </div>
               <div class="desc">
-                Der Ziffernblock ist gesperrt und die Meldung lautet <b>Ihre PIN kann nicht überprüft werden (Speicherfehler). Sperren Sie die App und setzen Sie die Wallet über den Sperrbildschirm zurücksetzen.</b> Diese Variante ohne 'PIN vergessen?'-Taste erscheint, wenn eine geschützte Funktion die PIN nicht aus dem Speicher lesen kann.
+                Der Ziffernblock ist gesperrt und die Meldung lautet <b>Ihre PIN kann nicht überprüft werden (Speicherfehler). Schließen Sie die App und starten Sie sie neu; auf dem Sperrbildschirm setzen Sie die Wallet über 'PIN vergessen?' zurück.</b> Diese Variante ohne 'PIN vergessen?'-Taste erscheint, wenn eine geschützte Funktion die PIN nicht aus dem Speicher lesen kann.
               </div>
             </div>
           </div>
@@ -3779,7 +3804,7 @@
                 />
               </div>
               <div class="desc">
-                Die App-Sperre bei einem Speicherfehler: der Ziffernblock ist gesperrt und die Meldung <b>Ihre PIN kann nicht überprüft werden (Speicherfehler). Setzen Sie die Wallet über 'PIN vergessen?' zurücksetzen und stellen Sie sie mit Ihrer Seed-Phrase wieder her.</b> verweist auf die darunter angebotene Aktion <b>PIN vergessen?</b>
+                Die App-Sperre bei einem Speicherfehler: der Ziffernblock ist gesperrt und die Meldung <b>Ihre PIN kann nicht überprüft werden (Speicherfehler). Setzen Sie die Wallet über 'PIN vergessen?' zurück und stellen Sie sie mit Ihrer Seed-Phrase wieder her.</b> verweist auf die darunter angebotene Aktion <b>PIN vergessen?</b>
               </div>
             </div>
             <div class="test" id="88-forgot-pin-bottom-sheet-default">
@@ -3795,7 +3820,7 @@
                 />
               </div>
               <div class="desc">
-                Das Bestätigungs-Bottom-Sheet nach Tippen auf <b>PIN vergessen?</b> mit dem Titel <b>Wallet wird zurückgesetzt</b> und dem Warnhinweis, dass Wallet und Daten gelöscht werden und die Wiederherstellungsphrase gesichert sein muss. Zwei Tasten stehen zur Wahl: <b>Schliessen</b> und <b>Zurücksetzen</b>.
+                Das Bestätigungs-Bottom-Sheet nach Tippen auf <b>PIN vergessen?</b> mit dem Titel <b>Wallet wird zurückgesetzt</b> und dem Warnhinweis, dass Wallet und Daten gelöscht werden und die Wiederherstellungsphrase gesichert sein muss. Zwei Tasten stehen zur Wahl: <b>Schließen</b> und <b>Zurücksetzen</b>.
               </div>
             </div>
           </div>
@@ -3959,7 +3984,7 @@
                 />
               </div>
               <div class="desc">
-                Ansicht mit vorhandenem Guthaben: Oben die Aktionen <b>Kaufen</b> und <b>Verkaufen</b>, darunter der Abschnitt <b>Bestand</b> mit <b>REALU 153.00 CHF</b> und dem Detail <b>100 x 1.53 CHF</b>. Die Karte <b>Letzte Transaktionen</b> listet die jüngsten Bewegungen (<b>+ 50 REALU</b>, <b>- 20 REALU</b>, <b>+ 100 REALU</b>) mit Datum und schliesst mit dem Link <b>Transaktionshistorie</b>.
+                Ansicht mit vorhandenem Guthaben: Oben die Aktionen <b>Kaufen</b> und <b>Verkaufen</b>, darunter der Abschnitt <b>Bestand</b> mit <b>REALU 153.00 CHF</b> und dem Detail <b>100 × 1.53 CHF</b>. Die Karte <b>Letzte Transaktionen</b> listet die jüngsten Bewegungen (<b>+ 50 REALU</b>, <b>- 20 REALU</b>, <b>+ 100 REALU</b>) mit Datum und schliesst mit dem Link <b>Transaktionshistorie</b>.
               </div>
             </div>
           </div>
@@ -3986,7 +4011,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Ist der Datenschutz-Schalter aktiv, maskiert das Dashboard alle Geldbeträge, lässt die übrige Struktur aber unverändert.
+            Ist <code>hideAmounts</code> im SettingsBloc gesetzt, maskiert das Dashboard alle Geldbeträge, lässt die übrige Struktur aber unverändert. Ein Schalter in den Einstellungen existiert dafür noch nicht.
           </p>
 
           <div class="tests cols-2">
@@ -4003,7 +4028,7 @@
                 />
               </div>
               <div class="desc">
-                Dieselbe Bestandsansicht bei aktivem Datenschutz-Schalter <b>Beträge ausblenden</b>: Der Bestandswert und alle Transaktionsbeträge sind durch <b>\*\*\*.\*\</b>* ersetzt, während Struktur, Anzahl <b>100 x 1.53 CHF</b> und Beschriftungen sichtbar bleiben. Der Nutzer aktiviert diesen Modus in den Einstellungen, um Geldbeträge vor fremden Blicken zu verbergen.
+                Dieselbe Bestandsansicht mit maskierten Beträgen (Zustand <code>hideAmounts</code> im SettingsBloc): Der Bestandswert und alle Transaktionsbeträge sind durch <b>\*\*\*.\*\</b>* ersetzt, während Struktur, Anzahl <b>100 × 1.53 CHF</b> und Beschriftungen sichtbar bleiben. Einen Schalter dafür gibt es in der App derzeit nicht; der Zustand ist nur über den Bloc erreichbar.
               </div>
             </div>
           </div>
@@ -4079,7 +4104,7 @@
                 />
               </div>
               <div class="desc">
-                Nach Antippen des Feldes <b>Anfangsdatum</b> öffnet sich der <b>Kalender-Dialog</b> (hier auf Mai 2025) über der abgedunkelten Seite. Mit <b>OK</b> wird das gewählte Datum übernommen und der Verlauf neu gefiltert, <b>Abbrechen</b> schliesst den Dialog ohne Änderung.
+                Nach Antippen des Feldes <b>Anfangsdatum</b> öffnet sich der <b>Kalender-Dialog</b> (hier auf Mai 2025) über der abgedunkelten Seite. Mit <b>OK</b> wird das gewählte Datum übernommen und der Verlauf neu gefiltert, <b>Cancel</b> schliesst den Dialog ohne Änderung. Der Golden ist ohne deutsche Locale aufgenommen, daher englische Beschriftungen und ein überlagertes Kalenderraster.
               </div>
             </div>
           </div>
@@ -4123,7 +4148,7 @@
                 />
               </div>
               <div class="desc">
-                Eine einzelne Zeile (<b>Kauf, + 50 REALU</b>) während der <b>Erzeugung des Einzelbelegs</b>: das Download-Symbol am rechten Rand ist durch einen <b>kleinen Ladekreis</b> ersetzt. Der Nutzer sieht dies unmittelbar nach dem Tippen auf das Beleg-Symbol der Zeile.
+                Eine einzelne Zeile (<b>Kauf, + 50 REALU</b>) während der <b>Erzeugung des Einzelbelegs</b>: das Download-Symbol am rechten Rand ist durch einen <b>kleinen Ladekreis</b> ersetzt (im Golden nur als Punkt sichtbar). Der Nutzer sieht dies unmittelbar nach dem Tippen auf das Beleg-Symbol der Zeile.
               </div>
             </div>
             <div class="test" id="99-transaction-history-row-receipt-failure">
@@ -4139,7 +4164,7 @@
                 />
               </div>
               <div class="desc">
-                Konnte der Beleg nicht erstellt werden, erscheint am unteren Rand eine <b>rote Fehlermeldung</b> 'Beleg konnte nicht erstellt werden.'. Das Download-Symbol der Zeile ist wieder sichtbar, sodass ein <b>erneuter Versuch</b> möglich ist.
+                Konnte der Beleg nicht erstellt werden, erscheint am unteren Rand eine <b>rote Fehlermeldung</b> mit der Servermeldung (im Golden 'Beleg konnte nicht erstellt werden.'). Das Download-Symbol der Zeile ist wieder sichtbar, sodass ein <b>erneuter Versuch</b> möglich ist.
               </div>
             </div>
             <div class="test" id="100-transaction-history-multi-receipt-loading">
@@ -4155,7 +4180,7 @@
                 />
               </div>
               <div class="desc">
-                Der grosse blaue <b>PDF-Sammel-Button</b> zeigt während der <b>Erzeugung des Sammelbelegs</b> über alle gefilterten Buchungen einen <b>Ladekreis</b> statt des Download-Symbols. Dieser Zustand erscheint nach Antippen des PDF-Buttons oben rechts.
+                Der grosse blaue <b>PDF-Sammel-Button</b> zeigt während der <b>Erzeugung des Sammelbelegs</b> über alle gefilterten Buchungen einen <b>Ladekreis</b> statt des Download-Symbols (im Golden nur als Punkt sichtbar). Dieser Zustand erscheint nach Antippen des PDF-Buttons oben rechts.
               </div>
             </div>
           </div>
@@ -4199,7 +4224,7 @@
                 />
               </div>
               <div class="desc">
-                Die <b>Bottom-Sheet-Variante</b> der Empfangen-Seite: oben der horizontale Ziehbalken (Handlebar), darunter der QR-Code der eigenen Wallet-Adresse und die zweizeilig formatierte Adresse mit <b>fett</b> hervorgehobenem Anfang und Ende sowie dem Kopieren-Symbol. Der Nutzer sieht diese Variante, wenn die Seite als aufgezogenes Blatt von unten geöffnet wird; ein Tippen auf die Adresse kopiert sie in die Zwischenablage.
+                Die <b>Bottom-Sheet-Variante</b> der Empfangen-Seite: oben der horizontale Ziehbalken (Handlebar), darunter der QR-Code der eigenen Wallet-Adresse und die zweizeilig formatierte Adresse mit <b>fett</b> hervorgehobenem Anfang und Ende, dem Kopieren-Symbol und unten dem CTA <b>Senden</b>. Der Nutzer sieht diese Variante, wenn die Seite als aufgezogenes Blatt von unten geöffnet wird; ein Tippen auf die Adresse kopiert sie in die Zwischenablage.
               </div>
             </div>
             <div class="test" id="102-receive-page-full-page">
@@ -4215,7 +4240,7 @@
                 />
               </div>
               <div class="desc">
-                Die <b>vollflächige Variante</b> derselben Empfangen-Seite: oben eine AppBar mit <b>Zurück-Pfeil</b> statt Ziehbalken, darunter identisch der QR-Code, die zweizeilige Adresse und das Kopieren-Symbol. Diese Variante erscheint, wenn die Seite über die Navigation als eigene Route geöffnet wird; über den Pfeil gelangt der Nutzer zurück.
+                Die <b>vollflächige Variante</b> derselben Empfangen-Seite: oben eine AppBar mit <b>Zurück-Pfeil</b> statt Ziehbalken, darunter identisch der QR-Code, die zweizeilige Adresse, das Kopieren-Symbol und der CTA <b>Senden</b>. Diese Variante erscheint, wenn die Seite über die Navigation als eigene Route geöffnet wird; über den Pfeil gelangt der Nutzer zurück.
               </div>
             </div>
           </div>
@@ -4242,7 +4267,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Die Kaufseite (RealUnit Aktientoken kaufen) beginnt mit dem Umrechner: oben Sie bezahlen (Fiat-Betrag und Währung), darunter Sie erhalten (RealU-Anteile). Diese Ansichten zeigen den Normalzustand, ein geladenes Angebot sowie die Währungsauswahl und deren Fehlerfall.
+            Die Kaufseite (RealUnit Aktientoken kaufen) beginnt mit dem Umrechner: oben Sie bezahlen (Fiat-Betrag und Währung), darunter Sie erhalten (REALU). Diese Ansichten zeigen den Normalzustand, ein geladenes Angebot sowie die Währungsauswahl und deren Fehlerfall.
           </p>
 
           <div class="tests cols-2">
@@ -4259,7 +4284,7 @@
                 />
               </div>
               <div class="desc">
-                Der <b>Startzustand</b> der Kaufseite mit leerem Umrechner: die Felder <b>Sie bezahlen</b> (Währung <b>CHF</b>) und <b>Sie erhalten</b> (RealU) sind noch ohne Betrag. Es ist noch kein Angebot abgerufen, deshalb erscheint unten keine Kauf-Schaltfläche.
+                Der <b>Startzustand</b> der Kaufseite mit leerem Umrechner: die Felder <b>Sie bezahlen</b> (Währung <b>CHF</b>) und <b>Sie erhalten</b> (REALU) sind noch ohne Betrag. Es ist noch kein Angebot abgerufen, deshalb erscheint unten keine Kauf-Schaltfläche.
               </div>
             </div>
             <div class="test" id="104-buy-payment-info-loaded">
@@ -4275,7 +4300,7 @@
                 />
               </div>
               <div class="desc">
-                Ein <b>gültiges Angebot</b> ist geladen: der Umrechner zeigt <b>100 CHF</b> gegen <b>1.00 RealU</b>. Unten erscheint die verbindliche Kauf-Schaltfläche <b>Jetzt verbindlich kaufen</b>, mit der der Nutzer den Kauf abschliessen kann.
+                Ein <b>gültiges Angebot</b> ist geladen: der Umrechner zeigt <b>100 CHF</b> gegen <b>1.00 REALU</b>. Unten erscheint die verbindliche Kauf-Schaltfläche <b>Jetzt verbindlich kaufen</b>, mit der der Nutzer den Kauf abschliessen kann.
               </div>
             </div>
             <div class="test" id="105-buy-currency-picker-open">
@@ -4383,7 +4408,7 @@
                 />
               </div>
               <div class="desc">
-                Die Kursabfrage ist <b>fehlgeschlagen</b>. Der Info-Block zeigt die <b>API-Fehlermeldung unverändert</b>. Die App wählt keinen eigenen Text.
+                Die Kursabfrage ist <b>fehlgeschlagen</b>. Der Info-Block zeigt die <b>API-Fehlermeldung unverändert</b>, darunter die Schaltfläche <b>Wiederholen</b>, die das Angebot neu abruft. Die App wählt keinen eigenen Text.
               </div>
             </div>
           </div>
@@ -4410,7 +4435,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Sobald ein gültiges Angebot vorliegt, erscheint unten die Schaltfläche Jetzt verbindlich kaufen. Diese Zustände zeigen den laufenden Bestätigungsvorgang und die drei möglichen Fehlermeldungen, die als Snackbar erscheinen.
+            Sobald ein gültiges Angebot vorliegt, erscheint unten die Schaltfläche Jetzt verbindlich kaufen. Diese Zustände zeigen den laufenden Bestätigungsvorgang und drei Beispiele von API-Fehlermeldungen, die als Snackbar erscheinen. Beträge und Meldungen in den Goldens sind Testdaten.
           </p>
 
           <div class="tests cols-2">
@@ -4427,7 +4452,7 @@
                 />
               </div>
               <div class="desc">
-                Die Bestätigung <b>läuft gerade</b>: die Schaltfläche <b>Jetzt verbindlich kaufen</b> zeigt einen Ladespinner. Der Nutzer sieht das unmittelbar nach dem Tippen, während die App den verbindlichen Kauf beim Server bestätigt.
+                Die Bestätigung <b>läuft gerade</b>: die Schaltfläche <b>Jetzt verbindlich kaufen</b> zeigt einen Ladespinner. Der Nutzer sieht das unmittelbar nach dem Tippen, während die App den verbindlichen Kauf beim Server bestätigt. Der Golden rendert nur die Schaltfläche.
               </div>
             </div>
             <div class="test" id="111-buy-confirm-failed-aktionariat">
@@ -4443,7 +4468,7 @@
                 />
               </div>
               <div class="desc">
-                Die Bestätigung ist <b>fehlgeschlagen</b>. Die Snackbar zeigt die <b>API-Fehlermeldung unverändert</b> (Beispiel: Kauf konnte nicht bestätigt werden, bitte später erneut versuchen). Die App wählt keinen eigenen Text. Die Kauf-Schaltfläche darunter ist wieder bedienbar.
+                Die Bestätigung ist <b>fehlgeschlagen</b>. Die Snackbar zeigt die <b>API-Fehlermeldung unverändert</b> (im Golden <b>The purchase could not be confirmed. Please try again later.</b>). Die App wählt keinen eigenen Text. Die Kauf-Schaltfläche darunter ist wieder bedienbar.
               </div>
             </div>
             <div class="test" id="112-buy-confirm-failed-amount-too-low">
@@ -4551,7 +4576,7 @@
                 />
               </div>
               <div class="desc">
-                Ebenfalls der Reiter <b>QR-Code</b>, hier jedoch die Variante, bei der der Server den QR-Code als <b>fertige SVG-Grafik</b> liefert und die App diese direkt anzeigt. Inhaltlich derselbe Zweck wie der generierte QR-Code.
+                Ebenfalls der Reiter <b>QR-Code</b>, hier jedoch die Variante, bei der der Server den QR-Code als <b>fertige SVG-Grafik</b> liefert und die App diese direkt anzeigt. Inhaltlich derselbe Zweck wie der generierte QR-Code; der Golden verwendet ein Platzhalter-SVG.
               </div>
             </div>
             <div class="test" id="117-buy-payment-details-no-purpose">
@@ -4703,7 +4728,7 @@
                 />
               </div>
               <div class="desc">
-                Das Bottom-Sheet <b>Zahlungskonto hinzufügen</b> im leeren Ausgangszustand mit dem Pflichtfeld <b>IBAN</b> und dem optionalen Feld <b>Bezeichnung (optional)</b>. Mit <b>Weiter</b> wird die IBAN geprüft und das Konto gespeichert.
+                Das Bottom-Sheet <b>Auszahlungskonto hinzufügen</b> im leeren Ausgangszustand mit dem Pflichtfeld <b>IBAN</b> und dem optionalen Feld <b>Bezeichnung (optional)</b>. Mit <b>Weiter</b> wird die IBAN geprüft und das Konto gespeichert.
               </div>
             </div>
           </div>
@@ -4747,7 +4772,7 @@
                 />
               </div>
               <div class="desc">
-                Das Bestätigungs-Sheet <b>Verkauf prüfen und bestätigen</b> mit der Zusammenfassung: Menge <b>REALU 100</b>, <b>Betrag in CHF 100.0</b> und die Empfänger-IBAN. Der Button <b>Bestätigen</b> ist aktiv und löst den Verkauf aus.
+                Das Bestätigungs-Sheet <b>Verkauf prüfen &amp; bestätigen</b> mit der Zusammenfassung: <b>REALU 100</b>, <b>Betrag in CHF 100.0</b> und die Empfänger-IBAN. Der Button <b>Bestätigen</b> ist aktiv und löst den Verkauf aus.
               </div>
             </div>
             <div class="test" id="124-sell-confirm-sheet-loading">
@@ -4779,7 +4804,7 @@
                 />
               </div>
               <div class="desc">
-                Die Erfolgsmeldung nach einem abgeschlossenen Verkauf: ein blaues Häkchen, der Titel <b>Verkauf erfolgreich</b> und der Hinweis, dass der Betrag auf das angegebene Bankkonto ausgezahlt wird. Mit <b>Schliessen</b> kehrt der Nutzer zurück.
+                Die Erfolgsmeldung nach einem abgeschlossenen Verkauf: ein blaues Häkchen, der Titel <b>Verkauf erfolgreich</b> und der Hinweis, dass der Betrag auf das angegebene Bankkonto ausgezahlt wird. Mit <b>Schließen</b> kehrt der Nutzer zurück.
               </div>
             </div>
           </div>
@@ -4915,7 +4940,7 @@
                 />
               </div>
               <div class="desc">
-                Die Prüfkarte für den Tausch mit dem Titel <b>REALU → ZCHF tauschen</b>: Sie zeigt <b>Sie senden 100 REALU</b> und <b>Sie erhalten ca. 100.00 ZCHF</b>, den Hinweis zur Bestätigung über den BrokerBot sowie einen <b>Bestätigen</b>-Button. Nach dem Tippen muss der Tausch auf der BitBox freigegeben werden.
+                Die Prüfkarte für den Tausch mit dem Titel <b>REALU → ZCHF tauschen</b>: Sie zeigt <b>Sie senden 100 REALU</b> und <b>Sie erhalten ≈ 100.00 ZCHF</b>, den Hinweis zur Bestätigung über den BrokerBot sowie einen <b>Bestätigen</b>-Button. Nach dem Tippen muss der Tausch auf der BitBox freigegeben werden.
               </div>
             </div>
             <div class="test" id="131-sell-bitbox-swapping">
@@ -4991,7 +5016,7 @@
                 />
               </div>
               <div class="desc">
-                Nach dem Bestätigen der Einzahlung erscheint in Schritt 3 ein Ladeindikator mit dem Text <b>ZCHF wird gesendet. Bestätigen Sie auf der Bitbox.</b> Die Einzahlungs-Transaktion muss jetzt auf dem Gerät freigegeben werden.
+                Nach dem Bestätigen der Einzahlung erscheint in Schritt 3 ein Ladeindikator mit dem Text <b>ZCHF wird gesendet. Bestätigen Sie auf der Bitbox</b>. Die Einzahlungs-Transaktion muss jetzt auf dem Gerät freigegeben werden.
               </div>
             </div>
             <div class="test" id="134-sell-bitbox-retrying-deposit">
@@ -5051,7 +5076,7 @@
                 />
               </div>
               <div class="desc">
-                Fehlerzustand, wenn die Einzahlung gar nicht auf die Blockchain gelangt ist: ein rotes Fehler-Symbol mit der Überschrift <b>Einzahlung fehlgeschlagen</b> und dem Hinweis, dass der Tausch abgeschlossen ist, die ZCHF-Einzahlung aber nicht gesendet werden konnte und die Mittel sicher sind. Über den <b>Wiederholen</b>-Button wird der Versuch erneut gestartet.
+                Fehlerzustand, wenn die Einzahlung gar nicht auf die Blockchain gelangt ist: ein rotes Fehler-Symbol mit der Überschrift <b>Einzahlung fehlgeschlagen</b> und darunter der Fehlermeldung (im Golden <b>network error</b>); ohne Meldung erscheint der Standardtext, dass der Tausch abgeschlossen ist, die ZCHF-Einzahlung aber nicht gesendet werden konnte und die Mittel sicher sind. Über den <b>Wiederholen</b>-Button wird der Versuch erneut gestartet.
               </div>
             </div>
             <div class="test" id="136-sell-bitbox-confirm-retry">
@@ -5067,7 +5092,7 @@
                 />
               </div>
               <div class="desc">
-                Fehler-Variante, wenn die Einzahlung bereits on-chain ist und nur die Bestätigung fehlt: rotes Fehler-Symbol mit der Überschrift <b>Bestätigung ausstehend</b> und dem Hinweis, dass die ZCHF-Einzahlung gesendet, aber noch nicht bei DFX bestätigt wurde. Der <b>Wiederholen</b>-Button setzt am Bestätigungsschritt wieder an.
+                Fehler-Variante, wenn die Einzahlung bereits on-chain ist und nur die Bestätigung fehlt: rotes Fehler-Symbol mit der Überschrift <b>Bestätigung ausstehend</b> und darunter der Fehlermeldung (im Golden <b>confirm failed</b>); ohne Meldung erscheint der Standardtext, dass die ZCHF-Einzahlung gesendet, aber noch nicht bei DFX bestätigt wurde. Der <b>Wiederholen</b>-Button setzt am Bestätigungsschritt wieder an.
               </div>
             </div>
           </div>
@@ -5383,7 +5408,7 @@
                 />
               </div>
               <div class="desc">
-                Die <b>Adresswiederherstellungs-Seite</b>, die als Vollbild erscheint, wenn eine bereits gespeicherte BitBox-Wallet ihre Adresse verloren hat. Optisch identisch zum normalen Startzustand (<b>BitBox verbinden</b>, nur Abbrechen), aber erneutes Koppeln füllt die fehlende Adresse in die bestehende Wallet nach, statt eine zweite anzulegen.
+                Die <b>Adresswiederherstellungs-Seite</b>, die als Vollbild erscheint, wenn eine bereits gespeicherte BitBox-Wallet ihre Adresse verloren hat. Optisch identisch zum normalen Startzustand (<b>BitBox verbinden</b>, nur Abbrechen), aber erneutes Koppeln füllt die fehlende Adresse in die bestehende Wallet nach, statt eine zweite anzulegen. <b>Abbrechen</b> entfernt die defekte lokale Wallet und startet das Onboarding neu.
               </div>
             </div>
           </div>
@@ -5475,7 +5500,7 @@
                 />
               </div>
               <div class="desc">
-                Die Seite <b>E-Mail-Bestätigung</b> im Ausgangszustand. Sie fordert den Nutzer auf, die zugesandte E-Mail zu öffnen, auf den Bestätigungslink zu klicken und anschliessend zurückzukehren.
+                Die Seite <b>E-Mail-Bestätigung</b> im Ausgangszustand. Sie fordert den Nutzer auf, die zugesandte E-Mail zu öffnen, auf den Bestätigungslink zu klicken und anschliessend hierher zurückzukehren.
               </div>
             </div>
             <div class="test" id="152-kyc-email-verification-page-default">
@@ -5491,7 +5516,7 @@
                 />
               </div>
               <div class="desc">
-                Die Seite <b>Willkommen zurück</b> für wiederkehrende Nutzer, deren Konto bereits existiert. Sie bittet darum, die soeben zugesandte E-Mail über den Link zu bestätigen, um mit dem bestehenden Konto fortzufahren.
+                Die Seite <b>Willkommen zurück!</b> für wiederkehrende Nutzer, deren Konto bereits existiert. Sie bittet darum, die soeben zugesandte E-Mail über den Link zu bestätigen, um mit dem bestehenden Konto fortzufahren.
               </div>
             </div>
             <div class="test" id="153-kyc-email-verification-page-loading">
@@ -5587,7 +5612,7 @@
                 />
               </div>
               <div class="desc">
-                Der Nutzer hat <b>Code erneut senden</b> angetippt: der Resend-Button ist deaktiviert und zeigt die Sende-Beschriftung. Der Weiter-Button bleibt unverändert.
+                Der Nutzer hat <b>Code erneut senden</b> angetippt: der Resend-Button ist deaktiviert und zeigt <b>Wird gesendet...</b>. Der Weiter-Button bleibt unverändert.
               </div>
             </div>
             <div class="test" id="159-kyc-2fa-page-verify-failure">
@@ -5603,7 +5628,7 @@
                 />
               </div>
               <div class="desc">
-                Rote SnackBar mit der Meldung <b>Der Code ist falsch</b>, wenn ein ungültiger 2FA-Code eingegeben wurde. Der Nutzer kann den Code korrigieren und erneut absenden.
+                Rote SnackBar mit der Server-Fehlermeldung (im Golden <b>invalid code</b>), wenn ein ungültiger 2FA-Code eingegeben wurde. Der Nutzer kann den Code korrigieren und erneut absenden.
               </div>
             </div>
             <div class="test" id="160-kyc-2fa-page-request-code-failure">
@@ -5619,7 +5644,7 @@
                 />
               </div>
               <div class="desc">
-                Rote SnackBar, wenn das <b>Versenden des Codes per E-Mail fehlschlägt</b> (etwa bei einer Ratenbegrenzung). Die Meldung weist auf ein Problem beim Senden der Mail hin.
+                Rote SnackBar, wenn das <b>Versenden des Codes per E-Mail fehlschlägt</b> (etwa bei einer Ratenbegrenzung). Die SnackBar zeigt die Server-Meldung (im Golden <b>rate limited</b>).
               </div>
             </div>
           </div>
@@ -5635,7 +5660,7 @@
                 <div class="file">test/goldens/screens/kyc/</div>
               </div>
               <div class="rhs">
-                <b>12 Screens</b>
+                <b>11 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/kyc"
@@ -5646,7 +5671,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Die Registrierung erfasst persönliche Daten, Adresse und Steueransässigkeit in einem dreistufigen Formular. Diese Einträge zeigen die einzelnen Schritte, vorausgefüllte Daten, geöffnete Dropdowns, Validierungsfehler sowie die Zustände beim Absenden inklusive BitBox-Signatur.
+            Die Registrierung erfasst Empfehlungscode (optional, siehe 277), persönliche Daten, Adresse und Steueransässigkeit in einem vierstufigen Formular. Diese Einträge zeigen die einzelnen Schritte, vorausgefüllte Daten, geöffnete Dropdowns, Validierungsfehler sowie die Zustände beim Absenden inklusive BitBox-Signatur.
           </p>
 
           <div class="tests cols-2">
@@ -5663,7 +5688,7 @@
                 />
               </div>
               <div class="desc">
-                Der Einstieg in die <b>Registrierung</b> auf dem ersten Schritt Persönliche Daten, mit leerem Formular. Hier werden Kontotyp, Vor- und Nachname, Geburtsdatum, Telefonnummer und Staatsangehörigkeit erfasst.
+                Der Schritt <b>Persönliche Daten</b> der Registrierung (zweiter Schritt nach dem Empfehlungscode), mit leerem Formular. Hier werden Kontotyp, Vor- und Nachname, Geburtstag, Telefonnummer und Staatsangehörigkeit erfasst.
               </div>
             </div>
             <div class="test" id="162-kyc-registration-page-prefilled">
@@ -5695,7 +5720,7 @@
                 />
               </div>
               <div class="desc">
-                Das geöffnete <b>Kontotyp-Auswahlmenü</b> im persönlichen Schritt. Das Overlay zeigt die auswählbaren Kontotypen.
+                Das geöffnete <b>Kontotyp-Auswahlmenü</b> im persönlichen Schritt. Das Overlay zeigt im Golden nur <b>Natürliche Person</b>.
               </div>
             </div>
             <div class="test" id="165-kyc-registration-personal-step-validation-error">
@@ -5727,7 +5752,7 @@
                 />
               </div>
               <div class="desc">
-                Der zweite Registrierungsschritt <b>Residenz</b> mit den Feldern für Strasse, Hausnummer, PLZ, Ort und Land. Der Seiten-Pager steht auf Seite 2 von 3.
+                Der Registrierungsschritt <b>Residenz</b> mit den Feldern Strasse, Nummer, PLZ, Stadt und Land. Einen Seitenzähler zeigt die App nicht.
               </div>
             </div>
             <div class="test" id="167-kyc-registration-address-step-validation-error">
@@ -5759,7 +5784,7 @@
                 />
               </div>
               <div class="desc">
-                Der dritte Registrierungsschritt <b>Steueransässigkeit</b> zur Angabe des Landes des steuerlichen Wohnsitzes. Der Pager steht auf Seite 3 von 3.
+                Der letzte Registrierungsschritt <b>Steueransässigkeit</b> zur Angabe des Landes des steuerlichen Wohnsitzes.
               </div>
             </div>
             <div class="test" id="169-kyc-registration-page-submit-loading">
@@ -5791,7 +5816,7 @@
                 />
               </div>
               <div class="desc">
-                Rote SnackBar <b>Registrierung fehlgeschlagen</b>, wenn die Übermittlung abgelehnt wird (hier durch eine abgebrochene Signatur ausgelöst). Die Formulareingaben bleiben erhalten.
+                Rote SnackBar, wenn die Übermittlung fehlschlägt: bei abgebrochener BitBox-Signatur (hier) <b>Signatur abgebrochen — bitte BitBox erneut bestätigen</b>, sonst die generische bzw. Server-Meldung. Die Formulareingaben bleiben erhalten.
               </div>
             </div>
             <div class="test" id="171-kyc-registration-page-forwarding-failed-snackbar">
@@ -5915,7 +5940,7 @@
                 />
               </div>
               <div class="desc">
-                Konnte die <b>Länderliste nicht geladen</b> werden, erscheint ein roter Hinweistext mit einem Erneut-versuchen-Button anstelle des Dropdowns.
+                Konnte die <b>Länderliste nicht geladen</b> werden, erscheint im Feldrahmen der Hinweis <b>Die Länderliste konnte nicht geladen werden. Bitte versuchen Sie es erneut.</b> mit dem Button <b>Wiederholen</b>.
               </div>
             </div>
             <div class="test" id="177-kyc-nationality-page-submit-loading">
@@ -5947,7 +5972,7 @@
                 />
               </div>
               <div class="desc">
-                Rote SnackBar, wenn das <b>Setzen der Staatsangehörigkeit fehlschlägt</b>. Der darunterliegende Formularkörper bleibt im Ruhezustand.
+                Rote SnackBar mit der Server-Meldung (im Golden <b>network error</b>), wenn das <b>Setzen der Staatsangehörigkeit fehlschlägt</b>. Der darunterliegende Formularkörper bleibt im Ruhezustand.
               </div>
             </div>
             <div class="test" id="179-kyc-nationality-page-validation-error">
@@ -6023,7 +6048,7 @@
                 />
               </div>
               <div class="desc">
-                Die eigenständige <b>Ladeseite Finanzdaten</b> mit Titelleiste und zentriertem Spinner. Zwischenzustand, während die Finanzdaten-Abfrage vorbereitet wird.
+                Die eigenständige <b>Ladeseite Finanzdaten</b> mit Titelleiste und zentriertem Spinner. Zwischenzustand, während die Finanzdaten-Abfrage vorbereitet wird. Gleicher Golden wie 180.
               </div>
             </div>
             <div class="test" id="182-kyc-financial-data-page-fallback">
@@ -6371,7 +6396,7 @@
                 />
               </div>
               <div class="desc">
-                Beim Fehlschlag der Verknüpfung erscheint eine rote <b>Registrierung-fehlgeschlagen-SnackBar</b> über einem zentrierten Spinner.
+                Beim Fehlschlag der Verknüpfung erscheint eine rote SnackBar mit der Fehlermeldung (im Golden <b>network error</b>) über einem zentrierten Spinner.
               </div>
             </div>
             <div class="test" id="202-kyc-link-wallet-page-missing-user-data">
@@ -6463,7 +6488,7 @@
                 />
               </div>
               <div class="desc">
-                Die Seite <b>Daten werden geprüft</b>: der zuletzt abgeschlossene Schritt (hier die Identitätsprüfung) befindet sich noch in Prüfung. Über den Aktualisieren-Button kann der Nutzer den Status neu abrufen.
+                Die Seite <b>Daten werden geprüft</b>: der zuletzt abgeschlossene Schritt (hier <code>IDENT</code>, die Identitätsprüfung) befindet sich noch in Prüfung; im Golden ist der Beschreibungstext nur als Platzhalterbalken gerendert. Über den Aktualisieren-Button kann der Nutzer den Status neu abrufen.
               </div>
             </div>
             <div class="test" id="206-kyc-completed-page-default">
@@ -6479,7 +6504,7 @@
                 />
               </div>
               <div class="desc">
-                Die Abschlussseite <b>Verifikation abgeschlossen</b>: der Nutzer hat nun genug Rechte, um die gewünschte Aktion auszuführen, und kann die Seite über Schliessen verlassen.
+                Die Abschlussseite <b>Verifikation abgeschlossen</b>: der Nutzer hat nun genug Rechte, um die gewünschte Aktion auszuführen, und kann die Seite über <b>Schließen</b> verlassen.
               </div>
             </div>
             <div class="test" id="207-kyc-failure-page-default">
@@ -6495,7 +6520,7 @@
                 />
               </div>
               <div class="desc">
-                Die allgemeine <b>Fehlerseite Fehler beim Laden</b> mit der konkreten Fehlermeldung. Sie rät, es später erneut zu versuchen oder den Support zu kontaktieren.
+                Die allgemeine <b>Fehlerseite Fehler beim Laden</b> mit der konkreten Fehlermeldung (im Golden <b>Something went wrong</b>).
               </div>
             </div>
             <div class="test" id="208-kyc-manual-review-page-default">
@@ -6767,7 +6792,7 @@
                 />
               </div>
               <div class="desc">
-                Die Netzwerk-Einstellung listet <b>Mainnet</b> (mit blauem Haken als aktuell aktives Netz) und <b>Testnet</b>. Der Nutzer hat gerade auf <b>Testnet</b> getippt, um das Netzwerk zu wechseln: Statt eines Hakens zeigt Testnet einen kleinen <b>Ladekreis</b>, solange der Wechsel im Gange ist. Diesen Zwischenzustand sieht man nur für den Moment, in dem der Netzwerkwechsel noch verarbeitet wird.
+                Die Netzwerk-Einstellung listet <b>Mainnet</b> (mit blauem Haken als aktuell aktives Netz) und <b>Testnet</b>. Der Nutzer hat gerade auf <b>Testnet</b> getippt, um das Netzwerk zu wechseln: Statt eines Hakens zeigt Testnet einen kleinen <b>Ladekreis</b> (im Golden nur als Punkt sichtbar), solange der Wechsel im Gange ist. Diesen Zwischenzustand sieht man nur für den Moment, in dem der Netzwerkwechsel noch verarbeitet wird.
               </div>
             </div>
           </div>
@@ -6794,7 +6819,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Der Bildschirm „Wallet-Sicherung" zeigt die 12 Wiederherstellungs-Wörter, mit denen die Wallet gesichert und wiederhergestellt werden kann. Bevor die Wörter im Speicher liegen, wird anstelle der Seed-Karte ein Ladeindikator eingeblendet.
+            Der Bildschirm «Wallet-Sicherung» zeigt die 12 Wiederherstellungs-Wörter, mit denen die Wallet gesichert und wiederhergestellt werden kann. Bevor die Wörter im Speicher liegen, wird anstelle der Seed-Karte ein Ladeindikator eingeblendet.
           </p>
 
           <div class="tests cols-2">
@@ -6947,7 +6972,7 @@
                 />
               </div>
               <div class="desc">
-                Schlägt das Aktivieren oder Deaktivieren der Biometrie fehl (etwa durch Sperre oder fehlende Registrierung), erscheint am unteren Rand eine <b>rote Meldung</b>: „Die Einstellung für die biometrische Entsperrung konnte nicht geändert werden." Ein reiner Abbruch des Betriebssystem-Dialogs löst diese Meldung nicht aus.
+                Schlägt das Aktivieren oder Deaktivieren der Biometrie fehl (etwa durch Sperre oder fehlende Registrierung), erscheint am unteren Rand eine <b>rote Meldung</b>: «Die Einstellung für die biometrische Entsperrung konnte nicht geändert werden.» Ein reiner Abbruch des Betriebssystem-Dialogs löst diese Meldung nicht aus.
               </div>
             </div>
           </div>
@@ -6991,7 +7016,7 @@
                 />
               </div>
               <div class="desc">
-                Der <b>Startzustand</b> des Steuerbericht-Screens: der Hinweis „Hier können Sie Ihren Steuerbericht für ein spezifisches Datum generieren.", darunter das Datumsfeld (vorbelegt mit dem letzten Jahresende, hier <b>31.12.2025</b>) und der blaue Knopf <b>PDF</b>. Diesen Zustand sehen Sie beim Öffnen des Screens; ein Tippen auf <b>PDF</b> startet die Erstellung für das gewählte Datum.
+                Der <b>Startzustand</b> des Steuerbericht-Screens: der Hinweis «Hier können Sie Ihren Steuerbericht für ein spezifisches Datum generieren.», darunter das Datumsfeld (vorbelegt mit dem letzten Jahresende, hier <b>31.12.2025</b>) und der blaue Knopf <b>PDF</b>. Diesen Zustand sehen Sie beim Öffnen des Screens; ein Tippen auf <b>PDF</b> startet die Erstellung für das gewählte Datum.
               </div>
             </div>
             <div class="test" id="225-settings-tax-report-page-date-picker">
@@ -7007,7 +7032,7 @@
                 />
               </div>
               <div class="desc">
-                Nach dem Tippen auf das Datumsfeld öffnet sich der <b>Material-Datumsdialog</b> (Select date), hier auf den vorbelegten Stichtag <b>Mittwoch, 31. Dez. 2025</b> gesetzt. Hier wählen Sie das <b>Stichdatum</b> des Berichts und bestätigen mit <b>OK</b> oder brechen mit <b>Cancel</b> ab; der Screen im Hintergrund ist während der Auswahl abgedunkelt.
+                Nach dem Tippen auf das Datumsfeld öffnet sich der <b>Material-Datumsdialog</b> (Select date), hier auf den vorbelegten Stichtag <b>Wed, Dec 31</b> (31.12.2025) gesetzt. Hier wählen Sie das <b>Stichdatum</b> des Berichts und bestätigen mit <b>OK</b> oder brechen mit <b>Cancel</b> ab; der Screen im Hintergrund ist während der Auswahl abgedunkelt. Der Golden ist ohne deutsche Locale aufgenommen, daher englische Beschriftungen und ein überlagertes Kalenderraster.
               </div>
             </div>
             <div class="test" id="226-settings-tax-report-page-failure-snackbar">
@@ -7023,7 +7048,7 @@
                 />
               </div>
               <div class="desc">
-                Schlägt die Erstellung fehl, erscheint am unteren Rand eine <b>rote Fehler-Meldung</b>: „Konnte Steuerausweis nicht generieren.". Der Screen bleibt unverändert bedienbar, sodass Sie den Vorgang direkt erneut anstossen können.
+                Schlägt die Erstellung fehl, erscheint am unteren Rand eine <b>rote Fehler-Meldung</b> mit der Servermeldung (im Golden «Konnte Steuerausweis nicht generieren.»). Der Screen bleibt unverändert bedienbar, sodass Sie den Vorgang direkt erneut anstossen können.
               </div>
             </div>
           </div>
@@ -7207,7 +7232,7 @@
                 />
               </div>
               <div class="desc">
-                Der <b>Fehlerzustand</b> beim Laden. Mittig steht der Text <b>Beim Laden der Nutzerdaten ist ein Fehler aufgetreten.</b> Der Nutzer sieht das, wenn die Nutzerdaten nicht vom Server geladen werden konnten.
+                Der <b>Fehlerzustand</b> beim Laden. In der Bildmitte steht linksbündig der Text <b>Beim Laden der Nutzerdaten ist ein Fehler aufgetreten.</b> Der Nutzer sieht das, wenn die Nutzerdaten nicht vom Server geladen werden konnten.
               </div>
             </div>
             <div class="test" id="235-settings-user-data-page-bitbox-disconnected">
@@ -7375,7 +7400,7 @@
                 />
               </div>
               <div class="desc">
-                Der <b>Fehlerzustand</b> eines Bearbeiten-Formulars: Titel <b>Fehler beim Laden</b>, eine Beschreibung mit der konkreten Fehlermeldung und dem Hinweis, bei anhaltendem Fehler den Support zu kontaktieren, sowie der Button <b>Aktualisieren</b>.
+                Der <b>Fehlerzustand</b> eines Bearbeiten-Formulars: Titel <b>Fehler beim Laden</b>, darunter die Fehlermeldung des Servers (im Golden <b>Something went wrong</b>) sowie der Button <b>Aktualisieren</b>.
               </div>
             </div>
           </div>
@@ -7402,7 +7427,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Der Disclaimer wird als mehrstufiger Ablauf vor der ersten Nutzung angezeigt. Ein Fortschrittsbalken oben zeigt, an welcher Stelle der Schritte man sich befindet; unten führen die Buttons Ablehnen und Zustimmen weiter.
+            Der Disclaimer wird als fünfstufiger Ablauf im Software-Wallet-Onboarding angezeigt (zwei Hinweisseiten, Rechtsdokumente RealUnit, Aktionariat, DFX; siehe 09). Ein Fortschrittsbalken oben zeigt, an welcher Stelle der Schritte man sich befindet; unten führen die Buttons Ablehnen und Zustimmen weiter.
           </p>
 
           <div class="tests cols-2">
@@ -7739,7 +7764,7 @@
                 />
               </div>
               <div class="desc">
-                Die geladene Ticket-Liste mit zwei Einträgen: ein offenes Ticket mit <b>grünem</b> Statuspunkt und ein geschlossenes mit <b>grauem</b> Punkt, jeweils mit Titel und Erstellungsdatum. Der Nutzer sieht diese Ansicht, wenn Tickets vorhanden sind, und kann einen Eintrag antippen, um den Chat zu öffnen.
+                Die geladene Ticket-Liste mit zwei Einträgen: ein offenes Ticket mit <b>grünem</b> Statuspunkt und ein geschlossenes mit <b>blaugrauem</b> Punkt, jeweils mit Titel und Erstellungsdatum. Der Nutzer sieht diese Ansicht, wenn Tickets vorhanden sind, und kann einen Eintrag antippen, um den Chat zu öffnen.
               </div>
             </div>
             <div class="test" id="256-support-tickets-page-error">
@@ -7755,7 +7780,7 @@
                 />
               </div>
               <div class="desc">
-                Die Ticket-Übersicht im Fehlerzustand mit dem zentrierten Text <b>Tickets konnten nicht geladen werden.</b> Diese Meldung erscheint, wenn die Ticket-Liste nicht vom Server abgerufen werden konnte.
+                Die Ticket-Übersicht im Fehlerzustand mit dem zentrierten Fehlertext (im Golden <b>Tickets konnten nicht geladen werden.</b>). Diese Meldung erscheint, wenn die Ticket-Liste nicht vom Server abgerufen werden konnte.
               </div>
             </div>
           </div>
@@ -7863,7 +7888,7 @@
                 />
               </div>
               <div class="desc">
-                Der Ticket-Chat im Fehlerzustand mit dem zentrierten Text <b>Chat konnte nicht geladen werden.</b> Diese Meldung erscheint, wenn der Chatverlauf eines Tickets nicht abgerufen werden konnte.
+                Der Ticket-Chat im Fehlerzustand mit dem zentrierten Fehlertext (im Golden <b>Chat konnte nicht geladen werden.</b>). Diese Meldung erscheint, wenn der Chatverlauf eines Tickets nicht abgerufen werden konnte.
               </div>
             </div>
           </div>
@@ -7907,7 +7932,7 @@
                 />
               </div>
               <div class="desc">
-                Der <b>Startzustand</b> des Debug-Auth-Tools: sichtbar sind nur das leere Feld „Adresse" mit dem Platzhalter 0x... und der Textbutton „Signierte Nachricht abrufen". So sieht der Entwickler den Screen beim Öffnen, wenn keine Adresse gespeichert ist.
+                Der <b>Startzustand</b> des Debug-Auth-Tools: sichtbar sind nur das leere Feld «Adresse» mit dem Platzhalter 0x... und der Textbutton «Signierte Nachricht abrufen». So sieht der Entwickler den Screen beim Öffnen, wenn keine Adresse gespeichert ist.
               </div>
             </div>
             <div class="test" id="263-debug-auth-page-fetching">
@@ -7923,7 +7948,7 @@
                 />
               </div>
               <div class="desc">
-                Während die signierte Nachricht vom Server geladen wird (<b>isLoading</b>), ist der Button „Signierte Nachricht abrufen" ausgegraut und deaktiviert. Der Signatur-Block fehlt noch, weil bislang keine Nachricht vorliegt.
+                Während die signierte Nachricht vom Server geladen wird (<b>isLoading</b>), ist der Button «Signierte Nachricht abrufen» ausgegraut und deaktiviert. Der Signatur-Block fehlt noch, weil bislang keine Nachricht vorliegt.
               </div>
             </div>
             <div class="test" id="264-debug-auth-page-error">
@@ -7939,7 +7964,7 @@
                 />
               </div>
               <div class="desc">
-                Schlägt der Abruf oder die Authentifizierung fehl, erscheint unter dem Button eine <b>rote Fehlerbox</b> mit dem Fehlertext, hier „Authentifizierung fehlgeschlagen (401).". Der Signatur-Block bleibt aus, da keine gültige Nachricht geladen wurde.
+                Schlägt der Abruf oder die Authentifizierung fehl, erscheint unter dem Button eine <b>rote Fehlerbox</b> mit dem Fehlertext, hier «Authentifizierung fehlgeschlagen (401).». Der Signatur-Block bleibt aus, da keine gültige Nachricht geladen wurde.
               </div>
             </div>
           </div>
@@ -7983,7 +8008,7 @@
                 />
               </div>
               <div class="desc">
-                Sobald die Nachricht geladen ist, erscheinen ein Trenner, die Überschrift „Signierte Nachricht:", die Challenge in einer grauen Box, das Feld „Signatur" und der blaue Button „Authentifizieren". Der Entwickler signiert die Nachricht extern und trägt die Signatur hier ein.
+                Sobald die Nachricht geladen ist, erscheinen ein Trenner, die Überschrift «Signierte Nachricht:», die Challenge in einer grauen Box, das Feld «Signatur» und der blaue Button «Authentifizieren». Der Entwickler signiert die Nachricht extern und trägt die Signatur hier ein.
               </div>
             </div>
             <div class="test" id="266-debug-auth-page-clipboard-snackbar">
@@ -7999,7 +8024,7 @@
                 />
               </div>
               <div class="desc">
-                Ein Tippen auf die graue Nachrichtenbox kopiert den Text in die Zwischenablage und zeigt unten die <b>grüne Snackbar</b> „In die Zwischenablage kopiert". So lässt sich die Nachricht bequem in ein externes Signier-Tool übernehmen.
+                Ein Tippen auf die graue Nachrichtenbox kopiert den Text in die Zwischenablage und zeigt unten die <b>grüne Snackbar</b> «In die Zwischenablage kopiert». So lässt sich die Nachricht bequem in ein externes Signier-Tool übernehmen.
               </div>
             </div>
             <div class="test" id="267-debug-auth-page-authenticating">
@@ -8015,7 +8040,7 @@
                 />
               </div>
               <div class="desc">
-                Nach dem Tippen auf „Authentifizieren" wechselt der Button in den <b>Ladezustand</b> (hellblau mit Spinner), während die eingetragene Signatur gegen den Server geprüft wird. Adress- und Signatur-Feld bleiben dabei sichtbar.
+                Nach dem Tippen auf «Authentifizieren» wechselt der Button in den <b>Ladezustand</b> (hellblau mit Spinner), während die eingetragene Signatur gegen den Server geprüft wird. Adress- und Signatur-Feld bleiben dabei sichtbar.
               </div>
             </div>
           </div>
@@ -8059,7 +8084,7 @@
                 />
               </div>
               <div class="desc">
-                Zeigt den <b>Ausgangszustand</b> des Telefonnummer-Felds: die Überschrift <b>Telefonnummer</b>, links das Vorwahl-Dropdown mit der Standardvorwahl <b>+41</b> (Schweiz, alternativ <b>+49</b> für Deutschland) und rechts das noch leere Rufnummernfeld mit dem Platzhalter <b>1231234567</b>. So sehen Nutzer das Feld, bevor sie eine Nummer eingeben; die Länge der Nummer wird erst serverseitig geprüft.
+                Zeigt den <b>Ausgangszustand</b> des Telefonnummer-Felds: die Überschrift <b>Telefonnummer</b>, links das Vorwahl-Dropdown mit der Standardvorwahl <b>+41</b> (Schweiz; weitere Einträge <b>+49</b>, <b>+43</b>, <b>+423</b>) und rechts das noch leere Rufnummernfeld mit dem Platzhalter <b>1231234567</b>. So sehen Nutzer das Feld, bevor sie eine Nummer eingeben; die Länge der Nummer wird erst serverseitig geprüft.
               </div>
             </div>
           </div>
@@ -8071,7 +8096,7 @@
           <summary>
             <div class="spec-head">
               <div class="lhs">
-                <h2><span class="num">79</span>Insider-Freischaltung — Bezahlen &amp; Senden</h2>
+                <h2><span class="num">79</span>Insider-Freischaltung — Bezahlen</h2>
                 <div class="file">test/goldens/screens/dashboard/</div>
               </div>
               <div class="rhs">
@@ -8086,9 +8111,10 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Die Funktionen <b>Bezahlen</b> (OpenCryptoPay) und <b>Senden</b> (REALU-Transfer
-            an eine andere Wallet) sind bewusst versteckt (Soft-Launch) und erscheinen erst
-            nach einer einmaligen Freischaltung auf dem Gerät.
+            Die Funktion <b>Bezahlen</b> (OpenCryptoPay) ist bewusst versteckt (Soft-Launch)
+            und erscheint erst nach einer einmaligen Freischaltung auf dem Gerät.
+            <b>Senden</b> (REALU-Transfer an eine andere Wallet) ist davon unabhängig über
+            Einstellungen → Wallet-Adresse und über Empfangen erreichbar.
           </p>
 
           <!-- Single column on purpose: the explainer block below carries a
@@ -8107,10 +8133,10 @@
                   <li>Einstellungen öffnen (Hamburger-Icon rechts oben im Dashboard).</li>
                   <li>Ganz nach unten scrollen bis zur Versionsnummer.</li>
                   <li>Siebenmal kurz hintereinander auf die Versionsnummer tippen.</li>
-                  <li>Es erscheint die Bestätigung „Insider-Funktionen freigeschaltet".</li>
+                  <li>Es erscheint die Bestätigung «Insider-Funktionen freigeschaltet».</li>
                   <li>
-                    Zurück im Dashboard stehen neben <b>Kaufen</b> und <b>Verkaufen</b> neu
-                    <b>Bezahlen</b> und <b>Senden</b>.
+                    Zurück im Dashboard steht neben <b>Kaufen</b> und <b>Verkaufen</b> neu
+                    <b>Bezahlen</b>.
                   </li>
                 </ol>
                 <p>
@@ -8135,14 +8161,14 @@
                     src="../screenshots/35-dashboard-with-balance.png"
                     alt="Dashboard vor der Freischaltung — nur Kaufen und Verkaufen"
                   />
-                  <p><em>Vorher: nur „Kaufen" und „Verkaufen".</em></p>
+                  <p><em>Vorher: nur «Kaufen» und «Verkaufen» (Golden mit Kurs 0, siehe 35).</em></p>
                 </div>
                 <div>
                   <img
                     src="../screenshots/269-dashboard-insider-unlocked.png"
-                    alt="Dashboard nach der Freischaltung — alle vier Aktionen"
+                    alt="Dashboard nach der Freischaltung — drei Aktionen"
                   />
-                  <p><em>Nachher: alle vier Aktionen.</em></p>
+                  <p><em>Nachher: drei Aktionen.</em></p>
                 </div>
               </div>
             </div>
@@ -8160,7 +8186,7 @@
               </div>
               <div class="desc">
                 Dashboard mit freigeschalteter Insider-Ansicht: neben <b>Kaufen</b> und
-                <b>Verkaufen</b> erscheinen zusätzlich <b>Bezahlen</b> und <b>Senden</b>.
+                <b>Verkaufen</b> erscheint zusätzlich <b>Bezahlen</b>.
                 Golden-Quelle: <code>dashboard_insider_unlocked.png</code> aus
                 <code>dashboard_golden_test.dart</code>.
               </div>
@@ -8194,8 +8220,9 @@
             eines Jahres, Stand der Tabellen <b>28.08.2026</b>. Die Diagramme sind
             Golden-Baselines der MAX-Ansicht; bei K3 zusätzlich 1J nach dem Verkauf auf 0.
             Unter <b>Bestand</b> erscheinen die drei jüngsten On-Chain-Transfers
-            (<b>Letzte Transaktionen</b>) — bei Bestand 0 (K3) blendet das Dashboard
-            diese Karte aus. Die Kurve ist der Marktwert in CHF (Stückzahl × REALU-Preis
+            (<b>Letzte Transaktionen</b>) — bei Bestand 0 (K3) ersetzt das Dashboard
+            Bestand, Aktionen und Letzte Transaktionen durch den Leerzustand mit dem
+            Button <b>RealUnit kaufen</b>. Die Kurve ist der Marktwert in CHF (Stückzahl × REALU-Preis
             des jeweiligen Tages), nicht die reine Stückzahl.
           </p>
 
@@ -8316,7 +8343,7 @@
               <div class="desc">
                 Dieselbe K3-Historie in der Ansicht <b>1J</b>. Der Abverkauf liegt
                 innerhalb des Jahresfensters, der Chart bleibt nach dem letzten
-                Verkauf eine sichtbare Null-Linie (Achse 0…10).
+                Verkauf eine sichtbare Null-Linie (gleiche Achse wie MAX, 0…5000).
               </div>
             </div>
 
@@ -8409,7 +8436,8 @@
           </summary>
           <p class="spec-intro">
             Jede Zelle ausser Land und ISO ist <b>ja</b> oder <b>nein</b>
-            (leer nur, wenn die API keinen Wert liefert). Wohnsitz, Nationalität,
+            (<b>—</b>, wenn die API keinen Wert liefert; Nationalität <b>ja</b> umfasst
+            die API-Werte Allowed und Exception). Wohnsitz, Nationalität,
             Bestand, IP und Steuer sind unabhängige Schalter. CSV, Excel und PDF
             exportieren dieselbe ja/nein-Liste. Quelle:
             <code>GET /v1/country</code>. Die Tabelle kopiert keine Zeilen ins Repo.
@@ -8486,19 +8514,18 @@
             Die öffentliche Website <a href="https://realunit.app">realunit.app</a>
             (Landingpage plus Empfehlung unter <code>/invite/</code>, Kampagne unter
             <code>/promo/</code>, der Aktionariat-Adressbestätigungs-Flow unter
-            <code>/confirm-aktionariat</code> und der Adresse-hinzufügen-Flow unter
+            <code>/confirm-aktionariat/</code> und der Adresse-hinzufügen-Flow unter
             <code>/account-merge/</code>) hat ihre eigene Visual-Regression-Suite.
             Jedes Bild hier ist eine <b>Playwright-Baseline</b> aus dem
             <a href="https://github.com/RealUnitCH/web">RealUnitCH/web</a>-Repo
             (<code>tests/__screenshots__/</code>), aufgenommen im gepinnten
             Linux-Container über drei Viewports — <b>Desktop</b> (Chromium),
-            <b>Tablet</b> (Chromium) und <b>Mobile</b> (Safari). Es gilt dieselbe
+            <b>Tablet</b> (Chromium) und <b>Mobile</b> (WebKit mit iPhone-15-Emulation; die Varianten ohne Plattform-Suffix wie <code>-mobile</code> und <code>-mobile-en</code> entsprechen der iOS-Ansicht). Es gilt dieselbe
             Eigenschaft wie bei den App-Screens oben: Driftet das Seitenrendering,
             wird zuerst der Visual-Regression-Test im web-Repo rot, bevor die
             Baseline sich ändert. Bei jedem Handbook-Build werden die aktuell
             akzeptierten Baselines aus <code>develop</code> automatisch ins Image
-            gezogen — Single Source of Truth ist das web-Repo, dieses Handbook
-            spiegelt nur den aktuellen Stand.
+            gezogen — Single Source of Truth ist das web-Repo, dieses Handbook spiegelt nur den aktuellen Stand. Mehrere Baselines der Invite- und Promo-Landings (u.a. Mobile gültig, Mobile und Desktop nicht erreichbar) sind oben beschnitten: Das Layout im web-Repo zentriert die Karte per Flexbox, und ist sie höher als der Viewport, liegt ihr oberer Teil ausserhalb des Screenshots. Diese Baselines beginnen deshalb unterhalb der Kartenoberkante.
           </p>
 
           <h3>Startseite <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
@@ -8548,8 +8575,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht (Safari), iOS-Variante — der Store-Badge richtet
-                sich nach der erkannten Plattform und zeigt hier den App Store.
+                Mobile-Ansicht (WebKit), iOS-Variante — alle drei Store-Badges (App Store, Google Play, GitHub-APK) bleiben sichtbar; der zur erkannten Plattform passende steht zuerst und ist vergrössert, hier der App Store.
               </div>
             </div>
             <div class="test" id="web-home-mobile-android">
@@ -8565,8 +8591,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — hier zeigt derselbe Store-Badge
-                Google Play.
+                Mobile-Ansicht, Android-Variante — dieselben drei Badges, hier steht Google Play zuerst und vergrössert.
               </div>
             </div>
           </div>
@@ -8779,7 +8804,7 @@
             </div>
           </div>
 
-          <h3>Adressbestätigung — Dienst nicht verfügbar <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
+          <h3>Adressbestätigung — Dienst vorübergehend nicht erreichbar <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
           <div class="tests cols-2">
             <div class="test" id="web-confirm-unavailable-desktop-de">
               <div class="head">
@@ -8790,7 +8815,7 @@
               <div class="img">
                 <img
                   src="../web/desktop-chromium/confirm-unavailable.png"
-                  alt="Dienst nicht verfügbar — Desktop (DE)"
+                  alt="Dienst vorübergehend nicht erreichbar — Desktop (DE)"
                 />
               </div>
               <div class="desc">
@@ -8823,7 +8848,7 @@
               <div class="img">
                 <img
                   src="../web/mobile-safari/confirm-unavailable.png"
-                  alt="Dienst nicht verfügbar — Mobile"
+                  alt="Dienst vorübergehend nicht erreichbar — Mobile"
                 />
               </div>
               <div class="desc">
@@ -9025,7 +9050,7 @@
             </div>
           </div>
 
-          <h3>Adresse hinzufügen — Dienst nicht verfügbar <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
+          <h3>Adresse hinzufügen — Dienst vorübergehend nicht erreichbar <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
           <div class="tests cols-2">
             <div class="test" id="web-merge-unavailable-desktop-de">
               <div class="head">
@@ -9036,7 +9061,7 @@
               <div class="img">
                 <img
                   src="../web/desktop-chromium/merge-unavailable.png"
-                  alt="Dienst nicht erreichbar — Desktop (DE)"
+                  alt="Dienst vorübergehend nicht erreichbar — Desktop (DE)"
                 />
               </div>
               <div class="desc">
@@ -9069,7 +9094,7 @@
               <div class="img">
                 <img
                   src="../web/mobile-safari/merge-unavailable.png"
-                  alt="Dienst nicht erreichbar — Mobile"
+                  alt="Dienst vorübergehend nicht erreichbar — Mobile"
                 />
               </div>
               <div class="desc">
@@ -9094,7 +9119,7 @@
               </div>
               <div class="desc">
                 Erfolgs-Zustand der Empfehlungs-Landing unter
-                <code>/invite/{code}</code> nach gültigem Code. Desktop, Deutsch.
+                <code>/invite/{code}</code> nach gültigem Code. Desktop, Deutsch. Desktop und Tablet zeigen den Hinweis «Öffne diesen Link auf deinem Smartphone, um die App zu starten.» und «Link kopieren»; Mobile zeigt stattdessen nach Ende der Prüfung den CTA «In der App öffnen», auf iOS zusätzlich den Hinweis für eine bereits installierte App.
               </div>
             </div>
             <div class="test" id="web-invite-ok-desktop-en">
@@ -9158,8 +9183,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht (Safari), iOS-Variante — der Store-Badge zeigt den
-                App Store.
+                Mobile-Ansicht (WebKit), iOS-Variante — beide Store-Badges bleiben sichtbar, der App-Store-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-invite-ok-mobile-android">
@@ -9175,8 +9199,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-invite-ok-mobile-en">
@@ -9197,7 +9220,7 @@
             </div>
           </div>
 
-          <h3>Empfehlung — Store-Fallback <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
+          <h3>Empfehlung — gültig, ohne Namen (Fallback-Texte) <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
           <div class="tests cols-2">
             <div class="test" id="web-invite-ok-fallback-desktop-de">
               <div class="head">
@@ -9212,8 +9235,7 @@
                 />
               </div>
               <div class="desc">
-                Dieselbe gültige Einladung im Store-Handoff-Fallback, wenn der
-                Deep-Link nicht greift. Desktop, Deutsch.
+                Gültiger Code, aber die API liefert keine Namen: statt «Hey Alice» und «Björn lädt dich ein zu RealUnit.» erscheinen die Fallback-Texte «Du bist eingeladen» und «Du bist zu RealUnit eingeladen.». Layout, Buttons und Badges wie im gültigen Zustand. Desktop, Deutsch.
               </div>
             </div>
             <div class="test" id="web-invite-ok-fallback-desktop-en">
@@ -9293,8 +9315,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-invite-ok-fallback-mobile-en">
@@ -9411,8 +9432,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-invite-loading-mobile-en">
@@ -9444,8 +9464,7 @@
                 />
               </div>
               <div class="desc">
-                Derselbe Zustand auf Englisch, Android-Variante — der Store-Badge
-                zeigt Google Play.
+                Derselbe Zustand auf Englisch, Android-Variante — Google-Play-Badge zuerst und vergrössert.
               </div>
             </div>
           </div>
@@ -9546,8 +9565,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-invite-invalid-mobile-en">
@@ -9579,8 +9597,7 @@
                 />
               </div>
               <div class="desc">
-                Derselbe Zustand auf Englisch, Android-Variante — der Store-Badge
-                zeigt Google Play.
+                Derselbe Zustand auf Englisch, Android-Variante — Google-Play-Badge zuerst und vergrössert.
               </div>
             </div>
           </div>
@@ -9681,8 +9698,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-invite-missing-code-mobile-en">
@@ -9799,8 +9815,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-invite-spent-mobile-en">
@@ -9821,7 +9836,7 @@
             </div>
           </div>
 
-          <h3>Empfehlung — Dienst nicht verfügbar <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
+          <h3>Empfehlung — Dienst vorübergehend nicht erreichbar <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
           <div class="tests cols-2">
             <div class="test" id="web-invite-unavailable-desktop-de">
               <div class="head">
@@ -9917,8 +9932,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-invite-unavailable-mobile-en">
@@ -9950,8 +9964,7 @@
                 />
               </div>
               <div class="desc">
-                Derselbe Zustand auf Englisch, Android-Variante — der Store-Badge
-                zeigt Google Play.
+                Derselbe Zustand auf Englisch, Android-Variante — Google-Play-Badge zuerst und vergrössert.
               </div>
             </div>
           </div>
@@ -9971,8 +9984,7 @@
                 />
               </div>
               <div class="desc">
-                Empfehlungs-Landing ohne JavaScript (noscript-Banner). Desktop,
-                Deutsch.
+                Empfehlungs-Landing ohne JavaScript: Karte «JavaScript ist deaktiviert» mit deutschem und englischem Text sowie den Store-Badges (immer zweisprachig, da ohne JavaScript keine Sprachwahl). Desktop.
               </div>
             </div>
             <div class="test" id="web-invite-noscript-tablet">
@@ -10026,7 +10038,7 @@
               <div class="desc">
                 Erfolgs-Zustand der Kampagnen-Landing unter
                 <code>/promo/{code}</code> nach gültigem Promo-Code. Desktop,
-                Deutsch.
+                Deutsch. Desktop und Tablet zeigen den Hinweis «Öffne diesen Link auf deinem Smartphone, um die App zu starten.» und «Link kopieren»; Mobile zeigt stattdessen nach Ende der Prüfung den CTA «In der App öffnen», auf iOS zusätzlich den Hinweis für eine bereits installierte App.
               </div>
             </div>
             <div class="test" id="web-promo-ok-desktop-en">
@@ -10090,8 +10102,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht (Safari), iOS-Variante — der Store-Badge zeigt den
-                App Store.
+                Mobile-Ansicht (WebKit), iOS-Variante — beide Store-Badges bleiben sichtbar, der App-Store-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-promo-ok-mobile-android">
@@ -10107,8 +10118,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-promo-ok-mobile-en">
@@ -10129,7 +10139,7 @@
             </div>
           </div>
 
-          <h3>Promo — Store-Fallback <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
+          <h3>Promo — gültig, ohne Aktionstext (Fallback-Text) <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
           <div class="tests cols-2">
             <div class="test" id="web-promo-ok-fallback-desktop-de">
               <div class="head">
@@ -10144,8 +10154,7 @@
                 />
               </div>
               <div class="desc">
-                Dieselbe gültige Kampagne im Store-Handoff-Fallback, wenn der
-                Deep-Link nicht greift. Desktop, Deutsch.
+                Gültiger Code, aber die API liefert keinen Aktionstext: Titel «Promo-Code», Text «Öffne die App, um den Promo-Code zu übernehmen.». Layout, Buttons und Badges wie im gültigen Zustand. Desktop, Deutsch.
               </div>
             </div>
             <div class="test" id="web-promo-ok-fallback-desktop-en">
@@ -10225,8 +10234,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-promo-ok-fallback-mobile-en">
@@ -10343,8 +10351,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-promo-loading-mobile-en">
@@ -10376,8 +10383,7 @@
                 />
               </div>
               <div class="desc">
-                Derselbe Zustand auf Englisch, Android-Variante — der Store-Badge
-                zeigt Google Play.
+                Derselbe Zustand auf Englisch, Android-Variante — Google-Play-Badge zuerst und vergrössert.
               </div>
             </div>
           </div>
@@ -10478,8 +10484,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-promo-invalid-mobile-en">
@@ -10511,8 +10516,7 @@
                 />
               </div>
               <div class="desc">
-                Derselbe Zustand auf Englisch, Android-Variante — der Store-Badge
-                zeigt Google Play.
+                Derselbe Zustand auf Englisch, Android-Variante — Google-Play-Badge zuerst und vergrössert.
               </div>
             </div>
           </div>
@@ -10612,8 +10616,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-promo-missing-code-mobile-en">
@@ -10730,8 +10733,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-promo-spent-mobile-en">
@@ -10752,7 +10754,7 @@
             </div>
           </div>
 
-          <h3>Promo — Dienst nicht verfügbar <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
+          <h3>Promo — Dienst vorübergehend nicht erreichbar <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
           <div class="tests cols-2">
             <div class="test" id="web-promo-unavailable-desktop-de">
               <div class="head">
@@ -10848,8 +10850,7 @@
                 />
               </div>
               <div class="desc">
-                Mobile-Ansicht, Android-Variante — der Store-Badge zeigt Google
-                Play.
+                Mobile-Ansicht, Android-Variante — beide Store-Badges bleiben sichtbar, der Google-Play-Badge steht zuerst und ist vergrössert.
               </div>
             </div>
             <div class="test" id="web-promo-unavailable-mobile-en">
@@ -10881,8 +10882,7 @@
                 />
               </div>
               <div class="desc">
-                Derselbe Zustand auf Englisch, Android-Variante — der Store-Badge
-                zeigt Google Play.
+                Derselbe Zustand auf Englisch, Android-Variante — Google-Play-Badge zuerst und vergrössert.
               </div>
             </div>
           </div>
@@ -10902,7 +10902,7 @@
                 />
               </div>
               <div class="desc">
-                Promo-Landing ohne JavaScript (noscript-Banner). Desktop, Deutsch.
+                Promo-Landing ohne JavaScript: Karte «JavaScript ist deaktiviert» mit deutschem und englischem Text sowie den Store-Badges (immer zweisprachig, da ohne JavaScript keine Sprachwahl). Desktop.
               </div>
             </div>
             <div class="test" id="web-promo-noscript-tablet">
@@ -11022,7 +11022,8 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Verifizierte Aktionäre mit ausreichendem Bestand sehen auf dem Dashboard
+            Verifizierte Aktionäre mit mindestens 70 REALU im Wallet (geprüft bei
+            der Einladung und bei der Qualifikation) sehen auf dem Dashboard
             die Karte <b>Empfehlungen</b> («Erhalte 20 REALU pro Weiterempfehlung»)
             und denselben Einstieg in den Einstellungen. Sichtbarkeit, Mindestbestand
             und Auszahlung entscheidet die DFX API; die App rendert
@@ -11064,8 +11065,12 @@
             wechselt. Übersicht zeigt Anzahl offen /
             gutgeschrieben (vorgelesen «3 Offen») sowie Summe REALU und Frankenwert; offene Einladungen
             lassen sich erneut kopieren und versenden, ohne den Status der
-            eingeladenen Person. Offene Einladungen verfallen nach 3 Monaten.
-            Kachel-Beschriftung
+            eingeladenen Person. Offene Einladungen verfallen nach 3 Monaten
+            (API: 90 Tage). Pro Empfehler werden höchstens 100 Empfehlungen je
+            Quartal prämiert; danach zeigt die Übersicht <b>In diesem Quartal sind
+            keine weiteren Prämien möglich.</b>
+            Die Kachel <b>Insgesamt erhalten</b> zeigt die Summe der erhaltenen REALU
+            und den laufenden Gegenwert zum aktuellen Aktienkurs, Beschriftung
             <b>Aktienkurs</b>. Jede Gutschrift in der Historie zeigt ganze REALU,
             Datum und den <b>im Zeitpunkt der Gutschrift fixierten</b> Frankenwert
             (eine Vorlese-Zeile: Titel, Datum, CHF, Anzahl) —
@@ -11090,26 +11095,38 @@
             ausstehende Code-Prüfung ab (Weiter wartet auf die Prüfung;
             Überspringen setzt Weiter nicht auf Laden). Überspringen
             verwirft einen getippten Code und lässt einen
-            Deeplink-Stash stehen. Ein abgelehnter Bind (4xx) zeigt
-            <b>Link ungültig oder abgelaufen</b> einmal in einem Dialog. 20 REALU als Promo-Zugabe nur beim ersten erfolgreichen
-            Kauf von mindestens dem Mindestkauf des Promo-Codes (Default 200 REALU).
-            Die Empfehlungsprämie entsteht serverseitig erst, wenn der erste abgeschlossene
-            REALU-Kauf der eingeladenen Person mindestens 200 REALU beträgt.
-            Einlösung und Kumulierungssperre sind Server-Pflicht. Universal Links:
+            Deeplink-Stash stehen. Ein abgelehnter Bind (4xx) zeigt einmal einen
+            Dialog: <b>Link ungültig oder abgelaufen</b>, <b>Dieser Einladungs- oder
+            Promo-Code wurde bereits verwendet.</b> (Einlösungslimit erreicht),
+            <b>Du hast bereits einen Einladungs- oder Promo-Code eingelöst.</b>
+            (ein Code pro Konto) oder <b>Diese Einladung gilt nur für neue Kundinnen
+            und Kunden.</b> (Eingabe nur vor dem ersten REALU-Kauf).
+            Promo-Codes legt RealUnit unter app.dfx.swiss/realunit an: je Code
+            ein Gültigkeitsfenster, ein Mindestkauf (Default 200 REALU) und ein
+            Einlösungslimit als Anzahl Einlösungen; ist es erreicht, nimmt die API
+            den Code nicht mehr an. 20 REALU als Promo-Zugabe nur beim ersten
+            erfolgreichen Kauf von mindestens dem Mindestkauf des Promo-Codes;
+            liegt der erste Kauf darunter, entsteht keine Zugabe, auch nicht bei
+            späteren Käufen. Die Empfehlungsprämie entsteht serverseitig erst, wenn
+            der erste abgeschlossene REALU-Kauf der eingeladenen Person mindestens
+            200 REALU beträgt. Einlösung und Kumulierungssperre sind Server-Pflicht.
+            Universal Links:
             <code>https://realunit.app/invite/…</code> und
             <code>/promo/…</code> öffnen die App (auch auf <code>www.realunit.app</code>,
             HTTP 200, kein 301). Nach Neuinstallation auf iOS den
             Link erneut antippen oder den Code von der Landing-Seite
-            (App-Store-Tap kopiert ihn) bei der Registrierung einfügen. Android trägt den
+            (Store-Badge- oder CTA-Tap kopiert ihn) bei der Registrierung einfügen. Android trägt den
             Code als Play-Store-Install-Referrer, schon während die Landing
             den Code prüft; ein ungültiger Lookup entfernt den Referrer.
             Auf iOS führt der App-Store-Badge, auf Android Play. Die
             In-App-CTA bleibt bis zum Lookup-Ende verborgen und gilt nur mobil.
             Landing und Registrierung zeigen den Code in Grossbuchstaben
-            und höchstens 32 Zeichen (wie die API); ein angehängtes
+            und höchstens 32 Zeichen (Limit von App und Landing; die API nimmt
+            benannte Promo-Codes bis 256 Zeichen an, Serien-Codes haben die Form
+            <code>PREFIX-XXXXXXXX</code>); ein angehängtes
             Satzzeichen (`!`, `?`, `/`) fällt weg. Steckt
             <code>invite/</code> oder <code>promo/</code> im Token,
-            bleibt nur der Code (wie die API). Unsichtbare
+            bleibt nur der Code. Unsichtbare
             Steuerzeichen (ZWSP) und Vollbreite-Zeichen aus Messenger-URLs
             entfernt die Landing-HTML schon in den Bytes, die Safari für
             den Smart App Banner ausliest. Dasselbe gilt für Play/Ads-
@@ -11118,7 +11135,7 @@
             — auch ohne <code>https://</code> (<code>realunit.app/invite/…</code>).
             Facebook <code>u=</code>, Google <code>q=</code>, Outlook
             <code>url=</code> und E-Mail <code>link=</code> auf der
-            Landing-URL ebenso, ein bloßes
+            Landing-URL ebenso, ein blosses
             <code>u=hello</code> oder eine fremde <code>https://</code>-URL
             nicht. Ein Kampagnenname in <code>utm_content</code> verdeckt
             keinen späteren Wrapper-Schlüssel, und eine Tracking-URL, die
@@ -11134,9 +11151,9 @@
             <code>x-apple-data-detectors="false"</code> am Code und
             Aktionstext, weil Lookup-JS den Text nachlädt).
             Tab-Titel, Open-Graph, Twitter und die Standard-Beschreibung folgen
-            Laden / ungültig / nicht erreichbar; ein Pfad ohne Code gilt als
-            ungültig. Ungültige Überschrift und Text sind statusrot;
-            die Browser-Themenfarbe folgt (`#E02523` ungültig, sonst Markenblau).
+            Laden / ungültig / bereits eingelöst / nicht erreichbar; ein Pfad ohne
+            Code gilt als ungültig. Ungültige Überschrift und Text sind statusrot;
+            die Browser-Themenfarbe folgt (`#E02523` ungültig, sonst `#1988C6`).
             og:locale:alternate nennt die andere Sprache (de_CH / en_GB).
             Crawler lesen Smart-App-Banner <code>app-argument</code>,
             <code>og:image:alt</code> / <code>twitter:image:alt</code>,
@@ -11181,8 +11198,9 @@
               />
             </div>
             <div class="desc">
-              Kachel <b>Insgesamt erhalten</b> mit ganzen REALU, fixiertem CHF
-              und Beschriftung <b>Aktienkurs</b>; Zähler Offen / Gutgeschrieben;
+              Kachel <b>Insgesamt erhalten</b> mit ganzen REALU, Gegenwert zum
+              aktuellen Aktienkurs (≈ CHF) und Beschriftung <b>Aktienkurs</b>;
+              Zähler Offen / Gutgeschrieben;
               offene Einladung mit Kopieren und Versenden.
             </div>
           </div>
@@ -11249,7 +11267,8 @@
               />
             </div>
             <div class="desc">
-              Nach dem Erstellen: personalisierter Share-Text, Kopieren und Versenden.
+              Nach dem Erstellen: personalisierter Share-Text, Kopieren, Versenden
+              und Erledigt.
             </div>
           </div>
           <div class="test" id="281-referral-terms">
@@ -11267,7 +11286,9 @@
             <div class="desc">
               Teilnahmebedingungen als eigene Seite; Checkbox
               «Ich habe die Teilnahmebedingungen gelesen und akzeptiert»;
-              «Einladungslink erstellen» erst danach aktiv.
+              «Einladungslink erstellen» erst danach aktiv. Der Golden-Test
+              zeigt noch den Stand 14.08.2026; die App bündelt die Fassung
+              vom 26.08.2026.
             </div>
           </div>
           <div class="test" id="282-referral-payout-row">
@@ -11302,7 +11323,8 @@
             <div class="desc">
               Nach der Annahme bleiben die Teilnahmebedingungen lesbar
               (Übersichtstitel und Einstellungen → Rechtliche Dokumente),
-              ohne Checkbox und ohne «Einladungslink erstellen».
+              ohne Checkbox und ohne «Einladungslink erstellen». Golden-Test
+              mit Stand 14.08.2026, siehe 281.
             </div>
           </div>
           <div class="test" id="284-referral-create-name">
@@ -11370,7 +11392,7 @@
               />
             </div>
             <div class="desc">
-              Entwurf 4: Code-Eingabe als Fallback; nach Prüfung «Einladung von
+              Code-Eingabe als Fallback; nach Prüfung «Einladung von
               Björn erkannt».
             </div>
           </div>
@@ -11389,6 +11411,8 @@
             <div class="desc">
               Historie: Prämie mit ganzer Anzahl (20 REALU), Datum und
               Frankenwert, fixiert im Zeitpunkt der Gutschrift (TB Ziff. 6).
+              Im Golden liegt die Prämie ausserhalb des angezeigten Datumsfilters
+              (Testdaten).
             </div>
           </div>
           <div class="test" id="289-dashboard-referral-entry-and-payout">
@@ -11404,7 +11428,7 @@
               />
             </div>
             <div class="desc">
-              Entwurf 1: Einstieg «Empfehlungen» («Erhalte 20 REALU pro
+              Einstieg «Empfehlungen» («Erhalte 20 REALU pro
               Weiterempfehlung») und Prämie in den letzten Transaktionen.
             </div>
           </div>
@@ -11421,7 +11445,7 @@
               />
             </div>
             <div class="desc">
-              Punkt 5: nach Prüfung erscheint der von RealUnit vorgegebene
+              Nach Prüfung erscheint der von RealUnit vorgegebene
               Aktionstext in einem eigenen Fenster (Schließen oder Tippen daneben).
             </div>
           </div>
@@ -11498,7 +11522,7 @@
           <p class="spec-intro">
             Beispiel-Belege, die das Backend als PDF erzeugt: die
             <b>Transaktionshistorie</b> (Sammelbeleg über mehrere Transaktionen,
-            per Klick auf „Transaktionshistorie"), die
+            per Klick auf «Transaktionshistorie»), die
             <b>Transaktionsbestätigung</b> (Einzelbeleg für eine Kauftransaktion),
             die <b>Verkauf-Bestätigung</b> (Einzelbeleg für eine
             Verkaufstransaktion) und die <b>Übertragung</b> (Einzelbeleg für eine
@@ -11640,7 +11664,7 @@
           <p class="spec-intro">
             Beispiel-Beleg, den das Backend als PDF erzeugt: die
             <b>Vermögensübersicht</b> weist den REALU-Bestand mit dem massgeblichen
-            <b>Steuerwert</b> aus (im Muster 350 REALU per 31.12.2025). Der Renderer
+            <b>Steuerwert</b> aus (im Muster 1'234 REALU zu CHF 1.37 per 31.12.2025). Der Renderer
             lebt im
             <a href="https://github.com/DFXswiss/api">DFXswiss/api</a>-Repo
             (<code>src/subdomains/supporting/balance/services/balance-pdf.service.ts</code>);
@@ -11762,7 +11786,7 @@ Dieser Inhalt dient Werbezwecken. Die genehmigten Prospekte und weitere Unterlag
   <!-- Android section -->
   <h3>Google Play Store (de-DE)</h3>
   <dl class="store-listing">
-    <dt>Titel (max 50)</dt><dd><code>RealUnit Wallet</code> <a class="src" href="https://github.com/RealUnitCH/app/blob/develop/android/fastlane/metadata/android/de-DE/title.txt" title="Quelle: title.txt">↗</a></dd>
+    <dt>Titel (max 30)</dt><dd><code>RealUnit Wallet</code> <a class="src" href="https://github.com/RealUnitCH/app/blob/develop/android/fastlane/metadata/android/de-DE/title.txt" title="Quelle: title.txt">↗</a></dd>
     <dt>Kurzbeschreibung (max 80)</dt><dd>RealUnit Aktientoken kaufen, verwahren &amp; verwalten – bankenunabhängig. <a class="src" href="https://github.com/RealUnitCH/app/blob/develop/android/fastlane/metadata/android/de-DE/short_description.txt" title="Quelle: short_description.txt">↗</a></dd>
     <dt>Lang-Beschreibung (max 4000, HTML) <a class="src" href="https://github.com/RealUnitCH/app/blob/develop/android/fastlane/metadata/android/de-DE/full_description.txt" title="Quelle: full_description.txt">↗</a></dt><dd><div class="rendered-html">Die offizielle App der RealUnit Schweiz AG – für den einfachen, sicheren Kauf und die bankenunabhängige Verwahrung der RealUnit Aktientoken. Direkt in Ihrer Hand.
 

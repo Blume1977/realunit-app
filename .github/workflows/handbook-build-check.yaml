@@ -33,6 +33,10 @@ name: Handbook Build Check
 #   - scripts/assemble-handbook-screenshots.sh  handbook→Golden mapping
 #   - test/goldens/**             Golden baselines (source of every
 #                                 screenshot the handbook serves)
+#   - scripts/assemble-handbook-store-listing.py, scripts/assemble-handbook-legal.py
+#                                 store-listing / legal-downloads generators
+#   - ios/fastlane/**, android/fastlane/metadata/**, assets/legal/**, assets/languages/**
+#                                 store texts, screenshots and legal documents
 #   - Dockerfile.handbook         multi-stage build
 #   - handbook.nginx.conf         nginx config
 #   - handbook.htpasswd           access gate

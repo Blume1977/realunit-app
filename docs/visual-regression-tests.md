@@ -190,7 +190,7 @@ public repos are free even for macOS minutes.
 
 ## Handbook screenshots are sourced from Goldens
 
-The 52 PNGs the handbook serves at `handbook.realunit.app/screenshots/`
+The 299 PNGs the handbook serves at `handbook.realunit.app/screenshots/`
 are assembled from the Golden baselines at docker-build time. One
 Golden → one handbook page, via the explicit mapping in
 `scripts/assemble-handbook-screenshots.sh`. The handbook does **not**
@@ -211,17 +211,18 @@ have its own screenshot set anymore.
 ### Where each handbook page comes from
 
 Authoritative mapping table lives in
-`scripts/assemble-handbook-screenshots.sh` — keep it in sync with
-`.maestro/handbook/*.yaml` (one entry per flow). The script copies the
+`scripts/assemble-handbook-screenshots.sh` — one row per handbook slot
+(only slots 01–26 have a companion `.maestro/handbook/*.yaml` smoke flow;
+slots 27+ are golden-only). The script copies the
 Golden into the output directory with the handbook's expected
 `NN-name.png` filename; the Dockerfile multi-stage build then layers
 that directory into `/usr/share/nginx/html/screenshots/`.
 
 ### When you add a new handbook page
 
-1. Add the `.maestro/handbook/<NN>-<name>.yaml` flow (still useful as
-   integration smoke even if no longer the screenshot source — see
-   Maestro section below for current PR-gate vs nightly status).
+1. Optionally add a `.maestro/handbook/<NN>-<name>.yaml` flow (only as
+   navigation smoke, not as screenshot source — see Maestro section
+   below for current PR-gate vs nightly status).
 2. Add a Golden test under `test/goldens/screens/<screen>/` that
    renders the same UI state as the handbook flow's terminal screen.
 3. Add a row to the `MAPPING` array in
@@ -229,7 +230,7 @@ that directory into `/usr/share/nginx/html/screenshots/`.
    Golden file.
 4. Open the PR. The `Handbook Build Check` workflow runs
    `docker build` and a container smoke (`/healthz` + auth gate +
-   probe `/screenshots/<NN>-*.png`). A missing Golden surfaces here
+   `docker exec test -f` on every mapped `/screenshots/<NN>-*.png`). A missing Golden surfaces here
    as a missing-source error from the assembly script before docker
    even spins up.
 

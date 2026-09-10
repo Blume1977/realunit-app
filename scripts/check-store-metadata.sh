@@ -55,7 +55,7 @@ check ios/fastlane/metadata/de-DE/promotional_text.txt 170 "iOS promotional_text
 check ios/fastlane/metadata/de-DE/keywords.txt 100 "iOS keywords"
 check ios/fastlane/metadata/de-DE/description.txt 4000 "iOS description"
 check ios/fastlane/metadata/de-DE/release_notes.txt 4000 "iOS release_notes"
-check android/fastlane/metadata/android/de-DE/title.txt 50 "Android title"
+check android/fastlane/metadata/android/de-DE/title.txt 30 "Android title"
 check android/fastlane/metadata/android/de-DE/short_description.txt 80 "Android short_description"
 check android/fastlane/metadata/android/de-DE/full_description.txt 4000 "Android full_description"
 check android/fastlane/metadata/android/de-DE/changelogs/default.txt 500 "Android changelog"

@@ -1,11 +1,12 @@
 # syntax=docker/dockerfile:1
 #
 # Static nginx host for docs/handbook/ — served at handbook.realunit.app (PRD)
-# and dev-handbook.realunit.app (DEV) via Cloudflare Tunnel.
+# via Cloudflare Tunnel; the former DEV instance is retired.
 #
 # Built independently of the Flutter app: no Flutter toolchain, no app code.
-# Build context is the repo root; only docs/handbook/, scripts/, and
-# test/goldens/ are copied in.
+# Build context is the repo root; only docs/handbook/, scripts/, test/goldens/,
+# ios/fastlane/{metadata,screenshots}, android/fastlane/metadata, assets/legal and
+# assets/languages are copied in.
 #
 # The handbook screenshots (`screenshots/NN-name.png`) are assembled from the
 # visual-regression Golden baselines under `test/goldens/screens/` via

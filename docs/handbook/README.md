@@ -223,7 +223,7 @@ open docs/handbook/de/index.html   # Sektion "B — Transaktionsbelege"
 ```
 
 Zum Regenerieren der Muster-PDFs selbst siehe das api-Repo
-(`GENERATE_RECEIPT_EXAMPLES=true npx jest realunit-receipt-example`).
+(`GENERATE_RECEIPT_EXAMPLES=true npm test -- realunit-receipt-example`).
 
 ## Vermögensübersicht
 
@@ -232,7 +232,8 @@ Muster-PDFs (DE + EN): die Vermögensübersicht weist den REALU-Bestand mit dem
 massgeblichen Steuerwert aus. Wie die Transaktionsbelege werden diese PDFs
 **nicht** hier generiert — sie liegen bereits committet im api-Repo unter
 `docs/examples/realunit-statement/` (gerendert vom `BalancePdfService` via
-`realunit-balance-example.spec.ts`) und werden beim Handbook-Build nur ins Image
+`realunit-statement-example.spec.ts`, Regeneration mit
+`GENERATE_STATEMENT_EXAMPLE=true npm test -- realunit-statement-example`) und werden beim Handbook-Build nur ins Image
 kopiert (Step "Stage RealUnit balance examples from api repo" in `handbook.yaml`;
 Zielverzeichnis `docs/handbook/balance/` ist gitignored). Single Source of Truth
 ist das api-Repo. Kommt upstream ein Beispiel hinzu oder weg, failt der Build am

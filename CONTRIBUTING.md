@@ -248,7 +248,7 @@ The app supports three wallet modes (`software`, `bitbox`, `debug`) with differe
     ```bash
     rg "^//\s*@no-integration-test:" lib/
     ```
-- Visual-regression Goldens under `test/goldens/screens/` are also the source of the 26 screenshots served at `handbook.realunit.app`. When you add a handbook page, you MUST add a matching Golden test AND a row in the mapping table at `scripts/assemble-handbook-screenshots.sh` — the handbook will not pick up a Maestro-captured PNG anymore. The `Handbook Build Check` workflow on every PR runs the assembly script and fails loudly if a mapped Golden is missing.
+- Visual-regression Goldens under `test/goldens/screens/` and `test/goldens/widgets/` are also the source of the 299 screenshots served at `handbook.realunit.app`. When you add a handbook page, you MUST add a matching Golden test AND a row in the mapping table at `scripts/assemble-handbook-screenshots.sh` — the handbook will not pick up a Maestro-captured PNG anymore. The `Handbook Build Check` workflow on every PR runs the assembly script and fails loudly if a mapped Golden is missing.
   - Why: single source of truth — a UI regression that breaks a Golden also breaks the handbook image before either ships; eliminates the previous "two pipelines, two truths" problem.
   - See: [`docs/visual-regression-tests.md`](docs/visual-regression-tests.md) section "Handbook screenshots are sourced from Goldens".
 

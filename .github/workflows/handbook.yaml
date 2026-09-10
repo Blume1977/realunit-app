@@ -279,7 +279,7 @@ jobs:
 
           # Like the receipt examples, these PDFs are already committed in the api
           # repo (rendered by BalancePdfService via the api-side spec
-          # realunit-balance-example.spec.ts), so no generator / npm run is needed
+          # realunit-statement-example.spec.ts), so no generator / npm run is needed
           # here — we only copy them into the build context. Reuses the same
           # _api-checkout/ from the mail step above. NOTE the SEPARATE dest dir
           # (docs/handbook/balance/, not receipts/) so the receipt step's
