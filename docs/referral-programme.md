@@ -78,7 +78,7 @@ API token `Aktienkurs` (never «aktueller NAV»). The tile localizes it
 
 ```json
 {
-  "version": "2026-08-14",
+  "version": "2026-08-26",
   "markdown": "…",
   "markdownEn": "…"
 }
@@ -87,10 +87,10 @@ API token `Aktienkurs` (never «aktueller NAV»). The tile localizes it
 The app renders this 1:1. Bundled `assets/legal/referral_terms_*.md` is only
 a fallback when the call fails.
 
-### `POST /v1/realunit/referral/terms/accept`
+### `PUT /v1/realunit/referral/terms/accept`
 
-Body: `{ "accepted": true, "version": "2026-08-14" }`. `version` is the
-terms version the user accepted (bundled fallback `2026-08-14`).
+Body: `{ "accepted": true, "version": "2026-08-26" }`. `version` is the
+terms version the user accepted (bundled fallback `2026-08-26`).
 
 ### `POST /v1/realunit/referral/invites`
 
@@ -253,7 +253,7 @@ row.
   replaced with a blank spinner). create-invite button after checkbox
   «Ich habe die Teilnahmebedingungen gelesen und akzeptiert».
   Accepting terms opens the name-entry screen. A second accept while
-  the POST is in flight is ignored. A failed accept
+  the PUT is in flight is ignored. A failed accept
   focuses Create so it can be retried. A second accept stays on that
   error copy in the loading state so the page is not replaced with only
   the accepting spinner. After create, the
@@ -301,7 +301,7 @@ row.
   create is not awaited, so a hung summary GET cannot block Create.
   The overview title and Settings → Legal documents (last tile) open
   the Teilnahmebedingungen read-only (GET /terms 1:1, then bundled
-  14.08) so Ziff. 2–11 stay reachable after the checkbox.
+  26.08) so Ziff. 2–11 stay reachable after the checkbox.
 - Registration: dedicated optional step (skip allowed) with the same
   field for invite and promo. A pasted `realunit.app/invite|promo/…`
   URL (or the landing copy button) is reduced to the code before lookup

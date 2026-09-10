@@ -4,7 +4,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/referral/referral_js
 /// `GET /v1/realunit/referral/terms`. Markdown is authored on the API;
 /// the app renders it 1:1. Bundled assets are a fallback only.
 class ReferralTermsDto {
-  static const bundledVersion = '2026-08-14';
+  static const bundledVersion = '2026-08-26';
 
   final String version;
   final String markdown;

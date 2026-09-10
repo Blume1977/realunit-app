@@ -45,7 +45,7 @@ class ReferralNeedsTerms extends ReferralState {
 class ReferralTermsAccepting extends ReferralState {
   final ReferralSummaryDto summary;
 
-  /// Previous accept error kept on screen while this POST retries.
+  /// Previous accept error kept on screen while this PUT retries.
   final String? errorMessage;
 
   const ReferralTermsAccepting({required this.summary, this.errorMessage});

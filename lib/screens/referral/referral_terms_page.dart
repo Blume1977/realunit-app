@@ -54,7 +54,7 @@ class ReferralTermsPage extends StatefulWidget {
   final Future<String> Function(String assetPath)? loadAsset;
 
   /// After the Empfehler has accepted, hide the checkbox and create CTA.
-  /// Still loads GET /terms 1:1, then the bundled 14.08 TB.
+  /// Still loads GET /terms 1:1, then the bundled 26.08 TB.
   final bool readOnly;
 
   const ReferralTermsPage({
@@ -129,7 +129,7 @@ class _ReferralTermsPageState extends State<ReferralTermsPage> {
         }
       }
     } catch (_) {
-      // Bundled TB 14.08 is the fallback when the API is unreachable.
+      // Bundled TB 26.08 is the fallback when the API is unreachable.
     }
     if (!mounted || generation != _loadGeneration) return;
     final content = await loadReferralTermsMarkdown(

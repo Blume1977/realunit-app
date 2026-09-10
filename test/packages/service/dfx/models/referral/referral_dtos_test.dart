@@ -175,12 +175,12 @@ void main() {
 
   group('$ReferralTermsDto', () {
     test('pins the bundled fallback version used for offline acceptance', () {
-      expect(ReferralTermsDto.bundledVersion, '2026-08-14');
+      expect(ReferralTermsDto.bundledVersion, '2026-08-26');
     });
 
     test('EN falls back to DE markdown', () {
       final dto = ReferralTermsDto.fromJson({
-        'version': '2026-08-14',
+        'version': '2026-08-26',
         'markdown': 'DE md',
       });
       expect(dto.textForLang('de'), 'DE md');
@@ -189,7 +189,7 @@ void main() {
 
     test('EN prefers markdownEn', () {
       final dto = ReferralTermsDto.fromJson({
-        'version': '2026-08-14',
+        'version': '2026-08-26',
         'markdown': 'DE md',
         'markdownEn': 'EN md',
       });
@@ -198,7 +198,7 @@ void main() {
 
     test('EN ignores empty markdownEn and uses DE', () {
       final dto = ReferralTermsDto.fromJson({
-        'version': '2026-08-14',
+        'version': '2026-08-26',
         'markdown': 'DE md',
         'markdownEn': '  ',
       });
@@ -207,7 +207,7 @@ void main() {
 
     test('DE ignores empty markdown and uses EN', () {
       final dto = ReferralTermsDto.fromJson({
-        'version': '2026-08-14',
+        'version': '2026-08-26',
         'markdown': '  ',
         'markdownEn': 'EN md',
       });

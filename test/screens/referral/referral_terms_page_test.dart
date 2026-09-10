@@ -285,7 +285,7 @@ void main() {
   });
 
   testWidgets(
-    'keeps the accept error while the retry POST is in flight',
+    'keeps the accept error while the retry PUT is in flight',
     (tester) async {
       when(() => cubit.state).thenReturn(
         const ReferralTermsAccepting(
@@ -341,7 +341,7 @@ void main() {
   );
 
   testWidgets(
-    'falls back to bundled TB 14.08 when the terms API is unreachable',
+    'falls back to bundled TB 26.08 when the terms API is unreachable',
     (tester) async {
       final service = _MockReferralService();
       when(() => service.getTerms()).thenThrow(Exception('down'));
@@ -370,7 +370,7 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('14.08.2026'), findsWidgets);
+      expect(find.textContaining('26.08.2026'), findsWidgets);
       expect(find.textContaining('70 RealUnit-Aktientoken'), findsWidgets);
     },
   );
@@ -532,7 +532,7 @@ void main() {
 
       second.complete(
         const ReferralTermsDto(
-          version: '2026-08-14',
+          version: '2026-08-26',
           markdown: '# Alte TB',
           markdownEn: '# New terms',
         ),
@@ -542,7 +542,7 @@ void main() {
 
       first.complete(
         const ReferralTermsDto(
-          version: '2026-08-14',
+          version: '2026-08-26',
           markdown: '# Stale DE',
           markdownEn: '# Stale EN',
         ),

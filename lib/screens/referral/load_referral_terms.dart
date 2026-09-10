@@ -5,7 +5,7 @@ import 'dart:async';
 const referralTermsAssetTimeout = Duration(seconds: 5);
 
 /// Resolves TB markdown: API text 1:1, then the locale-bundled asset, then
-/// the German TB 14.08 so an English load failure does not blank the page.
+/// the German TB 26.08 so an English load failure does not blank the page.
 Future<String?> loadReferralTermsMarkdown({
   required String languageCode,
   required Future<String> Function(String assetPath) loadAsset,

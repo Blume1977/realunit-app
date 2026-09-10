@@ -38,12 +38,12 @@ void main() {
     final result = await loadReferralTermsMarkdown(
       languageCode: 'en',
       loadAsset: (path) async {
-        if (path.endsWith('referral_terms_de.md')) return '# DE TB 14.08.2026';
+        if (path.endsWith('referral_terms_de.md')) return '# DE TB 26.08.2026';
         throw Exception('missing $path');
       },
     );
 
-    expect(result, '# DE TB 14.08.2026');
+    expect(result, '# DE TB 26.08.2026');
   });
 
   test('returns null when API and bundled assets are all empty', () async {
@@ -56,7 +56,7 @@ void main() {
     expect(result, isNull);
   });
 
-  test('bundled fallback is the 14.08 TB, not a paraphrase', () {
+  test('bundled fallback is the 26.08 TB, not a paraphrase', () {
     final de = File('assets/legal/referral_terms_de.md').readAsStringSync();
     expect(de, contains('im eigenen Wallet'));
     expect(de, contains('registriert und verifiziert'));
