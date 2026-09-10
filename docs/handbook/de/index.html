@@ -11066,7 +11066,8 @@
             gutgeschrieben (vorgelesen «3 Offen») sowie Summe REALU und Frankenwert; offene Einladungen
             lassen sich erneut kopieren und versenden, ohne den Status der
             eingeladenen Person. Offene Einladungen verfallen nach 3 Monaten
-            (API: 90 Tage). Pro Empfehler werden höchstens 100 Empfehlungen je
+            (API: 90 Tage; die Einladung wird serverseitig als gelöscht markiert,
+            Code und Zuordnung sind danach nicht mehr nutzbar). Pro Empfehler werden höchstens 100 Empfehlungen je
             Quartal prämiert; danach zeigt die Übersicht <b>In diesem Quartal sind
             keine weiteren Prämien möglich.</b>
             Die Kachel <b>Insgesamt erhalten</b> zeigt die Summe der erhaltenen REALU
@@ -11103,8 +11104,9 @@
             und Kunden.</b> (Eingabe nur vor dem ersten REALU-Kauf).
             Promo-Codes legt RealUnit unter app.dfx.swiss/realunit an: je Code
             ein Gültigkeitsfenster, ein Mindestkauf (Default 200 REALU) und ein
-            Einlösungslimit als Anzahl Einlösungen; ist es erreicht, nimmt die API
-            den Code nicht mehr an. 20 REALU als Promo-Zugabe nur beim ersten
+            Einlösungslimit als Anzahl Einlösungen (Pflichtfeld, ganze Zahl ab 1,
+            keine Option «unbegrenzt»; die API weist Codes ohne Limit ab); ist es
+            erreicht, nimmt die API den Code nicht mehr an. 20 REALU als Promo-Zugabe nur beim ersten
             erfolgreichen Kauf von mindestens dem Mindestkauf des Promo-Codes;
             liegt der erste Kauf darunter, entsteht keine Zugabe, auch nicht bei
             späteren Käufen. Die Empfehlungsprämie entsteht serverseitig erst, wenn
