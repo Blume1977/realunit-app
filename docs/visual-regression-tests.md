@@ -1,7 +1,7 @@
 # Visual Regression Tests
 
 Pixel-exact baseline tests for every page in the app. 57 `lib/screens/**/*_page.dart`
-files mapped to 94 Golden PNGs under `test/goldens/screens/` (page renderings
+files mapped to 350 Golden PNGs under `test/goldens/screens/` (page renderings
 plus state variants: Buy/Sell error banners, KYC loading/failure, Dashboard
 with-balance, RestoreWallet valid/invalid, Legal-Disclaimer steps, etc.),
 validated on each PR by the `Visual Regression` job (required status check
@@ -223,14 +223,14 @@ that directory into `/usr/share/nginx/html/screenshots/`.
 1. Optionally add a `.maestro/handbook/<NN>-<name>.yaml` flow (only as
    navigation smoke, not as screenshot source — see Maestro section
    below for current PR-gate vs nightly status).
-2. Add a Golden test under `test/goldens/screens/<screen>/` that
+2. Add a Golden test under `test/goldens/screens/<screen>/` or `test/goldens/widgets/<widget>/` (whichever tree the UI lives in) that
    renders the same UI state as the handbook flow's terminal screen.
 3. Add a row to the `MAPPING` array in
    `scripts/assemble-handbook-screenshots.sh` pointing at the new
    Golden file.
 4. Open the PR. The `Handbook Build Check` workflow runs
    `docker build` and a container smoke (`/healthz` + auth gate +
-   `docker exec test -f` on every mapped `/screenshots/<NN>-*.png`). A missing Golden surfaces here
+   spot-checks selected mapped screenshots via `docker exec test -f`; the full set is gated by the assemble step (`expected 299`)). A missing Golden surfaces here
    as a missing-source error from the assembly script before docker
    even spins up.
 

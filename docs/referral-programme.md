@@ -7,10 +7,8 @@ the decision authority. This app is a rendering layer.
 
 Authenticated routes use the existing Bearer session.
 
-Live contract: `DFXswiss/backend` (private), module
-`src/subdomains/supporting/realunit/` (controller, service, entities); the
-former drop-in [JonnyLuca/dfx-referral-api](https://github.com/JonnyLuca/dfx-referral-api)
-is superseded. (`GET`/`POST /v1/realunit/referral/*`, 70 REALU gate re-checked at credit,
+Live contract: `GET`/`POST /v1/realunit/referral/*` on `api.dfx.swiss` and `dev.api.dfx.swiss`
+(70 REALU gate re-checked at credit,
 quarterly cap 100, 3-month expiry, promo `redemptionCap` required, promo
 `minBuyRealu` default 200, referral first-buy floor 200, KYC + late bind, CORS for `realunit.app`, NestJS drop-in
 `RealUnitReferralController`). Credit is evaluated on Aktionariat
@@ -36,7 +34,7 @@ POST invites then return `503 { "code": "UNAVAILABLE" }` so this app
 retries instead of showing «not eligible». Live `GET /v1/realunit/account`
 404 `Account not found` is a known-zero holding (tile stays hidden), not
 unknown. The `/v1/realunit/referral/*` routes are mounted on
-`api.dfx.swiss` (DFXswiss/backend); should a deployment ever lack them,
+`api.dfx.swiss`; should a deployment ever lack them,
 public lookup returns NestJS `Cannot GET`, and the app maps that body
 (and `503 UNAVAILABLE`) to the unavailable retry copy, not Nest internals. `onAccountMerge` /
 `mergeWallets` is idempotent so a DFX `register/wallet` retry after
@@ -544,11 +542,8 @@ Install Referrer covers Android).
 
 ## Out of this repository
 
-The HTTP contract lives in private `DFXswiss/backend`
-(`src/subdomains/supporting/realunit/`, controller
-`realunit-referral.controller.ts`, promo batch endpoint
-`POST /v1/realunit/referral/promo/batch`); the former drop-in
-[JonnyLuca/dfx-referral-api](https://github.com/JonnyLuca/dfx-referral-api)
-is superseded. Prize-wallet keys (`PRIZE_WALLET_KEY`,
+The HTTP contract is the DFX API (`api.dfx.swiss` / `dev.api.dfx.swiss`,
+`GET`/`POST /v1/realunit/referral/*`, including
+`POST /v1/realunit/referral/promo/batch`). Prize-wallet keys (`PRIZE_WALLET_KEY`,
 `ETH_RPC_URL`) and the Play app-signing SHA256 are mount/release
 config, not app code.
