@@ -9166,8 +9166,8 @@
             und Auszahlung entscheidet die DFX API; die App rendert
             <code>eligible</code> 1:1. Die Prämie von 20 REALU wird dem Empfehler
             gutgeschrieben, sobald die eingeladene Person verifiziert ist und
-            ihren ersten Kauf von mindestens N REALU abgeschlossen hat
-            (Vorgabe 200, durch die API gesetzt; Teilnahmebedingungen vom
+            ihren ersten abgeschlossenen REALU-Kauf von mindestens 200 REALU
+            getätigt hat (serverseitig geprüft; Teilnahmebedingungen vom
             26.08.2026, Ziff. 4). Nach einem fehlgeschlagenen ersten
             Summary-GET (unmounted, 503, Timeout) blendet die Karte aus;
             solange die Route aktuell und die App im Vordergrund ist, wird
@@ -9230,7 +9230,9 @@
             verwirft einen getippten Code und lässt einen
             Deeplink-Stash stehen. Ein abgelehnter Bind (4xx) zeigt
             <b>Link ungültig oder abgelaufen</b> einmal in einem Dialog. 20 REALU als Promo-Zugabe nur beim ersten erfolgreichen
-            Kauf von mindestens N REALU (Vorgabe 200, durch die API gesetzt).
+            Kauf von mindestens dem Mindestkauf des Promo-Codes (Default 200 REALU).
+            Die Empfehlungsprämie entsteht serverseitig erst, wenn der erste abgeschlossene
+            REALU-Kauf der eingeladenen Person mindestens 200 REALU beträgt.
             Einlösung und Kumulierungssperre sind Server-Pflicht. Universal Links:
             <code>https://realunit.app/invite/…</code> und
             <code>/promo/…</code> öffnen die App (auch auf <code>www.realunit.app</code>,

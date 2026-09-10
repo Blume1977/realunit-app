@@ -10,8 +10,8 @@ Authenticated routes use the existing Bearer session.
 Live contract until `DFXswiss/backend` is writable (private):
 [JonnyLuca/dfx-referral-api](https://github.com/JonnyLuca/dfx-referral-api)
 (`GET`/`POST /v1/realunit/referral/*`, 70 REALU gate re-checked at credit,
-quarterly cap 100, 3-month expiry, promo `redemptionCap` required, min-buy N
-default 200, KYC + late bind, CORS for `realunit.app`, NestJS drop-in
+quarterly cap 100, 3-month expiry, promo `redemptionCap` required, promo
+`minBuyRealu` default 200, referral first-buy floor 200, KYC + late bind, CORS for `realunit.app`, NestJS drop-in
 `RealUnitReferralController`). Credit is evaluated on Aktionariat
 **settlement** (whole REALU shares) and again when KYC Level 30 is
 reached — not on `PUT /v1/realunit/buy/{id}/confirm` (payment
@@ -186,8 +186,10 @@ copy. Promo `campaignText` is shown 1:1 in a dialog.
 `kind` is `Invite` or `Promo`. If `kind` is omitted, campaign/action text
 without an inviter name is treated as promo so the confirmation dialog
 still appears. The API rejects self-referral, double-bind, and promo+invite
-stacking. Promo credit is only the first successful purchase of at least
-`minBuyRealu` (default 200). A first buy below N creates no later claim.
+stacking. The inviter's referral prize is due only when the invitee's first
+completed REALU buy is at least 200, checked on the server. Promo credit
+uses the promo code's own `minBuyRealu` (default 200). A first buy below
+the applicable floor creates no later claim.
 `redemptionCap` is required — no unlimited option.
 
 ### `GET /v1/realunit/referral/code/:code` (public)
