@@ -36,7 +36,10 @@ class TextSubstringHighlighting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveStyle = style ?? DefaultTextStyle.of(context).style;
+    // RichText does not inherit DefaultTextStyle, so merge the caller's style
+    // onto it: keeps the app font family (and other inherited attributes) for
+    // every caller that only overrides size or colour.
+    final effectiveStyle = DefaultTextStyle.of(context).style.merge(style);
     final effectiveHighlightedStyle =
         highlightedStyle ?? effectiveStyle.copyWith(fontWeight: .bold);
 
@@ -60,8 +63,7 @@ class TextSubstringHighlighting extends StatelessWidget {
     // node so Maestro can target it via `tapOn: id:`. We render the tappable
     // chunk through a WidgetSpan so it stays inline with the surrounding
     // copy and word-wrapping behaviour is preserved.
-    final useSemanticsTap =
-        highlightedSemanticsId != null && onHighlightedTap != null;
+    final useSemanticsTap = highlightedSemanticsId != null && onHighlightedTap != null;
 
     return RichText(
       textAlign: textAlign,

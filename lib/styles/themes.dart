@@ -20,6 +20,7 @@ ThemeData get realUnitTheme => ThemeData(
     ),
     centerTitle: true,
     titleTextStyle: RealUnitTextStyle.body.sm.copyWith(
+      fontFamily: RealUnitTextStyle.fontFamily,
       fontWeight: .bold,
       color: RealUnitColors.realUnitBlack,
     ),
