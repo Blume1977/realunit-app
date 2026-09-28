@@ -7,21 +7,17 @@
 String referralShareText({
   required String? fromApi,
   required String guestName,
+  required String code,
   required String url,
-  required String Function(String guestName, String hostName, String url)
-  fallback,
-  String Function(String hostName, String url)? fallbackNoName,
-  String? hostName,
+  required String Function(String guestName, String code, String url) fallback,
+  required String Function(String code, String url) fallbackNoName,
 }) {
   final name = guestName.trim();
-  final host = (hostName != null && hostName.trim().isNotEmpty)
-      ? hostName.trim()
-      : 'RealUnit';
   final text = (fromApi != null && fromApi.trim().isNotEmpty)
       ? fromApi.trim()
-      : (name.isEmpty && fallbackNoName != null)
-          ? fallbackNoName(host, url)
-          : fallback(name, host, url);
+      : name.isEmpty
+      ? fallbackNoName(code, url)
+      : fallback(name, code, url);
   return text.replaceAllMapped(
     _apexInviteHost,
     (match) => '${match[1]}https://realunit.app',

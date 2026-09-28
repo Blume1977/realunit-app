@@ -69,9 +69,7 @@ class ReferralOverviewPage extends StatelessWidget {
                       AppFilledButton(
                         label: s.retry,
                         autofocus: !state.retrying,
-                        state: state.retrying
-                            ? FilledButtonState.loading
-                            : FilledButtonState.idle,
+                        state: state.retrying ? FilledButtonState.loading : FilledButtonState.idle,
                         onPressed: state.retrying
                             ? null
                             : () => context.read<ReferralCubit>().load(),
@@ -162,8 +160,9 @@ class ReferralOverviewPage extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 s.referralInvitesLoading,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: RealUnitColors.neutral500),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.copyWith(color: RealUnitColors.neutral500),
                               ),
                             ),
                           ],
@@ -221,10 +220,7 @@ class ReferralOverviewPage extends StatelessWidget {
                 ),
                 actions: [
                   _CreateInviteAction(
-                    autofocus:
-                        openInvites.isEmpty &&
-                        !showListRetry &&
-                        !state.invitesLoading,
+                    autofocus: openInvites.isEmpty && !showListRetry && !state.invitesLoading,
                   ),
                 ],
               ),
@@ -287,9 +283,7 @@ class _TotalReceivedTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final realuLabel = hideAmounts
-        ? '*** REALU'
-        : '${realu.truncate()} REALU';
+    final realuLabel = hideAmounts ? '*** REALU' : '${realu.truncate()} REALU';
     return Semantics(
       container: true,
       label: '$title. $realuLabel. $chfLabel',
@@ -341,12 +335,10 @@ class _OpenInviteTile extends StatelessWidget {
     return referralShareText(
       fromApi: invite.copyTextForLocale(lang),
       guestName: invite.guestName,
+      code: invite.code,
       url: invite.url,
-      hostName: invite.inviterName,
-      fallback: (guestName, hostName, url) =>
-          S.of(context).referralShareText(guestName, url),
-      fallbackNoName: (hostName, url) =>
-          S.of(context).referralShareTextNoName(url),
+      fallback: (guestName, code, url) => S.of(context).referralShareText(guestName, code, url),
+      fallbackNoName: (code, url) => S.of(context).referralShareTextNoName(code, url),
     );
   }
 

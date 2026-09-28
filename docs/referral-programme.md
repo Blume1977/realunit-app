@@ -107,16 +107,20 @@ Response:
   "code": "AB12CD",
   "url": "https://realunit.app/invite/AB12CD",
   "guestName": "Alice",
-  "copyText": "Hey Alice, ich nutze die RealUnit App — schau's dir mal an: https://realunit.app/invite/AB12CD",
-  "copyTextEn": "Hey Alice, I use the RealUnit app — have a look: https://realunit.app/invite/AB12CD",
+  "copyText": "Hallo Alice\n\nKennst du die RealUnit App? … meinen Code AB12CD ein oder … diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt dient Werbezwecken. …",
+  "copyTextEn": "Hi Alice\n\nDo you know the RealUnit app? … my code AB12CD … this link to download the app: https://realunit.app/invite/AB12CD\n\nThis is an advertisement. …",
   "inviterName": "Björn"
 }
 ```
 
 The server generates code, URL, and share text. `inviterName` is the
-Empfehler display name. A missing `copyText` falls back to the
-first-person recommendation (guest name plus invite URL), not a
-host-named «lädt dich ein» sentence. A later
+Empfehler display name. The share text is the wording approved by
+RealUnit legal on 28.09.2026: greeting («Hallo Alice», or just «Hallo»
+without a guest name), product description, invite code and link, and
+the advertising and prospectus note as a fixed part of the text. A
+missing `copyText` falls back to the same localised template (guest
+name, code and invite URL), not a host-named «lädt dich ein» sentence.
+A later
 `GET /v2/user/profile` firstName (or Kontozusammenführung) rewrites
 open-invite `copyText` / `inviterName` so a first invite created
 while the name was still the wallet address is not stuck as
@@ -189,10 +193,10 @@ copy. Promo `campaignText` is shown 1:1 in a dialog.
 `kind` is `Invite` or `Promo`. If `kind` is omitted, campaign/action text
 without an inviter name is treated as promo so the confirmation dialog
 still appears. The API rejects self-referral, double-bind, and promo+invite
-stacking. The inviter's referral prize is due when a completed REALU buy is at
-least 70, checked on the server. A smaller referral purchase leaves the
-invitation open. Promo credit uses the promo code's own `minBuyRealu`
-(default 200). A promo purchase below that floor creates no later claim.
+stacking. The inviter's referral prize is due only when the invitee's first
+completed REALU buy is at least 200, checked on the server. Promo credit
+uses the promo code's own `minBuyRealu` (default 200). A first buy below
+the applicable floor creates no later claim.
 `redemptionCap` is required — no unlimited option.
 
 ### `GET /v1/realunit/referral/code/:code` (public)
