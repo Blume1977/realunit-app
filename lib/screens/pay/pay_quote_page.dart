@@ -9,8 +9,10 @@ import 'package:realunit_wallet/packages/service/dfx/real_unit_pay_service.dart'
 import 'package:realunit_wallet/packages/utils/default_assets.dart';
 import 'package:realunit_wallet/screens/pay/cubits/pay_quote/pay_quote_cubit.dart';
 import 'package:realunit_wallet/screens/pay/pay_process_page.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/styles/colors.dart';
+import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import 'package:realunit_wallet/widgets/route_animation_gate.dart';
 import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
@@ -126,6 +128,14 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
       feeRealu: feeRealu ?? 0,
     );
     final merchant = state.merchantName;
+    final settings = context.watch<SettingsBloc>().state;
+    final useEur = settings.currency == Currency.eur && state.hasEurReceipt;
+    // The till asked for this franc amount. It stays on the requested row
+    // even when the receipt shows the stored euro figures.
+    final requestedChf = _chf(parts.billChf, 'CHF');
+    final feeFiat = useEur ? _chf(state.feeEur!, 'EUR') : _chf(parts.feeChf, 'CHF');
+    final roundingFiat = useEur ? _chf(state.roundingEur!, 'EUR') : _chf(parts.roundingChf, 'CHF');
+    final totalFiat = useEur ? _chf(state.totalEur!, 'EUR') : _chf(parts.totalChf, 'CHF');
     return ScrollableActionsLayout(
       centerBody: true,
       body: Column(
@@ -176,22 +186,23 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
               _AmountRow(
                 label: S.of(context).payQuoteRequested,
                 realu: _realu(parts.billRealu),
-                chf: _chf(parts.billChf, state.fiatAsset),
+                chf: requestedChf,
+                also: useEur ? _chf(state.billEur!, 'EUR') : null,
               ),
               _AmountRow(
                 label: S.of(context).payQuoteRealuFees,
                 realu: _realu(parts.feeRealu),
-                chf: _chf(parts.feeChf, 'CHF'),
+                chf: feeFiat,
               ),
               _AmountRow(
                 label: S.of(context).payQuoteRounding,
                 realu: _realu(parts.roundingRealu),
-                chf: _chf(parts.roundingChf, 'CHF'),
+                chf: roundingFiat,
               ),
               _AmountRow(
                 label: S.of(context).payQuoteTotal,
                 realu: _realu(parts.totalRealu),
-                chf: _chf(parts.totalChf, 'CHF'),
+                chf: totalFiat,
               ),
             ],
           ),
@@ -342,16 +353,29 @@ class _AmountRow extends StatelessWidget {
   final String label;
   final String realu;
   final String chf;
+  final String? also;
 
   const _AmountRow({
     required this.label,
     required this.realu,
     required this.chf,
+    this.also,
   });
 
   @override
   Widget build(BuildContext context) {
     final small = Theme.of(context).textTheme.bodySmall?.copyWith(height: 1.35);
+    final fiatStyle = small?.copyWith(color: RealUnitColors.neutral600);
+    final Widget fiat = also == null
+        ? Text(chf, textAlign: TextAlign.end, softWrap: true, style: fiatStyle)
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(chf, textAlign: TextAlign.end, softWrap: true, style: fiatStyle),
+              Text(also!, textAlign: TextAlign.end, softWrap: true, style: fiatStyle),
+            ],
+          );
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
@@ -376,14 +400,7 @@ class _AmountRow extends StatelessWidget {
                   ),
                 ),
               ),
-              Flexible(
-                child: Text(
-                  chf,
-                  textAlign: TextAlign.end,
-                  softWrap: true,
-                  style: small?.copyWith(color: RealUnitColors.neutral600),
-                ),
-              ),
+              Flexible(child: fiat),
             ],
           ),
         ],

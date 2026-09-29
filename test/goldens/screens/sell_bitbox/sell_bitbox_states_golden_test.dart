@@ -9,7 +9,9 @@ import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/rea
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
 import 'package:realunit_wallet/screens/sell_bitbox/cubit/sell_bitbox_cubit.dart';
 import 'package:realunit_wallet/screens/sell_bitbox/sell_bitbox_page.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/currency.dart';
+import 'package:realunit_wallet/styles/language.dart';
 
 import '../../../helper/helper.dart';
 
@@ -50,20 +52,29 @@ Map<String, dynamic> _eip7702Json() => {
       'depositAddress': '0xdeposit',
     };
 
-SellPaymentInfo _paymentInfo() => SellPaymentInfo(
+SellPaymentInfo _paymentInfo({
+  double estimatedAmount = 100.0,
+  double? valueChf,
+  double? valueEur,
+  double? zchfAmount,
+}) =>
+    SellPaymentInfo(
       id: 42,
       eip7702: Eip7702Data.fromJson(_eip7702Json()),
       amount: 100,
       exchangeRate: 1.0,
       rate: 1.0,
       beneficiary: const BeneficiaryDto(iban: 'CH...'),
-      estimatedAmount: 100.0,
+      estimatedAmount: estimatedAmount,
       currency: Currency.chf,
       depositAddress: '0xDEP0517addressABCDEF1234',
       tokenAddress: '0xtoken',
       chainId: 1,
       ethBalance: 1.0,
       requiredGasEth: 0.001,
+      valueChf: valueChf,
+      valueEur: valueEur,
+      zchfAmount: zchfAmount,
     );
 
 // Fixed, deterministic signed-transaction stand-ins. None of these bytes are
@@ -83,14 +94,75 @@ void main() {
     cubit = _MockSellBitboxCubit();
   });
 
-  Widget buildSubject() => BlocProvider<SellBitboxCubit>.value(
-        value: cubit,
-        child: SellBitboxView(paymentInfo: _paymentInfo()),
-      );
+  Widget buildSubject() {
+    final settingsBloc = MockSettingsBloc();
+    when(() => settingsBloc.state).thenReturn(const SettingsState());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SellBitboxCubit>.value(value: cubit),
+        BlocProvider<SettingsBloc>.value(value: settingsBloc),
+      ],
+      child: SellBitboxView(paymentInfo: _paymentInfo()),
+    );
+  }
 
   Widget forState(SellBitboxState state) {
     when(() => cubit.state).thenReturn(state);
     return wrapForGolden(buildSubject());
+  }
+
+  // The coin line is the stored ZCHF amount (100), not the 108 estimate.
+  // EUR is selected, but only CHF was stored. The extra row stays CHF.
+  Widget forStoredChfWhenEur(SellBitboxState state) {
+    when(() => cubit.state).thenReturn(state);
+    final settingsBloc = MockSettingsBloc();
+    const settingsState = SettingsState(
+      language: Language.de,
+      currency: Currency.eur,
+    );
+    when(() => settingsBloc.state).thenReturn(settingsState);
+    return wrapForGolden(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<SellBitboxCubit>.value(value: cubit),
+          BlocProvider<SettingsBloc>.value(value: settingsBloc),
+        ],
+        child: SellBitboxView(
+          paymentInfo: _paymentInfo(
+            estimatedAmount: 108,
+            zchfAmount: 100,
+            valueChf: 88.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // EUR is selected and 92.50 EUR was stored, so that row is shown beside it.
+  Widget forStoredEur(SellBitboxState state) {
+    when(() => cubit.state).thenReturn(state);
+    final settingsBloc = MockSettingsBloc();
+    const settingsState = SettingsState(
+      language: Language.de,
+      currency: Currency.eur,
+    );
+    when(() => settingsBloc.state).thenReturn(settingsState);
+    return wrapForGolden(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<SellBitboxCubit>.value(value: cubit),
+          BlocProvider<SettingsBloc>.value(value: settingsBloc),
+        ],
+        child: SellBitboxView(
+          paymentInfo: _paymentInfo(
+            estimatedAmount: 108,
+            zchfAmount: 100,
+            valueChf: 100,
+            valueEur: 92.5,
+          ),
+        ),
+      ),
+    );
   }
 
   group('$SellBitboxView', () {
@@ -132,6 +204,24 @@ void main() {
       ),
     );
 
+    goldenTest(
+      'awaiting swap confirm — ZCHF line plus stored EUR',
+      fileName: 'sell_bitbox_awaiting_swap_confirm_stored_eur',
+      constraints: phoneConstraints,
+      builder: () => forStoredEur(
+        SellBitboxAwaitingSwapConfirm('0xrawswap', '0xrawdeposit'),
+      ),
+    );
+
+    goldenTest(
+      'awaiting swap confirm — ZCHF line plus stored CHF when EUR is selected',
+      fileName: 'sell_bitbox_awaiting_swap_confirm_stored_chf',
+      constraints: phoneConstraints,
+      builder: () => forStoredChfWhenEur(
+        SellBitboxAwaitingSwapConfirm('0xrawswap', '0xrawdeposit'),
+      ),
+    );
+
     // Step 2 (Swap) — signing/broadcasting in flight: spinner + "Swapping".
     goldenTest(
       'swapping — spinner',
@@ -147,6 +237,24 @@ void main() {
       fileName: 'sell_bitbox_awaiting_deposit_confirm',
       constraints: phoneConstraints,
       builder: () => forState(
+        SellBitboxAwaitingDepositConfirm(_signedTx(), '0xrawdeposit'),
+      ),
+    );
+
+    goldenTest(
+      'awaiting deposit confirm — ZCHF line plus stored EUR',
+      fileName: 'sell_bitbox_awaiting_deposit_confirm_stored_eur',
+      constraints: phoneConstraints,
+      builder: () => forStoredEur(
+        SellBitboxAwaitingDepositConfirm(_signedTx(), '0xrawdeposit'),
+      ),
+    );
+
+    goldenTest(
+      'awaiting deposit confirm — ZCHF line plus stored CHF when EUR is selected',
+      fileName: 'sell_bitbox_awaiting_deposit_confirm_stored_chf',
+      constraints: phoneConstraints,
+      builder: () => forStoredChfWhenEur(
         SellBitboxAwaitingDepositConfirm(_signedTx(), '0xrawdeposit'),
       ),
     );

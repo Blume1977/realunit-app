@@ -8,6 +8,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/referral/dto/referra
 import 'package:realunit_wallet/screens/referral/cubit/referral_cubit.dart';
 import 'package:realunit_wallet/screens/referral/referral_overview_page.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
+import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/styles/language.dart';
 
 import '../../../helper/helper.dart';
@@ -31,6 +32,15 @@ void main() {
       initialState: settingsState,
     );
   });
+
+  void useSettings(SettingsState settingsState) {
+    when(() => settings.state).thenReturn(settingsState);
+    whenListen(
+      settings,
+      const Stream<SettingsState>.empty(),
+      initialState: settingsState,
+    );
+  }
 
   Widget buildOverview(ReferralState state) {
     when(() => cubit.state).thenReturn(state);
@@ -94,6 +104,34 @@ void main() {
           creditedCount: 0,
           realuSum: 0,
           chfSum: 0,
+        );
+        return buildOverview(
+          const ReferralOverviewLoaded(summary: summary, invites: []),
+        );
+      },
+    );
+
+    // 40 shares at a stored share price of 1.27 EUR is 50.80 EUR.
+    goldenTest(
+      'overview tile shows the stored EUR amount when EUR is selected',
+      fileName: 'referral_overview_page_eur',
+      constraints: phoneConstraints,
+      builder: () {
+        useSettings(
+          const SettingsState(language: Language.de, currency: Currency.eur),
+        );
+        const summary = ReferralSummaryDto(
+          eligible: true,
+          termsAccepted: true,
+          minHolding: 70,
+          openCount: 1,
+          creditedCount: 2,
+          realuSum: 40,
+          chfSum: 512.4,
+          eurSum: 470.2,
+          sharePriceLabel: 'Aktienkurs',
+          sharePrice: 1.38,
+          sharePriceEur: 1.27,
         );
         return buildOverview(
           const ReferralOverviewLoaded(summary: summary, invites: []),

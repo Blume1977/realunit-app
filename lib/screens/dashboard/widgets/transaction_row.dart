@@ -143,8 +143,11 @@ class ReferralPayoutTransactionRow extends StatelessWidget {
           symbol: transaction.asset.symbol,
         );
         final chfLine = chf != null && chf.isNotEmpty
-            ? s.referralPayoutChf(
-                settings.hideAmounts ? '***.**' : formatFrozenChfAmount(chf),
+            ? referralPayoutFrozenLine(
+                context: context,
+                raw: chf,
+                currency: settings.currency,
+                hideAmounts: settings.hideAmounts,
               )
             : null;
         return Semantics(

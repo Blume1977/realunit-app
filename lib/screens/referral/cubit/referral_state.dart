@@ -81,7 +81,9 @@ class ReferralOverviewLoaded extends ReferralState {
     summary.creditedCount,
     summary.realuSum,
     summary.chfSum,
+    summary.eurSum,
     summary.sharePrice,
+    summary.sharePriceEur,
     summary.sharePriceLabel,
     // Compare every rendered per-invite field, not just the id, so a refresh
     // that only resolves e.g. inviterName after a late bind still re-renders.

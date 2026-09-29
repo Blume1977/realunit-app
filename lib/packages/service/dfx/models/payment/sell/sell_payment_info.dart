@@ -1,6 +1,17 @@
+import 'package:equatable/equatable.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/eip7702/eip7702_data_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/real_unit_sell_payment_info_dto.dart';
 import 'package:realunit_wallet/styles/currency.dart';
+
+class StoredSellFiat extends Equatable {
+  final double amount;
+  final Currency currency;
+
+  const StoredSellFiat({required this.amount, required this.currency});
+
+  @override
+  List<Object?> get props => [amount, currency];
+}
 
 class SellPaymentInfo {
   final int id;
@@ -23,6 +34,9 @@ class SellPaymentInfo {
   final double minVolume;
   final double maxVolume;
   final String? error;
+  final double? valueChf;
+  final double? valueEur;
+  final double? zchfAmount;
 
   const SellPaymentInfo({
     required this.id,
@@ -42,5 +56,24 @@ class SellPaymentInfo {
     this.minVolume = 0,
     this.maxVolume = double.infinity,
     this.error,
+    this.valueChf,
+    this.valueEur,
+    this.zchfAmount,
   });
+
+  StoredSellFiat? storedFiat(Currency? settingsCurrency) {
+    if (settingsCurrency == Currency.eur && valueEur != null) {
+      return StoredSellFiat(amount: valueEur!, currency: Currency.eur);
+    }
+    if (settingsCurrency == Currency.chf && valueChf != null) {
+      return StoredSellFiat(amount: valueChf!, currency: Currency.chf);
+    }
+    if (settingsCurrency == Currency.eur && valueChf != null) {
+      return StoredSellFiat(amount: valueChf!, currency: Currency.chf);
+    }
+    if (settingsCurrency == Currency.chf && valueEur != null) {
+      return StoredSellFiat(amount: valueEur!, currency: Currency.eur);
+    }
+    return null;
+  }
 }

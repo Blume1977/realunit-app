@@ -298,6 +298,7 @@
   "referralOverviewHint": "20 REALU per successful referral once the invited person has completed their first purchase of at least the minimum purchase set out in the terms of participation.",
   "referralOverviewTitle": "Your referrals",
   "referralPayout": "Referral prize",
+  "referralPayoutAmount": "${currency} ${amount} at credit",
   "referralPayoutChf": "CHF ${chf} at credit",
   "referralPromoTitle": "Promotion",
   "referralQuarterCap": "No further prizes can be credited this quarter.",

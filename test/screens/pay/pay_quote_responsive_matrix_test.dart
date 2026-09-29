@@ -17,6 +17,7 @@ import 'package:realunit_wallet/packages/utils/default_assets.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/screens/pay/cubits/pay_quote/pay_quote_cubit.dart';
 import 'package:realunit_wallet/screens/pay/pay_quote_page.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/themes.dart';
 
 import '../../helper/helper.dart';
@@ -114,8 +115,13 @@ void main() {
     for (final cell in kFullResponsiveMatrix) {
       testWidgets(cell.id, (tester) async {
         await withTargetPlatform(cell.device.platform, () async {
-          final subject = BlocProvider<PayQuoteCubit>.value(
-            value: quoteCubit,
+          final settingsBloc = MockSettingsBloc();
+          when(() => settingsBloc.state).thenReturn(const SettingsState());
+          final subject = MultiBlocProvider(
+            providers: [
+              BlocProvider<SettingsBloc>.value(value: settingsBloc),
+              BlocProvider<PayQuoteCubit>.value(value: quoteCubit),
+            ],
             child: const PayQuoteView(),
           );
 

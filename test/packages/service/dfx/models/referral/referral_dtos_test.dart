@@ -44,6 +44,42 @@ void main() {
       });
       expect(dto.sharePrice, 1.38);
       expect(dto.tileChf, 55.2);
+      expect(dto.tileEur, isNull);
+    });
+
+    test('tileEur uses the stored euro sum or the euro share price', () {
+      final stored = ReferralSummaryDto.fromJson({
+        'eligible': true,
+        'termsAccepted': true,
+        'openCount': 0,
+        'creditedCount': 1,
+        'realuSum': 0,
+        'chfSum': 10,
+        'eurSum': 9.2,
+      });
+      expect(stored.tileEur, 9.2);
+
+      final priced = ReferralSummaryDto.fromJson({
+        'eligible': true,
+        'termsAccepted': true,
+        'openCount': 0,
+        'creditedCount': 2,
+        'realuSum': 40,
+        'chfSum': 512.4,
+        'sharePriceEur': 1.1,
+      });
+      expect(priced.tileEur, 44);
+
+      const fractional = ReferralSummaryDto(
+        eligible: true,
+        termsAccepted: true,
+        openCount: 0,
+        creditedCount: 1,
+        realuSum: 40.9,
+        chfSum: 10,
+        sharePriceEur: 1.1,
+      );
+      expect(fractional.tileEur, 44);
     });
 
     test('coerces eligible and termsAccepted from 1/true strings', () {

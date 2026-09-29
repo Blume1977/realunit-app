@@ -18,6 +18,7 @@ import 'package:realunit_wallet/screens/transaction_history/cubits/receipt/trans
 import 'package:realunit_wallet/screens/transaction_history/transaction_history_page.dart';
 import 'package:realunit_wallet/screens/transaction_history/widgets/transaction_history_download_button.dart';
 import 'package:realunit_wallet/screens/transaction_history/widgets/transaction_history_row.dart';
+import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/styles/language.dart';
 import 'package:realunit_wallet/widgets/date_picker_field.dart';
 
@@ -175,6 +176,66 @@ void main() {
           note: '',
           data: '246.50',
           // Prize date must fall inside the pinned clock's default filter window.
+          timestamp: DateTime.utc(2026, 5, 20, 10),
+        );
+        return withClock(pinnedClock, () {
+          when(() => filterCubit.state).thenReturn(
+            TransactionHistoryFilterState(all: [prize], filtered: [prize]),
+          );
+          return wrapForGolden(buildSubject());
+        });
+      },
+    );
+
+    goldenTest(
+      'referral prize shows stored EUR when EUR is selected',
+      fileName: 'transaction_history_page_referral_payout_eur',
+      constraints: phoneConstraints,
+      builder: () {
+        when(() => settingsBloc.state).thenReturn(
+          const SettingsState(language: Language.de, currency: Currency.eur),
+        );
+        final prize = Transaction(
+          height: 0,
+          txId: 'referral-payout-7',
+          chainId: realUnitAsset.chainId,
+          senderAddress: kReferralPayoutSenderAddress,
+          receiverAddress: walletAddress,
+          amount: BigInt.from(20),
+          asset: realUnitAsset,
+          type: TransactionTypes.referralPayout,
+          note: '',
+          data: '246.50|230.10',
+          timestamp: DateTime.utc(2026, 5, 20, 10),
+        );
+        return withClock(pinnedClock, () {
+          when(() => filterCubit.state).thenReturn(
+            TransactionHistoryFilterState(all: [prize], filtered: [prize]),
+          );
+          return wrapForGolden(buildSubject());
+        });
+      },
+    );
+
+    goldenTest(
+      'referral prize keeps stored CHF when EUR is selected but no EUR was stored',
+      fileName: 'transaction_history_page_referral_payout_chf_only',
+      constraints: phoneConstraints,
+      builder: () {
+        when(() => settingsBloc.state).thenReturn(
+          const SettingsState(language: Language.de, currency: Currency.eur),
+        );
+        final prize = Transaction(
+          height: 0,
+          txId: 'referral-payout-7',
+          chainId: realUnitAsset.chainId,
+          senderAddress: kReferralPayoutSenderAddress,
+          receiverAddress: walletAddress,
+          amount: BigInt.from(20),
+          asset: realUnitAsset,
+          type: TransactionTypes.referralPayout,
+          note: '',
+          data: '246.50',
           timestamp: DateTime.utc(2026, 5, 20, 10),
         );
         return withClock(pinnedClock, () {

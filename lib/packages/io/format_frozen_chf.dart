@@ -11,6 +11,24 @@ String formatFrozenChfAmount(String raw) {
   return _roundHalfUpToCents(normalized);
 }
 
+String encodeFrozenFiatData({required num chfValue, num? eurValue}) {
+  final chf = formatFrozenChfAmount(chfValue.toString());
+  if (eurValue == null) return chf;
+  return '$chf|${formatFrozenChfAmount(eurValue.toString())}';
+}
+
+({String chf, String? eur}) splitFrozenFiatData(String raw) {
+  final index = raw.indexOf('|');
+  if (index < 0) {
+    return (chf: formatFrozenChfAmount(raw), eur: null);
+  }
+  final eurRaw = raw.substring(index + 1);
+  return (
+    chf: formatFrozenChfAmount(raw.substring(0, index)),
+    eur: eurRaw.isEmpty ? null : formatFrozenChfAmount(eurRaw),
+  );
+}
+
 /// Half-up to two decimals from a decimal string. `double` + `toStringAsFixed(2)`
 /// can turn `1.005` into `1.00`.
 String _roundHalfUpToCents(String normalized) {

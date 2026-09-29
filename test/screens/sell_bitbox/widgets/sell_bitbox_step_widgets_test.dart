@@ -10,6 +10,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_pa
 import 'package:realunit_wallet/screens/sell_bitbox/cubit/sell_bitbox_cubit.dart';
 import 'package:realunit_wallet/screens/sell_bitbox/widgets/sell_bitbox_deposit_step.dart';
 import 'package:realunit_wallet/screens/sell_bitbox/widgets/sell_bitbox_swap_step.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/currency.dart';
 
 import '../../../helper/helper.dart';
@@ -57,17 +58,29 @@ SellPaymentInfo _info() => SellPaymentInfo(
       requiredGasEth: 0.001,
     );
 
-Widget _hostSwap(SellBitboxCubit cubit, SellPaymentInfo info) =>
-    BlocProvider<SellBitboxCubit>.value(
-      value: cubit,
-      child: SellBitboxSwapStep(paymentInfo: info),
-    );
+Widget _hostSwap(SellBitboxCubit cubit, SellPaymentInfo info) {
+  final settings = MockSettingsBloc();
+  when(() => settings.state).thenReturn(const SettingsState());
+  return MultiBlocProvider(
+    providers: [
+      BlocProvider<SellBitboxCubit>.value(value: cubit),
+      BlocProvider<SettingsBloc>.value(value: settings),
+    ],
+    child: SellBitboxSwapStep(paymentInfo: info),
+  );
+}
 
-Widget _hostDeposit(SellBitboxCubit cubit, SellPaymentInfo info) =>
-    BlocProvider<SellBitboxCubit>.value(
-      value: cubit,
-      child: SellBitboxDepositStep(paymentInfo: info),
-    );
+Widget _hostDeposit(SellBitboxCubit cubit, SellPaymentInfo info) {
+  final settings = MockSettingsBloc();
+  when(() => settings.state).thenReturn(const SettingsState());
+  return MultiBlocProvider(
+    providers: [
+      BlocProvider<SellBitboxCubit>.value(value: cubit),
+      BlocProvider<SettingsBloc>.value(value: settings),
+    ],
+    child: SellBitboxDepositStep(paymentInfo: info),
+  );
+}
 
 void main() {
   late _MockSellBitboxCubit cubit;

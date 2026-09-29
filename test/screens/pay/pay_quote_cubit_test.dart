@@ -48,6 +48,8 @@ SwapPaymentInfo _swap({
   String? error,
   double? ethereumTransactionFeeChf = 0.05,
   double? ethereumTransactionFeeRealu = 0.01234567,
+  double? valueChf,
+  double? valueEur,
 }) {
   return SwapPaymentInfo(
     id: 99,
@@ -61,6 +63,8 @@ SwapPaymentInfo _swap({
     feesTotal: feesTotal,
     ethereumTransactionFeeChf: isValid ? ethereumTransactionFeeChf : null,
     ethereumTransactionFeeRealu: isValid ? ethereumTransactionFeeRealu : null,
+    valueChf: valueChf,
+    valueEur: valueEur,
   );
 }
 
@@ -100,6 +104,30 @@ void main() {
       expect(state.swap.ethereumTransactionFeeRealu, 0.01234567);
       expect(state.merchantName, isNull);
       expect(state.merchantCity, isNull);
+      expect(state.hasEurReceipt, isFalse);
+    },
+  );
+
+  blocTest<PayQuoteCubit, PayQuoteState>(
+    'a quote with stored franc and euro values keeps the euro receipt lines',
+    build: build,
+    setUp: () {
+      when(() => payService.getPaymentDetails('pl_realunit_ocp_sepolia')).thenAnswer(
+        (_) async => _details(expiration: DateTime.now().add(const Duration(minutes: 5))),
+      );
+      when(() => payService.getSwapPaymentInfo(any())).thenAnswer(
+        (_) async => _swap(valueChf: 2, valueEur: 1.8, estimatedAmount: 2.05),
+      );
+    },
+    act: (cubit) => cubit.load(),
+    expect: () => [isA<PayQuoteLoading>(), isA<PayQuoteReady>()],
+    verify: (cubit) {
+      final state = cubit.state as PayQuoteReady;
+      expect(state.hasEurReceipt, isTrue);
+      expect(state.billEur, closeTo(1.8, 0.000001));
+      expect(state.feeEur, closeTo(0.045, 0.000001));
+      expect(state.roundingEur, closeTo(0, 0.000001));
+      expect(state.totalEur, closeTo(1.845, 0.000001));
     },
   );
 

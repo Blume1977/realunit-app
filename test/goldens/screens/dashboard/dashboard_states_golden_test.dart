@@ -460,5 +460,58 @@ void main() {
         return wrapForGolden(buildSubject());
       },
     );
+
+    goldenTest(
+      'Empfehlungen card and euro prize in latest transactions',
+      fileName: 'dashboard_referral_entry_and_payout_eur',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await alchemist.precacheImages(tester);
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Empfehlungen'));
+        await tester.pumpAndSettle();
+      },
+      builder: () {
+        when(() => settingsBloc.state).thenReturn(
+          const SettingsState(
+            language: Language.de,
+            currency: Currency.eur,
+            walletFeatureReferral: true,
+          ),
+        );
+        when(() => balanceCubit.state).thenReturn(heldBalance());
+        final referral = MockRealUnitReferralService();
+        when(() => referral.getSummary()).thenAnswer(
+          (_) async => const ReferralSummaryDto(
+            eligible: true,
+            termsAccepted: true,
+            openCount: 0,
+            creditedCount: 0,
+            realuSum: 0,
+            chfSum: 0,
+          ),
+        );
+        if (GetIt.instance.isRegistered<RealUnitReferralService>()) {
+          GetIt.instance.unregister<RealUnitReferralService>();
+        }
+        GetIt.instance.registerSingleton<RealUnitReferralService>(referral);
+        final prize = Transaction(
+          height: 0,
+          txId: 'referral-payout-7',
+          chainId: realUnitAsset.chainId,
+          senderAddress: kReferralPayoutSenderAddress,
+          receiverAddress: walletAddress,
+          amount: BigInt.from(20),
+          asset: realUnitAsset,
+          type: TransactionTypes.referralPayout,
+          note: '',
+          data: '246.50|230.10',
+          timestamp: DateTime.utc(2026, 8, 24, 10),
+        );
+        when(() => transactionRepository.watchTransactionsOfAssets(any(), any(), any()))
+            .thenAnswer((_) => Stream.value([prize, recentTransactions.first]));
+        return wrapForGolden(buildSubject());
+      },
+    );
   });
 }

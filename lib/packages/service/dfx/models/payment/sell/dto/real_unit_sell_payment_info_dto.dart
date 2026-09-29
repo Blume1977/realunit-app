@@ -27,6 +27,9 @@ class RealUnitSellPaymentInfoDto {
   final double requiredGasEth;
   final bool isValid;
   final String? error;
+  final double? valueChf;
+  final double? valueEur;
+  final double? zchfAmount;
 
   const RealUnitSellPaymentInfoDto({
     required this.id,
@@ -52,6 +55,9 @@ class RealUnitSellPaymentInfoDto {
     required this.requiredGasEth,
     required this.isValid,
     this.error,
+    this.valueChf,
+    this.valueEur,
+    this.zchfAmount,
   });
 
   factory RealUnitSellPaymentInfoDto.fromJson(Map<String, dynamic> json) {
@@ -81,6 +87,9 @@ class RealUnitSellPaymentInfoDto {
       requiredGasEth: (json['requiredGasEth'] as num).toDouble(),
       isValid: json['isValid'] as bool,
       error: json['error'] as String?,
+      valueChf: (json['valueChf'] as num?)?.toDouble(),
+      valueEur: (json['valueEur'] as num?)?.toDouble(),
+      zchfAmount: (json['zchfAmount'] as num?)?.toDouble(),
     );
   }
 }

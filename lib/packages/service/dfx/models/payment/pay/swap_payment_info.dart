@@ -16,6 +16,8 @@ class SwapPaymentInfo extends Equatable {
   final double? feesTotal;
   final double? ethereumTransactionFeeChf;
   final double? ethereumTransactionFeeRealu;
+  final double? valueChf;
+  final double? valueEur;
 
   const SwapPaymentInfo({
     required this.id,
@@ -29,6 +31,8 @@ class SwapPaymentInfo extends Equatable {
     this.feesTotal,
     this.ethereumTransactionFeeChf,
     this.ethereumTransactionFeeRealu,
+    this.valueChf,
+    this.valueEur,
   });
 
   factory SwapPaymentInfo.fromDto(RealUnitSwapPaymentInfoDto dto) => SwapPaymentInfo(
@@ -43,6 +47,8 @@ class SwapPaymentInfo extends Equatable {
     feesTotal: dto.fees?.total,
     ethereumTransactionFeeChf: dto.ethereumTransactionFeeChf,
     ethereumTransactionFeeRealu: dto.ethereumTransactionFeeRealu,
+    valueChf: dto.valueChf,
+    valueEur: dto.valueEur,
   );
 
   @override
@@ -58,5 +64,7 @@ class SwapPaymentInfo extends Equatable {
     feesTotal,
     ethereumTransactionFeeChf,
     ethereumTransactionFeeRealu,
+    valueChf,
+    valueEur,
   ];
 }

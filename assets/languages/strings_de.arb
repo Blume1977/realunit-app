@@ -298,6 +298,7 @@
   "referralOverviewHint": "20 REALU pro erfolgreicher Weiterempfehlung, sobald die eingeladene Person ihren ersten Kauf über den Mindestkauf gemäss Teilnahmebedingungen erfolgreich abgewickelt hat.",
   "referralOverviewTitle": "Ihre Empfehlungen",
   "referralPayout": "Empfehlungsprämie",
+  "referralPayoutAmount": "${currency} ${amount} zum Zeitpunkt der Gutschrift",
   "referralPayoutChf": "CHF ${chf} zum Zeitpunkt der Gutschrift",
   "referralPromoTitle": "Aktion",
   "referralQuarterCap": "In diesem Quartal sind keine weiteren Prämien möglich.",

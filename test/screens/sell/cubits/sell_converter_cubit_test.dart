@@ -62,8 +62,8 @@ void main() {
         ),
       );
 
-      final cubit = SellConverterCubit(service);
-      await cubit.onFiatChanged('100', currency: Currency.eur);
+      final cubit = SellConverterCubit(service, currency: Currency.eur);
+      await cubit.onFiatChanged('100');
       await Future<void>.delayed(const Duration(milliseconds: 250));
 
       verify(() => service.getSellShares('100', Currency.eur)).called(1);

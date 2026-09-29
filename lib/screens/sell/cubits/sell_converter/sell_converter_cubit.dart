@@ -11,7 +11,8 @@ part 'sell_converter_state.dart';
 class SellConverterCubit extends Cubit<SellConverterState> {
   final DfxBrokerbotService _brokerbotService;
 
-  SellConverterCubit(this._brokerbotService) : super(const SellConverterState());
+  SellConverterCubit(this._brokerbotService, {Currency currency = Currency.chf})
+    : super(SellConverterState(currency: currency));
 
   Timer? _fiatDebounce;
   Timer? _sharesDebounce;
@@ -27,7 +28,7 @@ class SellConverterCubit extends Cubit<SellConverterState> {
   int _seq = 0;
 
   /// User changed fiat → convert to shares
-  Future<void> onFiatChanged(String value, {Currency currency = Currency.chf}) async {
+  Future<void> onFiatChanged(String value) async {
     emit(state.copyWith(fiatText: value));
 
     _fiatDebounce?.cancel();
@@ -37,7 +38,7 @@ class SellConverterCubit extends Cubit<SellConverterState> {
       emit(state.copyWith(loading: true));
 
       try {
-        final result = await _brokerbotService.getSellShares(value, currency);
+        final result = await _brokerbotService.getSellShares(value, state.currency);
         if (isClosed || mySeq != _seq) return;
         emit(
           state.copyWith(
@@ -54,7 +55,7 @@ class SellConverterCubit extends Cubit<SellConverterState> {
   }
 
   /// User changed shares → convert to fiat
-  Future<void> onSharesChanged(String value, {Currency currency = Currency.chf}) async {
+  Future<void> onSharesChanged(String value) async {
     emit(state.copyWith(sharesText: value));
 
     _sharesDebounce?.cancel();
@@ -64,7 +65,7 @@ class SellConverterCubit extends Cubit<SellConverterState> {
       emit(state.copyWith(loading: true));
 
       try {
-        final result = await _brokerbotService.getSellPrice(value, currency);
+        final result = await _brokerbotService.getSellPrice(value, state.currency);
         if (isClosed || mySeq != _seq) return;
         emit(
           state.copyWith(

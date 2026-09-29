@@ -32,6 +32,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_pa
 import 'package:realunit_wallet/screens/sell/cubits/sell_confirm/sell_confirm_cubit.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_confirm_sheet.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_executed_sheet.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/styles/themes.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
@@ -39,6 +40,8 @@ import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import '../../helper/helper.dart';
 
 class _MockSellConfirmCubit extends MockCubit<SellConfirmState> implements SellConfirmCubit {}
+
+class _MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState> implements SettingsBloc {}
 
 class _FakeSellPaymentInfo extends Fake implements SellPaymentInfo {}
 
@@ -89,6 +92,7 @@ SellPaymentInfo _worstCasePaymentInfo() => const SellPaymentInfo(
 
 void main() {
   late _MockSellConfirmCubit confirmCubit;
+  late _MockSettingsBloc settingsBloc;
 
   setUpAll(() {
     registerFallbackValue(_FakeSellPaymentInfo());
@@ -96,6 +100,8 @@ void main() {
 
   setUp(() {
     confirmCubit = _MockSellConfirmCubit();
+    settingsBloc = _MockSettingsBloc();
+    when(() => settingsBloc.state).thenReturn(const SettingsState());
     when(() => confirmCubit.state).thenReturn(SellConfirmInitial());
     whenListen(
       confirmCubit,
@@ -140,19 +146,22 @@ void main() {
     addTearDown(router.dispose);
 
     await tester.pumpWidget(
-      MediaQuery(
-        data: cell.mediaQuery,
-        child: MaterialApp.router(
-          theme: realUnitTheme,
-          locale: const Locale('de'),
-          localizationsDelegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          routerConfig: router,
+      BlocProvider<SettingsBloc>.value(
+        value: settingsBloc,
+        child: MediaQuery(
+          data: cell.mediaQuery,
+          child: MaterialApp.router(
+            theme: realUnitTheme,
+            locale: const Locale('de'),
+            localizationsDelegates: const [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            routerConfig: router,
+          ),
         ),
       ),
     );

@@ -12,8 +12,10 @@ class ReferralSummaryDto {
   final int creditedCount;
   final num realuSum;
   final num chfSum;
+  final num? eurSum;
   final String? sharePriceLabel;
   final num? sharePrice;
+  final num? sharePriceEur;
 
   const ReferralSummaryDto({
     required this.eligible,
@@ -23,8 +25,10 @@ class ReferralSummaryDto {
     required this.creditedCount,
     required this.realuSum,
     required this.chfSum,
+    this.eurSum,
     this.sharePriceLabel,
     this.sharePrice,
+    this.sharePriceEur,
   });
 
   /// Offerte: total tile may show the running value at Aktienkurs.
@@ -36,6 +40,15 @@ class ReferralSummaryDto {
       return ((whole * price) * 100).round() / 100;
     }
     return chfSum;
+  }
+
+  num? get tileEur {
+    final price = sharePriceEur;
+    if (price != null && price > 0 && realuSum > 0) {
+      final whole = realuSum is int ? realuSum : realuSum.truncate();
+      return ((whole * price) * 100).round() / 100;
+    }
+    return eurSum;
   }
 
   /// Tile label. Empty API fields, «NAV» copy (Offerte draft 5), and the
@@ -62,8 +75,10 @@ class ReferralSummaryDto {
       creditedCount: creditedCount,
       realuSum: _summarySum(json, 'realuSum', creditedCount: creditedCount),
       chfSum: _summarySum(json, 'chfSum', creditedCount: creditedCount),
+      eurSum: referralJsonNum(json['eurSum']),
       sharePriceLabel: referralJsonString(json['sharePriceLabel']),
       sharePrice: referralJsonNum(json['sharePrice']),
+      sharePriceEur: referralJsonNum(json['sharePriceEur']),
     );
   }
 }

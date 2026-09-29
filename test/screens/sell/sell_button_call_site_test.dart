@@ -22,12 +22,15 @@ import 'package:realunit_wallet/screens/sell/cubits/sell_payment_info/sell_payme
 import 'package:realunit_wallet/screens/sell/widgets/sell_button.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_confirm_sheet.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_executed_sheet.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/styles/themes.dart';
 
 class _MockSellPaymentInfoCubit extends MockCubit<SellPaymentInfoState>
     implements SellPaymentInfoCubit {}
+
+class _MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState> implements SettingsBloc {}
 
 class _MockSellConverterCubit extends MockCubit<SellConverterState>
     implements SellConverterCubit {}
@@ -90,6 +93,7 @@ SellPaymentInfo _paymentInfoFixture() => const SellPaymentInfo(
 void main() {
   late _MockSellPaymentInfoCubit sellPaymentInfoCubit;
   late _MockSellConverterCubit sellConverterCubit;
+  late _MockSettingsBloc settingsBloc;
 
   setUpAll(() {
     GetIt.instance.registerSingleton<RealUnitSellPaymentInfoService>(
@@ -102,6 +106,8 @@ void main() {
   setUp(() {
     sellPaymentInfoCubit = _MockSellPaymentInfoCubit();
     sellConverterCubit = _MockSellConverterCubit();
+    settingsBloc = _MockSettingsBloc();
+    when(() => settingsBloc.state).thenReturn(const SettingsState());
     when(() => sellPaymentInfoCubit.state).thenReturn(const SellPaymentInfoInitial());
     when(() => sellConverterCubit.state).thenReturn(const SellConverterState());
   });
@@ -141,16 +147,19 @@ void main() {
     addTearDown(router.dispose);
 
     await tester.pumpWidget(
-      MaterialApp.router(
-        theme: realUnitTheme,
-        routerConfig: router,
-        localizationsDelegates: const [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
+      BlocProvider<SettingsBloc>.value(
+        value: settingsBloc,
+        child: MaterialApp.router(
+          theme: realUnitTheme,
+          routerConfig: router,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+        ),
       ),
     );
     await tester.pumpAndSettle();

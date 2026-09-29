@@ -17,6 +17,7 @@ import 'package:realunit_wallet/screens/referral/referral_page.dart';
 import 'package:realunit_wallet/screens/referral/referral_terms_page.dart';
 import 'package:realunit_wallet/screens/referral/widgets/referral_entry_card.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
+import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/styles/language.dart';
 
 import '../../../helper/helper.dart';
@@ -243,7 +244,58 @@ void main() {
         );
       },
     );
+
+    goldenTest(
+      'history prize row shows stored EUR when EUR is selected',
+      fileName: 'referral_payout_transaction_row_eur',
+      constraints: phoneConstraints,
+      builder: () => _prizeRow(
+        settings: const SettingsState(language: Language.de, currency: Currency.eur),
+        data: '246.50|230.10',
+      ),
+    );
+
+    goldenTest(
+      'history prize row keeps stored CHF when EUR is selected but no EUR was stored',
+      fileName: 'referral_payout_transaction_row_eur_chf_only',
+      constraints: phoneConstraints,
+      builder: () => _prizeRow(
+        settings: const SettingsState(language: Language.de, currency: Currency.eur),
+        data: '246.50',
+      ),
+    );
   });
+}
+
+Widget _prizeRow({required SettingsState settings, required String data}) {
+  final bloc = _MockSettingsBloc();
+  when(() => bloc.state).thenReturn(settings);
+  whenListen(bloc, const Stream<SettingsState>.empty(), initialState: settings);
+  return wrapForGolden(
+    BlocProvider<SettingsBloc>.value(
+      value: bloc,
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ReferralPayoutTransactionRow(
+            transaction: Transaction(
+              height: 0,
+              txId: 'referral-payout-7',
+              chainId: realUnitAsset.chainId,
+              senderAddress: kReferralPayoutSenderAddress,
+              receiverAddress: '0xabc',
+              amount: BigInt.from(20),
+              asset: realUnitAsset,
+              type: TransactionTypes.referralPayout,
+              note: '',
+              data: data,
+              timestamp: DateTime.utc(2026, 8, 24, 10),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 const _termsMarkdownStub = '''# Teilnahmebedingungen Referral-Programm RealUnit App

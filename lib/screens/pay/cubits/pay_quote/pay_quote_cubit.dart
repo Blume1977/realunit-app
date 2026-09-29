@@ -56,17 +56,39 @@ class PayQuoteCubit extends Cubit<PayQuoteState> {
         return;
       }
 
+      final fiatAmount = details.requestedAmount.amount;
+      double? billEur;
+      double? feeEur;
+      double? roundingEur;
+      double? totalEur;
+      final valueChf = swap.valueChf;
+      final valueEur = swap.valueEur;
+      if (valueChf != null && valueEur != null && valueChf != 0) {
+        final ratio = valueEur / valueChf;
+        final feeChf = swap.ethereumTransactionFeeChf ?? 0;
+        final roundingChf = swap.estimatedAmount - fiatAmount - feeChf;
+        final totalChf = fiatAmount + feeChf + roundingChf;
+        billEur = fiatAmount * ratio;
+        feeEur = feeChf * ratio;
+        roundingEur = roundingChf * ratio;
+        totalEur = totalChf * ratio;
+      }
+
       emit(
         PayQuoteReady(
           paymentLinkId: _paymentLinkId,
           quoteId: details.quote.id,
           fiatAsset: details.requestedAmount.asset,
-          fiatAmount: details.requestedAmount.amount,
+          fiatAmount: fiatAmount,
           zchfAmount: zchfAmount,
           merchantName: _recipientName(details),
           merchantCity: details.recipient?.city,
           expiresAt: details.quote.expiration,
           swap: swap,
+          billEur: billEur,
+          feeEur: feeEur,
+          roundingEur: roundingEur,
+          totalEur: totalEur,
         ),
       );
     } catch (e) {

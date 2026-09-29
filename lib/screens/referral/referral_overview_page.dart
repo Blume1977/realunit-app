@@ -14,6 +14,7 @@ import 'package:realunit_wallet/screens/referral/widgets/referral_loading_status
 import 'package:realunit_wallet/screens/referral/widgets/referral_share_invite_button.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/colors.dart';
+import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import 'package:realunit_wallet/widgets/buttons/app_text_button.dart';
 import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
@@ -93,10 +94,6 @@ class ReferralOverviewPage extends StatelessWidget {
             final showListRetry =
                 listError ||
                 (summary.openCount > 0 && openInvites.isEmpty);
-            final chfFormat = NumberFormat.currency(
-              locale: 'de_CH',
-              symbol: 'CHF',
-            );
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -107,14 +104,23 @@ class ReferralOverviewPage extends StatelessWidget {
                   children: [
                     BlocBuilder<SettingsBloc, SettingsState>(
                       builder: (context, settings) {
-                        final chf = settings.hideAmounts
+                        final useEur =
+                            settings.currency == Currency.eur &&
+                            summary.tileEur != null;
+                        final fiatFormat = NumberFormat.currency(
+                          locale: 'de_CH',
+                          symbol: useEur ? 'EUR' : 'CHF',
+                        );
+                        final fiat = settings.hideAmounts
                             ? '***.**'
-                            : chfFormat.format(summary.tileChf);
+                            : fiatFormat.format(
+                                useEur ? summary.tileEur! : summary.tileChf,
+                              );
                         return _TotalReceivedTile(
                           realu: summary.realuSum,
                           hideAmounts: settings.hideAmounts,
                           chfLabel: s.referralChfAtSharePrice(
-                            chf,
+                            fiat,
                             summary.tileSharePriceLabel ?? s.referralSharePrice,
                           ),
                           title: s.referralTotalReceived,

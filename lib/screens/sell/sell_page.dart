@@ -12,6 +12,7 @@ import 'package:realunit_wallet/screens/sell/cubits/sell_selected_bank_account/s
 import 'package:realunit_wallet/screens/sell/widgets/sell_bank_account_field.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_button.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_converter.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
 
@@ -20,6 +21,16 @@ class SellPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsBloc>().state;
+    final view = BlocListener<SettingsBloc, SettingsState>(
+      listenWhen: (previous, current) => previous.currency != current.currency,
+      listener: (context, settingsState) {
+        final cubit = context.read<SellConverterCubit>();
+        if (cubit.state.currency == settingsState.currency) return;
+        cubit.onCurrencyChanged(settingsState.currency);
+      },
+      child: const SellView(),
+    );
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -31,6 +42,7 @@ class SellPage extends StatelessWidget {
         BlocProvider(
           create: (context) => SellConverterCubit(
             getIt<DfxBrokerbotService>(),
+            currency: settings.currency,
           )..onSharesChanged('100'),
         ),
         BlocProvider(
@@ -43,7 +55,7 @@ class SellPage extends StatelessWidget {
           create: (context) => SellSelectedBankAccountCubit(),
         ),
       ],
-      child: const SellView(),
+      child: view,
     );
   }
 }

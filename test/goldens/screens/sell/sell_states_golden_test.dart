@@ -29,7 +29,9 @@ import 'package:realunit_wallet/screens/sell/sell_page.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_add_bank_account_sheet.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_confirm_sheet.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_executed_sheet.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/currency.dart';
+import 'package:realunit_wallet/styles/language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../helper/helper.dart';
@@ -66,10 +68,10 @@ class _MockSupportedFiatRepository extends Mock implements SupportedFiatReposito
 
 class _MockApiConfig extends Mock implements ApiConfig {}
 
-// Shared review payload for the confirm/executed sheets. `amount` (100),
-// `estimatedAmount` (100.0), `currency` (CHF) and `beneficiary.iban` are the
-// only fields the SellConfirmSheet renders.
-SellPaymentInfo _paymentInfo() => SellPaymentInfo(
+// Shared review payload for the confirm/executed sheets. The sheet renders
+// `amount`, the IBAN, and either the stored fiat for the selected currency
+// or, when nothing is stored, `estimatedAmount` with `currency`.
+SellPaymentInfo _paymentInfo({double? valueChf, double? valueEur}) => SellPaymentInfo(
       id: 42,
       eip7702: Eip7702Data.fromJson({
         'relayerAddress': '0xrelay',
@@ -108,6 +110,8 @@ SellPaymentInfo _paymentInfo() => SellPaymentInfo(
       chainId: 1,
       ethBalance: 1.0,
       requiredGasEth: 0.001,
+      valueChf: valueChf,
+      valueEur: valueEur,
     );
 
 void main() {
@@ -252,14 +256,27 @@ void main() {
       confirmCubit = _MockSellConfirmCubit();
     });
 
-    Widget sheetFor(SellConfirmState state) {
+    Widget sheetFor(
+      SellConfirmState state, {
+      SellPaymentInfo? paymentInfo,
+      SettingsState? settings,
+    }) {
       when(() => confirmCubit.state).thenReturn(state);
+      Widget sheet = SellConfirmSheetView(
+        paymentInfo: paymentInfo ?? _paymentInfo(),
+      );
+      final settingsBloc = MockSettingsBloc();
+      when(() => settingsBloc.state).thenReturn(settings ?? const SettingsState());
+      sheet = BlocProvider<SettingsBloc>.value(
+        value: settingsBloc,
+        child: sheet,
+      );
       return wrapForGolden(
         Scaffold(
           backgroundColor: Colors.black54,
           bottomSheet: BlocProvider<SellConfirmCubit>.value(
             value: confirmCubit,
-            child: SellConfirmSheetView(paymentInfo: _paymentInfo()),
+            child: sheet,
           ),
         ),
       );
@@ -280,6 +297,31 @@ void main() {
       pumpBeforeTest: pumpOnce,
       constraints: phoneConstraints,
       builder: () => sheetFor(SellConfirmLoading()),
+    );
+
+    // Stored 92.5 EUR beside 100 CHF. EUR is selected, so the row shows EUR.
+    goldenTest(
+      'review card shows the stored EUR amount when EUR is selected',
+      fileName: 'sell_confirm_sheet_eur',
+      constraints: phoneConstraints,
+      builder: () => sheetFor(
+        SellConfirmInitial(),
+        paymentInfo: _paymentInfo(valueChf: 100, valueEur: 92.5),
+        settings: const SettingsState(language: Language.de, currency: Currency.eur),
+      ),
+    );
+
+    // EUR is selected, but this quote stored only CHF. The row keeps that
+    // CHF amount instead of the 100.0 estimate.
+    goldenTest(
+      'review card keeps stored CHF when EUR is selected but no EUR was stored',
+      fileName: 'sell_confirm_sheet_eur_settings_chf_stored',
+      constraints: phoneConstraints,
+      builder: () => sheetFor(
+        SellConfirmInitial(),
+        paymentInfo: _paymentInfo(valueChf: 88.5),
+        settings: const SettingsState(language: Language.de, currency: Currency.eur),
+      ),
     );
   });
 

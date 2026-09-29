@@ -71,6 +71,9 @@ class RealUnitSellPaymentInfoService extends DFXAuthService {
         minVolume: responseDto.minVolume,
         maxVolume: responseDto.maxVolume,
         error: responseDto.error,
+        valueChf: responseDto.valueChf,
+        valueEur: responseDto.valueEur,
+        zchfAmount: responseDto.zchfAmount,
       );
     } else if (response.statusCode == 403) {
       final errorJson = jsonDecode(response.body) as Map<String, dynamic>;

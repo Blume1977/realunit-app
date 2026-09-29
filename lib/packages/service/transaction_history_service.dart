@@ -167,7 +167,10 @@ class TransactionHistoryService extends DFXAuthService {
         asset: asset,
         type: TransactionTypes.referralPayout,
         note: '',
-        data: formatFrozenChfAmount(payout.chfValue.toString()),
+        data: encodeFrozenFiatData(
+          chfValue: payout.chfValue,
+          eurValue: payout.eurValue,
+        ),
         timestamp: payout.created,
       );
       if (exists) {

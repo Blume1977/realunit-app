@@ -27,6 +27,7 @@ import 'package:realunit_wallet/screens/sell/widgets/sell_bank_account_field.dar
 import 'package:realunit_wallet/screens/sell/widgets/sell_button.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_converter.dart';
 import 'package:realunit_wallet/screens/sell/widgets/sell_max_amount_button.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -161,7 +162,19 @@ void main() {
 
   group('$SellPage', () {
     testWidgets('renders $SellView', (tester) async {
-      await tester.pumpApp(const SellPage());
+      final settings = MockSettingsBloc();
+      when(() => settings.state).thenReturn(const SettingsState());
+      whenListen(
+        settings,
+        const Stream<SettingsState>.empty(),
+        initialState: const SettingsState(),
+      );
+      await tester.pumpApp(
+        BlocProvider<SettingsBloc>.value(
+          value: settings,
+          child: const SellPage(),
+        ),
+      );
 
       expect(find.byType(SellView), findsOne);
     });

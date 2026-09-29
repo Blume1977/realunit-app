@@ -7,6 +7,7 @@ class ReferralPayoutDto {
   final int id;
   final num amount;
   final num chfValue;
+  final num? eurValue;
   final DateTime created;
   final String kind;
   final String status;
@@ -19,6 +20,7 @@ class ReferralPayoutDto {
     required this.created,
     required this.kind,
     required this.status,
+    this.eurValue,
     this.txHash,
   });
 
@@ -39,6 +41,7 @@ class ReferralPayoutDto {
       // Garbage/missing frozen CHF is 0.00 (TB Ziff. 6) so Anzahl+Datum
       // still appear; JSON null from a NaN API value must not drop the prize.
       chfValue: referralJsonNum(json['chfValue']) ?? 0,
+      eurValue: referralJsonNum(json['eurValue']),
       created: created,
       kind: referralJsonString(json['kind']) ?? '',
       status: referralJsonString(json['status']) ?? '',

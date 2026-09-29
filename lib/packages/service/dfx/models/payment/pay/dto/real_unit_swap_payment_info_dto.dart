@@ -20,6 +20,8 @@ class RealUnitSwapPaymentInfoDto {
   final RealUnitSwapFeeDto? fees;
   final double? ethereumTransactionFeeChf;
   final double? ethereumTransactionFeeRealu;
+  final double? valueChf;
+  final double? valueEur;
 
   const RealUnitSwapPaymentInfoDto({
     required this.id,
@@ -40,6 +42,8 @@ class RealUnitSwapPaymentInfoDto {
     this.fees,
     this.ethereumTransactionFeeChf,
     this.ethereumTransactionFeeRealu,
+    this.valueChf,
+    this.valueEur,
   });
 
   factory RealUnitSwapPaymentInfoDto.fromJson(Map<String, dynamic> json) {
@@ -76,6 +80,8 @@ class RealUnitSwapPaymentInfoDto {
           : RealUnitSwapFeeDto.fromJson(json['fees'] as Map<String, dynamic>),
       ethereumTransactionFeeChf: ethereumTransactionFeeChf,
       ethereumTransactionFeeRealu: ethereumTransactionFeeRealu,
+      valueChf: (json['valueChf'] as num?)?.toDouble(),
+      valueEur: (json['valueEur'] as num?)?.toDouble(),
     );
   }
 }

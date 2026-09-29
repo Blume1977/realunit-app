@@ -5,6 +5,7 @@ import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
 import 'package:realunit_wallet/packages/utils/default_assets.dart';
 import 'package:realunit_wallet/screens/sell_bitbox/cubit/sell_bitbox_cubit.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 
 class SellBitboxSwapStep extends StatelessWidget {
@@ -23,6 +24,7 @@ class SellBitboxSwapStep extends StatelessWidget {
           );
         }
         if (state is SellBitboxAwaitingSwapConfirm) {
+          final onChainZchf = paymentInfo.zchfAmount ?? paymentInfo.estimatedAmount;
           return Column(
             mainAxisAlignment: .center,
             spacing: 24,
@@ -50,8 +52,9 @@ class SellBitboxSwapStep extends StatelessWidget {
                     _row(
                       context,
                       label: S.of(context).sellBitboxSwapTo,
-                      value: '≈ ${paymentInfo.estimatedAmount.toStringAsFixed(2)} ZCHF',
+                      value: '≈ ${onChainZchf.toStringAsFixed(2)} ZCHF',
                     ),
+                    ..._storedFiatRows(context, paymentInfo),
                   ],
                 ),
               ),
@@ -86,6 +89,20 @@ class SellBitboxSwapStep extends StatelessWidget {
         return const SizedBox.shrink();
       },
     );
+  }
+
+  List<Widget> _storedFiatRows(BuildContext context, SellPaymentInfo paymentInfo) {
+    final settings = context.watch<SettingsBloc>().state;
+    final stored = paymentInfo.storedFiat(settings.currency);
+    if (stored == null) return const [];
+    return [
+      const Divider(color: RealUnitColors.neutral200, height: 1),
+      _row(
+        context,
+        label: stored.currency.code,
+        value: stored.amount.toStringAsFixed(2),
+      ),
+    ];
   }
 
   Widget _row(BuildContext context, {required String label, required String value}) {
