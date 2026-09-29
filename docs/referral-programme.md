@@ -144,7 +144,7 @@ accepts given-name autofill.
 List of the current user's invites (bare array or `{ "invites": [...] }`).
 Each row includes `copyText` / `copyTextEn` / `inviterName`. When the
 server omits share text, overview copy/share uses the first-person
-fallback (guest name plus invite URL), not a host-named sentence.
+fallback (guest name, code and invite URL), not a host-named sentence.
 The Empfehler list is **Open** or **Credited** only. Bound and Review
 are folded to Open server-side so the Empfehler cannot see the invitee’s
 registration or purchase progress (TB Ziff. 7). Admin relationships keep
