@@ -175,7 +175,7 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
             spacing: 4,
             children: [
               Text(
-                S.of(context).youPay,
+                S.of(context).youSell,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: RealUnitColors.neutral500,
