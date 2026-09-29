@@ -44,13 +44,13 @@ class PayInfoPage extends StatelessWidget {
             body: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 12,
               children: [
                 Text(
                   S.of(context).payInfoBody,
                   textAlign: .center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 12),
                 Text.rich(
                   TextLinkSpan.link(
                     context,
