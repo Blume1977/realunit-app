@@ -27,6 +27,10 @@ class SellPaymentInfo {
   final int chainId;
   final double ethBalance;
   final double requiredGasEth;
+
+  /// Relay gas the software-wallet customer pays. Absent on a BitBox quote.
+  final double? ethereumTransactionFeeChf;
+  final double? ethereumTransactionFeeRealu;
   // Fields below come from the API quote response. The backend is the
   // authority on whether the quote is valid for trading and what the
   // current min/max limits are for the user+currency combination.
@@ -52,6 +56,8 @@ class SellPaymentInfo {
     required this.chainId,
     required this.ethBalance,
     required this.requiredGasEth,
+    this.ethereumTransactionFeeChf,
+    this.ethereumTransactionFeeRealu,
     this.isValid = true,
     this.minVolume = 0,
     this.maxVolume = double.infinity,

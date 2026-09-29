@@ -18,7 +18,11 @@ class SendProcessPage extends StatelessWidget {
   final String recipient;
   final int amount;
 
-  const SendProcessPage({super.key, required this.recipient, required this.amount});
+  const SendProcessPage({
+    super.key,
+    required this.recipient,
+    required this.amount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -91,22 +95,34 @@ class SendProcessView extends StatelessWidget {
     );
   }
 
-  String _progressLabel(BuildContext context, SendProcessState state) => switch (state) {
-    SendProcessInitial() || SendProcessPreparing() => S.of(context).sendPreparing,
-    SendProcessSigning() => S.of(context).sendSigning,
+  String _progressLabel(
+    BuildContext context,
+    SendProcessState state,
+  ) => switch (state) {
+    SendProcessInitial() ||
+    SendProcessPreparing() => S.of(context).sendPreparing,
+    SendProcessSigning(:final networkFeeRealu) =>
+      networkFeeRealu > 0
+          ? '${S.of(context).sendSigning}\n${S.of(context).payQuoteRealuFees}: ${S.of(context).sendShares(networkFeeRealu.toString())}'
+          : S.of(context).sendSigning,
     SendProcessSuccess() => S.of(context).sendSuccess,
     SendProcessFailure() => S.of(context).sendFailureTitle,
   };
 
   String _failureMessage(BuildContext context, SendProcessFailure state) {
     final localized = switch (state.reason) {
-      SendProcessFailureReason.signatureUnsupported => S.of(context).sendFailureSignatureUnsupported,
-      SendProcessFailureReason.signatureCancelled => S.of(context).sendFailureSignatureCancelled,
-      SendProcessFailureReason.gasFundingUnavailable => S.of(context).sendFailureGasUnavailable,
-      SendProcessFailureReason.invalidRequest => S.of(context).sendFailureInvalidRequest,
+      SendProcessFailureReason.signatureUnsupported =>
+        S.of(context).sendFailureSignatureUnsupported,
+      SendProcessFailureReason.signatureCancelled =>
+        S.of(context).sendFailureSignatureCancelled,
+      SendProcessFailureReason.gasFundingUnavailable =>
+        S.of(context).sendFailureGasUnavailable,
+      SendProcessFailureReason.invalidRequest =>
+        S.of(context).sendFailureInvalidRequest,
       SendProcessFailureReason.registrationOrKycRequired =>
         S.of(context).sendFailureRegistrationOrKycRequired,
-      SendProcessFailureReason.confirmMismatch => S.of(context).sendFailureConfirmMismatch,
+      SendProcessFailureReason.confirmMismatch =>
+        S.of(context).sendFailureConfirmMismatch,
       SendProcessFailureReason.generic => S.of(context).sendFailureGeneric,
     };
 
@@ -182,7 +198,8 @@ class _SendProcessResultSheet extends StatefulWidget {
   });
 
   @override
-  State<_SendProcessResultSheet> createState() => _SendProcessResultSheetState();
+  State<_SendProcessResultSheet> createState() =>
+      _SendProcessResultSheetState();
 }
 
 class _SendProcessResultSheetState extends State<_SendProcessResultSheet> {
@@ -207,7 +224,10 @@ class _SendProcessResultSheetState extends State<_SendProcessResultSheet> {
               spacing: 24,
               children: [
                 Icon(widget.icon, color: RealUnitColors.realUnitBlue, size: 64),
-                Text(widget.title, style: Theme.of(context).textTheme.headlineMedium),
+                Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
                 Text(
                   widget.description,
                   textAlign: TextAlign.center,

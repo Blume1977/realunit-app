@@ -66,7 +66,7 @@ void main() {
       builder: () {
         when(
           () => processCubit.state,
-        ).thenReturn(const PayProcessPayRetry(PayRetryReason.quoteExpired));
+        ).thenReturn(const PayProcessPayRetry(PayRetryReason.transient));
         return wrapForGolden(
           BlocProvider<PayProcessCubit>.value(
             value: processCubit,

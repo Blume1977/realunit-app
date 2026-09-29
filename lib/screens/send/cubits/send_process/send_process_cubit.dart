@@ -61,7 +61,9 @@ class SendProcessCubit extends Cubit<SendProcessState> {
     // produce the EIP-712 delegation + EIP-7702 authorization the gasless
     // transfer requires. Surface the dedicated unsupported state otherwise.
     if (_appStore.wallet.walletType != WalletType.software) {
-      emit(const SendProcessFailure(SendProcessFailureReason.signatureUnsupported));
+      emit(
+        const SendProcessFailure(SendProcessFailureReason.signatureUnsupported),
+      );
       return;
     }
 
@@ -80,16 +82,22 @@ class SendProcessCubit extends Cubit<SendProcessState> {
       }
       _preparedInfo = info;
     } on TransferSignatureUnsupportedException {
-      prepareFailure = const SendProcessFailure(SendProcessFailureReason.signatureUnsupported);
+      prepareFailure = const SendProcessFailure(
+        SendProcessFailureReason.signatureUnsupported,
+      );
     } on TransferGasFundingUnavailableException catch (e) {
       prepareFailure = SendProcessFailure(
         SendProcessFailureReason.gasFundingUnavailable,
         message: e.detail,
       );
     } on SigningCancelledException {
-      prepareFailure = const SendProcessFailure(SendProcessFailureReason.signatureCancelled);
+      prepareFailure = const SendProcessFailure(
+        SendProcessFailureReason.signatureCancelled,
+      );
     } on BitboxNotConnectedException {
-      prepareFailure = const SendProcessFailure(SendProcessFailureReason.signatureUnsupported);
+      prepareFailure = const SendProcessFailure(
+        SendProcessFailureReason.signatureUnsupported,
+      );
     } on RegistrationRequiredException catch (e) {
       prepareFailure = SendProcessFailure(
         SendProcessFailureReason.registrationOrKycRequired,
@@ -105,7 +113,10 @@ class SendProcessCubit extends Cubit<SendProcessState> {
       // signaled reason rather than re-deriving limits locally.
       prepareFailure = SendProcessFailure(_reasonForApi(e), message: e.message);
     } catch (e) {
-      prepareFailure = SendProcessFailure(SendProcessFailureReason.generic, message: e.toString());
+      prepareFailure = SendProcessFailure(
+        SendProcessFailureReason.generic,
+        message: e.toString(),
+      );
     }
 
     if (prepareFailure != null) {
@@ -128,14 +139,18 @@ class SendProcessCubit extends Cubit<SendProcessState> {
   /// failure state.
   Future<void> retryConfirm() async {
     if (_preparedInfo == null) {
-      throw StateError('Cannot retry confirm: no prepared transfer info is stored');
+      throw StateError(
+        'Cannot retry confirm: no prepared transfer info is stored',
+      );
     }
     if (_confirmInFlight) {
       throw StateError('Cannot retry confirm: a confirm is already in flight');
     }
     final current = state;
     if (current is! SendProcessFailure || !current.canRetry) {
-      throw StateError('Cannot retry confirm: cubit is not in a retryable failure state');
+      throw StateError(
+        'Cannot retry confirm: cubit is not in a retryable failure state',
+      );
     }
     await _confirmPrepared();
   }
@@ -159,7 +174,7 @@ class SendProcessCubit extends Cubit<SendProcessState> {
     // the diagnostic log when the cubit closed before that success could emit.
     String? directSuccessTxHash;
     try {
-      emit(const SendProcessSigning());
+      emit(SendProcessSigning(networkFeeRealu: info.networkFeeRealu));
       final txHash = await _transferService.confirmTransfer(
         info,
         confirmedRecipient: _recipient,
@@ -181,18 +196,26 @@ class SendProcessCubit extends Cubit<SendProcessState> {
     } on TransferReceiptTimeoutException catch (e) {
       nextState = SendProcessSuccess(e.txHash);
     } on TransferConfirmMismatchException {
-      nextState = const SendProcessFailure(SendProcessFailureReason.confirmMismatch);
+      nextState = const SendProcessFailure(
+        SendProcessFailureReason.confirmMismatch,
+      );
     } on TransferSignatureUnsupportedException {
-      nextState = const SendProcessFailure(SendProcessFailureReason.signatureUnsupported);
+      nextState = const SendProcessFailure(
+        SendProcessFailureReason.signatureUnsupported,
+      );
     } on TransferGasFundingUnavailableException catch (e) {
       nextState = SendProcessFailure(
         SendProcessFailureReason.gasFundingUnavailable,
         message: e.detail,
       );
     } on SigningCancelledException {
-      nextState = const SendProcessFailure(SendProcessFailureReason.signatureCancelled);
+      nextState = const SendProcessFailure(
+        SendProcessFailureReason.signatureCancelled,
+      );
     } on BitboxNotConnectedException {
-      nextState = const SendProcessFailure(SendProcessFailureReason.signatureUnsupported);
+      nextState = const SendProcessFailure(
+        SendProcessFailureReason.signatureUnsupported,
+      );
     } on RegistrationRequiredException catch (e) {
       nextState = SendProcessFailure(
         SendProcessFailureReason.registrationOrKycRequired,

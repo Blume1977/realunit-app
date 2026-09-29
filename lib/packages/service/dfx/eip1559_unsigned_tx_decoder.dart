@@ -1,20 +1,10 @@
-/// Minimal, purpose-built decoder for the unsigned EIP-1559 (type 2) ZCHF-transfer
-/// (pay-leg) transaction the OCP pay backend hands the app to sign
-/// (`PUT /v1/realunit/pay/unsigned-transaction`). It exists so the app can verify —
-/// BEFORE signing the pay leg — that the raw ERC20-transfer bytes match the DTO's
-/// accompanying metadata (`tokenAddress`, `recipient`, `amountWei`, `chainId`) and
-/// that gas/fee fields stay within local caps, rather than blindly signing whatever
-/// bytes come back. See `PayProcessCubit._validatePayUnsignedTx`.
+/// Decoder for an unsigned EIP-1559 (type 2) ZCHF transfer. The software-wallet
+/// pay does not ask the customer to sign this transfer. The customer signs only
+/// the EIP-7702 delegation, and the relayer broadcasts the payment.
 ///
-/// Scope is the pay leg only. The earlier REALU→ZCHF swap leg
-/// (`RealUnitSwapUnsignedTransactionDto`) is signed blind today: that DTO carries only
-/// a raw `swap` hex string with no comparable recipient/amount/chainId metadata, so this
-/// decoder is not applied to it (closing that gap needs a backend DTO extension).
-///
-/// This is intentionally narrow: it only understands the exact shape the backend produces
-/// for the pay leg (a type-2 tx whose `data` is a plain ERC20 `transfer(address,uint256)`
-/// call) and rejects (fail-closed) anything that does not match that shape, rather than
-/// being a general-purpose Ethereum RLP/ABI library.
+/// The decoder checks raw bytes against `tokenAddress`, `recipient`,
+/// `amountWei`, and `chainId`, and rejects a shape it does not understand. It
+/// is not a general-purpose Ethereum RLP/ABI library.
 library;
 
 import 'dart:typed_data';
@@ -22,9 +12,9 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart' as convert;
 import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/pay_exceptions.dart';
 
-/// A decoded (still unsigned) EIP-1559 transaction — the fields this app needs to
-/// cross-check against `RealUnitOcpPayUnsignedTransactionDto` and to apply local
-/// gas/fee caps before signing the pay leg.
+/// A decoded unsigned EIP-1559 transaction. The fields are what a byte check
+/// compares with `RealUnitOcpPayUnsignedTransactionDto`. The customer does not
+/// sign this transaction.
 class DecodedEip1559Transaction {
   final BigInt chainId;
 
@@ -57,10 +47,9 @@ class DecodedEip1559Transaction {
   });
 }
 
-/// Decodes the RLP-encoded, unsigned, type-2 (EIP-1559) transaction hex the OCP pay backend
-/// returns for the pay leg. Throws `PayUnsignedTxMismatchException` — never silently
-/// truncates/pads/skips — on any structural anomaly, since a transaction the app cannot
-/// fully parse is one it must refuse to sign.
+/// Decodes an RLP-encoded unsigned type-2 (EIP-1559) transaction hex. Throws
+/// `PayUnsignedTxMismatchException` on any structural anomaly. The customer
+/// does not sign this transaction.
 abstract final class Eip1559UnsignedTxDecoder {
   static const _typeByte = 0x02;
   static const _fieldCount = 9;
@@ -75,9 +64,7 @@ abstract final class Eip1559UnsignedTxDecoder {
   static const _accessListFieldIndex = 8;
 
   static DecodedEip1559Transaction decode(String rawTransaction) {
-    final hex = rawTransaction.startsWith('0x')
-        ? rawTransaction.substring(2)
-        : rawTransaction;
+    final hex = rawTransaction.startsWith('0x') ? rawTransaction.substring(2) : rawTransaction;
     final Uint8List bytes;
     try {
       bytes = Uint8List.fromList(convert.hex.decode(hex));
@@ -115,9 +102,8 @@ abstract final class Eip1559UnsignedTxDecoder {
     if (data is! Uint8List) {
       throw const PayUnsignedTxMismatchException('unsigned tx "data" is not a byte string');
     }
-    // This narrow decoder only ever handles the plain ERC20-transfer shape the backend
-    // produces for the pay leg, which never carries an access list. Reject non-empty lists
-    // fail-closed rather than signing payload bytes we have not inspected.
+    // This decoder only understands the plain ERC20 transfer, which has an
+    // empty access list. Anything else is rejected.
     final accessList = root[_accessListFieldIndex];
     if (accessList is! List<Object> || accessList.isNotEmpty) {
       throw const PayUnsignedTxMismatchException(
@@ -277,9 +263,8 @@ class DecodedErc20Transfer {
   const DecodedErc20Transfer({required this.recipient, required this.amountWei});
 }
 
-/// Decodes ERC20 `transfer(address,uint256)` calldata — the only shape the OCP pay backend ever
-/// asks the app to sign for the pay leg. Anything else (wrong selector, wrong length, a
-/// non-zero-padded address slot) is rejected, never partially parsed.
+/// Decodes ERC20 `transfer(address,uint256)` calldata. Anything else is
+/// rejected. The customer does not sign this call; the relayer broadcasts it.
 abstract final class Erc20TransferCalldataDecoder {
   static const _selector = [0xa9, 0x05, 0x9c, 0xbb]; // transfer(address,uint256)
   static const _calldataLength = 68; // 4 (selector) + 32 (address) + 32 (amount)

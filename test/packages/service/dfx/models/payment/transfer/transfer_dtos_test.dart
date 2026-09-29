@@ -60,23 +60,26 @@ void main() {
       expect(data.recipient, '0xRecipient');
     });
 
-    test('toEip7702Data maps recipient into the shared signer DTO depositAddress', () {
-      final data = RealUnitTransferEip7702DataDto.fromJson(_eip7702Json());
+    test(
+      'toEip7702Data maps recipient into the shared signer DTO depositAddress',
+      () {
+        final data = RealUnitTransferEip7702DataDto.fromJson(_eip7702Json());
 
-      final shared = data.toEip7702Data();
+        final shared = data.toEip7702Data();
 
-      // The recipient flows through depositAddress (the signers never read it),
-      // while every signed field is preserved verbatim.
-      expect(shared.depositAddress, '0xRecipient');
-      expect(shared.relayerAddress, '0xRelayer');
-      expect(shared.delegatorAddress, '0xDelegator');
-      expect(shared.userNonce, 7);
-      expect(shared.domain.chainId, 11155111);
-      expect(shared.message.delegator, '0xSender');
-      expect(shared.message.salt, 3);
-      expect(shared.tokenAddress, '0xRealu');
-      expect(shared.amountWei, '5');
-    });
+        // The recipient flows through depositAddress (the signers never read it),
+        // while every signed field is preserved verbatim.
+        expect(shared.depositAddress, '0xRecipient');
+        expect(shared.relayerAddress, '0xRelayer');
+        expect(shared.delegatorAddress, '0xDelegator');
+        expect(shared.userNonce, 7);
+        expect(shared.domain.chainId, 11155111);
+        expect(shared.message.delegator, '0xSender');
+        expect(shared.message.salt, 3);
+        expect(shared.tokenAddress, '0xRealu');
+        expect(shared.amountWei, '5');
+      },
+    );
   });
 
   group('RealUnitTransferPaymentInfoDto', () {
@@ -86,6 +89,7 @@ void main() {
         'uid': 'RTabc',
         'toAddress': '0xRecipient',
         'amount': 5,
+        'networkFeeRealu': 1,
         'tokenAddress': '0xRealu',
         'chainId': 11155111,
         'eip7702': _eip7702Json(),
@@ -95,6 +99,7 @@ void main() {
       expect(dto.uid, 'RTabc');
       expect(dto.toAddress, '0xRecipient');
       expect(dto.amount, 5);
+      expect(dto.networkFeeRealu, 1);
       expect(dto.tokenAddress, '0xRealu');
       expect(dto.chainId, 11155111);
       expect(dto.eip7702.recipient, '0xRecipient');
@@ -107,6 +112,7 @@ void main() {
         'uid': 'RTx',
         'toAddress': '0xRecipient',
         'amount': 5.0,
+        'networkFeeRealu': 1,
         'tokenAddress': '0xRealu',
         'chainId': 1,
         'eip7702': _eip7702Json(),

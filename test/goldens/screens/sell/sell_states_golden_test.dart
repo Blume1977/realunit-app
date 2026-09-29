@@ -45,7 +45,8 @@ class _MockSellPaymentInfoCubit extends MockCubit<SellPaymentInfoState>
 class _MockSellSelectedBankAccountCubit extends MockCubit<BankAccount?>
     implements SellSelectedBankAccountCubit {}
 
-class _MockSellBalanceCubit extends MockCubit<Balance> implements SellBalanceCubit {}
+class _MockSellBalanceCubit extends MockCubit<Balance>
+    implements SellBalanceCubit {}
 
 class _MockSellConfirmCubit extends MockCubit<SellConfirmState>
     implements SellConfirmCubit {}
@@ -55,7 +56,8 @@ class _MockSellBankAccountsCubit extends MockCubit<SellBankAccountsState>
 
 class _MockDfxBrokerbotService extends Mock implements DfxBrokerbotService {}
 
-class _MockDfxBankAccountService extends Mock implements DfxBankAccountService {}
+class _MockDfxBankAccountService extends Mock
+    implements DfxBankAccountService {}
 
 class _MockDfxPriceService extends Mock implements DFXPriceService {}
 
@@ -64,14 +66,17 @@ class _MockRealUnitSellPaymentInfoService extends Mock
 
 class _MockBalanceRepository extends Mock implements BalanceRepository {}
 
-class _MockSupportedFiatRepository extends Mock implements SupportedFiatRepository {}
+class _MockSupportedFiatRepository extends Mock
+    implements SupportedFiatRepository {}
 
 class _MockApiConfig extends Mock implements ApiConfig {}
 
 // Shared review payload for the confirm/executed sheets. The sheet renders
-// `amount`, the IBAN, and either the stored fiat for the selected currency
-// or, when nothing is stored, `estimatedAmount` with `currency`.
-SellPaymentInfo _paymentInfo({double? valueChf, double? valueEur}) => SellPaymentInfo(
+// `amount`, the IBAN, the network fee, and either the stored fiat for the
+// selected currency or, when nothing is stored, `estimatedAmount` with
+// `currency`. A CHF figure is shown net of the fee.
+SellPaymentInfo _paymentInfo({double? valueChf, double? valueEur}) =>
+    SellPaymentInfo(
       id: 42,
       eip7702: Eip7702Data.fromJson({
         'relayerAddress': '0xrelay',
@@ -104,6 +109,8 @@ SellPaymentInfo _paymentInfo({double? valueChf, double? valueEur}) => SellPaymen
       rate: 1.0,
       beneficiary: const BeneficiaryDto(iban: 'CH9300762011623852957'),
       estimatedAmount: 100.0,
+      ethereumTransactionFeeChf: 3.0,
+      ethereumTransactionFeeRealu: 0.03,
       currency: Currency.chf,
       depositAddress: '0xdeposit',
       tokenAddress: '0xtoken',
@@ -116,20 +123,20 @@ SellPaymentInfo _paymentInfo({double? valueChf, double? valueEur}) => SellPaymen
 
 void main() {
   Balance zeroBalance() => Balance(
-        chainId: 1,
-        contractAddress: '0x0',
-        walletAddress: '0x0',
-        balance: BigInt.zero,
-        asset: realUnitAsset,
-      );
+    chainId: 1,
+    contractAddress: '0x0',
+    walletAddress: '0x0',
+    balance: BigInt.zero,
+    asset: realUnitAsset,
+  );
 
   Balance withBalance() => Balance(
-        chainId: 1,
-        contractAddress: '0x0',
-        walletAddress: '0x0',
-        balance: BigInt.from(1000000000000000000),
-        asset: realUnitAsset,
-      );
+    chainId: 1,
+    contractAddress: '0x0',
+    walletAddress: '0x0',
+    balance: BigInt.from(1000000000000000000),
+    asset: realUnitAsset,
+  );
 
   late _MockDfxBankAccountService bankAccountService;
 
@@ -143,9 +150,9 @@ void main() {
     final appStore = MockAppStore();
     when(() => appStore.apiConfig).thenReturn(apiConfig);
     when(() => appStore.wallet).thenReturn(MockSoftwareWallet());
-    when(() => appStore.primaryAddress).thenReturn(
-      '0x0000000000000000000000000000000000000000',
-    );
+    when(
+      () => appStore.primaryAddress,
+    ).thenReturn('0x0000000000000000000000000000000000000000');
     getIt.registerSingleton<AppStore>(appStore);
     getIt.registerSingleton<DfxBrokerbotService>(_MockDfxBrokerbotService());
     bankAccountService = _MockDfxBankAccountService();
@@ -168,19 +175,26 @@ void main() {
     getIt.registerSingleton<RealUnitSellPaymentInfoService>(
       _MockRealUnitSellPaymentInfoService(),
     );
-    getIt.registerSingleton<SharedPreferences>(await SharedPreferences.getInstance());
+    getIt.registerSingleton<SharedPreferences>(
+      await SharedPreferences.getInstance(),
+    );
     final balanceRepository = _MockBalanceRepository();
-    when(() => balanceRepository.watchBalance(any()))
-        .thenAnswer((_) => Stream.value(withBalance()));
+    when(
+      () => balanceRepository.watchBalance(any()),
+    ).thenAnswer((_) => Stream.value(withBalance()));
     when(() => balanceRepository.saveBalance(any())).thenAnswer((_) async {});
     getIt.registerSingleton<BalanceRepository>(balanceRepository);
 
     final fiatRepo = _MockSupportedFiatRepository();
-    when(() => fiatRepo.getSellable()).thenAnswer((_) async => const [Currency.chf]);
-    when(() => fiatRepo.getBuyable())
-        .thenAnswer((_) async => const [Currency.chf, Currency.eur]);
-    when(() => fiatRepo.getAll())
-        .thenAnswer((_) async => const [Currency.chf, Currency.eur]);
+    when(
+      () => fiatRepo.getSellable(),
+    ).thenAnswer((_) async => const [Currency.chf]);
+    when(
+      () => fiatRepo.getBuyable(),
+    ).thenAnswer((_) async => const [Currency.chf, Currency.eur]);
+    when(
+      () => fiatRepo.getAll(),
+    ).thenAnswer((_) async => const [Currency.chf, Currency.eur]);
     getIt.registerSingleton<SupportedFiatRepository>(fiatRepo);
   });
 
@@ -222,20 +236,24 @@ void main() {
         ),
         initialState: const SellConverterState(loading: true),
       );
-      when(() => paymentInfoCubit.state).thenReturn(const SellPaymentInfoInitial());
+      when(
+        () => paymentInfoCubit.state,
+      ).thenReturn(const SellPaymentInfoInitial());
       when(() => selectedBankAccountCubit.state).thenReturn(selectedAccount);
       when(() => balanceCubit.state).thenReturn(withBalance());
     });
 
     Widget buildSubject() => MultiBlocProvider(
-          providers: [
-            BlocProvider<SellConverterCubit>.value(value: converterCubit),
-            BlocProvider<SellPaymentInfoCubit>.value(value: paymentInfoCubit),
-            BlocProvider<SellSelectedBankAccountCubit>.value(value: selectedBankAccountCubit),
-            BlocProvider<SellBalanceCubit>.value(value: balanceCubit),
-          ],
-          child: const SellView(),
-        );
+      providers: [
+        BlocProvider<SellConverterCubit>.value(value: converterCubit),
+        BlocProvider<SellPaymentInfoCubit>.value(value: paymentInfoCubit),
+        BlocProvider<SellSelectedBankAccountCubit>.value(
+          value: selectedBankAccountCubit,
+        ),
+        BlocProvider<SellBalanceCubit>.value(value: balanceCubit),
+      ],
+      child: const SellView(),
+    );
 
     goldenTest(
       'bank account selected — IBAN in field, active sell button',
@@ -346,7 +364,9 @@ void main() {
 
     setUp(() {
       bankAccountsCubit = _MockSellBankAccountsCubit();
-      when(() => bankAccountsCubit.state).thenReturn(const SellBankAccountsInitial());
+      when(
+        () => bankAccountsCubit.state,
+      ).thenReturn(const SellBankAccountsInitial());
     });
 
     goldenTest(

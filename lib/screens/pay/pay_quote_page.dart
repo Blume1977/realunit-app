@@ -46,12 +46,20 @@ class PayQuoteView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: BlocBuilder<PayQuoteCubit, PayQuoteState>(
             builder: (context, state) => switch (state) {
-              PayQuoteLoading() => const Center(child: CupertinoActivityIndicator()),
+              PayQuoteLoading() => const Center(
+                child: CupertinoActivityIndicator(),
+              ),
               PayQuoteReady() => _PayQuoteReadyView(state: state),
-              PayQuoteExpired() => _PayQuoteMessage(message: S.of(context).payFailureQuoteExpired),
-              PayQuoteUnavailable() => _PayQuoteMessage(message: S.of(context).payQuoteUnavailable),
+              PayQuoteExpired() => _PayQuoteMessage(
+                message: S.of(context).payFailureQuoteExpired,
+              ),
+              PayQuoteUnavailable() => _PayQuoteMessage(
+                message: S.of(context).payQuoteUnavailable,
+              ),
               PayQuoteError(:final message) => _PayQuoteMessage(
-                message: message.isNotEmpty ? message : S.of(context).payFailureGeneric,
+                message: message.isNotEmpty
+                    ? message
+                    : S.of(context).payFailureGeneric,
                 onRetry: () => context.read<PayQuoteCubit>().load(),
               ),
             },
@@ -117,9 +125,10 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
     final swap = state.swap;
     final feeChf = swap.ethereumTransactionFeeChf;
     final feeRealu = swap.ethereumTransactionFeeRealu;
-    // The customer pays the sold shares. The three lines split that total
-    // into the bill, the fee, and the whole-share round-up. The signed
-    // quote itself is not changed.
+    // The customer pays the network fee in REALU. DFX only fronts the gas.
+    // A fee line is shown when the quote carries one. The signed quote itself
+    // is not changed.
+    final showFee = feeChf != null || feeRealu != null;
     final parts = _quoteParts(
       billChf: state.fiatAmount,
       shares: swap.amount,
@@ -189,11 +198,12 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
                 chf: requestedChf,
                 also: useEur ? _chf(state.billEur!, 'EUR') : null,
               ),
-              _AmountRow(
-                label: S.of(context).payQuoteRealuFees,
-                realu: _realu(parts.feeRealu),
-                chf: feeFiat,
-              ),
+              if (showFee)
+                _AmountRow(
+                  label: S.of(context).payQuoteRealuFees,
+                  realu: _realu(parts.feeRealu),
+                  chf: feeFiat,
+                ),
               _AmountRow(
                 label: S.of(context).payQuoteRounding,
                 realu: _realu(parts.roundingRealu),
@@ -209,16 +219,18 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
           Text(
             _clock(_remaining),
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
         ],
       ),
       actions: [
         AppFilledButton(
           label: S.of(context).payConfirmButton,
-          state: _navigating ? FilledButtonState.loading : FilledButtonState.idle,
+          state: _navigating
+              ? FilledButtonState.loading
+              : FilledButtonState.idle,
           onPressed: _navigating
               ? null
               : () async {
@@ -231,6 +243,7 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
                       MaterialPageRoute<bool>(
                         builder: (_) => PayProcessPage(
                           paymentLinkId: state.paymentLinkId,
+                          quoteId: state.quoteId,
                           swap: state.swap,
                         ),
                       ),
@@ -253,7 +266,8 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
   }
 }
 
-String _chf(double amount, String asset) => '${amount.toStringAsFixed(2)} $asset';
+String _chf(double amount, String asset) =>
+    '${amount.toStringAsFixed(2)} $asset';
 
 String _wholeRealu(double shares) =>
     '${shares.toStringAsFixed(0)} ${realUnitAsset.symbol}';
@@ -424,9 +438,9 @@ class _PayQuoteMessage extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: RealUnitColors.neutral500,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: RealUnitColors.neutral500),
           ),
           if (onRetry != null) ...[
             const SizedBox(height: 16),

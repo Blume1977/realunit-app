@@ -8,6 +8,7 @@ class RealUnitTransferPaymentInfoDto {
   final String uid;
   final String toAddress;
   final int amount;
+  final int networkFeeRealu;
   final String tokenAddress;
   final int chainId;
   final RealUnitTransferEip7702DataDto eip7702;
@@ -17,6 +18,7 @@ class RealUnitTransferPaymentInfoDto {
     required this.uid,
     required this.toAddress,
     required this.amount,
+    required this.networkFeeRealu,
     required this.tokenAddress,
     required this.chainId,
     required this.eip7702,
@@ -28,6 +30,7 @@ class RealUnitTransferPaymentInfoDto {
       uid: json['uid'] as String,
       toAddress: json['toAddress'] as String,
       amount: (json['amount'] as num).toInt(),
+      networkFeeRealu: (json['networkFeeRealu'] as num).toInt(),
       tokenAddress: json['tokenAddress'] as String,
       chainId: json['chainId'] as int,
       eip7702: RealUnitTransferEip7702DataDto.fromJson(

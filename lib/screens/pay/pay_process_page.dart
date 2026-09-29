@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
-import 'package:realunit_wallet/packages/service/dfx/dfx_blockchain_api_service.dart';
-import 'package:realunit_wallet/packages/service/dfx/dfx_faucet_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/swap_payment_info.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_pay_service.dart';
-import 'package:realunit_wallet/packages/service/wallet_service.dart';
 import 'package:realunit_wallet/screens/pay/cubits/pay_process/pay_process_cubit.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/styles/colors.dart';
@@ -15,11 +12,13 @@ import 'package:realunit_wallet/widgets/route_animation_gate.dart';
 
 class PayProcessPage extends StatelessWidget {
   final String paymentLinkId;
+  final String quoteId;
   final SwapPaymentInfo swap;
 
   const PayProcessPage({
     super.key,
     required this.paymentLinkId,
+    required this.quoteId,
     required this.swap,
   });
 
@@ -28,11 +27,9 @@ class PayProcessPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => PayProcessCubit(
         payService: getIt<RealUnitPayService>(),
-        faucetService: getIt<DfxFaucetService>(),
-        blockchainService: getIt<DfxBlockchainApiService>(),
-        walletService: getIt<WalletService>(),
         appStore: getIt<AppStore>(),
         paymentLinkId: paymentLinkId,
+        quoteId: quoteId,
         swap: swap,
       ),
       child: RouteAnimationGate(
@@ -63,8 +60,8 @@ class PayProcessView extends StatelessWidget {
             swapCompleted: true,
           );
         } else if (state is PayProcessPayRetry) {
-          // The swap already succeeded — offer to retry the PAY leg only. The
-          // ZCHF stays in the wallet; this never re-swaps.
+          // The confirm may already have been sent. This payment leaves no CHF.
+          // Retry sends the same delegation again.
           await _showRetrySheet(context, state);
         } else if (state is PayProcessFailure) {
           await _showResultSheet(
@@ -120,6 +117,7 @@ class PayProcessView extends StatelessWidget {
     return switch (state.reason) {
       PayProcessFailureReason.insufficientEth => S.of(context).payFailureInsufficientEth,
       PayProcessFailureReason.signatureUnsupported => S.of(context).payFailureSignatureUnsupported,
+      PayProcessFailureReason.payUnavailable => S.of(context).payFailurePayUnavailable,
       PayProcessFailureReason.bitboxRequired => S.of(context).payFailureBitboxRequired,
       PayProcessFailureReason.generic => S.of(context).payFailureGeneric,
     };
@@ -131,10 +129,7 @@ class PayProcessView extends StatelessWidget {
       return apiText;
     }
     return switch (state.reason) {
-      PayRetryReason.quoteExpired => S.of(context).payRetryQuoteExpired,
       PayRetryReason.transient => S.of(context).payRetryTransient,
-      PayRetryReason.insufficientZchf => S.of(context).payRetryInsufficientZchf,
-      PayRetryReason.unsignedTxMismatch => S.of(context).payRetryUnsignedTxMismatch,
     };
   }
 
@@ -181,11 +176,14 @@ class PayProcessView extends StatelessWidget {
     if (context.mounted) Navigator.of(context).pop(swapCompleted);
   }
 
-  /// Recovery sheet shown after a successful swap when the pay leg failed. The
-  /// primary action retries the PAY leg only ([PayProcessCubit.retryPay]) — the
-  /// swap is never redone, so the ZCHF already held is reused. Dismissing leaves
-  /// that ZCHF safely in the wallet.
-  Future<void> _showRetrySheet(BuildContext context, PayProcessPayRetry state) async {
+  /// Recovery sheet when a pay confirm did not finish. This payment leaves no
+  /// CHF in the wallet. The primary action ([PayProcessCubit.retryPay]) sends
+  /// the same delegation again and can sell REALU if the first confirm did not
+  /// arrive.
+  Future<void> _showRetrySheet(
+    BuildContext context,
+    PayProcessPayRetry state,
+  ) async {
     await waitForIncomingRouteAnimation(context);
     if (!context.mounted) {
       return;
@@ -204,7 +202,11 @@ class PayProcessView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 24,
             children: [
-              const Icon(Icons.replay_rounded, color: RealUnitColors.realUnitBlue, size: 64),
+              const Icon(
+                Icons.replay_rounded,
+                color: RealUnitColors.realUnitBlue,
+                size: 64,
+              ),
               Text(
                 S.of(sheetContext).payRetryTitle,
                 style: Theme.of(sheetContext).textTheme.headlineMedium,
@@ -231,11 +233,11 @@ class PayProcessView extends StatelessWidget {
     );
 
     if (retry == true) {
-      // Retry the PAY leg only — never re-swaps. Keep the page so the next
-      // attempt surfaces its own result.
+      // Send the same delegation again. Keep the page so the next attempt
+      // surfaces its own result.
       await cubit.retryPay();
     } else if (context.mounted) {
-      // Closed: leave the flow. The swapped ZCHF stays safely in the wallet.
+      // Closed: leave the flow. This payment did not leave CHF in the wallet.
       // true tells the quote page not to offer Pay again on the same quote.
       Navigator.of(context).pop(true);
     }

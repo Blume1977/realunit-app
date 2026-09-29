@@ -9,10 +9,13 @@ import 'package:realunit_wallet/screens/sell/cubits/sell_confirm/sell_confirm_cu
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/styles/colors.dart';
+import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import 'package:realunit_wallet/widgets/handlebars.dart';
 import 'package:realunit_wallet/widgets/iban_text_formatter.dart';
 import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
+
+String _money(double amount) => amount.toStringAsFixed(2);
 
 class SellConfirmSheet extends StatelessWidget {
   final SellPaymentInfo paymentInfo;
@@ -22,12 +25,9 @@ class SellConfirmSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SellConfirmCubit(
-        getIt<RealUnitSellPaymentInfoService>(),
-      ),
-      child: SellConfirmSheetView(
-        paymentInfo: paymentInfo,
-      ),
+      create: (context) =>
+          SellConfirmCubit(getIt<RealUnitSellPaymentInfoService>()),
+      child: SellConfirmSheetView(paymentInfo: paymentInfo),
     );
   }
 }
@@ -61,7 +61,11 @@ class SellConfirmSheetView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Handlebars.horizontal(context, margin: const EdgeInsets.only(top: 5), width: 36),
+                Handlebars.horizontal(
+                  context,
+                  margin: const EdgeInsets.only(top: 5),
+                  width: 36,
+                ),
                 // Handlebar stays OUTSIDE the scrollable body (sibling above it) —
                 // it must never scroll away with the content.
                 ConstrainedBox(
@@ -86,7 +90,9 @@ class SellConfirmSheetView extends StatelessWidget {
                         ),
                         Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: RealUnitColors.neutral200),
+                            border: Border.all(
+                              color: RealUnitColors.neutral200,
+                            ),
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: Column(
@@ -97,15 +103,31 @@ class SellConfirmSheetView extends StatelessWidget {
                                   label: realUnitAsset.symbol,
                                   value: '${paymentInfo.amount}',
                                 ),
+                                if (paymentInfo.ethereumTransactionFeeChf !=
+                                        null &&
+                                    paymentInfo.ethereumTransactionFeeChf! > 0)
+                                  _infoRow(
+                                    label: S.of(context).payQuoteRealuFees,
+                                    value:
+                                        paymentInfo
+                                                .ethereumTransactionFeeRealu !=
+                                            null
+                                        ? '${_money(paymentInfo.ethereumTransactionFeeChf!)} CHF (${paymentInfo.ethereumTransactionFeeRealu} REALU)'
+                                        : '${_money(paymentInfo.ethereumTransactionFeeChf!)} CHF',
+                                  ),
                                 _infoRow(
                                   label:
                                       '${S.of(context).amountIn} '
                                       '${_confirmCurrencyCode(context, paymentInfo)}',
-                                  value: '${_confirmAmount(context, paymentInfo)}',
+                                  value: _money(
+                                    _confirmAmount(context, paymentInfo),
+                                  ),
                                 ),
                                 _infoRow(
                                   label: S.of(context).receiver,
-                                  value: IbanTextFormatter.formatIban(paymentInfo.beneficiary.iban),
+                                  value: IbanTextFormatter.formatIban(
+                                    paymentInfo.beneficiary.iban,
+                                  ),
                                 ),
                               ],
                             ),
@@ -121,8 +143,9 @@ class SellConfirmSheetView extends StatelessWidget {
                             final isLoading = state is SellConfirmLoading;
                             return AppFilledButton(
                               label: S.of(context).confirm,
-                              onPressed: () =>
-                                  context.read<SellConfirmCubit>().confirmPayment(paymentInfo),
+                              onPressed: () => context
+                                  .read<SellConfirmCubit>()
+                                  .confirmPayment(paymentInfo),
                               state: isLoading ? .loading : .idle,
                             );
                           },
@@ -145,10 +168,7 @@ class SellConfirmSheetView extends StatelessWidget {
   /// Wrapping also prevents horizontal RenderFlex overflow for either side.
   Widget _infoRow({required String label, required String value}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 12.0,
-        horizontal: 20.0,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -183,10 +203,15 @@ class SellConfirmSheetView extends StatelessWidget {
   double _confirmAmount(BuildContext context, SellPaymentInfo paymentInfo) {
     final settings = context.watch<SettingsBloc>().state;
     final stored = paymentInfo.storedFiat(settings.currency);
-    if (stored != null) {
-      return stored.amount;
+    final amount = stored?.amount ?? paymentInfo.estimatedAmount;
+    final currency = stored?.currency ?? paymentInfo.currency;
+    // The relay fee is CHF. Take it off a franc figure only. A stored euro
+    // amount stays as stored.
+    final fee = paymentInfo.ethereumTransactionFeeChf;
+    if (fee == null || fee <= 0 || currency != Currency.chf) {
+      return amount;
     }
-    return paymentInfo.estimatedAmount;
+    return amount - fee;
   }
 
   String _confirmCurrencyCode(BuildContext context, SellPaymentInfo paymentInfo) {
@@ -203,11 +228,7 @@ class SellConfirmSheetView extends StatelessWidget {
     for (var i = 0; i < children.length; i++) {
       result.add(children[i]);
       if (i < children.length - 1) {
-        result.add(
-          const Divider(
-            color: RealUnitColors.neutral200,
-          ),
-        );
+        result.add(const Divider(color: RealUnitColors.neutral200));
       }
     }
     return result;

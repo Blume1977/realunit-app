@@ -8,20 +8,42 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
+import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/screens/dashboard/widgets/sections/dashboard_actions.dart';
+import 'package:realunit_wallet/screens/home/bloc/home_bloc.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/widgets/action_button.dart';
 
 import '../../../../helper/helper.dart';
 
+class _BitboxWallet extends Fake implements BitboxWallet {
+  @override
+  WalletType get walletType => WalletType.bitbox;
+}
+
+class _DebugWallet extends Fake implements DebugWallet {
+  @override
+  WalletType get walletType => WalletType.debug;
+}
+
 void main() {
   late List<String> pushedRoutes;
   late MockSettingsBloc settingsBloc;
+  late MockHomeBloc homeBloc;
+
+  HomeState homeWith(AWallet wallet) => HomeState(
+    hasWallet: true,
+    openWallet: wallet,
+  );
 
   setUp(() {
     pushedRoutes = <String>[];
     settingsBloc = MockSettingsBloc();
+    homeBloc = MockHomeBloc();
+    when(() => homeBloc.state).thenReturn(
+      homeWith(SoftwareViewWallet(1, 'Software', '0x0000000000000000000000000000000000000001')),
+    );
   });
 
   GoRouter buildRouter() {
@@ -40,8 +62,11 @@ void main() {
         GoRoute(
           path: '/',
           builder: (_, _) => Scaffold(
-            body: BlocProvider<SettingsBloc>.value(
-              value: settingsBloc,
+            body: MultiBlocProvider(
+              providers: [
+                BlocProvider<SettingsBloc>.value(value: settingsBloc),
+                BlocProvider<HomeBloc>.value(value: homeBloc),
+              ],
               child: const DashboardActions(),
             ),
           ),
@@ -145,7 +170,54 @@ void main() {
         await tester.pumpAndSettle();
         expect(pushedRoutes, [AppRoutes.pay]);
       });
+    });
 
+    group('BitBox', () {
+      setUp(() {
+        when(() => settingsBloc.state).thenReturn(
+          const SettingsState(walletFeaturePay: true),
+        );
+        when(() => homeBloc.state).thenReturn(homeWith(_BitboxWallet()));
+      });
+
+      testWidgets('does not offer pay even when the insider switch is on', (tester) async {
+        await pumpActions(tester);
+
+        expect(actionButtonByLabel(S.current.buy), findsOneWidget);
+        expect(actionButtonByLabel(S.current.sell), findsOneWidget);
+        expect(actionButtonByLabel(S.current.pay), findsNothing);
+        expect(find.byType(Expanded), findsNWidgets(2));
+      });
+    });
+
+    group('debug wallet', () {
+      setUp(() {
+        when(() => settingsBloc.state).thenReturn(
+          const SettingsState(walletFeaturePay: true),
+        );
+        when(() => homeBloc.state).thenReturn(homeWith(_DebugWallet()));
+      });
+
+      testWidgets('does not offer pay', (tester) async {
+        await pumpActions(tester);
+        expect(actionButtonByLabel(S.current.pay), findsNothing);
+      });
+    });
+
+    group('showPayAction', () {
+      test('software wallet with the switch on', () {
+        expect(
+          showPayAction(walletFeaturePay: true, walletType: WalletType.software),
+          isTrue,
+        );
+      });
+
+      test('bitbox, debug, and a missing wallet stay off', () {
+        expect(showPayAction(walletFeaturePay: true, walletType: WalletType.bitbox), isFalse);
+        expect(showPayAction(walletFeaturePay: true, walletType: WalletType.debug), isFalse);
+        expect(showPayAction(walletFeaturePay: true, walletType: null), isFalse);
+        expect(showPayAction(walletFeaturePay: false, walletType: WalletType.software), isFalse);
+      });
     });
 
     group('transitions', () {

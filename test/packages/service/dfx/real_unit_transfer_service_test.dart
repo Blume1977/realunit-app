@@ -33,7 +33,8 @@ class _MockWalletService extends Mock implements WalletService {}
 // Deterministic test private key — a real EthPrivateKey credential the
 // EIP-712 / EIP-7702 signers accept directly (they reject anything that isn't
 // BitboxCredentials or EthPrivateKey).
-const _testPrivateKeyHex = 'fb1ace12f9801e85f3db1b3935dd47d9f064f98152466f47c701b5e12680e612';
+const _testPrivateKeyHex =
+    'fb1ace12f9801e85f3db1b3935dd47d9f064f98152466f47c701b5e12680e612';
 
 final _privKey = EthPrivateKey.fromHex(_testPrivateKeyHex);
 final _walletAddress = _privKey.address.hexEip55;
@@ -52,7 +53,10 @@ class _UnsupportedCreds extends Fake implements CredentialsWithKnownAddress {
   EthereumAddress get address => _privKey.address;
 }
 
-Map<String, dynamic> _eip7702Json({int chainId = 1, String recipient = _confirmedRecipient}) => {
+Map<String, dynamic> _eip7702Json({
+  int chainId = 1,
+  String recipient = _confirmedRecipient,
+}) => {
   'relayerAddress': '0xrelay',
   'delegationManagerAddress': _delegationManager,
   'delegatorAddress': _metaMaskDelegator,
@@ -89,6 +93,7 @@ RealUnitTransferPaymentInfoDto _info({
   'uid': 'RTabc',
   'toAddress': toAddress,
   'amount': amount,
+  'networkFeeRealu': 1,
   'tokenAddress': '0xRealu',
   'chainId': 1,
   'eip7702': _eip7702Json(recipient: eip7702Recipient),
@@ -123,12 +128,16 @@ void main() {
     session = SessionCache(_MockCacheRepository());
     session.setAuthToken('jwt-1');
 
-    when(() => appStore.apiConfig).thenReturn(const ApiConfig(networkMode: NetworkMode.mainnet));
+    when(
+      () => appStore.apiConfig,
+    ).thenReturn(const ApiConfig(networkMode: NetworkMode.mainnet));
     when(() => appStore.sessionCache).thenReturn(session);
     when(() => appStore.wallet).thenReturn(wallet);
     when(() => wallet.currentAccount).thenReturn(account);
     when(() => account.primaryAddress).thenReturn(_privKey);
-    when(() => walletService.ensureCurrentWalletUnlocked()).thenAnswer((_) async {});
+    when(
+      () => walletService.ensureCurrentWalletUnlocked(),
+    ).thenAnswer((_) async {});
     when(() => walletService.lockCurrentWallet()).thenAnswer((_) async {});
   });
 
@@ -138,59 +147,70 @@ void main() {
   }
 
   group('prepareTransfer', () {
-    test('200 → parses the payment-info DTO and PUTs toAddress + amount', () async {
-      Uri? sentUri;
-      Map<String, dynamic>? body;
-      final client = MockClient((request) async {
-        sentUri = request.url;
-        body = jsonDecode(request.body) as Map<String, dynamic>;
-        return http.Response(
-          jsonEncode({
-            'id': 42,
-            'uid': 'RTabc',
-            'toAddress': '0xRecipient',
-            'amount': 5,
-            'tokenAddress': '0xRealu',
-            'chainId': 1,
-            'eip7702': _eip7702Json(),
-          }),
-          200,
-        );
-      });
+    test(
+      '200 → parses the payment-info DTO and PUTs toAddress + amount',
+      () async {
+        Uri? sentUri;
+        Map<String, dynamic>? body;
+        final client = MockClient((request) async {
+          sentUri = request.url;
+          body = jsonDecode(request.body) as Map<String, dynamic>;
+          return http.Response(
+            jsonEncode({
+              'id': 42,
+              'uid': 'RTabc',
+              'toAddress': '0xRecipient',
+              'amount': 5,
+              'networkFeeRealu': 1,
+              'tokenAddress': '0xRealu',
+              'chainId': 1,
+              'eip7702': _eip7702Json(),
+            }),
+            200,
+          );
+        });
 
-      final info = await build(client).prepareTransfer(
-        const RealUnitTransferDto(toAddress: '0xRecipient', amount: 5),
-      );
-
-      expect(sentUri!.path, '/v1/realunit/transfer');
-      expect(body, {'toAddress': '0xRecipient', 'amount': 5});
-      expect(info.id, 42);
-      expect(info.eip7702.recipient, '0xRecipient');
-    });
-
-    test('503 without message → gas-funding exception with no user-facing text', () async {
-      final client = MockClient(
-        (_) async => http.Response(jsonEncode({'statusCode': 503, 'code': 'X'}), 503),
-      );
-
-      expect(
-        () => build(client).prepareTransfer(
+        final info = await build(client).prepareTransfer(
           const RealUnitTransferDto(toAddress: '0xRecipient', amount: 5),
-        ),
-        throwsA(
-          isA<TransferGasFundingUnavailableException>().having(
-            (e) => e.detail,
-            'detail',
-            isNull,
+        );
+
+        expect(sentUri!.path, '/v1/realunit/transfer');
+        expect(body, {'toAddress': '0xRecipient', 'amount': 5});
+        expect(info.id, 42);
+        expect(info.eip7702.recipient, '0xRecipient');
+      },
+    );
+
+    test(
+      '503 without message → gas-funding exception with no user-facing text',
+      () async {
+        final client = MockClient(
+          (_) async =>
+              http.Response(jsonEncode({'statusCode': 503, 'code': 'X'}), 503),
+        );
+
+        expect(
+          () => build(client).prepareTransfer(
+            const RealUnitTransferDto(toAddress: '0xRecipient', amount: 5),
           ),
-        ),
-      );
-    });
+          throwsA(
+            isA<TransferGasFundingUnavailableException>().having(
+              (e) => e.detail,
+              'detail',
+              isNull,
+            ),
+          ),
+        );
+      },
+    );
 
     test('503 → TransferGasFundingUnavailableException', () async {
       final client = MockClient(
         (_) async => http.Response(
-          jsonEncode({'statusCode': 503, 'message': 'W2W gas funding temporarily unavailable'}),
+          jsonEncode({
+            'statusCode': 503,
+            'message': 'W2W gas funding temporarily unavailable',
+          }),
           503,
         ),
       );
@@ -203,61 +223,73 @@ void main() {
       );
     });
 
-    test('400 (invalid recipient / insufficient REALU) → ApiException', () async {
-      final client = MockClient(
-        (_) async => http.Response(
-          jsonEncode({'statusCode': 400, 'code': 'X', 'message': 'Invalid recipient address'}),
-          400,
-        ),
-      );
+    test(
+      '400 (invalid recipient / insufficient REALU) → ApiException',
+      () async {
+        final client = MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'statusCode': 400,
+              'code': 'X',
+              'message': 'Invalid recipient address',
+            }),
+            400,
+          ),
+        );
 
-      expect(
-        () => build(client).prepareTransfer(
-          const RealUnitTransferDto(toAddress: 'bad', amount: 5),
-        ),
-        throwsA(isA<ApiException>()),
-      );
-    });
+        expect(
+          () => build(client).prepareTransfer(
+            const RealUnitTransferDto(toAddress: 'bad', amount: 5),
+          ),
+          throwsA(isA<ApiException>()),
+        );
+      },
+    );
   });
 
   group('confirmTransfer (software wallet happy path)', () {
-    test('signs delegation + authorization, PUTs the envelope, returns txHash', () async {
-      Uri? sentUri;
-      Map<String, dynamic>? body;
-      final client = MockClient((request) async {
-        sentUri = request.url;
-        body = jsonDecode(request.body) as Map<String, dynamic>;
-        return http.Response(jsonEncode({'txHash': '0xdeadbeef'}), 200);
-      });
+    test(
+      'signs delegation + authorization, PUTs the envelope, returns txHash',
+      () async {
+        Uri? sentUri;
+        Map<String, dynamic>? body;
+        final client = MockClient((request) async {
+          sentUri = request.url;
+          body = jsonDecode(request.body) as Map<String, dynamic>;
+          return http.Response(jsonEncode({'txHash': '0xdeadbeef'}), 200);
+        });
 
-      final txHash = await _confirm(build(client), _info());
+        final txHash = await _confirm(build(client), _info());
 
-      expect(txHash, '0xdeadbeef');
-      expect(sentUri!.path, '/v1/realunit/transfer/42/confirm');
+        expect(txHash, '0xdeadbeef');
+        expect(sentUri!.path, '/v1/realunit/transfer/42/confirm');
 
-      final envelope = body!;
-      expect(envelope.containsKey('delegation'), isTrue);
-      expect(envelope.containsKey('authorization'), isTrue);
+        final envelope = body!;
+        expect(envelope.containsKey('delegation'), isTrue);
+        expect(envelope.containsKey('authorization'), isTrue);
 
-      final delegation = envelope['delegation'] as Map<String, dynamic>;
-      expect(delegation['delegate'], '0xrelay');
-      expect(delegation['delegator'], _walletAddress);
-      expect(delegation['authority'], '0xauth');
-      expect(delegation['salt'], '0');
-      expect((delegation['signature'] as String).length, 132);
+        final delegation = envelope['delegation'] as Map<String, dynamic>;
+        expect(delegation['delegate'], '0xrelay');
+        expect(delegation['delegator'], _walletAddress);
+        expect(delegation['authority'], '0xauth');
+        expect(delegation['salt'], '0');
+        expect((delegation['signature'] as String).length, 132);
 
-      final authorization = envelope['authorization'] as Map<String, dynamic>;
-      expect(authorization['chainId'], 1);
-      expect(authorization['address'], _metaMaskDelegator);
-      expect(authorization['nonce'], 7);
-      // r/s are always full 32-byte (64 hex char) big-endian values.
-      expect((authorization['r'] as String).substring(2).length, 64);
-      expect((authorization['s'] as String).substring(2).length, 64);
-      expect(authorization['yParity'], anyOf(0, 1));
-    });
+        final authorization = envelope['authorization'] as Map<String, dynamic>;
+        expect(authorization['chainId'], 1);
+        expect(authorization['address'], _metaMaskDelegator);
+        expect(authorization['nonce'], 7);
+        // r/s are always full 32-byte (64 hex char) big-endian values.
+        expect((authorization['r'] as String).substring(2).length, 64);
+        expect((authorization['s'] as String).substring(2).length, 64);
+        expect(authorization['yParity'], anyOf(0, 1));
+      },
+    );
 
     test('locks the wallet after signing (key never left resident)', () async {
-      final client = MockClient((_) async => http.Response(jsonEncode({'txHash': '0x1'}), 200));
+      final client = MockClient(
+        (_) async => http.Response(jsonEncode({'txHash': '0x1'}), 200),
+      );
 
       await _confirm(build(client), _info());
 
@@ -265,32 +297,39 @@ void main() {
       verify(() => walletService.lockCurrentWallet()).called(1);
     });
 
-    test('debug-wallet credentials → TransferSignatureUnsupportedException', () async {
-      when(() => account.primaryAddress).thenReturn(_UnsupportedCreds());
-      final client = MockClient((_) async => http.Response('{}', 200));
+    test(
+      'debug-wallet credentials → TransferSignatureUnsupportedException',
+      () async {
+        when(() => account.primaryAddress).thenReturn(_UnsupportedCreds());
+        final client = MockClient((_) async => http.Response('{}', 200));
 
-      expect(
-        () => _confirm(build(client), _info()),
-        throwsA(isA<TransferSignatureUnsupportedException>()),
-      );
-    });
+        expect(
+          () => _confirm(build(client), _info()),
+          throwsA(isA<TransferSignatureUnsupportedException>()),
+        );
+      },
+    );
 
-    test('503 on confirm without message → gas-funding exception with no user-facing text', () async {
-      final client = MockClient(
-        (_) async => http.Response(jsonEncode({'statusCode': 503, 'code': 'X'}), 503),
-      );
+    test(
+      '503 on confirm without message → gas-funding exception with no user-facing text',
+      () async {
+        final client = MockClient(
+          (_) async =>
+              http.Response(jsonEncode({'statusCode': 503, 'code': 'X'}), 503),
+        );
 
-      expect(
-        () => _confirm(build(client), _info()),
-        throwsA(
-          isA<TransferGasFundingUnavailableException>().having(
-            (e) => e.detail,
-            'detail',
-            isNull,
+        expect(
+          () => _confirm(build(client), _info()),
+          throwsA(
+            isA<TransferGasFundingUnavailableException>().having(
+              (e) => e.detail,
+              'detail',
+              isNull,
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     test('503 on confirm → TransferGasFundingUnavailableException', () async {
       final client = MockClient(
@@ -305,8 +344,10 @@ void main() {
 
     test('4xx on confirm → ApiException', () async {
       final client = MockClient(
-        (_) async =>
-            http.Response(jsonEncode({'statusCode': 409, 'code': 'X', 'message': 'no'}), 409),
+        (_) async => http.Response(
+          jsonEncode({'statusCode': 409, 'code': 'X', 'message': 'no'}),
+          409,
+        ),
       );
 
       expect(
@@ -319,16 +360,18 @@ void main() {
     // sell software-confirm guard. Each case mutates one field of the otherwise
     // valid eip7702 payload and asserts validation throws WITHOUT any PUT.
     group('eip7702 validation pins (throw before any PUT)', () {
-      RealUnitTransferPaymentInfoDto infoWith(Map<String, dynamic> Function() mutate) =>
-          RealUnitTransferPaymentInfoDto.fromJson({
-            'id': 42,
-            'uid': 'RTabc',
-            'toAddress': _confirmedRecipient,
-            'amount': _confirmedAmount,
-            'tokenAddress': '0xRealu',
-            'chainId': 1,
-            'eip7702': mutate(),
-          });
+      RealUnitTransferPaymentInfoDto infoWith(
+        Map<String, dynamic> Function() mutate,
+      ) => RealUnitTransferPaymentInfoDto.fromJson({
+        'id': 42,
+        'uid': 'RTabc',
+        'toAddress': _confirmedRecipient,
+        'amount': _confirmedAmount,
+        'networkFeeRealu': 1,
+        'tokenAddress': '0xRealu',
+        'chainId': 1,
+        'eip7702': mutate(),
+      });
 
       Future<void> expectRejected(RealUnitTransferPaymentInfoDto info) async {
         var called = false;
@@ -337,16 +380,24 @@ void main() {
           return http.Response('{}', 200);
         });
         await expectLater(() => _confirm(build(client), info), throwsException);
-        expect(called, isFalse, reason: 'no PUT must happen when validation rejects the payload');
+        expect(
+          called,
+          isFalse,
+          reason: 'no PUT must happen when validation rejects the payload',
+        );
       }
 
       test('wrong delegator (MetaMask delegator) contract', () async {
-        await expectRejected(infoWith(() => _eip7702Json()..['delegatorAddress'] = '0xWrong'));
+        await expectRejected(
+          infoWith(() => _eip7702Json()..['delegatorAddress'] = '0xWrong'),
+        );
       });
 
       test('wrong delegation manager contract', () async {
         await expectRejected(
-          infoWith(() => _eip7702Json()..['delegationManagerAddress'] = '0xWrong'),
+          infoWith(
+            () => _eip7702Json()..['delegationManagerAddress'] = '0xWrong',
+          ),
         );
       });
 
@@ -354,7 +405,8 @@ void main() {
         await expectRejected(
           infoWith(() {
             final json = _eip7702Json();
-            (json['domain'] as Map<String, dynamic>)['verifyingContract'] = '0xWrong';
+            (json['domain'] as Map<String, dynamic>)['verifyingContract'] =
+                '0xWrong';
             return json;
           }),
         );
@@ -364,7 +416,8 @@ void main() {
         await expectRejected(
           infoWith(() {
             final json = _eip7702Json();
-            (json['message'] as Map<String, dynamic>)['delegator'] = '0xSomeoneElse';
+            (json['message'] as Map<String, dynamic>)['delegator'] =
+                '0xSomeoneElse';
             return json;
           }),
         );
@@ -378,22 +431,29 @@ void main() {
         await expectRejected(
           infoWith(() {
             final json = _eip7702Json();
-            (json['message'] as Map<String, dynamic>)['delegate'] = '0xOtherRelayer';
+            (json['message'] as Map<String, dynamic>)['delegate'] =
+                '0xOtherRelayer';
             return json;
           }),
         );
       });
 
       test('token address != RealUnit token', () async {
-        await expectRejected(infoWith(() => _eip7702Json()..['tokenAddress'] = '0xNotRealu'));
+        await expectRejected(
+          infoWith(() => _eip7702Json()..['tokenAddress'] = '0xNotRealu'),
+        );
       });
 
       test('amount-wei mismatch', () async {
-        await expectRejected(infoWith(() => _eip7702Json()..['amountWei'] = '6'));
+        await expectRejected(
+          infoWith(() => _eip7702Json()..['amountWei'] = '6'),
+        );
       });
 
       test('unparseable amount-wei', () async {
-        await expectRejected(infoWith(() => _eip7702Json()..['amountWei'] = 'not-a-number'));
+        await expectRejected(
+          infoWith(() => _eip7702Json()..['amountWei'] = 'not-a-number'),
+        );
       });
     });
 
@@ -419,16 +479,23 @@ void main() {
           ),
           throwsA(isA<TransferConfirmMismatchException>()),
         );
-        expect(called, isFalse, reason: 'no PUT must happen when user-confirm guard rejects');
+        expect(
+          called,
+          isFalse,
+          reason: 'no PUT must happen when user-confirm guard rejects',
+        );
       }
 
       test('toAddress mismatch → TransferConfirmMismatchException', () async {
         await expectMismatch(_info(toAddress: '0xOtherRecipient'));
       });
 
-      test('eip7702.recipient mismatch → TransferConfirmMismatchException', () async {
-        await expectMismatch(_info(eip7702Recipient: '0xOtherRecipient'));
-      });
+      test(
+        'eip7702.recipient mismatch → TransferConfirmMismatchException',
+        () async {
+          await expectMismatch(_info(eip7702Recipient: '0xOtherRecipient'));
+        },
+      );
 
       test('amount mismatch → TransferConfirmMismatchException', () async {
         await expectMismatch(_info(amount: 99));
@@ -449,40 +516,45 @@ void main() {
   });
 
   group('confirm 409 mapping', () {
-    test('409 "already confirmed" → TransferAlreadyConfirmedException', () async {
-      final client = MockClient(
-        (_) async => http.Response(
-          jsonEncode({
-            'statusCode': 409,
-            'message': 'Transaction request is already confirmed',
-            'error': 'Conflict',
-            'txHash': '0xfrom409',
-          }),
-          409,
-        ),
-      );
+    test(
+      '409 "already confirmed" → TransferAlreadyConfirmedException',
+      () async {
+        final client = MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'statusCode': 409,
+              'message': 'Transaction request is already confirmed',
+              'error': 'Conflict',
+              'txHash': '0xfrom409',
+            }),
+            409,
+          ),
+        );
 
-      await expectLater(
-        _confirm(build(client), _info()),
-        throwsA(
-          isA<TransferAlreadyConfirmedException>()
-              .having((e) => e.txHash, 'txHash', '0xfrom409')
-              .having(
-                (e) => e.message.toLowerCase().contains('already confirmed'),
-                'message mentions already confirmed',
-                isTrue,
-              ),
-        ),
-      );
-    });
+        await expectLater(
+          _confirm(build(client), _info()),
+          throwsA(
+            isA<TransferAlreadyConfirmedException>()
+                .having((e) => e.txHash, 'txHash', '0xfrom409')
+                .having(
+                  (e) => e.message.toLowerCase().contains('already confirmed'),
+                  'message mentions already confirmed',
+                  isTrue,
+                ),
+          ),
+        );
+      },
+    );
 
     test('400 with timeout-like message stays a plain ApiException', () async {
-      const hash = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+      const hash =
+          '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
       final client = MockClient(
         (_) async => http.Response(
           jsonEncode({
             'statusCode': 400,
-            'message': 'Timed out while waiting for transaction with hash "$hash"',
+            'message':
+                'Timed out while waiting for transaction with hash "$hash"',
             'error': 'Bad Request',
           }),
           400,
@@ -492,73 +564,97 @@ void main() {
       await expectLater(
         _confirm(build(client), _info()),
         throwsA(
-          predicate((e) => e is ApiException && e is! TransferReceiptTimeoutException),
+          predicate(
+            (e) => e is ApiException && e is! TransferReceiptTimeoutException,
+          ),
         ),
       );
     });
 
-    test('500 viem receipt-timeout with hash → TransferReceiptTimeoutException', () async {
-      const hash = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-      final client = MockClient(
-        (_) async => http.Response(
-          jsonEncode({
-            'statusCode': 500,
-            'message': 'Timed out while waiting for transaction with hash "$hash"\nVersion: viem@2.21.0',
-            'error': 'Internal Server Error',
-          }),
-          500,
-        ),
-      );
+    test(
+      '500 viem receipt-timeout with hash → TransferReceiptTimeoutException',
+      () async {
+        const hash =
+            '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        final client = MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'statusCode': 500,
+              'message':
+                  'Timed out while waiting for transaction with hash "$hash"\nVersion: viem@2.21.0',
+              'error': 'Internal Server Error',
+            }),
+            500,
+          ),
+        );
 
-      await expectLater(
-        _confirm(build(client), _info()),
-        throwsA(
-          isA<TransferReceiptTimeoutException>().having((e) => e.txHash, 'txHash', hash),
-        ),
-      );
-    });
+        await expectLater(
+          _confirm(build(client), _info()),
+          throwsA(
+            isA<TransferReceiptTimeoutException>().having(
+              (e) => e.txHash,
+              'txHash',
+              hash,
+            ),
+          ),
+        );
+      },
+    );
 
-    test('HTTP 400 with body statusCode 500 and timeout phrase stays a plain ApiException', () async {
-      const hash = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-      final client = MockClient(
-        (_) async => http.Response(
-          jsonEncode({
-            'statusCode': 500,
-            'message': 'Timed out while waiting for transaction with hash "$hash"',
-            'error': 'Internal Server Error',
-          }),
-          400,
-        ),
-      );
+    test(
+      'HTTP 400 with body statusCode 500 and timeout phrase stays a plain ApiException',
+      () async {
+        const hash =
+            '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        final client = MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'statusCode': 500,
+              'message':
+                  'Timed out while waiting for transaction with hash "$hash"',
+              'error': 'Internal Server Error',
+            }),
+            400,
+          ),
+        );
 
-      await expectLater(
-        _confirm(build(client), _info()),
-        throwsA(
-          predicate((e) => e is ApiException && e is! TransferReceiptTimeoutException),
-        ),
-      );
-    });
+        await expectLater(
+          _confirm(build(client), _info()),
+          throwsA(
+            predicate(
+              (e) => e is ApiException && e is! TransferReceiptTimeoutException,
+            ),
+          ),
+        );
+      },
+    );
 
-    test('HTTP 500 with hash but no timeout phrase stays a plain ApiException', () async {
-      const hash = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-      final client = MockClient(
-        (_) async => http.Response(
-          jsonEncode({
-            'statusCode': 500,
-            'message': 'relay failed for $hash',
-            'error': 'Internal Server Error',
-          }),
-          500,
-        ),
-      );
+    test(
+      'HTTP 500 with hash but no timeout phrase stays a plain ApiException',
+      () async {
+        const hash =
+            '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        final client = MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'statusCode': 500,
+              'message': 'relay failed for $hash',
+              'error': 'Internal Server Error',
+            }),
+            500,
+          ),
+        );
 
-      await expectLater(
-        _confirm(build(client), _info()),
-        throwsA(
-          predicate((e) => e is ApiException && e is! TransferReceiptTimeoutException),
-        ),
-      );
-    });
+        await expectLater(
+          _confirm(build(client), _info()),
+          throwsA(
+            predicate(
+              (e) => e is ApiException && e is! TransferReceiptTimeoutException,
+            ),
+          ),
+        );
+      },
+    );
 
     test('any other 409 conflict stays a plain ApiException', () async {
       final client = MockClient(
@@ -575,7 +671,9 @@ void main() {
       await expectLater(
         _confirm(build(client), _info()),
         throwsA(
-          predicate((e) => e is ApiException && e is! TransferAlreadyConfirmedException),
+          predicate(
+            (e) => e is ApiException && e is! TransferAlreadyConfirmedException,
+          ),
         ),
       );
     });

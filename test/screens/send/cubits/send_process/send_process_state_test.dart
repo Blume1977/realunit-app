@@ -10,12 +10,10 @@ void main() {
       // and skip the getter line in the coverage report.
       expect(const SendProcessInitial().props, isEmpty);
       expect(const SendProcessPreparing().props, isEmpty);
-      expect(const SendProcessSigning().props, isEmpty);
 
       // Same type compares equal (base `props => []`).
       expect(const SendProcessInitial(), const SendProcessInitial());
       expect(const SendProcessPreparing(), const SendProcessPreparing());
-      expect(const SendProcessSigning(), const SendProcessSigning());
 
       // Different payload-less subclasses are unequal.
       expect(
@@ -29,6 +27,15 @@ void main() {
       expect(
         const SendProcessSigning(),
         isNot(equals(const SendProcessInitial())),
+      );
+    });
+
+    test('SendProcessSigning is keyed on the REALU network fee', () {
+      expect(const SendProcessSigning().props, [0]);
+      expect(const SendProcessSigning(), const SendProcessSigning());
+      expect(
+        const SendProcessSigning(networkFeeRealu: 1),
+        isNot(equals(const SendProcessSigning())),
       );
     });
 

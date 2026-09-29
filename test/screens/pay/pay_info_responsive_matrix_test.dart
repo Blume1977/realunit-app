@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
+import 'package:realunit_wallet/packages/wallet/wallet.dart';
+import 'package:realunit_wallet/screens/home/bloc/home_bloc.dart';
 import 'package:realunit_wallet/screens/pay/pay_info_page.dart';
 import 'package:realunit_wallet/styles/themes.dart';
 
@@ -36,7 +40,23 @@ Future<void> _pumpScreen(
 }
 
 void main() {
+  late MockHomeBloc homeBloc;
+
   setUpAll(stubMobileScannerChannel);
+
+  setUp(() {
+    homeBloc = MockHomeBloc();
+    when(() => homeBloc.state).thenReturn(
+      HomeState(
+        hasWallet: true,
+        openWallet: SoftwareViewWallet(
+          1,
+          'Software',
+          '0x0000000000000000000000000000000000000001',
+        ),
+      ),
+    );
+  });
 
   group('PayInfoPage responsive matrix (full device × textScale)', () {
     for (final cell in kFullResponsiveMatrix) {
@@ -44,7 +64,11 @@ void main() {
         await withTargetPlatform(cell.device.platform, () async {
           await expectNoLayoutOverflow(
             tester,
-            () => _pumpScreen(tester, cell, const PayInfoPage()),
+            () => _pumpScreen(
+              tester,
+              cell,
+              BlocProvider<HomeBloc>.value(value: homeBloc, child: const PayInfoPage()),
+            ),
             reason: 'PayInfoPage overflow / ${cell.label}',
           );
 

@@ -51,7 +51,13 @@ class SendProcessPreparing extends SendProcessState {
 
 /// Signing the EIP-712 delegation + EIP-7702 authorization and confirming.
 class SendProcessSigning extends SendProcessState {
-  const SendProcessSigning();
+  /// Whole REALU the customer pays on top of the amount the recipient gets.
+  final int networkFeeRealu;
+
+  const SendProcessSigning({this.networkFeeRealu = 0});
+
+  @override
+  List<Object?> get props => [networkFeeRealu];
 }
 
 class SendProcessSuccess extends SendProcessState {

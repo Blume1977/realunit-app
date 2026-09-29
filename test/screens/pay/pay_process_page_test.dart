@@ -89,7 +89,9 @@ void main() {
 
   group('$PayProcessPage', () {
     testWidgets('builds its own cubit and renders $PayProcessView', (tester) async {
-      await tester.pumpApp(const PayProcessPage(paymentLinkId: 'pl_abc', swap: _swap));
+      await tester.pumpApp(
+        const PayProcessPage(paymentLinkId: 'pl_abc', quoteId: 'quote_xyz', swap: _swap),
+      );
       // The route gate starts the cubit after the home route is settled; pump
       // a frame so start() can emit (the sheet animation is not awaited here).
       await tester.pump();
@@ -109,8 +111,11 @@ void main() {
                   Navigator.of(context).push(
                     TimedMaterialPageRoute<void>(
                       transitionDuration: const Duration(milliseconds: 300),
-                      builder: (_) =>
-                          const PayProcessPage(paymentLinkId: 'pl_abc', swap: _swap),
+                      builder: (_) => const PayProcessPage(
+                        paymentLinkId: 'pl_abc',
+                        quoteId: 'quote_xyz',
+                        swap: _swap,
+                      ),
                     ),
                   );
                 },
@@ -199,7 +204,7 @@ void main() {
     testWidgets('pay-retry label', (tester) async {
       await expectLabel(
         tester,
-        const PayProcessPayRetry(PayRetryReason.quoteExpired),
+        const PayProcessPayRetry(PayRetryReason.transient),
         S.current.payRetryTitle,
       );
     });
@@ -361,9 +366,9 @@ void main() {
     testWidgets('pay-retry emits a retry sheet whose primary action calls retryPay', (
       tester,
     ) async {
-      await pumpWithState(tester, const PayProcessPayRetry(PayRetryReason.quoteExpired));
+      await pumpWithState(tester, const PayProcessPayRetry(PayRetryReason.transient));
 
-      expect(find.text(S.current.payRetryQuoteExpired), findsOne);
+      expect(find.text(S.current.payRetryTransient), findsOne);
       expect(find.byIcon(Icons.replay_rounded), findsOne);
 
       await tester.tap(find.text(S.current.payRetryButton));
@@ -383,18 +388,6 @@ void main() {
 
       verifyNever(() => processCubit.retryPay());
       expect(find.text(S.current.payRetryTransient), findsNothing);
-    });
-
-    testWidgets('insufficient-zchf retry reason shows its message', (tester) async {
-      await pumpWithState(tester, const PayProcessPayRetry(PayRetryReason.insufficientZchf));
-
-      expect(find.text(S.current.payRetryInsufficientZchf), findsOne);
-    });
-
-    testWidgets('unsigned-tx-mismatch retry reason shows its message', (tester) async {
-      await pumpWithState(tester, const PayProcessPayRetry(PayRetryReason.unsignedTxMismatch));
-
-      expect(find.text(S.current.payRetryUnsignedTxMismatch), findsOne);
     });
 
     testWidgets('transient retry with API message shows the API text 1:1', (tester) async {

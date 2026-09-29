@@ -13,10 +13,12 @@ import 'package:realunit_wallet/packages/service/dfx/models/transactions/dto/tra
 import 'package:realunit_wallet/packages/service/dfx/real_unit_pdf_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_referral_service.dart';
 import 'package:realunit_wallet/packages/utils/default_assets.dart';
+import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/balance_cubit.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/dashboard_bloc.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/pending_transactions_cubit.dart';
 import 'package:realunit_wallet/screens/dashboard/dashboard_page.dart';
+import 'package:realunit_wallet/screens/home/bloc/home_bloc.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/currency.dart';
 
@@ -41,21 +43,22 @@ void main() {
   late _MockBalanceCubit balanceCubit;
   late _MockPendingTransactionsCubit pendingTxCubit;
   late MockSettingsBloc settingsBloc;
+  late MockHomeBloc homeBloc;
 
   Balance zeroBalance() => Balance(
-        chainId: realUnitAsset.chainId,
-        contractAddress: realUnitAsset.address,
-        walletAddress: '0x0',
-        balance: BigInt.zero,
-        asset: realUnitAsset,
-      );
+    chainId: realUnitAsset.chainId,
+    contractAddress: realUnitAsset.address,
+    walletAddress: '0x0',
+    balance: BigInt.zero,
+    asset: realUnitAsset,
+  );
 
   DashboardState emptyDashboardState() => DashboardState(
-        price: BigInt.zero,
-        priceChart: const [],
-        portfolioHistory: const [],
-        currency: Currency.chf,
-      );
+    price: BigInt.zero,
+    priceChart: const [],
+    portfolioHistory: const [],
+    currency: Currency.chf,
+  );
 
   setUpAll(() {
     final getIt = GetIt.instance;
@@ -65,12 +68,13 @@ void main() {
     when(() => apiConfig.asset).thenReturn(realUnitAsset);
     when(() => appStore.apiConfig).thenReturn(apiConfig);
     when(() => appStore.primaryAddress).thenReturn('0x0');
-    when(() => transactionRepository.watchTransactionsOfAssets(
-              any(),
-              any(),
-              any(),
-            ))
-        .thenAnswer((_) => const Stream<List<Transaction>>.empty());
+    when(
+      () => transactionRepository.watchTransactionsOfAssets(
+        any(),
+        any(),
+        any(),
+      ),
+    ).thenAnswer((_) => const Stream<List<Transaction>>.empty());
     getIt.registerSingleton<AppStore>(appStore);
     getIt.registerSingleton<RealUnitPdfService>(_MockRealUnitPdfService());
     getIt.registerSingleton<TransactionRepository>(transactionRepository);
@@ -86,23 +90,35 @@ void main() {
     balanceCubit = _MockBalanceCubit();
     pendingTxCubit = _MockPendingTransactionsCubit();
     settingsBloc = MockSettingsBloc();
+    homeBloc = MockHomeBloc();
 
     when(() => dashboardBloc.state).thenReturn(emptyDashboardState());
     when(() => balanceCubit.state).thenReturn(zeroBalance());
     when(() => balanceCubit.asset).thenReturn(realUnitAsset);
     when(() => pendingTxCubit.state).thenReturn(const <TransactionDto>[]);
     when(() => settingsBloc.state).thenReturn(const SettingsState());
+    when(() => homeBloc.state).thenReturn(
+      HomeState(
+        hasWallet: true,
+        openWallet: SoftwareViewWallet(
+          1,
+          'Software',
+          '0x0000000000000000000000000000000000000001',
+        ),
+      ),
+    );
   });
 
   Widget buildSubject() => MultiBlocProvider(
-        providers: [
-          BlocProvider<SettingsBloc>.value(value: settingsBloc),
-          BlocProvider<DashboardBloc>.value(value: dashboardBloc),
-          BlocProvider<BalanceCubit>.value(value: balanceCubit),
-          BlocProvider<PendingTransactionsCubit>.value(value: pendingTxCubit),
-        ],
-        child: const DashboardView(),
-      );
+    providers: [
+      BlocProvider<SettingsBloc>.value(value: settingsBloc),
+      BlocProvider<HomeBloc>.value(value: homeBloc),
+      BlocProvider<DashboardBloc>.value(value: dashboardBloc),
+      BlocProvider<BalanceCubit>.value(value: balanceCubit),
+      BlocProvider<PendingTransactionsCubit>.value(value: pendingTxCubit),
+    ],
+    child: const DashboardView(),
+  );
 
   group('$DashboardView', () {
     goldenTest(

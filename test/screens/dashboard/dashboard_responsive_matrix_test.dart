@@ -23,11 +23,13 @@ import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/models/balance.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/transactions/dto/transactions_dto.dart';
 import 'package:realunit_wallet/packages/utils/default_assets.dart';
+import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/balance_cubit.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/dashboard_bloc.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/pending_transactions_cubit.dart';
 import 'package:realunit_wallet/screens/dashboard/dashboard_page.dart';
 import 'package:realunit_wallet/screens/dashboard/widgets/sections/dashboard_actions.dart';
+import 'package:realunit_wallet/screens/home/bloc/home_bloc.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/styles/currency.dart';
@@ -48,6 +50,7 @@ void main() {
   late _MockBalanceCubit balanceCubit;
   late _MockPendingTransactionsCubit pendingTxCubit;
   late MockSettingsBloc settingsBloc;
+  late MockHomeBloc homeBloc;
 
   Balance zeroBalance() => Balance(
     chainId: realUnitAsset.chainId,
@@ -81,17 +84,29 @@ void main() {
     balanceCubit = _MockBalanceCubit();
     pendingTxCubit = _MockPendingTransactionsCubit();
     settingsBloc = MockSettingsBloc();
+    homeBloc = MockHomeBloc();
 
     when(() => dashboardBloc.state).thenReturn(emptyDashboardState());
     when(() => balanceCubit.state).thenReturn(zeroBalance());
     when(() => balanceCubit.asset).thenReturn(realUnitAsset);
     when(() => pendingTxCubit.state).thenReturn(const <TransactionDto>[]);
     when(() => settingsBloc.state).thenReturn(const SettingsState());
+    when(() => homeBloc.state).thenReturn(
+      HomeState(
+        hasWallet: true,
+        openWallet: SoftwareViewWallet(
+          1,
+          'Software',
+          '0x0000000000000000000000000000000000000001',
+        ),
+      ),
+    );
   });
 
   Widget buildDashboard() => MultiBlocProvider(
     providers: [
       BlocProvider<SettingsBloc>.value(value: settingsBloc),
+      BlocProvider<HomeBloc>.value(value: homeBloc),
       BlocProvider<DashboardBloc>.value(value: dashboardBloc),
       BlocProvider<BalanceCubit>.value(value: balanceCubit),
       BlocProvider<PendingTransactionsCubit>.value(value: pendingTxCubit),
@@ -99,8 +114,11 @@ void main() {
     child: const DashboardView(),
   );
 
-  Widget buildActionsHost() => BlocProvider<SettingsBloc>.value(
-    value: settingsBloc,
+  Widget buildActionsHost() => MultiBlocProvider(
+    providers: [
+      BlocProvider<SettingsBloc>.value(value: settingsBloc),
+      BlocProvider<HomeBloc>.value(value: homeBloc),
+    ],
     child: const Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
@@ -275,7 +293,6 @@ void main() {
               within: find.byType(DashboardActions),
               reason: '${cell.label}: pay button not tappable',
             );
-
           });
         });
       }

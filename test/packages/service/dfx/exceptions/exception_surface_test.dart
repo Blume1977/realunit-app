@@ -38,6 +38,7 @@ void main() {
       const SeedDecryptionException('test'),
       const AlreadyConfirmedException(code: 'TEST', message: 'test'),
       const InvalidPaymentLinkException('test'),
+      const PayConfirmNotSubmittedException('test'),
       const PaySignatureUnsupportedException(),
       const PayUnsignedTxMismatchException('test'),
       const InvalidRecipientAddressException('test'),
