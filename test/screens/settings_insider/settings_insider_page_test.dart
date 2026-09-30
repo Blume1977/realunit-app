@@ -204,4 +204,40 @@ void main() {
     expect(tester.widget<Switch>(find.byType(Switch).at(2)).value, isFalse);
     expect(tester.widget<Switch>(find.byType(Switch).at(3)).value, isTrue);
   });
+
+  testWidgets(
+    'when all four are centrally enabled, switches stay on and Pay tap does not dispatch',
+    (tester) async {
+      when(() => settingsBloc.state).thenReturn(
+        const SettingsState(
+          walletFeaturePay: true,
+          walletFeatureSend: true,
+          walletFeaturePromoCode: true,
+          walletFeatureReferral: true,
+          walletFeaturePayCentral: true,
+          walletFeatureSendCentral: true,
+          walletFeaturePromoCodeCentral: true,
+          walletFeatureReferralCentral: true,
+        ),
+      );
+
+      await pumpPage(tester);
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<Switch>(find.byType(Switch).at(0)).value, isTrue);
+      expect(tester.widget<Switch>(find.byType(Switch).at(1)).value, isTrue);
+      expect(tester.widget<Switch>(find.byType(Switch).at(2)).value, isTrue);
+      expect(tester.widget<Switch>(find.byType(Switch).at(3)).value, isTrue);
+      expect(find.text(S.current.settingsInsiderCentrallyEnabled), findsNWidgets(4));
+
+      await tester.tap(find.text(S.current.pay));
+      await tester.pump();
+
+      verifyNever(
+        () => settingsBloc.add(
+          const SetInsiderFeatureEnabledEvent(InsiderFeature.pay, false),
+        ),
+      );
+    },
+  );
 }

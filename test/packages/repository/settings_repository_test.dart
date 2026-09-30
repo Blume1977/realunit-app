@@ -159,6 +159,10 @@ void main() {
         expect(repo.walletFeatureSend, isFalse);
         expect(repo.walletFeaturePromoCode, isFalse);
         expect(repo.walletFeatureReferral, isFalse);
+        expect(repo.walletFeaturePayCentral, isFalse);
+        expect(repo.walletFeatureSendCentral, isFalse);
+        expect(repo.walletFeaturePromoCodeCentral, isFalse);
+        expect(repo.walletFeatureReferralCentral, isFalse);
       });
 
       test('persist true', () async {
@@ -175,6 +179,10 @@ void main() {
         expect(repo.walletFeatureSend, isTrue);
         expect(repo.walletFeaturePromoCode, isTrue);
         expect(repo.walletFeatureReferral, isTrue);
+        expect(repo.walletFeaturePayCentral, isTrue);
+        expect(repo.walletFeatureSendCentral, isTrue);
+        expect(repo.walletFeaturePromoCodeCentral, isTrue);
+        expect(repo.walletFeatureReferralCentral, isTrue);
       });
 
       test('ignore false over true', () async {
@@ -197,6 +205,10 @@ void main() {
         expect(repo.walletFeatureSend, isTrue);
         expect(repo.walletFeaturePromoCode, isTrue);
         expect(repo.walletFeatureReferral, isTrue);
+        expect(repo.walletFeaturePayCentral, isTrue);
+        expect(repo.walletFeatureSendCentral, isTrue);
+        expect(repo.walletFeaturePromoCodeCentral, isTrue);
+        expect(repo.walletFeatureReferralCentral, isTrue);
       });
 
       test('migrates old insider unlock to pay only', () async {
@@ -242,7 +254,7 @@ void main() {
         expect(repo.walletFeatureReferral, isFalse);
       });
 
-      test('user off persists across a new repository', () async {
+      test('a central true stays on when the insider switch is turned off', () async {
         SharedPreferences.setMockInitialValues({});
         final prefs = await SharedPreferences.getInstance();
         final repo = SettingsRepository(prefs);
@@ -260,6 +272,44 @@ void main() {
         await Future<void>.delayed(Duration.zero);
 
         final reloaded = SettingsRepository(prefs);
+        expect(reloaded.walletFeaturePay, isTrue);
+        expect(reloaded.walletFeatureSend, isTrue);
+        expect(reloaded.walletFeaturePromoCode, isTrue);
+        expect(reloaded.walletFeatureReferral, isTrue);
+        expect(reloaded.walletFeaturePayCentral, isTrue);
+        expect(reloaded.walletFeatureSendCentral, isTrue);
+        expect(reloaded.walletFeaturePromoCodeCentral, isTrue);
+        expect(reloaded.walletFeatureReferralCentral, isTrue);
+
+        reloaded.walletFeaturePay = false;
+        reloaded.walletFeatureSend = false;
+        reloaded.walletFeaturePromoCode = false;
+        reloaded.walletFeatureReferral = false;
+        await Future<void>.delayed(Duration.zero);
+
+        expect(reloaded.walletFeaturePay, isTrue);
+        expect(reloaded.walletFeatureSend, isTrue);
+        expect(reloaded.walletFeaturePromoCode, isTrue);
+        expect(reloaded.walletFeatureReferral, isTrue);
+      });
+
+      test('a central true overrides a stored insider off', () async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final repo = SettingsRepository(prefs);
+
+        repo.setWalletFeaturePayFromUser(false);
+        repo.setWalletFeatureSendFromUser(false);
+        repo.setWalletFeaturePromoCodeFromUser(false);
+        repo.setWalletFeatureReferralFromUser(false);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(repo.walletFeaturePay, isFalse);
+        expect(repo.walletFeatureSend, isFalse);
+        expect(repo.walletFeaturePromoCode, isFalse);
+        expect(repo.walletFeatureReferral, isFalse);
+
+        final reloaded = SettingsRepository(prefs);
         expect(reloaded.walletFeaturePay, isFalse);
         expect(reloaded.walletFeatureSend, isFalse);
         expect(reloaded.walletFeaturePromoCode, isFalse);
@@ -271,13 +321,38 @@ void main() {
         reloaded.walletFeatureReferral = true;
         await Future<void>.delayed(Duration.zero);
 
-        expect(reloaded.walletFeaturePay, isFalse);
-        expect(reloaded.walletFeatureSend, isFalse);
-        expect(reloaded.walletFeaturePromoCode, isFalse);
-        expect(reloaded.walletFeatureReferral, isFalse);
+        expect(reloaded.walletFeaturePay, isTrue);
+        expect(reloaded.walletFeatureSend, isTrue);
+        expect(reloaded.walletFeaturePromoCode, isTrue);
+        expect(reloaded.walletFeatureReferral, isTrue);
+        expect(reloaded.walletFeaturePayCentral, isTrue);
+        expect(reloaded.walletFeatureSendCentral, isTrue);
+        expect(reloaded.walletFeaturePromoCodeCentral, isTrue);
+        expect(reloaded.walletFeatureReferralCentral, isTrue);
+
+        final stillOn = SettingsRepository(prefs);
+        expect(stillOn.walletFeaturePay, isTrue);
+        expect(stillOn.walletFeatureSend, isTrue);
+        expect(stillOn.walletFeaturePromoCode, isTrue);
+        expect(stillOn.walletFeatureReferral, isTrue);
+        expect(stillOn.walletFeaturePayCentral, isTrue);
+        expect(stillOn.walletFeatureSendCentral, isTrue);
+        expect(stillOn.walletFeaturePromoCodeCentral, isTrue);
+        expect(stillOn.walletFeatureReferralCentral, isTrue);
+
+        stillOn.walletFeaturePay = false;
+        stillOn.walletFeatureSend = false;
+        stillOn.walletFeaturePromoCode = false;
+        stillOn.walletFeatureReferral = false;
+        await Future<void>.delayed(Duration.zero);
+
+        expect(stillOn.walletFeaturePay, isTrue);
+        expect(stillOn.walletFeatureSend, isTrue);
+        expect(stillOn.walletFeaturePromoCode, isTrue);
+        expect(stillOn.walletFeatureReferral, isTrue);
       });
 
-      test('user on clears the user-off so the latch works again', () async {
+      test('a server false does not clear an insider-on', () async {
         SharedPreferences.setMockInitialValues({});
         final repo = SettingsRepository(await SharedPreferences.getInstance());
 
@@ -301,7 +376,82 @@ void main() {
         expect(repo.walletFeatureSend, isTrue);
         expect(repo.walletFeaturePromoCode, isTrue);
         expect(repo.walletFeatureReferral, isTrue);
+        expect(repo.walletFeaturePayCentral, isFalse);
+        expect(repo.walletFeatureSendCentral, isFalse);
+        expect(repo.walletFeaturePromoCodeCentral, isFalse);
+        expect(repo.walletFeatureReferralCentral, isFalse);
       });
+
+      test('an old stored user-off does not block the next central true', () async {
+        SharedPreferences.setMockInitialValues({
+          'walletFeaturePay': false,
+          'walletFeaturePayUserOff': true,
+          'walletFeatureSend': false,
+          'walletFeatureSendUserOff': true,
+          'walletFeaturePromoCode': false,
+          'walletFeaturePromoCodeUserOff': true,
+          'walletFeatureReferral': false,
+          'walletFeatureReferralUserOff': true,
+        });
+        final repo = SettingsRepository(await SharedPreferences.getInstance());
+
+        expect(repo.walletFeaturePay, isFalse);
+        expect(repo.walletFeatureSend, isFalse);
+        expect(repo.walletFeaturePromoCode, isFalse);
+        expect(repo.walletFeatureReferral, isFalse);
+        expect(repo.walletFeaturePayCentral, isFalse);
+        expect(repo.walletFeatureSendCentral, isFalse);
+        expect(repo.walletFeaturePromoCodeCentral, isFalse);
+        expect(repo.walletFeatureReferralCentral, isFalse);
+
+        repo.walletFeaturePay = true;
+        repo.walletFeatureSend = true;
+        repo.walletFeaturePromoCode = true;
+        repo.walletFeatureReferral = true;
+        await Future<void>.delayed(Duration.zero);
+
+        expect(repo.walletFeaturePay, isTrue);
+        expect(repo.walletFeatureSend, isTrue);
+        expect(repo.walletFeaturePromoCode, isTrue);
+        expect(repo.walletFeatureReferral, isTrue);
+        expect(repo.walletFeaturePayCentral, isTrue);
+        expect(repo.walletFeatureSendCentral, isTrue);
+        expect(repo.walletFeaturePromoCodeCentral, isTrue);
+        expect(repo.walletFeatureReferralCentral, isTrue);
+      });
+
+      test(
+        'an old stored on without user-off migrates to insider on, not to the central latch',
+        () async {
+          SharedPreferences.setMockInitialValues({
+            'walletFeaturePay': true,
+            'walletFeatureSend': true,
+            'walletFeaturePromoCode': true,
+            'walletFeatureReferral': true,
+          });
+          final repo = SettingsRepository(await SharedPreferences.getInstance());
+
+          expect(repo.walletFeaturePay, isTrue);
+          expect(repo.walletFeatureSend, isTrue);
+          expect(repo.walletFeaturePromoCode, isTrue);
+          expect(repo.walletFeatureReferral, isTrue);
+          expect(repo.walletFeaturePayCentral, isFalse);
+          expect(repo.walletFeatureSendCentral, isFalse);
+          expect(repo.walletFeaturePromoCodeCentral, isFalse);
+          expect(repo.walletFeatureReferralCentral, isFalse);
+
+          repo.setWalletFeaturePayFromUser(false);
+          repo.setWalletFeatureSendFromUser(false);
+          repo.setWalletFeaturePromoCodeFromUser(false);
+          repo.setWalletFeatureReferralFromUser(false);
+          await Future<void>.delayed(Duration.zero);
+
+          expect(repo.walletFeaturePay, isFalse);
+          expect(repo.walletFeatureSend, isFalse);
+          expect(repo.walletFeaturePromoCode, isFalse);
+          expect(repo.walletFeatureReferral, isFalse);
+        },
+      );
 
       test('stored false is not revived by an old insider key or by unlock', () async {
         SharedPreferences.setMockInitialValues({

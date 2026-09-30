@@ -8164,14 +8164,17 @@
           </summary>
           <p class="spec-intro">
             <b>Bezahlen</b>, <b>Senden</b>, <b>Promo-Code</b> und <b>Empfehlungen</b>
-            bleiben ausgeblendet, bis sie zentral freigeschaltet werden. Hat ein Gerät
-            eine Freischaltung einmal gesehen, bleibt sie auf diesem Gerät an, auch wenn
-            eine spätere Abfrage sie nicht mehr liefert. In Insider Funktionen lässt sich
-            jede der vier Funktionen wieder ausschalten; das Aus bleibt über Neustart und
-            eine spätere zentrale Freischaltung hinweg bestehen, bis der Schalter wieder
-            an ist oder siebenmal auf die Versionsnummer getippt wird. Siebenmal tippen
-            schaltet alle vier auf diesem Gerät ein. OpenCryptoPay-Zahlungslinks
-            funktionieren ohne den Bezahlen-Button.
+            bleiben ausgeblendet, bis sie zentral freigeschaltet werden oder ein Tester
+            sie unter Insider Funktionen einschaltet. Hat ein Gerät eine zentrale
+            Freischaltung einmal gesehen, bleibt sie auf diesem Gerät an, auch wenn eine
+            spätere Abfrage sie nicht mehr liefert oder fehlschlägt. Solange eine Funktion
+            nicht zentral freigeschaltet ist, lässt sie sich unter Insider Funktionen
+            ein- und ausschalten; dieses Aus gilt über den Neustart, bis der Schalter
+            wieder an ist. Ist sie zentral freigeschaltet, steht der Schalter fest auf
+            an, ist nicht bedienbar und zeigt «zentral freigeschaltet». Siebenmal auf die
+            Versionsnummer tippen schaltet auf diesem Gerät alle vier ein, die noch nicht
+            zentral an sind. OpenCryptoPay-Zahlungslinks funktionieren ohne den
+            Bezahlen-Button.
           </p>
 
           <!-- Single column on purpose: the explainer block below carries a
@@ -8204,15 +8207,16 @@
                 <p>
                   Die zentrale Freischaltung und der Sieben-Tap bleiben auf dem Gerät
                   gespeichert (auch nach App-Neustart). Eine Neuinstallation setzt sie
-                  zurück. In Insider Funktionen schaltet jeder Schalter seine Funktion
-                  aus und wieder an; Aus gilt weiter nach Neustart und nach einer
-                  späteren zentralen Freischaltung. OpenCryptoPay-Zahlungslinks
-                  funktionieren unabhängig vom Bezahlen-Button — der Deeplink bleibt
-                  bewusst immer offen. Tippen auf die Versionsnummer hat keine Wirkung
-                  mehr, wenn die Insider-Einstellungen schon sichtbar sind und alle vier
-                  Funktionen bereits an sind. Sind nur die zentralen Flags gesetzt,
-                  bleibt der siebenmalige Tap der Tester-Override und schaltet alle vier
-                  ein.
+                  zurück. Solange eine Funktion nicht zentral freigeschaltet ist, schaltet
+                  ihr Schalter sie aus und wieder an; dieses Aus gilt nach dem Neustart,
+                  aber nicht gegen eine spätere zentrale Freischaltung. Ist sie zentral
+                  freigeschaltet, bleibt der Schalter an und lässt sich nicht mehr
+                  ausmachen. OpenCryptoPay-Zahlungslinks funktionieren unabhängig vom
+                  Bezahlen-Button — der Deeplink bleibt bewusst immer offen. Tippen auf
+                  die Versionsnummer hat keine Wirkung mehr, wenn die Insider-Einstellungen
+                  schon sichtbar sind und alle vier Funktionen bereits an sind. Sind nur
+                  die zentralen Flags gesetzt, bleibt der siebenmalige Tap der
+                  Tester-Override und schaltet die übrigen ein.
                 </p>
               </div>
               <div class="img img-multi">

@@ -11,6 +11,10 @@ final class SettingsState {
     bool walletFeatureSend = false,
     bool walletFeaturePromoCode = false,
     bool walletFeatureReferral = false,
+    this.walletFeaturePayCentral = false,
+    this.walletFeatureSendCentral = false,
+    this.walletFeaturePromoCodeCentral = false,
+    this.walletFeatureReferralCentral = false,
     bool insiderPayEnabled = false,
     bool insiderSendEnabled = false,
     bool insiderReferralEnabled = false,
@@ -29,6 +33,10 @@ final class SettingsState {
   final bool walletFeatureSend;
   final bool walletFeaturePromoCode;
   final bool walletFeatureReferral;
+  final bool walletFeaturePayCentral;
+  final bool walletFeatureSendCentral;
+  final bool walletFeaturePromoCodeCentral;
+  final bool walletFeatureReferralCentral;
 
   bool get insiderPayEnabled => walletFeaturePay;
   bool get insiderSendEnabled => walletFeatureSend;
@@ -45,16 +53,24 @@ final class SettingsState {
     bool? walletFeatureSend,
     bool? walletFeaturePromoCode,
     bool? walletFeatureReferral,
-  }) =>
-      SettingsState(
-        language: language ?? this.language,
-        currency: currency ?? this.currency,
-        networkMode: networkMode ?? this.networkMode,
-        hideAmounts: hideAmounts ?? this.hideAmounts,
-        insiderFeaturesUnlocked: insiderFeaturesUnlocked ?? this.insiderFeaturesUnlocked,
-        walletFeaturePay: walletFeaturePay ?? this.walletFeaturePay,
-        walletFeatureSend: walletFeatureSend ?? this.walletFeatureSend,
-        walletFeaturePromoCode: walletFeaturePromoCode ?? this.walletFeaturePromoCode,
-        walletFeatureReferral: walletFeatureReferral ?? this.walletFeatureReferral,
-      );
+    bool? walletFeaturePayCentral,
+    bool? walletFeatureSendCentral,
+    bool? walletFeaturePromoCodeCentral,
+    bool? walletFeatureReferralCentral,
+  }) => SettingsState(
+    language: language ?? this.language,
+    currency: currency ?? this.currency,
+    networkMode: networkMode ?? this.networkMode,
+    hideAmounts: hideAmounts ?? this.hideAmounts,
+    insiderFeaturesUnlocked: insiderFeaturesUnlocked ?? this.insiderFeaturesUnlocked,
+    walletFeaturePay: walletFeaturePay ?? this.walletFeaturePay,
+    walletFeatureSend: walletFeatureSend ?? this.walletFeatureSend,
+    walletFeaturePromoCode: walletFeaturePromoCode ?? this.walletFeaturePromoCode,
+    walletFeatureReferral: walletFeatureReferral ?? this.walletFeatureReferral,
+    walletFeaturePayCentral: walletFeaturePayCentral ?? this.walletFeaturePayCentral,
+    walletFeatureSendCentral: walletFeatureSendCentral ?? this.walletFeatureSendCentral,
+    walletFeaturePromoCodeCentral:
+        walletFeaturePromoCodeCentral ?? this.walletFeaturePromoCodeCentral,
+    walletFeatureReferralCentral: walletFeatureReferralCentral ?? this.walletFeatureReferralCentral,
+  );
 }

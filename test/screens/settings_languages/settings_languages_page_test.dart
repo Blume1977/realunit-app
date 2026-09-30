@@ -11,8 +11,7 @@ import 'package:realunit_wallet/styles/language.dart';
 
 import '../../helper/helper.dart';
 
-class _MockSupportedLanguageRepository extends Mock
-    implements SupportedLanguageRepository {}
+class _MockSupportedLanguageRepository extends Mock implements SupportedLanguageRepository {}
 
 class _MockSettingsRepository extends Mock implements SettingsRepository {}
 
@@ -32,6 +31,10 @@ void main() {
     when(() => settingsRepo.walletFeatureSend).thenReturn(false);
     when(() => settingsRepo.walletFeaturePromoCode).thenReturn(false);
     when(() => settingsRepo.walletFeatureReferral).thenReturn(false);
+    when(() => settingsRepo.walletFeaturePayCentral).thenReturn(false);
+    when(() => settingsRepo.walletFeatureSendCentral).thenReturn(false);
+    when(() => settingsRepo.walletFeaturePromoCodeCentral).thenReturn(false);
+    when(() => settingsRepo.walletFeatureReferralCentral).thenReturn(false);
     settingsBloc = SettingsBloc(settingsRepo, () async {});
 
     final getIt = GetIt.instance;
@@ -52,8 +55,7 @@ void main() {
   testWidgets(
     'renders the languages returned by the repository',
     (tester) async {
-      when(() => langRepo.getEnabled())
-          .thenAnswer((_) async => const [Language.en, Language.de]);
+      when(() => langRepo.getEnabled()).thenAnswer((_) async => const [Language.en, Language.de]);
 
       await tester.pumpApp(const SettingsLanguagePage());
       await tester.pumpAndSettle();

@@ -434,6 +434,7 @@
   "settingsCurrencyLoadFailedDescription": "Please check your internet connection and try again.",
   "settingsDeleteWallet": "Reset wallet",
   "settingsInsiderBonus": "Bonus programme",
+  "settingsInsiderCentrallyEnabled": "centrally enabled",
   "settingsInsiderFeatures": "Insider features",
   "settingsInsiderFeaturesUnlocked": "Insider features unlocked",
   "settingsInsiderReferral": "Referral programme",

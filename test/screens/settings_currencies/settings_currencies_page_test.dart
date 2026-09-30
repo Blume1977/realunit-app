@@ -31,6 +31,10 @@ void main() {
     when(() => settingsRepo.walletFeatureSend).thenReturn(false);
     when(() => settingsRepo.walletFeaturePromoCode).thenReturn(false);
     when(() => settingsRepo.walletFeatureReferral).thenReturn(false);
+    when(() => settingsRepo.walletFeaturePayCentral).thenReturn(false);
+    when(() => settingsRepo.walletFeatureSendCentral).thenReturn(false);
+    when(() => settingsRepo.walletFeaturePromoCodeCentral).thenReturn(false);
+    when(() => settingsRepo.walletFeatureReferralCentral).thenReturn(false);
     settingsBloc = SettingsBloc(settingsRepo, () async {});
 
     final getIt = GetIt.instance;
@@ -51,8 +55,7 @@ void main() {
   testWidgets(
     'renders the currencies returned by the repository',
     (tester) async {
-      when(() => fiatRepo.getAll())
-          .thenAnswer((_) async => const [Currency.chf, Currency.eur]);
+      when(() => fiatRepo.getAll()).thenAnswer((_) async => const [Currency.chf, Currency.eur]);
 
       await tester.pumpApp(const SettingsCurrenciesPage());
       await tester.pumpAndSettle();
