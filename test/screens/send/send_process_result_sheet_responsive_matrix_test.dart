@@ -79,4 +79,37 @@ void main() {
       });
     }
   });
+
+  group('SendProcess unregistered-recipient sheet responsive matrix (full device × textScale)', () {
+    for (final cell in kFullResponsiveMatrix) {
+      testWidgets(cell.id, (tester) async {
+        await withTargetPlatform(cell.device.platform, () async {
+          final processCubit = _MockSendProcessCubit();
+          whenListen(
+            processCubit,
+            Stream<SendProcessState>.value(
+              const SendProcessFailure(
+                SendProcessFailureReason.recipientNotRegistered,
+                message: 'Recipient is not a registered RealUnit shareholder',
+              ),
+            ),
+            initialState: const SendProcessSigning(),
+          );
+
+          await expectNoLayoutOverflow(
+            tester,
+            () => _pumpResultSheet(tester, cell, processCubit),
+            reason: 'SendProcess unregistered-recipient sheet overflow / ${cell.label}',
+          );
+
+          await expectFullyTappable(
+            tester,
+            find.widgetWithText(FilledButton, S.current.close),
+            within: find.byType(SendProcessView),
+            reason: 'SendProcess unregistered-recipient sheet / ${cell.label}: Close CTA not tappable',
+          );
+        });
+      });
+    }
+  });
 }

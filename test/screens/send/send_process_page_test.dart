@@ -270,6 +270,22 @@ void main() {
       expect(find.text(S.current.sendFailureGasUnavailable), findsNothing);
     });
 
+    testWidgets('unregistered recipient shows RealUnit copy, not the API text', (tester) async {
+      await pumpWithState(
+        tester,
+        const SendProcessFailure(
+          SendProcessFailureReason.recipientNotRegistered,
+          message: 'Recipient is not a registered RealUnit shareholder',
+        ),
+      );
+
+      expect(find.text(S.current.sendFailureRecipientNotRegistered), findsOne);
+      expect(
+        find.text('Recipient is not a registered RealUnit shareholder'),
+        findsNothing,
+      );
+    });
+
     testWidgets('invalid-request failure message', (tester) async {
       await pumpWithState(
         tester,

@@ -341,6 +341,24 @@ void main() {
     },
   );
 
+  test('API 400 RECIPIENT_NOT_REGISTERED → recipientNotRegistered', () async {
+    when(() => service.prepareTransfer(any())).thenThrow(
+      const ApiException(
+        statusCode: 400,
+        code: 'RECIPIENT_NOT_REGISTERED',
+        message: 'Recipient is not a registered RealUnit shareholder',
+      ),
+    );
+
+    final cubit = build();
+    await cubit.start();
+
+    final state = cubit.state as SendProcessFailure;
+    expect(state.reason, SendProcessFailureReason.recipientNotRegistered);
+    expect(state.canRetry, isFalse);
+    await cubit.close();
+  });
+
   test('API 404 → invalidRequest', () async {
     when(() => service.prepareTransfer(any())).thenThrow(
       const ApiException(statusCode: 404, code: 'X', message: 'not found'),
@@ -977,6 +995,30 @@ void main() {
 
       final state = cubit.state as SendProcessFailure;
       expect(state.reason, SendProcessFailureReason.registrationOrKycRequired);
+      expect(state.canRetry, isFalse);
+      await cubit.close();
+    },
+  );
+
+  test(
+    'confirm-phase API 400 RECIPIENT_NOT_REGISTERED → recipientNotRegistered (non-retryable)',
+    () async {
+      when(
+        () => service.prepareTransfer(any()),
+      ).thenAnswer((_) async => _info());
+      stubConfirm(
+        const ApiException(
+          statusCode: 400,
+          code: 'RECIPIENT_NOT_REGISTERED',
+          message: 'Recipient is not a registered RealUnit shareholder',
+        ),
+      );
+
+      final cubit = build();
+      await cubit.start();
+
+      final state = cubit.state as SendProcessFailure;
+      expect(state.reason, SendProcessFailureReason.recipientNotRegistered);
       expect(state.canRetry, isFalse);
       await cubit.close();
     },

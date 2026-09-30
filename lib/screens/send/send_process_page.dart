@@ -119,6 +119,8 @@ class SendProcessView extends StatelessWidget {
         S.of(context).sendFailureGasUnavailable,
       SendProcessFailureReason.invalidRequest =>
         S.of(context).sendFailureInvalidRequest,
+      SendProcessFailureReason.recipientNotRegistered =>
+        S.of(context).sendFailureRecipientNotRegistered,
       SendProcessFailureReason.registrationOrKycRequired =>
         S.of(context).sendFailureRegistrationOrKycRequired,
       SendProcessFailureReason.confirmMismatch =>
@@ -127,8 +129,10 @@ class SendProcessView extends StatelessWidget {
     };
 
     // Generic failures always use localized copy — never raw API/exception text
-    // (e.g. viem receipt-timeout strings stored as e.toString()).
-    if (state.reason == SendProcessFailureReason.generic) {
+    // (e.g. viem receipt-timeout strings stored as e.toString()). An
+    // unregistered recipient shows RealUnit's approved copy.
+    if (state.reason == SendProcessFailureReason.generic ||
+        state.reason == SendProcessFailureReason.recipientNotRegistered) {
       return localized;
     }
 

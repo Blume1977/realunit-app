@@ -404,6 +404,7 @@
   "sendFailureGasUnavailable": "Transfers are temporarily unavailable. Your REALU is untouched — please try again later.",
   "sendFailureGeneric": "Something went wrong with the transfer. Please try again.",
   "sendFailureInvalidRequest": "The transfer could not be prepared. Please check the recipient and amount and try again.",
+  "sendFailureRecipientNotRegistered": "This address is not registered with RealUnit. It can be registered in the RealUnit app or at realunit.ch/token-kaufen. After that, this address can receive REALU.\n\nWe are happy to answer questions about registration at info@realunit.ch.",
   "sendFailureRegistrationOrKycRequired": "Please complete your registration or identity verification before sending REALU.",
   "sendFailureSignatureCancelled": "The signature was cancelled. Your REALU is untouched.",
   "sendFailureSignatureUnsupported": "This wallet cannot sign gasless transfers. Switch to a software wallet to send REALU.",
