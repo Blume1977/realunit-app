@@ -42,23 +42,15 @@ class SettingsWalletAddressPage extends StatelessWidget {
               body: Column(
                 spacing: 40.0,
                 children: [
-                  Column(
-                    spacing: 16.0,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/coins/REALU.svg',
-                        width: 70,
-                        height: 70,
-                      ),
-                      Text(
-                        '${S.of(context).realunitWallet} ${S.of(context).address}',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    ],
+                  SvgPicture.asset(
+                    'assets/images/coins/REALU.svg',
+                    width: 70,
+                    height: 70,
                   ),
                   QRAddressWidget(
                     uri: EthereumURI(address: walletAddress, amount: '').toString(),
                     subtitle: walletAddress,
+                    addressAbove: true,
                   ),
                   Padding(
                     padding: const .all(20.0),

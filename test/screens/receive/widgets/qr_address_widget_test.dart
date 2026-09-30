@@ -10,18 +10,21 @@ Widget _host(Widget child) => MaterialApp(home: Scaffold(body: child));
 void main() {
   group('$QRAddressWidget', () {
     testWidgets('renders a QrImageView for the uri', (tester) async {
-      await tester.pumpWidget(_host(
-        const QRAddressWidget(uri: 'ethereum:$_address', subtitle: _address),
-      ));
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: 'ethereum:$_address', subtitle: _address),
+        ),
+      );
 
       expect(find.byType(QrImageView), findsOneWidget);
     });
 
-    testWidgets('renders the address as one Text.rich containing all chunks',
-        (tester) async {
-      await tester.pumpWidget(_host(
-        const QRAddressWidget(uri: '', subtitle: _address),
-      ));
+    testWidgets('renders the address as one Text.rich containing all chunks', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: '', subtitle: _address),
+        ),
+      );
 
       // RichText is rendered with concatenated text — find.textContaining
       // walks descendants, hitting the rendered TextSpan tree.
@@ -37,49 +40,80 @@ void main() {
       );
     });
 
+    testWidgets('shows the address below the QR code by default', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: 'ethereum:$_address', subtitle: _address),
+        ),
+      );
+
+      final qrTop = tester.getTopLeft(find.byType(QrImageView)).dy;
+      final addressTop = tester.getTopLeft(find.byType(InkWell)).dy;
+      expect(addressTop, greaterThan(qrTop));
+    });
+
+    testWidgets('shows the address above the QR code when addressAbove is set', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: 'ethereum:$_address', subtitle: _address, addressAbove: true),
+        ),
+      );
+
+      final qrTop = tester.getTopLeft(find.byType(QrImageView)).dy;
+      final addressTop = tester.getTopLeft(find.byType(InkWell)).dy;
+      expect(addressTop, lessThan(qrTop));
+    });
+
     testWidgets('renders a copy icon next to the address', (tester) async {
-      await tester.pumpWidget(_host(
-        const QRAddressWidget(uri: '', subtitle: _address),
-      ));
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: '', subtitle: _address),
+        ),
+      );
 
       expect(find.byIcon(Icons.copy_outlined), findsOneWidget);
     });
 
-    testWidgets('tapping the address row is wrapped in a tappable InkWell',
-        (tester) async {
-      await tester.pumpWidget(_host(
-        const QRAddressWidget(uri: '', subtitle: _address),
-      ));
+    testWidgets('tapping the address row is wrapped in a tappable InkWell', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: '', subtitle: _address),
+        ),
+      );
 
       // Tapping should not throw (clipboard plugin is no-op in test bindings).
       await tester.tap(find.byType(InkWell));
       await tester.pump();
     });
 
-    testWidgets(
-        'renders a short/unexpected address without a RangeError '
+    testWidgets('renders a short/unexpected address without a RangeError '
         '(issue #657 P6 regression)', (tester) async {
       // A too-short subtitle used to crash on the fixed-index substring(6, 21)
       // etc. — it must now render gracefully on Receive and Settings.
-      await tester.pumpWidget(_host(
-        const QRAddressWidget(uri: '', subtitle: '0x1234'),
-      ));
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: '', subtitle: '0x1234'),
+        ),
+      );
 
       expect(tester.takeException(), isNull);
       expect(find.textContaining('0x1234'), findsAtLeastNWidgets(1));
 
       // The extreme case: an empty address must also not throw.
-      await tester.pumpWidget(_host(
-        const QRAddressWidget(uri: '', subtitle: ''),
-      ));
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: '', subtitle: ''),
+        ),
+      );
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('address row shrink-wraps so the parent Column can center it',
-        (tester) async {
-      await tester.pumpWidget(_host(
-        const QRAddressWidget(uri: 'ethereum:$_address', subtitle: _address),
-      ));
+    testWidgets('address row shrink-wraps so the parent Column can center it', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const QRAddressWidget(uri: 'ethereum:$_address', subtitle: _address),
+        ),
+      );
 
       final row = tester.widget<Row>(
         find.descendant(
