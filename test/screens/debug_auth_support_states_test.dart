@@ -16,6 +16,7 @@ void main() {
       expect(state.signMessage, isNull);
       expect(state.isLoading, isFalse);
       expect(state.isAuthenticated, isFalse);
+      expect(state.missingSignMessage, isFalse);
       expect(state.errorMessage, isNull);
     });
 
@@ -27,7 +28,7 @@ void main() {
       expect(next.isAuthenticated, isFalse);
     });
 
-    test('Equatable props pin all six fields', () {
+    test('Equatable props pin all seven fields', () {
       const a = DebugAuthState(address: '0xabc');
       const b = DebugAuthState(address: '0xabc');
       const c = DebugAuthState(address: '0xdef');

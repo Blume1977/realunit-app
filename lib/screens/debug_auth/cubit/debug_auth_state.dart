@@ -6,6 +6,7 @@ class DebugAuthState extends Equatable {
   final String? savedSignature;
   final bool isLoading;
   final bool isAuthenticated;
+  final bool missingSignMessage;
   final String? errorMessage;
 
   const DebugAuthState({
@@ -14,6 +15,7 @@ class DebugAuthState extends Equatable {
     this.savedSignature,
     this.isLoading = false,
     this.isAuthenticated = false,
+    this.missingSignMessage = false,
     this.errorMessage,
   });
 
@@ -23,6 +25,7 @@ class DebugAuthState extends Equatable {
     String? savedSignature,
     bool? isLoading,
     bool? isAuthenticated,
+    bool missingSignMessage = false,
     String? errorMessage,
   }) {
     return DebugAuthState(
@@ -31,6 +34,7 @@ class DebugAuthState extends Equatable {
       savedSignature: savedSignature ?? this.savedSignature,
       isLoading: isLoading ?? this.isLoading,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      missingSignMessage: missingSignMessage,
       errorMessage: errorMessage,
     );
   }
@@ -42,6 +46,7 @@ class DebugAuthState extends Equatable {
         savedSignature,
         isLoading,
         isAuthenticated,
+        missingSignMessage,
         errorMessage,
       ];
 }

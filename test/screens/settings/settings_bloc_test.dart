@@ -39,6 +39,7 @@ void main() {
     when(() => repo.hasStoredCurrency).thenReturn(false);
     when(() => repo.networkMode).thenReturn(NetworkMode.mainnet);
     when(() => repo.insiderFeaturesUnlocked).thenReturn(false);
+    when(() => repo.networkOptionsEnabled).thenReturn(false);
     when(() => repo.walletFeaturePay).thenAnswer((_) => payCentral || storedPay);
     when(() => repo.walletFeatureSend).thenAnswer((_) => sendCentral || storedSend);
     when(() => repo.walletFeaturePromoCode).thenAnswer((_) => promoCentral || storedPromo);
@@ -110,6 +111,7 @@ void main() {
       expect(bloc.state.networkMode, NetworkMode.testnet);
       expect(bloc.state.hideAmounts, isFalse);
       expect(bloc.state.insiderFeaturesUnlocked, isTrue);
+      expect(bloc.state.networkOptionsEnabled, isFalse);
       expect(bloc.state.walletFeaturePay, isFalse);
       expect(bloc.state.walletFeatureSend, isFalse);
       expect(bloc.state.walletFeaturePromoCode, isFalse);
@@ -189,6 +191,16 @@ void main() {
       verify(() => repo.networkMode = NetworkMode.testnet).called(1);
     });
 
+    test('SetNetworkModeEvent leaves networkOptionsEnabled true', () async {
+      when(() => repo.networkOptionsEnabled).thenReturn(true);
+      final bloc = build();
+
+      bloc.add(const SetNetworkModeEvent(NetworkMode.testnet));
+      await bloc.stream.firstWhere((s) => s.networkMode == NetworkMode.testnet);
+
+      expect(bloc.state.networkOptionsEnabled, isTrue);
+    });
+
     test('SetNetworkModeEvent invokes onNetworkModeChanged after auth refresh', () async {
       final callOrder = <String>[];
       final bloc = SettingsBloc(
@@ -205,6 +217,89 @@ void main() {
       // Reference-data invalidation must happen after the auth refresh so
       // the next fetch hits the new backend with the new token.
       expect(callOrder, ['auth', 'invalidate']);
+    });
+
+    test('SetNetworkModeEvent emits feature flags re-read after the mode is persisted', () async {
+      when(() => repo.networkMode = NetworkMode.testnet).thenAnswer((_) {
+        storedPay = true;
+        storedSend = true;
+        storedPromo = false;
+        storedReferral = true;
+        return NetworkMode.testnet;
+      });
+
+      final bloc = build();
+      bloc.add(const SetNetworkModeEvent(NetworkMode.testnet));
+      await bloc.stream.firstWhere((s) => s.networkMode == NetworkMode.testnet);
+
+      expect(bloc.state.walletFeaturePay, isTrue);
+      expect(bloc.state.walletFeatureSend, isTrue);
+      expect(bloc.state.walletFeaturePromoCode, isFalse);
+      expect(bloc.state.walletFeatureReferral, isTrue);
+    });
+
+    test('SetNetworkModeEvent refreshes wallet features from the new host', () async {
+      var fetchCount = 0;
+      final bloc = SettingsBloc(
+        repo,
+        () async {
+          authRefreshCount++;
+        },
+        fetchWalletFeatures: () async {
+          fetchCount++;
+          return const RealUnitWalletFeaturesDto();
+        },
+      );
+
+      await bloc.stream.first;
+      expect(fetchCount, 1);
+
+      bloc.add(const SetNetworkModeEvent(NetworkMode.testnet));
+      await bloc.stream.firstWhere((s) => s.networkMode == NetworkMode.testnet);
+      await bloc.stream.first;
+      expect(fetchCount, 2);
+    });
+
+    test('SetNetworkModeEvent of the current mode is a no-op', () async {
+      var invalidated = false;
+      final bloc = SettingsBloc(
+        repo,
+        () async {
+          authRefreshCount++;
+        },
+        onNetworkModeChanged: () => invalidated = true,
+      );
+
+      bloc.add(const SetNetworkModeEvent(NetworkMode.mainnet));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(authRefreshCount, 0);
+      expect(invalidated, isFalse);
+      verifyNever(() => repo.networkMode = NetworkMode.mainnet);
+      verifyNever(() => repo.networkMode = NetworkMode.testnet);
+    });
+
+    test('SetNetworkModeEvent rolls the mode back when auth refresh fails', () async {
+      var invalidated = false;
+      final bloc = SettingsBloc(
+        repo,
+        () async {
+          throw StateError('cancelled');
+        },
+        onNetworkModeChanged: () => invalidated = true,
+      );
+
+      final pending = bloc.stream.first;
+      bloc.add(const SetNetworkModeEvent(NetworkMode.testnet));
+      final emitted = await pending;
+
+      expect(bloc.state.networkMode, NetworkMode.mainnet);
+      expect(emitted.networkMode, NetworkMode.mainnet);
+      expect(invalidated, isFalse);
+      verifyInOrder([
+        () => repo.networkMode = NetworkMode.testnet,
+        () => repo.networkMode = NetworkMode.mainnet,
+      ]);
     });
 
     blocTest<SettingsBloc, SettingsState>(
@@ -245,6 +340,7 @@ void main() {
       act: (bloc) => bloc.add(const UnlockInsiderFeaturesEvent()),
       verify: (bloc) {
         expect(bloc.state.insiderFeaturesUnlocked, isTrue);
+        expect(bloc.state.networkOptionsEnabled, isFalse);
         expect(bloc.state.walletFeaturePay, isTrue);
         expect(bloc.state.walletFeatureSend, isTrue);
         expect(bloc.state.walletFeaturePromoCode, isTrue);
@@ -254,6 +350,7 @@ void main() {
         verify(() => repo.setWalletFeatureSendFromUser(true)).called(1);
         verify(() => repo.setWalletFeaturePromoCodeFromUser(true)).called(1);
         verify(() => repo.setWalletFeatureReferralFromUser(true)).called(1);
+        verifyNever(() => repo.networkOptionsEnabled = any());
       },
     );
 
@@ -329,6 +426,45 @@ void main() {
         verify(() => repo.setWalletFeaturePayFromUser(false)).called(1);
         expect(bloc.state.walletFeaturePay, isTrue);
         expect(bloc.state.walletFeaturePayCentral, isTrue);
+      },
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
+      'SetInsiderFeatureEnabledEvent.networkOptions true persists via the setter and shows on state',
+      setUp: () {
+        when(() => repo.networkOptionsEnabled = any()).thenAnswer((inv) {
+          final value = inv.positionalArguments.first as bool;
+          when(() => repo.networkOptionsEnabled).thenReturn(value);
+          return value;
+        });
+      },
+      build: build,
+      act: (bloc) => bloc.add(
+        const SetInsiderFeatureEnabledEvent(InsiderFeature.networkOptions, true),
+      ),
+      verify: (bloc) {
+        verify(() => repo.networkOptionsEnabled = true).called(1);
+        expect(bloc.state.networkOptionsEnabled, isTrue);
+      },
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
+      'SetInsiderFeatureEnabledEvent.networkOptions false persists via the setter and shows on state',
+      setUp: () {
+        when(() => repo.networkOptionsEnabled).thenReturn(true);
+        when(() => repo.networkOptionsEnabled = any()).thenAnswer((inv) {
+          final value = inv.positionalArguments.first as bool;
+          when(() => repo.networkOptionsEnabled).thenReturn(value);
+          return value;
+        });
+      },
+      build: build,
+      act: (bloc) => bloc.add(
+        const SetInsiderFeatureEnabledEvent(InsiderFeature.networkOptions, false),
+      ),
+      verify: (bloc) {
+        verify(() => repo.networkOptionsEnabled = false).called(1);
+        expect(bloc.state.networkOptionsEnabled, isFalse);
       },
     );
 

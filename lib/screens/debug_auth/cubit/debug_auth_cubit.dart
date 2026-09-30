@@ -27,9 +27,17 @@ class DebugAuthCubit extends Cubit<DebugAuthState> {
   }
 
   Future<void> authenticate(String signature) async {
+    if (state.signMessage == null) {
+      emit(state.copyWith(missingSignMessage: true, isLoading: false));
+      return;
+    }
     emit(state.copyWith(isLoading: true));
     try {
-      await _service.authenticate(state.address, signature);
+      await _service.authenticate(
+        state.address,
+        signature,
+        message: state.signMessage!,
+      );
       emit(state.copyWith(isAuthenticated: true, isLoading: false));
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString(), isLoading: false));

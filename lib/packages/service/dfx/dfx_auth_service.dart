@@ -44,9 +44,10 @@ abstract class DFXAuthService {
   /// (stateless, no nonce) and accepts it, so there is no need to first
   /// round-trip through `GET /v1/auth/signMessage`. Dropping that call also
   /// removes a network-timeout failure mode from the onboarding/pairing flow.
-  static const _signMessagePrefix =
+  static const signMessageBody =
       'By_signing_this_message,_you_confirm_that_you_are_the_sole_owner_'
       'of_the_provided_Blockchain_address._Your_ID:_';
+  static const devSignMessageMarker = '[dev]_';
 
   final String authPath = '/v1/auth';
   final AppStore appStore;
@@ -62,8 +63,23 @@ abstract class DFXAuthService {
 
   String getSignMessage() => buildSignMessage(walletAddress);
 
-  /// Builds the deterministic auth sign-in message for [address] (EIP-55).
-  String buildSignMessage(String address) => '$_signMessagePrefix$address';
+  String unprefixedSignMessage(String address) => '$signMessageBody$address';
+
+  String buildSignMessage(String address) {
+    final marker =
+        appStore.apiConfig.networkMode.isTestnet ? devSignMessageMarker : '';
+    return '$marker${unprefixedSignMessage(address)}';
+  }
+
+  bool _cachedSignatureMatches(String address, String message) {
+    final cache = appStore.sessionCache;
+    if (cache.signature == null || cache.signatureAddress != address) return false;
+    // Rows written before the message was stored were signed with the
+    // unprefixed mainnet text. A missing message is that text, not a hit
+    // for the dev prefix.
+    final stored = cache.signatureMessage ?? unprefixedSignMessage(address);
+    return stored == message;
+  }
 
   /// Create-and-persist the auth signature for [account] without going through
   /// `appStore.wallet`. Used during the BitBox pairing flow so the signature is
@@ -75,17 +91,16 @@ abstract class DFXAuthService {
   Future<void> ensureSignatureFor(AWalletAccount account) async {
     final address = account.primaryAddress.address.hexEip55;
     await appStore.sessionCache.loadSignature();
-    if (appStore.sessionCache.signature != null &&
-        appStore.sessionCache.signatureAddress == address) {
+    final message = buildSignMessage(address);
+    if (_cachedSignatureMatches(address, message)) {
       return;
     }
 
-    final message = buildSignMessage(address);
     final signature = await account.signMessage(message).timeout(_signMessageTimeout);
     if (signature.isEmpty || signature == '0x') {
       throw const SigningCancelledException();
     }
-    await appStore.sessionCache.saveSignature(address, signature);
+    await appStore.sessionCache.saveSignature(address, signature, message);
   }
 
   // Exceptions this method can throw on the BitBox path:
@@ -95,10 +110,9 @@ abstract class DFXAuthService {
   //     BitBox swift wrapper returns empty bytes / `'0x'`, normalised here.
   //   * `TimeoutException` — the user never confirms within `_signMessageTimeout`.
   Future<String> getSignature(String message) async {
-    final cached = appStore.sessionCache.signature;
-    final cachedAddress = appStore.sessionCache.signatureAddress;
-    if (cached != null && cachedAddress == walletAddress) {
-      return cached;
+    await appStore.sessionCache.loadSignature();
+    if (_cachedSignatureMatches(walletAddress, message)) {
+      return appStore.sessionCache.signature!;
     }
 
     // Cache miss — we actually need the private key. Decrypt the mnemonic on
@@ -113,7 +127,7 @@ abstract class DFXAuthService {
       if (signature.isEmpty || signature == '0x') {
         throw const SigningCancelledException();
       }
-      await appStore.sessionCache.saveSignature(walletAddress, signature);
+      await appStore.sessionCache.saveSignature(walletAddress, signature, message);
       return signature;
     } finally {
       await walletService.lockCurrentWallet();

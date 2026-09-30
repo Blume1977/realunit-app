@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +19,10 @@ import 'package:realunit_wallet/setup/routing/routes/pin_routes.dart';
 import 'package:realunit_wallet/setup/routing/routes/settings_routes.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/styles/icons.dart';
+
+// The Settings Network row exists only while insider network options are on.
+bool showSettingsNetworkRow({required bool networkOptionsEnabled}) =>
+    networkOptionsEnabled;
 
 class SettingsPage extends StatelessWidget {
   final Duration unavailablePollInterval;
@@ -65,7 +68,9 @@ class SettingsPage extends StatelessWidget {
                             selectedOption: state.currency.code,
                             onTap: () => context.pushNamed(SettingsRoutes.currencies),
                           ),
-                          if (kDebugMode)
+                          if (showSettingsNetworkRow(
+                            networkOptionsEnabled: state.networkOptionsEnabled,
+                          ))
                             SettingOption(
                               title: S.of(context).settingsNetwork,
                               leading: const NodesIcon(size: 24),

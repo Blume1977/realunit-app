@@ -18,6 +18,7 @@ import 'package:realunit_wallet/setup/routing/boot_navigation.dart';
 import 'package:realunit_wallet/setup/routing/router_config.dart';
 import 'package:realunit_wallet/setup/startup/app_startup.dart';
 import 'package:realunit_wallet/styles/themes.dart';
+import 'package:realunit_wallet/widgets/testnet_banner.dart';
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -83,60 +84,62 @@ class _WalletAppState extends State<WalletApp> {
         ],
         locale: Locale(settingsState.language.code),
         routerConfig: routerConfig,
-        builder: (context, child) => MultiBlocListener(
-          listeners: [
-            BlocListener<HomeBloc, HomeState>(
-              listenWhen: (previous, current) =>
-                  previous.openWallet == null && current.openWallet != null,
-              listener: (context, homeState) {
-                _accountCurrency.onOpened(homeState.openWallet);
-              },
-            ),
-            BlocListener<HomeBloc, HomeState>(
-              listenWhen: (previous, current) =>
-                  previous.openWallet != null &&
-                  current.openWallet != null &&
-                  !identical(previous.openWallet, current.openWallet),
-              listener: (context, homeState) {
-                _accountCurrency.onSwitched(homeState.openWallet);
-              },
-            ),
-            BlocListener<HomeBloc, HomeState>(
-              listenWhen: (previous, current) =>
-                  previous.openWallet != null && current.openWallet == null,
-              listener: (context, homeState) {
-                _accountCurrency.onClosed();
-              },
-            ),
-            BlocListener<HomeBloc, HomeState>(
-              listener: (context, homeState) {
-                if (!homeState.isLoadingWallet) {
+        builder: (context, child) => TestnetBanner(
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<HomeBloc, HomeState>(
+                listenWhen: (previous, current) =>
+                    previous.openWallet == null && current.openWallet != null,
+                listener: (context, homeState) {
+                  _accountCurrency.onOpened(homeState.openWallet);
+                },
+              ),
+              BlocListener<HomeBloc, HomeState>(
+                listenWhen: (previous, current) =>
+                    previous.openWallet != null &&
+                    current.openWallet != null &&
+                    !identical(previous.openWallet, current.openWallet),
+                listener: (context, homeState) {
+                  _accountCurrency.onSwitched(homeState.openWallet);
+                },
+              ),
+              BlocListener<HomeBloc, HomeState>(
+                listenWhen: (previous, current) =>
+                    previous.openWallet != null && current.openWallet == null,
+                listener: (context, homeState) {
+                  _accountCurrency.onClosed();
+                },
+              ),
+              BlocListener<HomeBloc, HomeState>(
+                listener: (context, homeState) {
+                  if (!homeState.isLoadingWallet) {
+                    _navigate();
+                  }
+                },
+              ),
+              BlocListener<HomeBloc, HomeState>(
+                listenWhen: (previous, current) =>
+                    !previous.historySyncFailed && current.historySyncFailed,
+                listener: (context, _) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(S.of(context).historySyncFailed)),
+                  );
+                },
+              ),
+              BlocListener<PinAuthCubit, PinAuthState>(
+                listener: (context, pinState) {
+                  if (pinState.isPinVerified) {
+                    _loadWalletIfNeeded();
+                  }
                   _navigate();
-                }
-              },
-            ),
-            BlocListener<HomeBloc, HomeState>(
-              listenWhen: (previous, current) =>
-                  !previous.historySyncFailed && current.historySyncFailed,
-              listener: (context, _) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(S.of(context).historySyncFailed)),
-                );
-              },
-            ),
-            BlocListener<PinAuthCubit, PinAuthState>(
-              listener: (context, pinState) {
-                if (pinState.isPinVerified) {
-                  _loadWalletIfNeeded();
-                }
-                _navigate();
-              },
-            ),
-            BlocListener<ClientPolicyCubit, ClientPolicyState>(
-              listener: (_, _) => _navigate(),
-            ),
-          ],
-          child: child ?? const SizedBox.shrink(),
+                },
+              ),
+              BlocListener<ClientPolicyCubit, ClientPolicyState>(
+                listener: (_, _) => _navigate(),
+              ),
+            ],
+            child: child ?? const SizedBox.shrink(),
+          ),
         ),
       ),
     ),

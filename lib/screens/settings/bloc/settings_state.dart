@@ -7,6 +7,7 @@ final class SettingsState {
     this.networkMode = NetworkMode.mainnet,
     this.hideAmounts = false,
     this.insiderFeaturesUnlocked = false,
+    this.networkOptionsEnabled = false,
     bool walletFeaturePay = false,
     bool walletFeatureSend = false,
     bool walletFeaturePromoCode = false,
@@ -29,6 +30,7 @@ final class SettingsState {
   final NetworkMode networkMode;
   final bool hideAmounts;
   final bool insiderFeaturesUnlocked;
+  final bool networkOptionsEnabled;
   final bool walletFeaturePay;
   final bool walletFeatureSend;
   final bool walletFeaturePromoCode;
@@ -49,6 +51,7 @@ final class SettingsState {
     NetworkMode? networkMode,
     bool? hideAmounts,
     bool? insiderFeaturesUnlocked,
+    bool? networkOptionsEnabled,
     bool? walletFeaturePay,
     bool? walletFeatureSend,
     bool? walletFeaturePromoCode,
@@ -63,6 +66,7 @@ final class SettingsState {
     networkMode: networkMode ?? this.networkMode,
     hideAmounts: hideAmounts ?? this.hideAmounts,
     insiderFeaturesUnlocked: insiderFeaturesUnlocked ?? this.insiderFeaturesUnlocked,
+    networkOptionsEnabled: networkOptionsEnabled ?? this.networkOptionsEnabled,
     walletFeaturePay: walletFeaturePay ?? this.walletFeaturePay,
     walletFeatureSend: walletFeatureSend ?? this.walletFeatureSend,
     walletFeaturePromoCode: walletFeaturePromoCode ?? this.walletFeaturePromoCode,

@@ -62,7 +62,7 @@ final class RefreshWalletFeaturesEvent extends SettingsEvent {
   const RefreshWalletFeaturesEvent();
 }
 
-enum InsiderFeature { pay, send, referral, bonus }
+enum InsiderFeature { networkOptions, pay, send, referral, bonus }
 
 final class SetInsiderFeatureEnabledEvent extends SettingsEvent {
   const SetInsiderFeatureEnabledEvent(this.feature, this.enabled);

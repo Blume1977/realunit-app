@@ -36,7 +36,7 @@ class DebugAuthService {
     throw Exception('Failed to fetch sign message (${response.statusCode})');
   }
 
-  Future<void> authenticate(String address, String signature) async {
+  Future<void> authenticate(String address, String signature, {required String message}) async {
     final uri = buildUri(_appStore.apiConfig.apiHost, '/v1/auth');
     final response = await _appStore.httpClient.post(
       uri,
@@ -52,7 +52,7 @@ class DebugAuthService {
       final body = jsonDecode(response.body) as Map<String, dynamic>;
       final checksumAddress = EthereumAddress.fromHex(address).hexEip55;
       _appStore.sessionCache.setAuthToken(body['accessToken'] as String);
-      await _appStore.sessionCache.saveSignature(checksumAddress, signature);
+      await _appStore.sessionCache.saveSignature(checksumAddress, signature, message);
       await _prefs.setString(_addressKey, address);
       await _prefs.setString(_signatureKey, signature);
     } else {

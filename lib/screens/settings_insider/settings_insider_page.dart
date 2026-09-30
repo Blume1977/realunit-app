@@ -21,6 +21,14 @@ class SettingsInsiderPage extends StatelessWidget {
           settings: [
             _featureRow(
               context: context,
+              title: S.of(context).settingsNetworkOptions,
+              icon: Icons.lan_outlined,
+              feature: InsiderFeature.networkOptions,
+              enabled: state.networkOptionsEnabled,
+              centrallyEnabled: false,
+            ),
+            _featureRow(
+              context: context,
               title: S.of(context).pay,
               icon: Icons.qr_code_scanner_rounded,
               feature: InsiderFeature.pay,

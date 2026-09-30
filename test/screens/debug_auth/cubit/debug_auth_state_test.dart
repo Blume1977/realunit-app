@@ -17,7 +17,8 @@ void main() {
       expect(state.isLoading, isFalse);
       expect(state.isAuthenticated, isFalse);
       expect(state.errorMessage, isNull);
-      expect(state.props, ['', null, null, false, false, null]);
+      expect(state.missingSignMessage, isFalse);
+      expect(state.props, ['', null, null, false, false, false, null]);
     });
   });
 
@@ -41,7 +42,7 @@ void main() {
       );
       expect(a, equals(b));
       expect(a.hashCode, b.hashCode);
-      expect(a.props, ['0xabc', 'msg', 'sig', true, true, 'err']);
+      expect(a.props, ['0xabc', 'msg', 'sig', true, true, false, 'err']);
     });
 
     test('different address is unequal', () {

@@ -43,13 +43,14 @@ void main() {
     );
 
     goldenTest(
-      'all four switches on',
+      'all five switches on',
       fileName: 'settings_insider_page_enabled',
       constraints: phoneConstraints,
       builder: () {
         when(() => settingsBloc.state).thenReturn(
           const SettingsState(
             insiderFeaturesUnlocked: true,
+            networkOptionsEnabled: true,
             insiderPayEnabled: true,
             insiderSendEnabled: true,
             insiderReferralEnabled: true,

@@ -87,6 +87,21 @@ void main() {
     );
 
     goldenTest(
+      'network options on shows the Network row',
+      fileName: 'settings_page_network_options_on',
+      constraints: const BoxConstraints.tightFor(width: 390, height: 844),
+      builder: () {
+        when(() => settingsBloc.state).thenReturn(
+          const SettingsState(
+            insiderFeaturesUnlocked: true,
+            networkOptionsEnabled: true,
+          ),
+        );
+        return buildSubject();
+      },
+    );
+
+    goldenTest(
       'eligible without insider referral toggle hides Empfehlungen',
       fileName: 'settings_page_referral_eligible',
       constraints: const BoxConstraints.tightFor(width: 390, height: 844),

@@ -109,7 +109,7 @@ class _DebugAuthViewState extends State<DebugAuthView> {
                   label: S.of(context).authenticate,
                 ),
               ],
-              if (state.errorMessage != null)
+              if (state.missingSignMessage || state.errorMessage != null)
                 Container(
                   padding: const .all(12),
                   decoration: BoxDecoration(
@@ -117,7 +117,9 @@ class _DebugAuthViewState extends State<DebugAuthView> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    state.errorMessage!,
+                    state.missingSignMessage
+                        ? S.of(context).debugAuthMissingSignMessage
+                        : state.errorMessage!,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: RealUnitColors.status.red600,
                     ),

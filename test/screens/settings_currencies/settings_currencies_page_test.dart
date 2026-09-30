@@ -27,6 +27,7 @@ void main() {
     when(() => settingsRepo.currency).thenReturn('CHF');
     when(() => settingsRepo.networkMode).thenReturn(NetworkMode.mainnet);
     when(() => settingsRepo.insiderFeaturesUnlocked).thenReturn(false);
+    when(() => settingsRepo.networkOptionsEnabled).thenReturn(false);
     when(() => settingsRepo.walletFeaturePay).thenReturn(false);
     when(() => settingsRepo.walletFeatureSend).thenReturn(false);
     when(() => settingsRepo.walletFeaturePromoCode).thenReturn(false);

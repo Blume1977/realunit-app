@@ -46,35 +46,41 @@ void main() {
       test('starts null', () {
         expect(cache.signature, isNull);
         expect(cache.signatureAddress, isNull);
+        expect(cache.signatureMessage, isNull);
       });
 
       test('saveSignature writes both the signature and the address to the repo', () async {
-        await cache.saveSignature('0xabc', '0xsig');
+        await cache.saveSignature('0xabc', '0xsig', '0xmsg');
 
         expect(cache.signature, '0xsig');
         expect(cache.signatureAddress, '0xabc');
+        expect(cache.signatureMessage, '0xmsg');
         verify(() => repo.write('cached_signature', '0xsig')).called(1);
         verify(() => repo.write('cached_signature_address', '0xabc')).called(1);
+        verify(() => repo.write('cached_signature_message', '0xmsg')).called(1);
       });
 
       test('loadSignature populates from the repo when memory is empty', () async {
         when(() => repo.read('cached_signature')).thenAnswer((_) async => '0xsig');
         when(() => repo.read('cached_signature_address')).thenAnswer((_) async => '0xabc');
+        when(() => repo.read('cached_signature_message')).thenAnswer((_) async => '0xmsg');
 
         await cache.loadSignature();
 
         expect(cache.signature, '0xsig');
         expect(cache.signatureAddress, '0xabc');
+        expect(cache.signatureMessage, '0xmsg');
       });
 
       test('loadSignature does not overwrite an in-memory signature', () async {
-        await cache.saveSignature('0xabc', '0xsig');
+        await cache.saveSignature('0xabc', '0xsig', '0xmsg');
         when(() => repo.read(any())).thenAnswer((_) async => 'wrong');
 
         await cache.loadSignature();
 
         expect(cache.signature, '0xsig');
         expect(cache.signatureAddress, '0xabc');
+        expect(cache.signatureMessage, '0xmsg');
         verifyNever(() => repo.read(any()));
       });
 
@@ -85,13 +91,26 @@ void main() {
 
         expect(cache.signature, isNull);
         expect(cache.signatureAddress, isNull);
+        expect(cache.signatureMessage, isNull);
+      });
+
+      test('signatureMessage is null when the key was never written', () async {
+        when(() => repo.read('cached_signature')).thenAnswer((_) async => '0xsig');
+        when(() => repo.read('cached_signature_address')).thenAnswer((_) async => '0xabc');
+        when(() => repo.read('cached_signature_message')).thenAnswer((_) async => null);
+
+        await cache.loadSignature();
+
+        expect(cache.signature, '0xsig');
+        expect(cache.signatureAddress, '0xabc');
+        expect(cache.signatureMessage, isNull);
       });
     });
 
     group('clear', () {
       test('removes both signature keys and resets auth token + memory', () async {
         cache.setAuthToken('jwt-123');
-        await cache.saveSignature('0xabc', '0xsig');
+        await cache.saveSignature('0xabc', '0xsig', '0xmsg');
         clearInteractions(repo);
         when(() => repo.delete(any())).thenAnswer((_) async {});
 
@@ -100,8 +119,10 @@ void main() {
         expect(cache.authToken, isNull);
         expect(cache.signature, isNull);
         expect(cache.signatureAddress, isNull);
+        expect(cache.signatureMessage, isNull);
         verify(() => repo.delete('cached_signature')).called(1);
         verify(() => repo.delete('cached_signature_address')).called(1);
+        verify(() => repo.delete('cached_signature_message')).called(1);
       });
     });
   });

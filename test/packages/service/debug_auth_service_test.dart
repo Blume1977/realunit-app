@@ -116,7 +116,8 @@ void main() {
       const signature = '0xdeadbeef';
 
       final svc = await build(client);
-      await svc.authenticate(addressLower, signature);
+      const message = 'sign-this-please';
+      await svc.authenticate(addressLower, signature, message: message);
 
       expect(sentUri!.path, '/v1/auth');
       expect(body!['wallet'], 'RealUnit');
@@ -127,6 +128,7 @@ void main() {
       expect(session.authToken, 'jwt-OK');
       // Signature lands under the EIP-55 checksum address.
       expect(session.signatureAddress, checksum);
+      expect(session.signatureMessage, message);
       // The raw address + signature persist to SharedPreferences.
       expect(svc.savedAddress, addressLower);
       expect(svc.savedSignature, signature);
@@ -136,7 +138,7 @@ void main() {
       final client = MockClient((_) async => http.Response('boom', 500));
 
       expect(
-        () async => (await build(client)).authenticate('0xabc', '0xsig'),
+        () async => (await build(client)).authenticate('0xabc', '0xsig', message: 'm'),
         throwsA(
           predicate((e) => e.toString().contains('500')),
         ),

@@ -21,6 +21,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
            currency: Currency.fromCode(_settingsRepository.currency),
            networkMode: _settingsRepository.networkMode,
            insiderFeaturesUnlocked: _settingsRepository.insiderFeaturesUnlocked,
+           networkOptionsEnabled: _settingsRepository.networkOptionsEnabled,
            walletFeaturePay: _settingsRepository.walletFeaturePay,
            walletFeatureSend: _settingsRepository.walletFeatureSend,
            walletFeaturePromoCode: _settingsRepository.walletFeaturePromoCode,
@@ -85,10 +86,31 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     SetNetworkModeEvent event,
     Emitter<SettingsState> emit,
   ) async {
+    if (event.networkMode == state.networkMode) return;
+    final previous = state.networkMode;
     _settingsRepository.networkMode = event.networkMode;
-    await getNewAuthToken();
+    try {
+      await getNewAuthToken();
+    } catch (_) {
+      _settingsRepository.networkMode = previous;
+      emit(state.copyWith(networkMode: previous));
+      return;
+    }
     onNetworkModeChanged?.call();
-    emit(state.copyWith(networkMode: event.networkMode));
+    emit(
+      state.copyWith(
+        networkMode: event.networkMode,
+        walletFeaturePay: _settingsRepository.walletFeaturePay,
+        walletFeatureSend: _settingsRepository.walletFeatureSend,
+        walletFeaturePromoCode: _settingsRepository.walletFeaturePromoCode,
+        walletFeatureReferral: _settingsRepository.walletFeatureReferral,
+        walletFeaturePayCentral: _settingsRepository.walletFeaturePayCentral,
+        walletFeatureSendCentral: _settingsRepository.walletFeatureSendCentral,
+        walletFeaturePromoCodeCentral: _settingsRepository.walletFeaturePromoCodeCentral,
+        walletFeatureReferralCentral: _settingsRepository.walletFeatureReferralCentral,
+      ),
+    );
+    add(const RefreshWalletFeaturesEvent());
   }
 
   void _onToggleHideAmountEvent(ToggleHideAmountEvent event, Emitter<SettingsState> emit) {
@@ -151,6 +173,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Emitter<SettingsState> emit,
   ) {
     switch (event.feature) {
+      case InsiderFeature.networkOptions:
+        _settingsRepository.networkOptionsEnabled = event.enabled;
+        emit(state.copyWith(networkOptionsEnabled: _settingsRepository.networkOptionsEnabled));
       case InsiderFeature.pay:
         _settingsRepository.setWalletFeaturePayFromUser(event.enabled);
         emit(
