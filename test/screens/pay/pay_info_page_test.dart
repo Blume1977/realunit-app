@@ -37,10 +37,17 @@ void main() {
 
       expect(find.text(S.current.payInfoTitle), findsOneWidget);
       expect(find.text(S.current.payInfoBody), findsOneWidget);
+      expect(find.text(S.current.payInfoLocationsLink), findsOneWidget);
       expect(find.text(S.current.next), findsOneWidget);
+      // The approved wording (RealUnit legal, 28.09.2026) states that every payment is a
+      // sale of REALU and that the sale is rounded up to whole REALU.
       expect(
         S.current.payInfoBody,
-        anyOf(contains('ganze REALU'), contains('whole REALU shares')),
+        anyOf(contains('verkaufen Sie REALU'), contains('you sell REALU')),
+      );
+      expect(
+        S.current.payInfoBody,
+        anyOf(contains('ganze REALU'), contains('whole REALU')),
       );
     });
 
@@ -60,6 +67,7 @@ void main() {
       await tester.pumpApp(hosted(const PayInfoPage(), wallet: _BitboxWallet()));
 
       expect(find.text(S.current.payFailurePayUnavailable), findsOneWidget);
+      expect(find.text(S.current.payInfoLocationsLink), findsNothing);
       expect(find.text(S.current.next), findsNothing);
       expect(find.byType(PayScanPage), findsNothing);
     });

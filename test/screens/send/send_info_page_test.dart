@@ -15,6 +15,11 @@ void main() {
       expect(find.text(S.current.sendInfoTitle), findsOneWidget);
       expect(find.text(S.current.sendInfoBody), findsOneWidget);
       expect(find.text(S.current.next), findsOneWidget);
+      // The approved wording (RealUnit legal, 28.09.2026) warns that a transfer is final.
+      expect(
+        S.current.sendInfoBody,
+        anyOf(contains('endgültig'), contains('is final')),
+      );
     });
 
     testWidgets('continues to the recipient scanner', (tester) async {

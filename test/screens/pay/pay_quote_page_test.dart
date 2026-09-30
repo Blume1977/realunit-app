@@ -164,7 +164,7 @@ void main() {
 
       expect(find.text(S.current.payQuoteMerchant), findsOne);
       expect(find.text('Café Zürich'), findsOne);
-      expect(find.text(S.current.youPay), findsOne);
+      expect(find.text(S.current.youSell), findsOne);
       expect(find.text('2 REALU'), findsOne);
       expect(find.text('05:00'), findsOne);
       expect(find.text(S.current.payQuoteRequested), findsOne);
