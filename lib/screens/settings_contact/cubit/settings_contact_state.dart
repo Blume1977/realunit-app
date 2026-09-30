@@ -20,8 +20,12 @@ class SettingsContactSuccess extends SettingsContactState {
   // capability is a load-bearing signal: callers must treat it as
   // "no information, fall back to a direct push".
   final CreateSupportTicketCapabilityDto? capability;
+  final String? residenceCountrySymbol;
 
-  const SettingsContactSuccess({this.capability});
+  const SettingsContactSuccess({
+    this.capability,
+    this.residenceCountrySymbol,
+  });
 
   // The DTO is non-Equatable per repo convention, so we decompose its
   // fields manually here. If the API extends
@@ -33,6 +37,7 @@ class SettingsContactSuccess extends SettingsContactState {
   List<Object?> get props => [
     capability?.available,
     capability?.missingPrerequisite,
+    residenceCountrySymbol,
   ];
 }
 

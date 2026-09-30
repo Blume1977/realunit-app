@@ -9,8 +9,11 @@ import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_kyc_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/user/dto/user_dto.dart';
+import 'package:realunit_wallet/packages/service/dfx/real_unit_registration_service.dart';
 import 'package:realunit_wallet/screens/settings_contact/cubit/settings_contact_cubit.dart';
 import 'package:realunit_wallet/screens/settings_contact/settings_contact_page.dart';
+import 'package:realunit_wallet/screens/web_view/web_view_page.dart';
+import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/setup/routing/routes/support_routes.dart';
 import 'package:realunit_wallet/widgets/outlined_tile.dart';
 
@@ -19,9 +22,13 @@ class _MockSettingsContactCubit extends MockCubit<SettingsContactState>
 
 class _MockDfxKycService extends Mock implements DfxKycService {}
 
+class _MockRealUnitRegistrationService extends Mock
+    implements RealUnitRegistrationService {}
+
 void main() {
   late SettingsContactCubit cubit;
   late List<String> pushedRoutes;
+  late List<Uri> openedWebViewUrls;
   // Push-result for the `/support/email` capture flow under test. The
   // value the modelled capture page returns drives the re-init →
   // forward path in the page logic; tests flip it per-case.
@@ -35,6 +42,11 @@ void main() {
     final getIt = GetIt.instance;
     if (!getIt.isRegistered<DfxKycService>()) {
       getIt.registerSingleton<DfxKycService>(_MockDfxKycService());
+    }
+    if (!getIt.isRegistered<RealUnitRegistrationService>()) {
+      getIt.registerSingleton<RealUnitRegistrationService>(
+        _MockRealUnitRegistrationService(),
+      );
     }
   });
 
@@ -52,6 +64,7 @@ void main() {
       );
     });
     pushedRoutes = <String>[];
+    openedWebViewUrls = <Uri>[];
     emailCaptureResult = null;
     capabilityAfterReinit = null;
   });
@@ -91,6 +104,15 @@ void main() {
             );
           },
         ),
+        GoRoute(
+          name: AppRoutes.webView,
+          path: '/webView',
+          builder: (_, state) {
+            final params = state.extra! as WebViewRouteParams;
+            openedWebViewUrls.add(params.url);
+            return const Scaffold(body: Text('WEBVIEW'));
+          },
+        ),
       ],
     );
   }
@@ -117,6 +139,19 @@ void main() {
       (w) => w is OutlinedTile && w.title == S.current.contactSupport,
     );
   }
+
+  Finder faqTileFinder() {
+    return find.byWidgetPredicate(
+      (w) => w is OutlinedTile && w.title == S.current.contactFaq,
+    );
+  }
+
+  final swissFaq = Uri.parse(
+    'https://realunit.ch/wissen/faq-haeufige-fragen-zum-realunit/',
+  );
+  final germanFaq = Uri.parse(
+    'https://realunit.de/wissen/faq-haeufige-fragen-zum-realunit/',
+  );
 
   group('$SettingsContactPage', () {
     testWidgets('renders $SettingsContactView and creates a cubit', (tester) async {
@@ -164,6 +199,116 @@ void main() {
       );
       await pumpPage(tester);
       expect(supportTileFinder(), findsOne);
+    });
+
+    testWidgets('FAQ tile is visible in Initial state', (tester) async {
+      when(() => cubit.state).thenReturn(const SettingsContactInitial());
+      await pumpPage(tester);
+      expect(faqTileFinder(), findsOne);
+    });
+
+    testWidgets('FAQ tile is visible in Loading state', (tester) async {
+      when(() => cubit.state).thenReturn(const SettingsContactLoading());
+      await pumpPage(tester);
+      expect(faqTileFinder(), findsOne);
+    });
+
+    testWidgets('FAQ tile is visible in Success state', (tester) async {
+      when(() => cubit.state).thenReturn(const SettingsContactSuccess());
+      await pumpPage(tester);
+      expect(faqTileFinder(), findsOne);
+    });
+
+    testWidgets('FAQ tile is visible in Failure state', (tester) async {
+      when(() => cubit.state).thenReturn(
+        const SettingsContactFailure(message: 'boom'),
+      );
+      await pumpPage(tester);
+      expect(faqTileFinder(), findsOne);
+    });
+
+    testWidgets(
+      'Support tile subtitle equals contactSupportDescription and does not contain FAQ',
+      (tester) async {
+        when(() => cubit.state).thenReturn(const SettingsContactInitial());
+        await pumpPage(tester);
+        final tile = tester.widget<OutlinedTile>(supportTileFinder());
+        expect(tile.subtitle, S.current.contactSupportDescription);
+        expect(tile.subtitle, isNot(contains('FAQ')));
+      },
+    );
+  });
+
+  group('$SettingsContactView FAQ tile tap', () {
+    testWidgets('tap in Initial state opens Swiss FAQ with no fragment', (
+      tester,
+    ) async {
+      when(() => cubit.state).thenReturn(const SettingsContactInitial());
+      await pumpPage(tester);
+
+      await tester.tap(faqTileFinder());
+      await tester.pumpAndSettle();
+
+      expect(openedWebViewUrls, [swissFaq]);
+      expect(openedWebViewUrls.single.fragment, isEmpty);
+    });
+
+    testWidgets('tap in Failure state opens Swiss FAQ with no fragment', (
+      tester,
+    ) async {
+      when(() => cubit.state).thenReturn(
+        const SettingsContactFailure(message: 'boom'),
+      );
+      await pumpPage(tester);
+
+      await tester.tap(faqTileFinder());
+      await tester.pumpAndSettle();
+
+      expect(openedWebViewUrls, [swissFaq]);
+      expect(openedWebViewUrls.single.fragment, isEmpty);
+    });
+
+    testWidgets(
+      'tap in Success with null symbol opens Swiss FAQ with no fragment',
+      (tester) async {
+        when(() => cubit.state).thenReturn(const SettingsContactSuccess());
+        await pumpPage(tester);
+
+        await tester.tap(faqTileFinder());
+        await tester.pumpAndSettle();
+
+        expect(openedWebViewUrls, [swissFaq]);
+        expect(openedWebViewUrls.single.fragment, isEmpty);
+      },
+    );
+
+    testWidgets(
+      'tap in Success with CH opens Swiss FAQ with no fragment',
+      (tester) async {
+        when(() => cubit.state).thenReturn(
+          const SettingsContactSuccess(residenceCountrySymbol: 'CH'),
+        );
+        await pumpPage(tester);
+
+        await tester.tap(faqTileFinder());
+        await tester.pumpAndSettle();
+
+        expect(openedWebViewUrls, [swissFaq]);
+        expect(openedWebViewUrls.single.fragment, isEmpty);
+      },
+    );
+
+    testWidgets('tap in Success with DE opens German FAQ', (tester) async {
+      when(() => cubit.state).thenReturn(
+        const SettingsContactSuccess(residenceCountrySymbol: 'DE'),
+      );
+      await pumpPage(tester);
+
+      await tester.tap(faqTileFinder());
+      await tester.pumpAndSettle();
+
+      expect(openedWebViewUrls, [germanFaq]);
+      expect(openedWebViewUrls.single.fragment, isEmpty);
     });
   });
 

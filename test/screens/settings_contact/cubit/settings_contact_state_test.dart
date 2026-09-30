@@ -40,12 +40,18 @@ void main() {
   group('SettingsContactSuccess', () {
     test('null capability is equal across instances', () {
       // Pre-PR backend path: both Success states carry a null
-      // capability. The decomposed props ([null, null]) must compare
-      // equal.
+      // capability. The decomposed props ([null, null, null]) must
+      // compare equal.
       final a = SettingsContactSuccess();
       final b = SettingsContactSuccess();
       expect(a, equals(b));
-      expect(a.props, [null, null]);
+      expect(a.props, [null, null, null]);
+    });
+
+    test('different residenceCountrySymbol is unequal', () {
+      final a = SettingsContactSuccess(residenceCountrySymbol: 'CH');
+      final b = SettingsContactSuccess(residenceCountrySymbol: 'DE');
+      expect(a, isNot(equals(b)));
     });
 
     test('same capability (available true, no prerequisite) is equal', () {

@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_kyc_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/user/dto/user_dto.dart';
+import 'package:realunit_wallet/packages/service/dfx/real_unit_registration_service.dart';
+import 'package:realunit_wallet/packages/utils/real_unit_faq_uri.dart';
 import 'package:realunit_wallet/screens/settings_contact/cubit/settings_contact_cubit.dart';
 import 'package:realunit_wallet/screens/web_view/web_view_page.dart';
 import 'package:realunit_wallet/setup/di.dart';
@@ -19,7 +21,10 @@ class SettingsContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SettingsContactCubit(getIt<DfxKycService>())..init(),
+      create: (_) => SettingsContactCubit(
+        kycService: getIt<DfxKycService>(),
+        registrationService: getIt<RealUnitRegistrationService>(),
+      )..init(),
       child: const SettingsContactView(),
     );
   }
@@ -59,6 +64,30 @@ class SettingsContactView extends StatelessWidget {
                         subtitle: S.of(context).contactSupportDescription,
                         onTap: () => _onSupportTap(context, state),
                         trailingIcon: Icons.chevron_right_rounded,
+                      );
+                    },
+                  ),
+                  BlocBuilder<SettingsContactCubit, SettingsContactState>(
+                    builder: (context, state) {
+                      final symbol = state is SettingsContactSuccess
+                          ? state.residenceCountrySymbol
+                          : null;
+                      return OutlinedTile(
+                        leading: const Icon(
+                          Icons.help_outline,
+                          color: RealUnitColors.realUnitBlue,
+                          size: 24,
+                        ),
+                        title: S.of(context).contactFaq,
+                        subtitle: S.of(context).contactFaqDescription,
+                        onTap: () => context.pushNamed(
+                          AppRoutes.webView,
+                          extra: WebViewRouteParams(
+                            title: S.of(context).contactFaq,
+                            url: realUnitFaqUri(symbol),
+                          ),
+                        ),
+                        trailingIcon: Icons.open_in_new_outlined,
                       );
                     },
                   ),

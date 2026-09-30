@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/country/country.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/registration/dto/real_unit_registration_request_dto.dart';
+import 'package:realunit_wallet/packages/utils/real_unit_faq_uri.dart';
 import 'package:realunit_wallet/screens/kyc/steps/registration/cubits/registration_submit/kyc_registration_submit_cubit.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
@@ -40,20 +41,8 @@ class KycTaxResidenceSeed {
   const KycTaxResidenceSeed({required this.country, required this.tin});
 }
 
-/// FAQ for the automatic exchange of information.
-/// Swiss residence, and a null residence, use realunit.ch.
-/// Any other residence country uses realunit.de.
-/// Both locales use these German pages until an English FAQ exists.
-Uri kycTaxResidenceAiaFaqUri(Country? residenceCountry) {
-  if (residenceCountry == null || residenceCountry.symbol == 'CH') {
-    return Uri.parse(
-      'https://realunit.ch/wissen/faq-haeufige-fragen-zum-realunit/#faqaia',
-    );
-  }
-  return Uri.parse(
-    'https://realunit.de/wissen/faq-haeufige-fragen-zum-realunit/#faqaia',
-  );
-}
+Uri kycTaxResidenceAiaFaqUri(Country? residenceCountry) =>
+    realUnitFaqUri(residenceCountry?.symbol, fragment: 'faqaia');
 
 /// Mirrors the API bounds so the user hits a clean UI limit instead of a server-side 400:
 /// `countryAndTINs` is capped at 10 entries and each TIN at 64 characters.
