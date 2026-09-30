@@ -348,15 +348,25 @@ timed_out = {"v": False}
 
 def kill_pg():
     timed_out["v"] = True
+    # macOS can refuse killpg with EPERM for a session we started.
+    # An uncaught PermissionError aborts the suite (exit 1) instead of
+    # the exit-124 retry, so the simulator is never rebooted.
     try:
         os.killpg(p.pid, signal.SIGKILL)
+        return
     except ProcessLookupError:
+        return
+    except PermissionError:
+        pass
+    try:
+        p.kill()
+    except (ProcessLookupError, PermissionError):
         pass
 
 def on_signal(signum, _frame):
     kill_pg()
     try:
-        p.wait()
+        p.wait(timeout=5)
     except Exception:
         pass
     log.close()
@@ -395,7 +405,10 @@ finally:
     timer.cancel()
     if p.poll() is None:
         kill_pg()
-        p.wait()
+        try:
+            p.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            pass
 log.close()
 if timed_out["v"]:
     sys.stdout.write("\nmaestro attempt timed out after %ss\n" % timeout)
