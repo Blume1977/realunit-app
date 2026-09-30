@@ -64,6 +64,22 @@ void main() {
       expect(() => reportNonFatal(StateError('nothing is listening')), returnsNormally);
     });
 
+    test('is inert and non-throwing when a stack trace is supplied', () {
+      expect(crashReportingDsn, isEmpty);
+      expect(
+        () => reportNonFatal(
+          StateError('nothing is listening'),
+          stackTrace: StackTrace.current,
+        ),
+        returnsNormally,
+      );
+    });
+
+    test('remains assignable to NonFatalReporter', () {
+      final NonFatalReporter reporter = reportNonFatal;
+      expect(() => reporter(StateError('typed as NonFatalReporter')), returnsNormally);
+    });
+
     test('does not throw when the reported error cannot render itself', () {
       expect(() => reportNonFatal(_UnprintableError()), returnsNormally);
     });

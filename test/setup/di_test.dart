@@ -1,11 +1,15 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/packages/storage/secure_storage.dart';
 import 'package:realunit_wallet/setup/di.dart';
+import 'package:realunit_wallet/setup/startup/startup_exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
+
+class _DisposableService {}
 
 // The SecureStorage keys migrateSecurityFlags moves the flags into. These mirror
 // the private constants in SecureStorage; asserting the literal keys pins the
@@ -190,27 +194,191 @@ void main() {
       );
     });
 
-    test('fails loud when a database exists but its key is missing — never silently re-keys',
-        () async {
-      when(() => mockStorage.read(key: _databaseEncryptionKey)).thenAnswer((_) async => null);
+    test(
+      'throws DatabaseKeyMissingException when the key is verifiably absent '
+      '(walletConfigured: true)',
+      () async {
+        SharedPreferences.setMockInitialValues({'currentWalletId': 7});
+        when(() => mockStorage.read(key: _databaseEncryptionKey)).thenAnswer((_) async => null);
+        when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => true);
+        when(() => mockStorage.containsKey(key: _databaseEncryptionKey))
+            .thenAnswer((_) async => false);
 
-      await expectLater(
-        setupEssentials(
-          secureStorage: secureStorage,
-          databaseFileExists: () async => true,
-        ),
-        // Match the specific guard message so the test can't pass for the wrong
-        // reason (an unrelated earlier throw) — this is the security assertion.
-        throwsA(
-          isA<Exception>().having((e) => e.toString(), 'toString()', contains('key is missing')),
-        ),
+        await expectLater(
+          setupEssentials(
+            secureStorage: secureStorage,
+            databaseFileExists: () async => true,
+          ),
+          throwsA(
+            isA<DatabaseKeyMissingException>()
+                .having((e) => e.walletConfigured, 'walletConfigured', isTrue)
+                .having((e) => e.toString(), 'toString()', contains('key is missing')),
+          ),
+        );
+
+        verifyNever(
+          () => mockStorage.write(key: _databaseEncryptionKey, value: any(named: 'value')),
+        );
+      },
+    );
+
+    test(
+      'throws DatabaseKeyMissingException when the key is verifiably absent '
+      '(walletConfigured: false)',
+      () async {
+        when(() => mockStorage.read(key: _databaseEncryptionKey)).thenAnswer((_) async => null);
+        when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => true);
+        when(() => mockStorage.containsKey(key: _databaseEncryptionKey))
+            .thenAnswer((_) async => false);
+
+        await expectLater(
+          setupEssentials(
+            secureStorage: secureStorage,
+            databaseFileExists: () async => true,
+          ),
+          throwsA(
+            isA<DatabaseKeyMissingException>()
+                .having((e) => e.walletConfigured, 'walletConfigured', isFalse)
+                .having((e) => e.toString(), 'toString()', contains('key is missing')),
+          ),
+        );
+
+        verifyNever(
+          () => mockStorage.write(key: _databaseEncryptionKey, value: any(named: 'value')),
+        );
+      },
+    );
+
+    test(
+      'throws DatabaseKeyUnreadableException when protected data is unavailable',
+      () async {
+        when(() => mockStorage.read(key: _databaseEncryptionKey)).thenAnswer((_) async => null);
+        when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => false);
+
+        await expectLater(
+          setupEssentials(
+            secureStorage: secureStorage,
+            databaseFileExists: () async => true,
+          ),
+          throwsA(
+            isA<DatabaseKeyUnreadableException>().having(
+              (e) => e.protectedDataAvailable,
+              'protectedDataAvailable',
+              isFalse,
+            ),
+          ),
+        );
+
+        verifyNever(
+          () => mockStorage.write(key: _databaseEncryptionKey, value: any(named: 'value')),
+        );
+        verifyNever(() => mockStorage.containsKey(key: _databaseEncryptionKey));
+      },
+    );
+
+    test(
+      'throws DatabaseKeyUnreadableException when containsKey reports the entry exists',
+      () async {
+        when(() => mockStorage.read(key: _databaseEncryptionKey)).thenAnswer((_) async => null);
+        when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => true);
+        when(() => mockStorage.containsKey(key: _databaseEncryptionKey))
+            .thenAnswer((_) async => true);
+
+        await expectLater(
+          setupEssentials(
+            secureStorage: secureStorage,
+            databaseFileExists: () async => true,
+          ),
+          throwsA(isA<DatabaseKeyUnreadableException>()),
+        );
+
+        verifyNever(
+          () => mockStorage.write(key: _databaseEncryptionKey, value: any(named: 'value')),
+        );
+      },
+    );
+
+    test(
+      'propagates a PlatformException from containsKey and never writes a key',
+      () async {
+        when(() => mockStorage.read(key: _databaseEncryptionKey)).thenAnswer((_) async => null);
+        when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => true);
+        when(() => mockStorage.containsKey(key: _databaseEncryptionKey)).thenThrow(
+          PlatformException(code: 'Unexpected security result code'),
+        );
+
+        await expectLater(
+          setupEssentials(
+            secureStorage: secureStorage,
+            databaseFileExists: () async => true,
+          ),
+          throwsA(isA<PlatformException>()),
+        );
+
+        verifyNever(
+          () => mockStorage.write(key: _databaseEncryptionKey, value: any(named: 'value')),
+        );
+      },
+    );
+
+    test(
+      'throws DatabaseKeyMissingException when protected data availability is '
+      'null and the key is absent',
+      () async {
+        when(() => mockStorage.read(key: _databaseEncryptionKey)).thenAnswer((_) async => null);
+        when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => null);
+        when(() => mockStorage.containsKey(key: _databaseEncryptionKey))
+            .thenAnswer((_) async => false);
+
+        await expectLater(
+          setupEssentials(
+            secureStorage: secureStorage,
+            databaseFileExists: () async => true,
+          ),
+          throwsA(isA<DatabaseKeyMissingException>()),
+        );
+
+        verifyNever(
+          () => mockStorage.write(key: _databaseEncryptionKey, value: any(named: 'value')),
+        );
+      },
+    );
+  });
+
+  group('resetServiceLocator', () {
+    setUp(() => getIt.reset(dispose: false));
+    tearDown(() => getIt.reset(dispose: false));
+
+    test('clears registrations when a disposer throws', () async {
+      getIt.registerSingleton(
+        _DisposableService(),
+        dispose: (_) async {
+          throw StateError('dispose failed');
+        },
       );
 
-      // Must NOT mint or persist a key when a DB is present without one —
-      // that would strand the still-encrypted data behind a fresh key.
-      verifyNever(
-        () => mockStorage.write(key: _databaseEncryptionKey, value: any(named: 'value')),
+      await resetServiceLocator();
+
+      expect(getIt.isRegistered<_DisposableService>(), isFalse);
+      expect(
+        () => getIt.registerSingleton(_DisposableService()),
+        returnsNormally,
       );
+    });
+
+    test('runs a normal disposer once and clears the registration', () async {
+      var disposeCalls = 0;
+      getIt.registerSingleton(
+        _DisposableService(),
+        dispose: (_) async {
+          disposeCalls++;
+        },
+      );
+
+      await resetServiceLocator();
+
+      expect(disposeCalls, 1);
+      expect(getIt.isRegistered<_DisposableService>(), isFalse);
     });
   });
 }

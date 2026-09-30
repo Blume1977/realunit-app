@@ -327,4 +327,16 @@ const kResponsiveSurfaceCatalog = <ResponsiveSurface>[
   // reviewed and found safe (scrolls end-to-end, no separate sticky CTA) — not
   // a migration candidate. Not exhaustive — review responsibility for every
   // new sticky-CTA surface.
+  ResponsiveSurface(
+    id: 'startup_failure_page',
+    description: 'Startup failure page (Retry / Reset wallet / Contact support)',
+    matrixTestPath: 'test/screens/startup_failure/startup_failure_responsive_matrix_test.dart',
+    productionPath: 'lib/screens/startup_failure/startup_failure_page.dart',
+  ),
+  ResponsiveSurface(
+    id: 'startup_failure_reset_sheet',
+    description: 'Startup failure reset-wallet confirmation sheet (shrinkWrap mode)',
+    matrixTestPath: 'test/screens/startup_failure/startup_failure_responsive_matrix_test.dart',
+    productionPath: 'lib/screens/startup_failure/widgets/startup_failure_reset_sheet.dart',
+  ),
 ];

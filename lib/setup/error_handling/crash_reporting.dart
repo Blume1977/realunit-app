@@ -62,6 +62,10 @@ Future<void> initCrashReporting({
 /// and a test can record instead of report.
 typedef NonFatalReporter = void Function(Object error);
 
+/// Like [NonFatalReporter], but also accepts an optional [stackTrace] for
+/// callers that already caught with `on Object catch (error, stackTrace)`.
+typedef TracedNonFatalReporter = void Function(Object error, {StackTrace? stackTrace});
+
 /// Records [error] as a non-fatal event: a `developer.log` line for an attached
 /// developer plus, when the crash reporter is running, an error event carrying
 /// the same object.
@@ -78,11 +82,16 @@ typedef NonFatalReporter = void Function(Object error);
 /// @no-integration-test: the capture branch only runs in a build that injects a
 /// DSN, which no test build does; the DSN gate and the never-throws contract
 /// are covered by unit tests.
-void reportNonFatal(Object error) {
+void reportNonFatal(Object error, {StackTrace? stackTrace}) {
   try {
-    developer.log('non-fatal: $error', name: 'WalletApp', error: error);
+    developer.log(
+      'non-fatal: $error',
+      name: 'WalletApp',
+      error: error,
+      stackTrace: stackTrace,
+    );
     if (crashReportingDsn.isEmpty) return;
-    Sentry.captureException(error).ignore();
+    Sentry.captureException(error, stackTrace: stackTrace).ignore();
   } catch (_) {
     // A caller-visible throw here must never happen, since this runs before
     // a required emit in KycCubit. `.ignore()` discards both the eventual

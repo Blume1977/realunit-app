@@ -16,6 +16,7 @@ import 'package:realunit_wallet/setup/error_handling/error_handlers.dart';
 import 'package:realunit_wallet/setup/lifecycle_initializer.dart';
 import 'package:realunit_wallet/setup/routing/boot_navigation.dart';
 import 'package:realunit_wallet/setup/routing/router_config.dart';
+import 'package:realunit_wallet/setup/startup/app_startup.dart';
 import 'package:realunit_wallet/styles/themes.dart';
 
 Future<void> main() async {
@@ -29,13 +30,11 @@ Future<void> main() async {
   // installed above, while installErrorHandlers overwrites the async hook.
   await initCrashReporting();
 
-  // only preserve splash screen for 3 seconds for release version
-  if (kReleaseMode) {
-    await _initializeWithSplashDuration();
-    FlutterNativeSplash.remove();
-  } else {
-    await _initialize();
-  }
+  await startApp(
+    initialize: _initialize,
+    minimumSplashDuration: kReleaseMode ? const Duration(seconds: 3) : Duration.zero,
+    removeSplash: kReleaseMode ? FlutterNativeSplash.remove : null,
+  );
 }
 
 Future<void> _initialize() async {
@@ -45,13 +44,6 @@ Future<void> _initialize() async {
   runApp(
     const LifecycleInitializer(child: WalletApp()),
   );
-}
-
-Future<void> _initializeWithSplashDuration() async {
-  await Future.wait([
-    _initialize(),
-    Future.delayed(const Duration(seconds: 3)),
-  ]);
 }
 
 class WalletApp extends StatefulWidget {

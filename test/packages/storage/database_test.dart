@@ -123,6 +123,65 @@ void main() {
       expect(dirPort.docsCalls, 1);
     });
   });
+
+  group('AppDatabase.deleteDatabaseFiles', () {
+    late Directory tempDir;
+
+    setUp(() {
+      tempDir = Directory.systemTemp.createTempSync('app_database_delete_test_');
+    });
+
+    tearDown(() {
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('deletes the main file and all existing sidecars', () async {
+      final dirPort = _FakeDocumentsDirectoryPort(tempDir);
+      final dbPath = p.join(tempDir.path, 'wallet.db.enc');
+      File(dbPath).writeAsStringSync('main');
+      File('$dbPath-wal').writeAsStringSync('wal');
+      File('$dbPath-shm').writeAsStringSync('shm');
+      File('$dbPath-journal').writeAsStringSync('journal');
+
+      await AppDatabase.deleteDatabaseFiles(dirPort);
+
+      expect(File(dbPath).existsSync(), isFalse);
+      expect(File('$dbPath-wal').existsSync(), isFalse);
+      expect(File('$dbPath-shm').existsSync(), isFalse);
+      expect(File('$dbPath-journal').existsSync(), isFalse);
+    });
+
+    test('is a no-op when nothing exists', () async {
+      final dirPort = _FakeDocumentsDirectoryPort(tempDir);
+
+      await expectLater(AppDatabase.deleteDatabaseFiles(dirPort), completes);
+    });
+
+    test('deletes the main file when only it exists', () async {
+      final dirPort = _FakeDocumentsDirectoryPort(tempDir);
+      final dbPath = p.join(tempDir.path, 'wallet.db.enc');
+      File(dbPath).writeAsStringSync('main');
+
+      await AppDatabase.deleteDatabaseFiles(dirPort);
+
+      expect(File(dbPath).existsSync(), isFalse);
+    });
+
+    test('leaves unrelated files in the directory alone', () async {
+      final dirPort = _FakeDocumentsDirectoryPort(tempDir);
+      final dbPath = p.join(tempDir.path, 'wallet.db.enc');
+      File(dbPath).writeAsStringSync('main');
+      final other = File(p.join(tempDir.path, 'notes.txt'))..writeAsStringSync('keep');
+
+      await AppDatabase.deleteDatabaseFiles(dirPort);
+
+      expect(File(dbPath).existsSync(), isFalse);
+      expect(other.existsSync(), isTrue);
+      expect(other.readAsStringSync(), 'keep');
+    });
+  });
 }
 
 /// Records every [excludeFromBackup] invocation so tests can assert the exact

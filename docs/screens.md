@@ -40,6 +40,7 @@ Column meaning:
 
 | Area | Widget | Route | Path | Handbook |
 |---|---|---|---|---|
+| Startup | `StartupFailurePage` | — | — | — |
 | Onboarding | `HomePage` | `home` | `/home` | `01`, `11` |
 | Onboarding | `WelcomePage` | `welcome` | `/welcome` | `02`, `03`, `62` |
 | Onboarding | `CreateWalletPage` | `createWallet` | `/createWallet` | `04`, `05`, `63` |
@@ -129,7 +130,7 @@ Column meaning:
 | Shared widgets | `PhoneNumberField` | — | — | `268` |
 | Shared widgets | `ReferralPayoutTransactionRow` | — | — | `282` |
 
-86 screens — 49 routed (`GoRoute`) + 37 non-routed. The table also carries
+87 screens — 49 routed (`GoRoute`) + 38 non-routed. The table also carries
 two shared-widget baselines (`PhoneNumberField`, `ReferralPayoutTransactionRow`),
 which are not screens.
 Referral surfaces have Golden baselines (`276`–`292`); the handbook

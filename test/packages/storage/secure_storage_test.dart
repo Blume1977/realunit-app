@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -78,6 +78,102 @@ void main() {
       expect(
         SecureStorage.getNewEncryptionKey(),
         isNot(SecureStorage.getNewEncryptionKey()),
+      );
+    });
+
+    test('isProtectedDataAvailable forwards true from the plugin', () async {
+      when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => true);
+
+      expect(await secureStorage.isProtectedDataAvailable(), isTrue);
+      verify(() => mockStorage.isCupertinoProtectedDataAvailable()).called(1);
+    });
+
+    test('isProtectedDataAvailable forwards false from the plugin', () async {
+      when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => false);
+
+      expect(await secureStorage.isProtectedDataAvailable(), isFalse);
+    });
+
+    test('isProtectedDataAvailable forwards null from the plugin', () async {
+      when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => null);
+
+      expect(await secureStorage.isProtectedDataAvailable(), isNull);
+    });
+
+    test('isEncryptionKeyAbsent is false when the key is readable', () async {
+      when(
+        () => mockStorage.read(key: 'drift.encryption.password'),
+      ).thenAnswer((_) async => 'cafebabe');
+
+      expect(await secureStorage.isEncryptionKeyAbsent(), isFalse);
+      verifyNever(() => mockStorage.containsKey(key: any(named: 'key')));
+      verifyNever(() => mockStorage.isCupertinoProtectedDataAvailable());
+    });
+
+    test('isEncryptionKeyAbsent is false when protected data is unavailable', () async {
+      when(
+        () => mockStorage.read(key: 'drift.encryption.password'),
+      ).thenAnswer((_) async => null);
+      when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => false);
+
+      expect(await secureStorage.isEncryptionKeyAbsent(), isFalse);
+      verifyNever(() => mockStorage.containsKey(key: any(named: 'key')));
+    });
+
+    test('isEncryptionKeyAbsent is false when containsKey reports the entry exists', () async {
+      when(
+        () => mockStorage.read(key: 'drift.encryption.password'),
+      ).thenAnswer((_) async => null);
+      when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => true);
+      when(
+        () => mockStorage.containsKey(key: 'drift.encryption.password'),
+      ).thenAnswer((_) async => true);
+
+      expect(await secureStorage.isEncryptionKeyAbsent(), isFalse);
+    });
+
+    test(
+      'isEncryptionKeyAbsent is true when the entry is absent and protected data is true',
+      () async {
+        when(
+          () => mockStorage.read(key: 'drift.encryption.password'),
+        ).thenAnswer((_) async => null);
+        when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => true);
+        when(
+          () => mockStorage.containsKey(key: 'drift.encryption.password'),
+        ).thenAnswer((_) async => false);
+
+        expect(await secureStorage.isEncryptionKeyAbsent(), isTrue);
+      },
+    );
+
+    test(
+      'isEncryptionKeyAbsent is true when the entry is absent and protected data is null',
+      () async {
+        when(
+          () => mockStorage.read(key: 'drift.encryption.password'),
+        ).thenAnswer((_) async => null);
+        when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => null);
+        when(
+          () => mockStorage.containsKey(key: 'drift.encryption.password'),
+        ).thenAnswer((_) async => false);
+
+        expect(await secureStorage.isEncryptionKeyAbsent(), isTrue);
+      },
+    );
+
+    test('isEncryptionKeyAbsent propagates a containsKey PlatformException', () async {
+      when(
+        () => mockStorage.read(key: 'drift.encryption.password'),
+      ).thenAnswer((_) async => null);
+      when(() => mockStorage.isCupertinoProtectedDataAvailable()).thenAnswer((_) async => true);
+      when(() => mockStorage.containsKey(key: 'drift.encryption.password')).thenThrow(
+        PlatformException(code: 'Unexpected security result code'),
+      );
+
+      await expectLater(
+        secureStorage.isEncryptionKeyAbsent(),
+        throwsA(isA<PlatformException>()),
       );
     });
   });

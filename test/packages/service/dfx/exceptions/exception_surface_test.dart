@@ -11,6 +11,7 @@ import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_rej
 import 'package:realunit_wallet/packages/service/dfx/models/kyc/kyc_level.dart';
 import 'package:realunit_wallet/packages/storage/secure_storage.dart';
 import 'package:realunit_wallet/packages/wallet/exceptions/signing_cancelled_exception.dart';
+import 'package:realunit_wallet/setup/startup/startup_exceptions.dart';
 
 // Guard against a recurring failure mode: an Exception subclass without a
 // toString() override gets rendered as `Instance of '...'` whenever a cubit
@@ -52,6 +53,8 @@ void main() {
         txHash: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
       ),
       const KycUnsupportedStepException(KycStepName.statutes),
+      const DatabaseKeyMissingException(walletConfigured: false),
+      const DatabaseKeyUnreadableException(protectedDataAvailable: null),
     ];
 
     for (final ex in exceptions) {

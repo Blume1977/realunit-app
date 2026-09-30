@@ -124,13 +124,34 @@ class AppDatabase extends _$AppDatabase {
     DocumentsDirectoryPort directory = const PathProviderAdapter(),
   ]) async {
     final dbPath = await getDatabasePath(directory);
-    await exclusion.excludeFromBackup([
-      dbPath,
-      '$dbPath-wal',
-      '$dbPath-shm',
-      '$dbPath-journal',
-    ]);
+    await exclusion.excludeFromBackup(_databaseFilePaths(dbPath));
   }
+
+  /// Deletes the SQLCipher database and its `-wal` / `-shm` / `-journal`
+  /// sidecars. Sidecars go first and the main file last; missing files are
+  /// skipped so an interrupted wipe stays repeatable.
+  // @no-integration-test: deletes real documents-directory paths; unit tests
+  // inject a temp-dir [DocumentsDirectoryPort] instead of path_provider.
+  static Future<void> deleteDatabaseFiles([
+    DocumentsDirectoryPort directory = const PathProviderAdapter(),
+  ]) async {
+    final dbPath = await getDatabasePath(directory);
+    final paths = _databaseFilePaths(dbPath);
+    for (final path in [...paths.skip(1), paths.first]) {
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    }
+  }
+
+  /// Main database path followed by `-wal`, `-shm`, `-journal` sidecars.
+  static List<String> _databaseFilePaths(String dbPath) => [
+    dbPath,
+    '$dbPath-wal',
+    '$dbPath-shm',
+    '$dbPath-journal',
+  ];
 }
 
 // coverage:ignore-start
