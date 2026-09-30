@@ -86,19 +86,17 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
 
   String _shareText({
     required String guestName,
+    required String code,
     required String url,
     required String? copyText,
-    String? hostName,
   }) {
     return referralShareText(
       fromApi: copyText,
       guestName: guestName,
+      code: code,
       url: url,
-      hostName: hostName,
-      fallback: (guestName, hostName, url) =>
-          S.of(context).referralShareText(guestName, url),
-      fallbackNoName: (hostName, url) =>
-          S.of(context).referralShareTextNoName(url),
+      fallback: (guestName, code, url) => S.of(context).referralShareText(guestName, code, url),
+      fallbackNoName: (code, url) => S.of(context).referralShareTextNoName(code, url),
     );
   }
 
@@ -110,8 +108,7 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
         if (!context.mounted) return;
-        final created =
-            context.read<ReferralCubit>().state is ReferralInviteCreated;
+        final created = context.read<ReferralCubit>().state is ReferralInviteCreated;
         Navigator.of(context).pop(created);
       },
       child: Scaffold(
@@ -157,10 +154,8 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                 final localized = message != null && message.isNotEmpty
                     ? localizedReferralError(context, message)
                     : null;
-                final text = localized ??
-                    (state is ReferralNeedsTerms
-                        ? s.referralTermsRequired
-                        : null);
+                final text =
+                    localized ?? (state is ReferralNeedsTerms ? s.referralTermsRequired : null);
                 final retrying =
                     (state is ReferralFailure && state.retrying) ||
                     (state is ReferralNeedsTerms && state.retrying);
@@ -179,19 +174,16 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                               text,
                               textAlign: TextAlign.center,
                               style: message != null && message.isNotEmpty
-                                  ? Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                        color: RealUnitColors.status.red600,
-                                      )
+                                  ? Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: RealUnitColors.status.red600,
+                                    )
                                   : null,
                             ),
                           ),
                         AppFilledButton(
                           label: s.retry,
                           autofocus: !retrying,
-                          state: retrying
-                              ? FilledButtonState.loading
-                              : FilledButtonState.idle,
+                          state: retrying ? FilledButtonState.loading : FilledButtonState.idle,
                           onPressed: retrying
                               ? null
                               : () {
@@ -215,9 +207,9 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                 final lang = Localizations.localeOf(context).languageCode;
                 final text = _shareText(
                   guestName: state.invite.guestName,
+                  code: state.invite.code,
                   url: state.invite.url,
                   copyText: state.invite.copyTextForLocale(lang),
-                  hostName: state.invite.inviterName,
                 );
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -308,9 +300,7 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                               AutofillHints.name,
                             ],
                             textInputAction: TextInputAction.done,
-                            onFieldSubmitted: creating
-                                ? null
-                                : (_) => _submit(context),
+                            onFieldSubmitted: creating ? null : (_) => _submit(context),
                             inputFormatters: [
                               FilteringTextInputFormatter.deny(
                                 invisibleReferralChars,
@@ -343,10 +333,9 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                                   Expanded(
                                     child: Text(
                                       s.referralCreating,
-                                      style: Theme.of(context).textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: RealUnitColors.neutral500,
-                                          ),
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: RealUnitColors.neutral500,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -358,10 +347,9 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                               liveRegion: true,
                               child: Text(
                                 localizedReferralError(context, error),
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: RealUnitColors.status.red600,
-                                    ),
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: RealUnitColors.status.red600,
+                                ),
                               ),
                             ),
                         ],
@@ -373,14 +361,9 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: AppFilledButton(
                         label: s.referralCreateInvite,
-                        autofocus:
-                            error != null && error.isNotEmpty && !creating,
-                        state: creating
-                            ? FilledButtonState.loading
-                            : FilledButtonState.idle,
-                        onPressed: !canSubmit || creating
-                            ? null
-                            : () => _submit(context),
+                        autofocus: error != null && error.isNotEmpty && !creating,
+                        state: creating ? FilledButtonState.loading : FilledButtonState.idle,
+                        onPressed: !canSubmit || creating ? null : () => _submit(context),
                       ),
                     ),
                   ],

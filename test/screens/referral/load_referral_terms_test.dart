@@ -58,5 +58,9 @@ void main() {
 
     expect(en, contains('own wallet'));
     expect(en, contains('have not yet qualified'));
+    expect(de, contains('mindestens 70 RealUnit-Aktientoken im eigenen Wallet'));
+    expect(de, contains('ersten Kauf über mindestens 200 RealUnit-Aktientoken'));
+    expect(en, contains('at least 70 RealUnit share tokens in their own wallet'));
+    expect(en, contains('first purchase of at least 200 RealUnit share tokens'));
   });
 }
