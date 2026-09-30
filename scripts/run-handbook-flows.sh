@@ -331,7 +331,7 @@ run_maestro_attempt() {
   shift
   MAESTRO_ATTEMPT_TIMEOUT_SEC="$MAESTRO_ATTEMPT_TIMEOUT_SEC" \
     /usr/bin/python3 - "$log" "$@" <<'PY'
-import os, select, signal, subprocess, sys, threading
+import os, select, signal, subprocess, sys, threading, time
 
 log_path = sys.argv[1]
 cmd = sys.argv[2:]
@@ -346,11 +346,10 @@ p = subprocess.Popen(
 )
 timed_out = {"v": False}
 
-def kill_pg():
-    timed_out["v"] = True
+def stop_process():
     # macOS can refuse killpg with EPERM for a session we started.
-    # An uncaught PermissionError aborts the suite (exit 1) instead of
-    # the exit-124 retry, so the simulator is never rebooted.
+    # Swallow that and signal the direct child. Do not raise: an
+    # uncaught PermissionError aborts the suite.
     try:
         os.killpg(p.pid, signal.SIGKILL)
         return
@@ -363,8 +362,15 @@ def kill_pg():
     except (ProcessLookupError, PermissionError):
         pass
 
+def on_timeout():
+    # Only the budget timer is a retryable hang. Cleanup must not set
+    # this: a live driver whose output pipe hiccups is not a 480s hang,
+    # and treating it as one reboots the simulator mid-chain.
+    timed_out["v"] = True
+    stop_process()
+
 def on_signal(signum, _frame):
-    kill_pg()
+    stop_process()
     try:
         p.wait(timeout=5)
     except Exception:
@@ -376,12 +382,14 @@ signal.signal(signal.SIGTERM, on_signal)
 signal.signal(signal.SIGINT, on_signal)
 signal.signal(signal.SIGHUP, on_signal)
 
-timer = threading.Timer(timeout, kill_pg)
+timer = threading.Timer(timeout, on_timeout)
 timer.daemon = True
 timer.start()
 try:
     fd = p.stdout.fileno()
     while True:
+        if timed_out["v"]:
+            break
         if p.poll() is not None:
             rest = os.read(fd, 65536) if p.stdout is not None else b""
             while rest:
@@ -394,9 +402,18 @@ try:
             continue
         try:
             chunk = os.read(fd, 4096)
+        except (InterruptedError, BlockingIOError):
+            continue
         except OSError:
+            if p.poll() is None:
+                continue
             break
         if not chunk:
+            # A closed pipe while the driver is still alive is not
+            # completion and not a hang. Keep waiting for the budget.
+            if p.poll() is None:
+                time.sleep(0.2)
+                continue
             break
         sys.stdout.buffer.write(chunk)
         sys.stdout.buffer.flush()
@@ -404,7 +421,11 @@ try:
 finally:
     timer.cancel()
     if p.poll() is None:
-        kill_pg()
+        # The budget timer already stopped the driver and set the hang
+        # flag. Any other way out must stop it too, without looking
+        # like a hang, or the session keeps running into the next flow.
+        if not timed_out["v"]:
+            stop_process()
         try:
             p.wait(timeout=5)
         except subprocess.TimeoutExpired:
@@ -413,7 +434,12 @@ log.close()
 if timed_out["v"]:
     sys.stdout.write("\nmaestro attempt timed out after %ss\n" % timeout)
     sys.exit(124)
-sys.exit(p.returncode or 0)
+# Only the budget timer may exit 124. A child that finishes with that
+# status is not a hang, and a missing status is not a success.
+rc = p.returncode
+if rc is None or rc == 124:
+    sys.exit(1)
+sys.exit(rc)
 PY
 }
 
@@ -452,11 +478,27 @@ for flow in "${flows[@]}"; do
     # debug log. A timed-out hung JVM (exit 124) is the same class.
     # Assertion failures without these patterns are real
     # regressions and must surface red — never retry them.
-    if { [ "$maestro_rc" -eq 124 ] || \
-         is_driver_hang_or_death "$flow_log" || \
-         is_driver_hang_or_death "$debug_dir/maestro.log"; } && \
+    elapsed=$(( $(date +%s) - attempt_start ))
+    driver_dead=false
+    if is_driver_hang_or_death "$flow_log" || \
+       is_driver_hang_or_death "$debug_dir/maestro.log"; then
+      driver_dead=true
+    fi
+    # A timeout reported well under the budget is the wrapper giving up,
+    # not a hung driver. Rebooting here wipes the chain, and the retried
+    # flow then fails a real assertion (the network screen never shows
+    # Mainnet because onboarding is gone). A dead driver still reboots:
+    # the next flow cannot talk to it.
+    if [ "$maestro_rc" -eq 124 ] && \
+       [ "$elapsed" -lt "$MAESTRO_ATTEMPT_TIMEOUT_SEC" ] && \
+       [ "$attempt" -lt "$MAESTRO_MAX_ATTEMPTS" ] && \
+       [ "$driver_dead" = false ]; then
+      echo "  wrapper reported a timeout after $(fmt_duration "$elapsed"), under the $(fmt_duration "$MAESTRO_ATTEMPT_TIMEOUT_SEC") budget; retrying without rebooting the simulator"
+      continue
+    fi
+    if { [ "$maestro_rc" -eq 124 ] || [ "$driver_dead" = true ]; } && \
        [ "$attempt" -lt "$MAESTRO_MAX_ATTEMPTS" ]; then
-      echo "  driver hang/death on attempt $attempt of $MAESTRO_MAX_ATTEMPTS after $(fmt_duration $(( $(date +%s) - attempt_start ))); restarting simulator and retrying"
+      echo "  driver hang/death on attempt $attempt of $MAESTRO_MAX_ATTEMPTS after $(fmt_duration "$elapsed"); restarting simulator and retrying"
       xcrun simctl shutdown "$UDID" || true
       xcrun simctl boot "$UDID"
       xcrun simctl bootstatus "$UDID" -b >/dev/null
