@@ -26,7 +26,8 @@ void main() {
   setUp(() {
     settingsBloc = MockSettingsBloc();
     when(() => settingsBloc.state).thenReturn(const SettingsState());
-    when(() => appStore.primaryAddress).thenReturn('0x938115b533a0b746428361760a6972dfd06d984a');
+    when(() => appStore.primaryAddress)
+        .thenReturn('0x938115b533a0b746428361760a6972dfd06d984a');
     final getIt = GetIt.instance;
     if (getIt.isRegistered<SettingsBloc>()) {
       getIt.unregister<SettingsBloc>();
@@ -43,7 +44,8 @@ void main() {
   Finder sendButton() => find.widgetWithText(AppFilledButton, S.current.send);
 
   group('$SettingsWalletAddressPage', () {
-    testWidgets('renders logo, QR, disclaimer and hides Send by default', (tester) async {
+    testWidgets('renders logo, QR, disclaimer and hides Send by default',
+        (tester) async {
       await tester.pumpApp(wrapPage(const SettingsWalletAddressPage()));
 
       expect(find.byType(SvgPicture), findsOneWidget);
@@ -53,22 +55,25 @@ void main() {
     });
 
     testWidgets(
-      'shows the address above the QR code without a heading and with the REALU-only hint',
-      (tester) async {
-        await tester.pumpApp(wrapPage(const SettingsWalletAddressPage()));
+        'shows the address above the QR code without a heading '
+        'and with the REALU-only hint', (tester) async {
+      await tester.pumpApp(wrapPage(const SettingsWalletAddressPage()));
 
-        final qr = tester.widget<QRAddressWidget>(find.byType(QRAddressWidget));
-        expect(qr.addressAbove, isTrue);
-        expect(find.text('${S.current.realunitWallet} ${S.current.address}'), findsNothing);
-        expect(
-          S.current.walletAddressDisclaimer,
-          anyOf(contains('nur REALU'), contains('only REALU')),
-        );
-      },
-    );
+      final qr = tester.widget<QRAddressWidget>(find.byType(QRAddressWidget));
+      expect(qr.addressAbove, isTrue);
+      expect(
+        find.text('${S.current.realunitWallet} ${S.current.address}'),
+        findsNothing,
+      );
+      expect(
+        S.current.walletAddressDisclaimer,
+        anyOf(contains('nur REALU'), contains('only REALU')),
+      );
+    });
 
     testWidgets('shows Send when walletFeatureSend is true', (tester) async {
-      when(() => settingsBloc.state).thenReturn(const SettingsState(walletFeatureSend: true));
+      when(() => settingsBloc.state)
+          .thenReturn(const SettingsState(walletFeatureSend: true));
 
       await tester.pumpApp(wrapPage(const SettingsWalletAddressPage()));
 
@@ -85,7 +90,8 @@ void main() {
     });
 
     testWidgets('tapping Send pushes the send route', (tester) async {
-      when(() => settingsBloc.state).thenReturn(const SettingsState(walletFeatureSend: true));
+      when(() => settingsBloc.state)
+          .thenReturn(const SettingsState(walletFeatureSend: true));
 
       final pushedRoutes = <String>[];
       final router = GoRouter(
