@@ -57,7 +57,7 @@ New `QrScannerView` consumer without catalog entry + `pushThenRearm` + double-ca
 Three branches participate in the release lane:
 
 - `staging` — integration branch. **All feature PRs target `staging`**, not `develop`. Same protections as `develop`: 1 approval + `Analyze & Test` + `Visual Regression` + `Coverage Floor Gate`.
-- `develop` — pre-release. Receives changes via [`auto-staging-pr.yaml`](.github/workflows/auto-staging-pr.yaml), which opens a `staging → develop` PR on every push to `staging`.
+- `develop` — pre-release. Receives changes via [`auto-staging-pr.yaml`](.github/workflows/auto-staging-pr.yaml), which opens a `staging → develop` PR on every push to `staging`. Any other pull request whose base is `develop` fails the `Develop base guard` check, including while it is a draft. A fork branch named `staging` is not that promotion.
 - `main` — production. Receives changes via [`auto-release-pr.yaml`](.github/workflows/auto-release-pr.yaml), which opens a `develop → main` PR on every push to `develop`.
 
 ```

@@ -1,0 +1,53 @@
+name: PR base
+
+# Feature work targets staging. The only pull request allowed to use
+# base `develop` is the same-repo promotion that auto-staging-pr.yaml
+# opens (head branch `staging`). Anything else aimed at develop fails
+# this check.
+#
+# This workflow is separate from RealUnit Build on purpose:
+# - It runs on drafts. The heavy jobs skip drafts, and a skipped check
+#   counts as success, so a draft aimed at develop would otherwise look
+#   green.
+# - It also runs on `edited`, so changing the base (the way a stacked
+#   PR lands on develop after its parent branch is deleted) re-evaluates
+#   without a new push. Pointing the base back at staging turns the
+#   check green again. `edited` is not on RealUnit Build, because that
+#   would rebuild the app on every title edit.
+# - A fork branch named `staging` is not the promotion. The head
+#   repository has to be this one.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-base-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  develop-base:
+    name: Develop base guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Reject a non-promotion pull request into develop
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          THIS_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ "$BASE_REF" != "develop" ]; then
+            echo "Base is ${BASE_REF}, not develop."
+            exit 0
+          fi
+          if [ "$HEAD_REF" = "staging" ] && [ "$HEAD_REPO" = "$THIS_REPO" ]; then
+            echo "Same-repo promotion: staging -> develop."
+            exit 0
+          fi
+          echo "::error::Only the same-repo staging promotion may target develop. This pull request is ${HEAD_REPO:-unknown}:${HEAD_REF:-unknown} -> ${BASE_REF}."
+          exit 1
