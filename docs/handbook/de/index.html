@@ -1189,14 +1189,14 @@
             <span>📱 <b>App:</b> RealUnit Wallet (Flutter)</span>
             <span>📂 <b>Code:</b>
               <a href="https://github.com/RealUnitCH/app">RealUnitCH/app</a></span>
-            <span>🧪 <b>Tests:</b> 375 Visual-Regression Goldens (311 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
+            <span>🧪 <b>Tests:</b> 376 Visual-Regression Goldens (312 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
           </div>
         </section>
 
         <section id="architecture" style="margin-top: 40px">
           <h3 style="margin-top: 0">Single Source of Truth</h3>
           <p>
-            Die 311 App-Screenshots dieser Seite sind Goldens aus
+            Die 312 App-Screenshots dieser Seite sind Goldens aus
             <code>test/goldens/{screens,widgets}/&lt;feature&gt;/goldens/macos/&lt;file&gt;.png</code>.
             Welcher Golden welcher Handbook-Slot ist, definiert die Mapping-Tabelle in
             <code>scripts/assemble-handbook-screenshots.sh</code>. Der Docker-Build
@@ -1236,7 +1236,7 @@
               <b>Pipeline:</b> Page-Edit → <code>flutter test --update-goldens test/goldens/</code>
               auf dem self-hosted Runner (Hardware-Determinismus) → neue Baseline committen →
               <code>handbook-deploy.yaml</code> baut das Docker-Image aus dem gepushten Branch
-              und assembliert die 311 Slots aus <code>test/goldens/</code> → Push auf
+              und assembliert die 312 Slots aus <code>test/goldens/</code> → Push auf
               <code>staging</code> deployt das Handbook-Image nach Produktion, via
               Cloudflare Tunnel.
             </p>
@@ -11415,7 +11415,8 @@
             (`285`), Einstellungen mit Empfehlungen (`299`), Rechtliche Dokumente letzter Eintrag (`286`), Einladung
             erkannt (`287`), Historie mit Prämie (`288`), Dashboard-Einstieg
             (`289`), Promo-Aktionstext (`290`), Bind-Overlay ungültig (`291`),
-            Bind-Overlay nur für neue Kundinnen (`292`).
+            Bind-Overlay nur für neue Kundinnen (`292`),
+            Bind-Overlay Einladung erkannt (`303`).
           </p>
           <div class="test" id="276-referral-overview">
             <div class="head">
@@ -11730,6 +11731,25 @@
               Body <b>Einladungs- und Promo-Codes müssen vor dem ersten REALU-Kauf
               eingelöst werden.</b> — nicht «Link ungültig».
               API-Code <code>ALREADY_REGISTERED</code>.
+            </div>
+          </div>
+          <div class="test" id="303-referral-bind-invite-recognized">
+            <div class="head">
+              <a class="name permalink" href="#303-referral-bind-invite-recognized">303-referral-bind-invite-recognized</a>
+              <button class="copy-link" type="button" data-target="303-referral-bind-invite-recognized" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_bind_error_dialog_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/303-referral-bind-invite-recognized.png"
+                alt="Dashboard-Overlay: Einladung erkannt"
+              />
+            </div>
+            <div class="desc">
+              Nach einem erfolgreichen Invite-Bind beim Öffnen der App:
+              Overlay auf dem Dashboard (Kurschart), ohne Titel, Body
+              «Einladung von Björn erkannt. Björn erhält seine Prämie automatisch, sobald Sie verifiziert sind und Ihren ersten Kauf abgeschlossen haben.»,
+              <b>Schließen</b> mit Tastaturfokus, nicht per Barrier schliessbar.
             </div>
           </div>
         </details>

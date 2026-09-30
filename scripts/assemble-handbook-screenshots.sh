@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Assemble the 311 handbook screenshots from the visual-regression Golden
+# Assemble the 312 handbook screenshots from the visual-regression Golden
 # baselines. The flat `NN-name.png` output layout matches what
 # docs/handbook/de/index.html links to (`<img src="../screenshots/NN-name.png">`
 # — the relative path resolves to `docs/handbook/screenshots/NN-name.png`).
@@ -322,7 +322,7 @@ MAPPING=(
   "273-handbook-persona-mix=screens/dashboard/goldens/macos/handbook_persona_mix.png"
   "274-handbook-persona-scale=screens/dashboard/goldens/macos/handbook_persona_scale.png"
   "275-handbook-persona-exit-1j=screens/dashboard/goldens/macos/handbook_persona_exit_1j.png"
-  # 276–292: referral/promo goldens. No matching .maestro/handbook flow —
+  # 276–292, 303: referral/promo goldens. No matching .maestro/handbook flow —
   # eligibility (KYC 30 + 70 REALU) is not reachable in the 01–26 chain.
   "276-referral-overview=screens/referral/goldens/macos/referral_overview_page_default.png"
   "277-kyc-registration-referral=screens/kyc/goldens/macos/kyc_registration_referral_step_default.png"
@@ -341,6 +341,7 @@ MAPPING=(
   "290-kyc-registration-referral-promo=screens/kyc/goldens/macos/kyc_registration_referral_step_promo.png"
   "291-referral-bind-error-invalid=screens/referral/goldens/macos/referral_bind_error_invalid.png"
   "292-referral-bind-error-already-registered=screens/referral/goldens/macos/referral_bind_error_already_registered.png"
+  "303-referral-bind-invite-recognized=screens/referral/goldens/macos/referral_bind_invite_recognized.png"
   "293-settings-insider-unlocked=screens/settings/goldens/macos/settings_page_insider_unlocked.png"
   "294-settings-insider-page-default=screens/settings_insider/goldens/macos/settings_insider_page_default.png"
   "295-settings-insider-page-enabled=screens/settings_insider/goldens/macos/settings_insider_page_enabled.png"

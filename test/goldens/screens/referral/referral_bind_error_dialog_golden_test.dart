@@ -20,6 +20,7 @@ import 'package:realunit_wallet/screens/dashboard/bloc/dashboard_bloc.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/pending_transactions_cubit.dart';
 import 'package:realunit_wallet/screens/dashboard/dashboard_page.dart';
 import 'package:realunit_wallet/screens/referral/referral_bind_error_dialog.dart';
+import 'package:realunit_wallet/screens/referral/referral_bind_invite_recognized_dialog.dart';
 import 'package:realunit_wallet/screens/referral/referral_error_message.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/currency.dart';
@@ -188,4 +189,22 @@ void main() {
       builder: () => overlay(referralSpentMessage),
     );
   });
+
+  goldenTest(
+    'invite recognized on the live dashboard',
+    fileName: 'referral_bind_invite_recognized',
+    constraints: phoneConstraints,
+    builder: () => wrapForGolden(
+      Stack(
+        fit: StackFit.expand,
+        children: [
+          dashboard(),
+          const ModalBarrier(dismissible: false, color: Colors.black54),
+          const Center(
+            child: ReferralBindInviteRecognizedDialog(inviterName: 'Björn'),
+          ),
+        ],
+      ),
+    ),
+  );
 }

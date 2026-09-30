@@ -10,6 +10,7 @@ import 'package:realunit_wallet/packages/service/dfx/real_unit_referral_service.
 import 'package:realunit_wallet/packages/service/dfx/referral_lookup_status.dart';
 import 'package:realunit_wallet/screens/pin/bloc/auth/pin_auth_cubit.dart';
 import 'package:realunit_wallet/screens/referral/referral_bind_error_dialog.dart';
+import 'package:realunit_wallet/screens/referral/referral_bind_invite_recognized_dialog.dart';
 import 'package:realunit_wallet/screens/referral/referral_error_message.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/setup/routing/effective_location.dart';
@@ -187,8 +188,14 @@ Future<void> _showPromoBindDialog(
     } else if (result.isInvite) {
       final inviter = result.displayInviterName;
       if (inviter == null) return;
-      title = null;
-      content = Text(s.referralInviteRecognized(inviter));
+      await showDialog<void>(
+        context: ctx,
+        barrierDismissible: false,
+        builder: (dialogContext) => ReferralBindInviteRecognizedDialog(
+          inviterName: inviter,
+        ),
+      );
+      return;
     } else {
       return;
     }
