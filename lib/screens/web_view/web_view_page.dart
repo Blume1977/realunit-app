@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
-import 'package:realunit_wallet/styles/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:realunit_wallet/screens/web_view/web_view_scaffold.dart';
 
 class WebViewRouteParams {
   final String title;
@@ -27,36 +29,11 @@ class WebViewPage extends StatelessWidget {
   final bool _showExternalBrowserButton;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.transparent,
-      leading: IconButton(
-        onPressed: () => context.pop(),
-        icon: const Icon(
-          Icons.arrow_back_rounded,
-          color: RealUnitColors.realUnitBlack,
-          size: 24,
-        ),
-      ),
-      title: Text(
-        _title,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          color: RealUnitColors.realUnitBlack,
-          fontWeight: .w700,
-        ),
-      ),
-      actions: [
-        if (_showExternalBrowserButton)
-          IconButton(
-            onPressed: () => launchUrl(_url, mode: LaunchMode.externalApplication),
-            icon: const Icon(
-              Icons.open_in_new_outlined,
-              color: RealUnitColors.realUnitBlack,
-              size: 24,
-            ),
-          ),
-      ],
-    ),
+  Widget build(BuildContext context) => WebViewScaffold(
+    title: _title,
+    showExternalBrowserButton: _showExternalBrowserButton,
+    onBack: () => context.pop(),
+    onOpenExternal: () => launchUrl(_url, mode: LaunchMode.externalApplication),
     body: WebViewPageBody(uri: _url),
   );
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
-import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/referral/dto/referral_bind_result_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_referral_service.dart';
@@ -11,11 +10,12 @@ import 'package:realunit_wallet/packages/service/dfx/referral_lookup_status.dart
 import 'package:realunit_wallet/screens/pin/bloc/auth/pin_auth_cubit.dart';
 import 'package:realunit_wallet/screens/referral/referral_bind_error_dialog.dart';
 import 'package:realunit_wallet/screens/referral/referral_bind_invite_recognized_dialog.dart';
+import 'package:realunit_wallet/screens/referral/referral_bind_promo_dialog.dart';
+import 'package:realunit_wallet/screens/referral/referral_bind_unavailable_dialog.dart';
 import 'package:realunit_wallet/screens/referral/referral_error_message.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/setup/routing/effective_location.dart';
 import 'package:realunit_wallet/setup/routing/referral_pending_code.dart';
-import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 
 bool _bindInFlight = false;
 
@@ -175,16 +175,20 @@ Future<void> _showPromoBindDialog(
   ReferralBindResultDto result,
 ) {
   return _withBindContext(router, (ctx) async {
-    final s = S.of(ctx);
-    final Widget? content;
-    final Widget? title;
     if (result.isPromo) {
       final lang = Localizations.localeOf(ctx).languageCode;
       final text = result.campaignTextForLocale(lang);
       if (text == null || text.isEmpty) return;
       final textLang = result.campaignTextLang(lang);
-      title = Text(s.referralPromoTitle);
-      content = Text(text, locale: Locale(textLang));
+      await showDialog<void>(
+        context: ctx,
+        barrierDismissible: false,
+        builder: (dialogContext) => ReferralBindPromoDialog(
+          campaignText: text,
+          textLang: textLang,
+        ),
+      );
+      return;
     } else if (result.isInvite) {
       final inviter = result.displayInviterName;
       if (inviter == null) return;
@@ -199,21 +203,6 @@ Future<void> _showPromoBindDialog(
     } else {
       return;
     }
-    await showDialog<void>(
-      context: ctx,
-      barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: title,
-        content: SingleChildScrollView(child: content),
-        actions: [
-          TextButton(
-            autofocus: true,
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(S.of(dialogContext).close),
-          ),
-        ],
-      ),
-    );
   });
 }
 
@@ -300,26 +289,10 @@ class _UnavailableBindDialogState extends State<_UnavailableBindDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      content: Text(S.of(context).referralCodeUnavailable),
-      actions: [
-        AppFilledButton(
-          label: S.of(context).retry,
-          autofocus: !_retrying,
-          fullWidth: false,
-          variant: FilledButtonVariant.secondary,
-          state: _retrying
-              ? FilledButtonState.loading
-              : FilledButtonState.idle,
-          onPressed: _retrying ? null : _retry,
-        ),
-        TextButton(
-          onPressed: _retrying
-              ? null
-              : () => Navigator.of(context).pop(),
-          child: Text(S.of(context).close),
-        ),
-      ],
+    return ReferralBindUnavailableDialog(
+      retrying: _retrying,
+      onRetry: _retry,
+      onClose: () => Navigator.of(context).pop(),
     );
   }
 }

@@ -249,8 +249,13 @@ The app supports three wallet modes (`software`, `bitbox`, `debug`) with differe
     ```bash
     rg "^//\s*@no-integration-test:" lib/
     ```
-- Visual-regression Goldens under `test/goldens/screens/` and `test/goldens/widgets/` are also the source of the 312 screenshots served at `handbook.realunit.app`. When you add a handbook page, you MUST add a matching Golden test AND a row in the mapping table at `scripts/assemble-handbook-screenshots.sh` — the handbook will not pick up a Maestro-captured PNG anymore. The `Handbook Build Check` workflow on every PR runs the assembly script and fails loudly if a mapped Golden is missing.
-  - Why: single source of truth — a UI regression that breaks a Golden also breaks the handbook image before either ships; eliminates the previous "two pipelines, two truths" problem.
+- Every screen, every popup, and every error message needs its own baseline image, and that image is the handbook screenshot. The same rule covers every dialog, every bottom sheet, every banner, every snackbar, every empty state, and every loading state. Each distinct wording is its own picture. A different message, a different button, or a different error is a different surface. There is no exception for a rare path, a small copy change, a state that looks similar, or a screenshot that already exists nearby. Reusing one image for two surfaces is not coverage. An unmapped golden is not coverage.
+  Adding or changing such a surface is incomplete unless the same change includes all three of the following:
+  1. A golden test under `test/goldens/` whose PNG shows that exact surface. Do not generate the PNG on a laptop; `golden-regenerate.yaml` commits it.
+  2. A row in `scripts/assemble-handbook-screenshots.sh`.
+  3. A block in `docs/handbook/de/index.html` that shows that PNG and quotes the visible title or the visible error text.
+  The in-app web view's page body is the external site. The app chrome around it still needs its own baseline, and the handbook text says the page body is not part of that picture. These baselines are the 405 screenshots served at `handbook.realunit.app`. The Handbook Build Check fails if a mapped PNG is missing. A pull request that leaves any of the three out is not ready for review.
+  - Why: a screen, a popup, or an error message that the handbook does not show is invisible until a person happens to open it. One baseline per surface is what makes the gap fail in review instead of in production.
   - See: [`docs/visual-regression-tests.md`](docs/visual-regression-tests.md) section "Handbook screenshots are sourced from Goldens".
 
 [^integration-test]: Activates once an `integration_test/` directory exists in the repo; until then, treat option 1 as N/A and the `// @no-integration-test:` annotation as the documenting form.

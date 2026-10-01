@@ -21,6 +21,8 @@ import 'package:realunit_wallet/screens/dashboard/bloc/pending_transactions_cubi
 import 'package:realunit_wallet/screens/dashboard/dashboard_page.dart';
 import 'package:realunit_wallet/screens/referral/referral_bind_error_dialog.dart';
 import 'package:realunit_wallet/screens/referral/referral_bind_invite_recognized_dialog.dart';
+import 'package:realunit_wallet/screens/referral/referral_bind_promo_dialog.dart';
+import 'package:realunit_wallet/screens/referral/referral_bind_unavailable_dialog.dart';
 import 'package:realunit_wallet/screens/referral/referral_error_message.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/currency.dart';
@@ -202,6 +204,74 @@ void main() {
           const ModalBarrier(dismissible: false, color: Colors.black54),
           const Center(
             child: ReferralBindInviteRecognizedDialog(inviterName: 'Björn'),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  goldenTest(
+    'promo campaign text on the live dashboard',
+    fileName: 'referral_bind_promo',
+    constraints: phoneConstraints,
+    builder: () => wrapForGolden(
+      Stack(
+        fit: StackFit.expand,
+        children: [
+          dashboard(),
+          const ModalBarrier(dismissible: false, color: Colors.black54),
+          const Center(
+            child: ReferralBindPromoDialog(
+              campaignText: 'Beispieltext der Aktion.',
+              textLang: 'de',
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  goldenTest(
+    'unavailable code check on the live dashboard',
+    fileName: 'referral_bind_unavailable',
+    constraints: phoneConstraints,
+    builder: () => wrapForGolden(
+      Stack(
+        fit: StackFit.expand,
+        children: [
+          dashboard(),
+          const ModalBarrier(dismissible: false, color: Colors.black54),
+          Center(
+            child: ReferralBindUnavailableDialog(
+              retrying: false,
+              onRetry: () {},
+              onClose: () {},
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  goldenTest(
+    'unavailable code check while retrying',
+    // The loading button hosts a CupertinoActivityIndicator; freeze it on the
+    // first frame instead of letting pumpAndSettle time out.
+    pumpBeforeTest: pumpOnce,
+    fileName: 'referral_bind_unavailable_retrying',
+    constraints: phoneConstraints,
+    builder: () => wrapForGolden(
+      Stack(
+        fit: StackFit.expand,
+        children: [
+          dashboard(),
+          const ModalBarrier(dismissible: false, color: Colors.black54),
+          Center(
+            child: ReferralBindUnavailableDialog(
+              retrying: true,
+              onRetry: () {},
+              onClose: () {},
+            ),
           ),
         ],
       ),

@@ -1,7 +1,7 @@
 # Visual Regression Tests
 
-Pixel-exact baseline tests for every page in the app. 82 `lib/screens/**/*_page.dart`
-files mapped to 376 Golden PNGs under `test/goldens/` (`screens/` and `widgets/`) (page renderings
+Pixel-exact baseline tests for every page in the app. 84 `lib/screens/**/*_page.dart`
+files mapped to 405 Golden PNGs under `test/goldens/` (`screens/` and `widgets/`) (page renderings
 plus state variants: Buy/Sell error banners, KYC loading/failure, Dashboard
 with-balance, RestoreWallet valid/invalid, Legal-Disclaimer steps, etc.),
 validated on each PR by the `Visual Regression` job (required status check
@@ -31,13 +31,9 @@ Buy has initial + payment-info-loaded, Settings has default +
 confirm-logout-sheet) — those produce more than one PNG each. All
 baselines live under `test/goldens/screens/<feature>/goldens/macos/*.png` or `test/goldens/widgets/<widget>/goldens/macos/*.png`.
 
-### Skipped: `web_view_page.dart`
+### In-app browser chrome
 
-The one `skip: true` in the suite. `InAppWebView` from `flutter_inappwebview` is a platform-view, not a regular widget — its rendering happens via the iOS/Android view-embedding API and has no headless representation in `flutter_test`.
-
-Method-channel stubbing alone is **not enough**: the widget's first build asserts that `InAppWebViewPlatform.instance` is set, and that interface declares five abstract `createPlatform…` methods (controller, widget, cookie manager, etc.) — each returning another platform-view-bound class. A working stub would need ~50 lines of mock subclasses and would still render the body as a blank rectangle.
-
-For a one-page edge case the cost/benefit doesn't justify it. The test is committed with `skip: true` and reactivates the moment someone wires up a full `InAppWebViewPlatform` mock — preferably published as a separate test-only package so other Flutter apps can reuse it.
+`web_view_page.dart` is not skipped. `InAppWebView` still has no headless page render, so the golden pumps `WebViewScaffold` with an empty body. Slots 394 and 395 are that chrome, with and without the external-browser button. The page body is the website and is not part of the baseline. No golden under `test/goldens/` is marked skipped.
 
 ## Regenerating baselines
 
@@ -191,7 +187,7 @@ public repos are free even for macOS minutes.
 
 ## Handbook screenshots are sourced from Goldens
 
-The 312 PNGs the handbook serves at `handbook.realunit.app/screenshots/`
+The 405 PNGs the handbook serves at `handbook.realunit.app/screenshots/`
 are assembled from the Golden baselines at docker-build time. One
 Golden → one handbook page, via the explicit mapping in
 `scripts/assemble-handbook-screenshots.sh`. The handbook does **not**
@@ -231,7 +227,7 @@ that directory into `/usr/share/nginx/html/screenshots/`.
    Golden file.
 4. Open the PR. The `Handbook Build Check` workflow runs
    `docker build` and a container smoke (`/healthz` + auth gate +
-   spot-checks selected mapped screenshots via `docker exec test -f`; the full set is gated by the assemble step (`expected 312`)). A missing Golden surfaces here
+   spot-checks selected mapped screenshots via `docker exec test -f`; the full set is gated by the assemble step (`expected 405`)). A missing Golden surfaces here
    as a missing-source error from the assembly script before docker
    even spins up.
 

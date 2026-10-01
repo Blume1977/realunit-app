@@ -133,7 +133,7 @@ The activated surface (see "Coverage scope" above) is at **100 % scoped line cov
 Out of scope of the gate and tracked elsewhere:
 
 - **Widget render paths** — measured separately via `testWidgets` specs, not in the line-coverage gate (deliberate; see `docs/testing.md` "Tier 0" rationale).
-- **Visual regression (goldens)** — every `lib/screens/**/*_page.dart` has a `test/goldens/**/*_golden_test.dart` companion, validated pixel-exact on the self-hosted runner by the `Visual Regression` CI job. Not folded into the line-coverage gate. The one exception is `lib/screens/web_view/web_view_page.dart` — `InAppWebView` is a platform-view that has no headless render in `flutter_test`, the spec is committed with `skip: true`. See [`docs/visual-regression-tests.md`](docs/visual-regression-tests.md).
+- **Visual regression (goldens)** — every `lib/screens/**/*_page.dart` has a `test/goldens/**/*_golden_test.dart` companion, validated pixel-exact on the self-hosted runner by the `Visual Regression` CI job. Not folded into the line-coverage gate. `web_view_page.dart` is included: its baseline is the app chrome only, and the in-app page body is the external site, not part of the picture. No golden under `test/goldens/` is marked skipped. See [`docs/visual-regression-tests.md`](docs/visual-regression-tests.md).
 - **Tier 2 (firmware simulator)** — runs in `bitbox-simulator.yml`, not folded into the scoped coverage number.
 - **Tier 3 (Maestro handbook flows)** — runs in `tier3-handbook.yaml`, not folded in.
 - **`lib/widgets/chain_asset_icon.dart`** and **`lib/widgets/image_picker_sheet.dart`** — `Image.asset` / `ImagePicker` platform-channel paths, see "Surface that needs infra work" in `docs/testing.md`.

@@ -13,34 +13,36 @@ Column meaning:
   **not a route**: it is shown inside a parent route (KYC steps, status
   sub-pages, disclaimer steps).
 - **Handbook** — the handbook screenshot slot number(s) that document the
-  screen, or `—` if the screen has no handbook slot (it may still have a
-  Visual-Regression Golden). Each slot is a
+  screen, or `—` for an orchestrator without its own screenshot (child pages
+  still have Visual-Regression Goldens). Each slot is a
   Visual-Regression Golden under `test/goldens/`, mapped to its handbook
   position by `scripts/assemble-handbook-screenshots.sh`. The handbook now
-  covers a **curated subset of Golden baselines** — screens **plus selected
-  state variants** (Default / Loading / Error / Snackbar / Dropdown /
-  Validation / Confirm / Success / Failure …), including the areas that were
-  previously absent: Support (email capture, tickets, chat), Settings
-  User-Data and its edit sub-pages, Settings Security, Receive, the BitBox
-  hardware-pairing flow (`ConnectBitboxPage`, `BitboxAddressRecoveryPage`),
-  the Buy payment-details tabs, the full KYC detail states (registration
+  has a slot for every macOS golden, 405 of them — screens plus their
+  state variants (Default / Loading / Error / Snackbar / Dropdown /
+  Validation / Confirm / Success / Failure …), including Support (email
+  capture, tickets, chat), Settings User-Data and its edit sub-pages,
+  Settings Security, Receive, the BitBox hardware-pairing flow
+  (`ConnectBitboxPage`, `BitboxAddressRecoveryPage`), the Buy
+  payment-details tabs, the full KYC detail states (registration
   personal/address/tax steps, nationality, e-mail, 2FA, ident, financial
   data, link-wallet, signature-unsupported, manual-review, account-merge)
   and `debugAuth` (a `kDebugMode`-only dev tool). Each row lists **all** the
   slots whose Golden renders that widget — a screen usually has several (its
   default plus its state variants), so most cells now carry a range rather
-  than a single anchor. One Golden is a shared form widget rather than a
-  screen: slot `268` is `PhoneNumberField` under `test/goldens/widgets/form/`.
-  `WebViewPage` (no active Golden) and `KycPageManager` (the orchestrator
-  has no Golden of its own — its states are the individual KYC pages) carry
-  `—`, as do `PayScanPage` and `PayProcessPage` (Visual-Regression goldens
-  exist, no handbook slot). Slot ↔ Golden mapping in
+  than a single anchor. Shared-widget goldens rather than screens: slot
+  `268` is `PhoneNumberField` under `test/goldens/widgets/form/`, and slot
+  `393` is `ImageSourceSheet`. `WebViewPage` is slots `394` and `395` (the
+  chrome; the page body is the website and is not part of the picture).
+  `PayScanPage` is `338`. `PayProcessPage` is `332`–`334`. `KycPageManager`
+  (the orchestrator has no Golden of its own — its states are the
+  individual KYC pages) carries `—`. Slot ↔ Golden mapping in
   `scripts/assemble-handbook-screenshots.sh`, slot ↔ HTML block in
   `docs/handbook/de/index.html`. See `docs/handbook/README.md`.
 
 | Area | Widget | Route | Path | Handbook |
 |---|---|---|---|---|
-| Startup | `StartupFailurePage` | — | — | — |
+| Startup | `StartupFailurePage` | — | — | `377`, `378`, `379`, `380` |
+| Startup | `UpdateRequiredPage` | `updateRequired` | `/updateRequired` | `389`, `390`, `391`, `392` |
 | Onboarding | `HomePage` | `home` | `/home` | `01`, `11` |
 | Onboarding | `WelcomePage` | `welcome` | `/welcome` | `02`, `03`, `62` |
 | Onboarding | `CreateWalletPage` | `createWallet` | `/createWallet` | `04`, `05`, `63` |
@@ -50,22 +52,27 @@ Column meaning:
 | Onboarding | `DebugAuthPage` | `debugAuth` | `/debugAuth` | `262`, `263`, `264`, `265`, `266`, `267` |
 | PIN & lock | `VerifyPinPage` | `pinGate` | `/pinGate` | `17`, `76`, `77`, `78`, `79`, `80`, `81`, `82`, `83`, `84`, `85`, `88` |
 | PIN & lock | `SetupPinPage` | `setupPin` | `/setupPin` | `08`, `09`, `10`, `73`, `74`, `75` |
-| PIN & lock | `VerifyPinPage` | `verifyPin` | `/verifyPin` | `86`, `87` |
-| Dashboard & trading | `DashboardPage` | `dashboard` | `/dashboard` | `35`, `89`, `90`, `91`, `92`, `93`, `94`, `269`, `289`, `291`, `292` |
-| Dashboard & trading | `TransactionHistoryPage` | `transactionHistory` | `/dashboard/transactionHistory` | `36`, `95`, `96`, `97`, `98`, `99`, `100`, `288` |
-| Dashboard & trading | `BuyPage` | `buy` | `/buy` | `44`, `45`, `46`, `47`, `48`, `103`, `104`, `105`, `106`, `107`, `108`, `109`, `110`, `111`, `112`, `113` |
+| PIN & lock | `VerifyPinPage` | `verifyPin` | `/verifyPin` | `86`, `87`, `339` |
+| Dashboard & trading | `DashboardPage` | `dashboard` | `/dashboard` | `35`, `89`, `90`, `91`, `92`, `93`, `94`, `269`, `289`, `291`, `292`, `308`, `309`, `310`, `311`, `312`, `313`, `314`, `315`, `316`, `317`, `318`, `319`, `320`, `321`, `322`, `340`, `341`, `342`, `387`, `388`, `396` |
+| Dashboard & trading | `TransactionHistoryPage` | `transactionHistory` | `/dashboard/transactionHistory` | `36`, `95`, `96`, `97`, `98`, `99`, `100`, `288`, `384`, `385`, `386` |
+| Dashboard & trading | `BuyPage` | `buy` | `/buy` | `44`, `45`, `46`, `47`, `48`, `103`, `104`, `105`, `106`, `107`, `108`, `109`, `110`, `111`, `112`, `113`, `304`, `305`, `306`, `307` |
 | Dashboard & trading | `BuyPaymentDetailsPage` | `buyPaymentDetails` | `/buyPaymentDetails` | `53`, `114`, `115`, `116`, `117` |
-| Dashboard & trading | `SellPage` | `sell` | `/sell` | `49`, `50`, `51`, `52`, `118`, `119`, `120`, `123`, `124`, `125` |
-| Dashboard & trading | `SellBitboxPage` | `sellBitbox` | `/sellBitbox` | `126`, `127`, `128`, `129`, `130`, `131`, `132`, `133`, `134`, `135`, `136` |
+| Dashboard & trading | `SellPage` | `sell` | `/sell` | `49`, `50`, `51`, `52`, `118`, `119`, `120`, `123`, `124`, `125`, `359`, `360`, `361`, `362` |
+| Dashboard & trading | `SellBitboxPage` | `sellBitbox` | `/sellBitbox` | `126`, `127`, `128`, `129`, `130`, `131`, `132`, `133`, `134`, `135`, `136`, `363`, `364`, `365`, `366` |
 | Dashboard & trading | `SellBankAccountSelectionPage` | — | — | `121`, `122` |
 | Dashboard & trading | `ReceivePage` | `receive` | `/receive` | `101`, `102`, `296`, `297` |
 | Dashboard & trading | `PayInfoPage` | `pay` | `/pay` | `300` |
-| Dashboard & trading | `PayScanPage` | — | — | — |
-| Dashboard & trading | `PayQuotePage` | — | — | `301`, `302` |
-| Dashboard & trading | `PayProcessPage` | — | — | — |
+| Dashboard & trading | `SendInfoPage` | `send` | `/send` | `373` |
+| Dashboard & trading | `SendRecipientPage` | — | — | `375` |
+| Dashboard & trading | `SendAmountPage` | — | — | `367`, `368`, `370`, `371`, `372` |
+| Dashboard & trading | `SendConfirmPage` | — | — | `369` |
+| Dashboard & trading | `SendProcessPage` | — | — | `374` |
+| Dashboard & trading | `PayScanPage` | — | — | `338` |
+| Dashboard & trading | `PayQuotePage` | — | — | `301`, `302`, `335`, `336`, `337` |
+| Dashboard & trading | `PayProcessPage` | — | — | `332`, `333`, `334` |
 | Dashboard & trading | `ConnectBitboxPage` | — | — | `137`, `138`, `139`, `140`, `141`, `142`, `143`, `144`, `145`, `146` |
 | Dashboard & trading | `BitboxAddressRecoveryPage` | `bitboxAddressRecovery` | `/bitboxAddressRecovery` | `147` |
-| Dashboard & trading | `WebViewPage` | `webView` | `/webView` | — |
+| Dashboard & trading | `WebViewPage` | `webView` | `/webView` | `394`, `395` |
 | Legal | `LegalDisclaimerPage` | `legalDisclaimer` | `/legalDisclaimer` | `242` |
 | Legal | `LegalDocumentPage` | `legalDocument` | `/legalDocument` | `243`, `244`, `245` |
 | Legal | `LegalDocumentPage` | `terms` | `/termsOfUse` | `26` |
@@ -73,7 +80,7 @@ Column meaning:
 | Legal | `LegalDfxStep` | — | — | `31` |
 | Legal | `LegalAktionariatStep` | — | — | `30` |
 | Legal | `LegalDocumentsStep` | — | — | `29` |
-| Settings | `SettingsPage` | `settings` | `/settings` | `12`, `24`, `211`, `212`, `285`, `293`, `299` |
+| Settings | `SettingsPage` | `settings` | `/settings` | `12`, `24`, `211`, `212`, `285`, `293`, `299`, `376` |
 | Settings | `SettingsAktionariatDocumentsPage` | `settingsAktionariatDocuments` | `/settings/aktionariatDocuments` | `21` |
 | Settings | `SettingsContactPage` | `settingsContact` | `/settings/contact` | `23` |
 | Settings | `SettingsCurrenciesPage` | `settingsCurrencies` | `/settings/currencies` | `14`, `215`, `216` |
@@ -86,10 +93,10 @@ Column meaning:
 | Settings | `SettingsSeedPage` | `settingsSeed` | `/settings/seed` | `18`, `19`, `218` |
 | Settings | `SettingsWalletAddressPage` | `settingsWalletAddress` | `/settings/walletAddress` | `16`, `298` |
 | Settings | `SettingsInsiderPage` | `settingsInsider` | `/settings/insider` | `294`, `295` |
-| Settings | `ReferralPage` | `settingsReferral` | `/settings/referral` | `279` |
-| Settings | `ReferralCreatePage` | `settingsReferralCreate` | `/settings/referral/create` | `280`, `284` |
-| Settings | `ReferralOverviewPage` | — | — | `276` |
-| Settings | `ReferralTermsPage` | `referralTerms` | `/referralTerms` | `281`, `283` |
+| Settings | `ReferralPage` | `settingsReferral` | `/settings/referral` | `279`, `348`, `349`, `350` |
+| Settings | `ReferralCreatePage` | `settingsReferralCreate` | `/settings/referral/create` | `280`, `284`, `343`, `344`, `345`, `346`, `347` |
+| Settings | `ReferralOverviewPage` | — | — | `276`, `351`, `352`, `353`, `354`, `355` |
+| Settings | `ReferralTermsPage` | `referralTerms` | `/referralTerms` | `281`, `283`, `358` |
 | Settings | `SettingsUserDataPage` | `settingsUserData` | `/settings/userData` | `227`, `228`, `229`, `230`, `231`, `232`, `233`, `234`, `235` |
 | Settings | `SettingsEditNamePage` | `settingsEditName` | `/settings/userData/editName` | `236` |
 | Settings | `SettingsEditAddressPage` | `settingsEditAddress` | `/settings/userData/editAddress` | `238` |
@@ -100,12 +107,14 @@ Column meaning:
 | Support | `SupportPage` | `support` | `/support` | `246` |
 | Support | `SupportEmailCapturePage` | `supportEmailCapture` | `/support/email` | `247`, `248`, `249` |
 | Support | `SupportTicketsPage` | `supportTickets` | `/support/tickets` | `253`, `254`, `255`, `256` |
-| Support | `SupportCreateTicketPage` | `supportCreateTicket` | `/support/create` | `250`, `251`, `252` |
+| Support | `SupportCreateTicketPage` | `supportCreateTicket` | `/support/create` | `250`, `251`, `252`, `381`, `382`, `383` |
 | Support | `SupportChatPage` | `supportChat` | `/support/chat/:uid` | `257`, `258`, `259`, `260`, `261` |
 | KYC | `KycPageManager` | `kyc` | `/kyc` | — |
-| KYC | `KycRegistrationPage` | — | — | `161`, `162`, `166`, `168`, `169`, `170`, `171`, `172` |
-| KYC | `KycRegistrationReferralStep` | — | — | `277`, `287`, `290` |
+| KYC | `KycRegistrationPage` | — | — | `161`, `162`, `166`, `168`, `169`, `170`, `171`, `172`, `326` |
+| KYC | `KycUnsupportedStepPage` | — | — | `331` |
+| KYC | `KycRegistrationReferralStep` | — | — | `277`, `287`, `290`, `327`, `328`, `329`, `330` |
 | KYC | `KycRegistrationPersonalStep` | — | — | `40`, `54`, `163`, `164`, `165` |
+| KYC | `KycPersonalDataPage` | — | — | `324`, `325` |
 | KYC | `KycRegistrationAddressStep` | — | — | `41`, `55`, `167` |
 | KYC | `KycRegistrationTaxStep` | — | — | `56`, `57`, `58`, `59`, `60`, `61`, `61b`, `61c`, `61d`, `61e`, `61f`, `61g`, `61h`, `61i`, `61j`, `61k` |
 | KYC | `KycNationalityPage` | — | — | `173`, `174`, `175`, `176`, `177`, `178`, `179` |
@@ -124,21 +133,21 @@ Column meaning:
 | KYC | `KycPendingPage` | — | — | `205` |
 | KYC | `KycCompletedPage` | — | — | `206` |
 | KYC | `KycFailurePage` | — | — | `207` |
-| KYC | `KycManualReviewPage` | — | — | `208` |
+| KYC | `KycManualReviewPage` | — | — | `208`, `323` |
 | KYC | `KycAccountMergePage` | — | — | `209` |
 | KYC | `KycMergeProcessingPage` | — | — | `210` |
 | Shared widgets | `PhoneNumberField` | — | — | `268` |
-| Shared widgets | `ReferralPayoutTransactionRow` | — | — | `282` |
+| Shared widgets | `ImageSourceSheet` | — | — | `393` |
+| Shared widgets | `ReferralPayoutTransactionRow` | — | — | `282`, `356`, `357` |
 
-87 screens — 49 routed (`GoRoute`) + 38 non-routed. The table also carries
-two shared-widget baselines (`PhoneNumberField`, `ReferralPayoutTransactionRow`),
+95 screens — 51 routed (`GoRoute`) + 44 non-routed. The table also carries
+three shared-widget baselines (`PhoneNumberField`, `ReferralPayoutTransactionRow`, `ImageSourceSheet`),
 which are not screens.
 Referral surfaces have Golden baselines (`276`–`292`); the handbook
 documents the programme in `#spec-referral`. Overlay slots `291` and `292`
 are listed on `DashboardPage` (the host screen), not as a second shared-widget
 row. OpenCryptoPay pay rounding cards `300`–`302` are documented in
-`#spec-81`. `PayScanPage` and `PayProcessPage` have Visual-Regression goldens
-under `test/goldens/screens/pay/` and no handbook slot.
+`#spec-81`.
 
 ## Notes
 
@@ -152,12 +161,12 @@ under `test/goldens/screens/pay/` and no handbook slot.
   `terms`); `VerifyPinPage` backs two (`pinGate`, `verifyPin`) via different
   constructors. Both uses are now documented and the slots are split between
   the rows: `VerifyPinPage`'s `pinGate` use is slots `17`, `76`–`85`, `88`
-  and its `verifyPin` app-lock use is slots `86`, `87`; `LegalDocumentPage`'s
+  and its `verifyPin` app-lock use is slots `86`, `87`, `339`; `LegalDocumentPage`'s
   `terms` route is slot `26` and its generic `legalDocument` route is slots
   `243`–`245`. `SetupPinPage` also backs the `settingsChangePin` route
   (`/settings/security/changePin`) via a second constructor; that reuse has no
   separate Golden and is not given its own row.
-- **Handbook numbering.** Each of the 312 handbook slots is a Visual-Regression
+- **Handbook numbering.** Each of the 405 handbook slots is a Visual-Regression
   Golden under `test/goldens/`, mapped to its handbook position by
   `scripts/assemble-handbook-screenshots.sh`. A parallel Tier-3 Maestro flow
   (`.maestro/handbook/NN-*.yaml`) covers navigation/tap-routing smoke for the

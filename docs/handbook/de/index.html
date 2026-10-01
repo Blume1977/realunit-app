@@ -1141,6 +1141,15 @@
               <a href="#spec-81"><span class="spec-num">81</span>Bezahlen — ganze REALU</a>
             </li>
             <li>
+              <a href="#spec-82"><span class="spec-num">82</span>Senden</a>
+            </li>
+            <li>
+              <a href="#spec-83"><span class="spec-num">83</span>Start und Aktualisierung</a>
+            </li>
+            <li>
+              <a href="#spec-84"><span class="spec-num">84</span>In-App-Browser</a>
+            </li>
+            <li>
               <a href="#spec-geo"><span class="spec-num">G</span>Aktientoken — Geo-Filter</a>
             </li>
             <li>
@@ -1189,14 +1198,14 @@
             <span>📱 <b>App:</b> RealUnit Wallet (Flutter)</span>
             <span>📂 <b>Code:</b>
               <a href="https://github.com/RealUnitCH/app">RealUnitCH/app</a></span>
-            <span>🧪 <b>Tests:</b> 376 Visual-Regression Goldens (312 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
+            <span>🧪 <b>Tests:</b> 405 Visual-Regression Goldens (405 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
           </div>
         </section>
 
         <section id="architecture" style="margin-top: 40px">
           <h3 style="margin-top: 0">Single Source of Truth</h3>
           <p>
-            Die 312 App-Screenshots dieser Seite sind Goldens aus
+            Die 405 App-Screenshots dieser Seite sind Goldens aus
             <code>test/goldens/{screens,widgets}/&lt;feature&gt;/goldens/macos/&lt;file&gt;.png</code>.
             Welcher Golden welcher Handbook-Slot ist, definiert die Mapping-Tabelle in
             <code>scripts/assemble-handbook-screenshots.sh</code>. Der Docker-Build
@@ -1236,7 +1245,7 @@
               <b>Pipeline:</b> Page-Edit → <code>flutter test --update-goldens test/goldens/</code>
               auf dem self-hosted Runner (Hardware-Determinismus) → neue Baseline committen →
               <code>handbook-deploy.yaml</code> baut das Docker-Image aus dem gepushten Branch
-              und assembliert die 312 Slots aus <code>test/goldens/</code> → Push auf
+              und assembliert die 405 Slots aus <code>test/goldens/</code> → Push auf
               <code>staging</code> deployt das Handbook-Image nach Produktion, via
               Cloudflare Tunnel.
             </p>
@@ -3688,7 +3697,7 @@
                 <div class="file">test/goldens/screens/pin/</div>
               </div>
               <div class="rhs">
-                <b>4 Screens</b>
+                <b>5 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/pin"
@@ -3749,6 +3758,24 @@
               </div>
               <div class="desc">
                 Der Ziffernblock ist <b>gesperrt</b> und die Meldung lautet <b>Zu viele Fehlversuche. Schließen Sie die App und starten Sie sie neu; auf dem Sperrbildschirm setzen Sie die Wallet über 'PIN vergessen?' zurück.</b> Dieser Endzustand nach dem Ausschöpfen aller Versuche lässt nur noch das Zurücksetzen der Wallet zu.
+              </div>
+            </div>
+            <div class="test" id="339-verify-pin-page-locked-app-lock">
+              <div class="head">
+                <a class="name permalink" href="#339-verify-pin-page-locked-app-lock">339-verify-pin-page-locked-app-lock</a>
+                <button class="copy-link" type="button" data-target="339-verify-pin-page-locked-app-lock" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">verify_pin_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/339-verify-pin-page-locked-app-lock.png"
+                  alt="PIN dauerhaft gesperrt, App-Sperre"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe dauerhafte Sperre im App-Sperrfluss. Die Meldung lautet
+                <b>Zu viele Fehlversuche. Nutzen Sie 'PIN vergessen?', um zurückzusetzen.</b>
+                Die Wiederherstellung läuft über die Aktion <b>PIN vergessen?</b>
               </div>
             </div>
             <div class="test" id="85-verify-pin-page-unverifiable">
@@ -3916,7 +3943,7 @@
                 <div class="file">test/goldens/screens/dashboard/</div>
               </div>
               <div class="rhs">
-                <b>1 Screen</b>
+                <b>7 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/dashboard"
@@ -3947,6 +3974,108 @@
                 Sobald eine Portfolio-Historie vorliegt, ersetzt die Kopfzeile den Kurs durch <b>Bestandsentwicklung</b> mit dem aktuellen Wert <b>CHF153.00</b> und rechts der Veränderung <b>+5.00 CHF | +3.38%</b> für den Zeitraum <b>Max</b>. Das Chart zeigt die Wertentwicklung des eigenen Bestands mit den Achsenwerten von 135 bis 160.
               </div>
             </div>
+            <div class="test" id="308-dashboard-portfolio-chart-zero">
+              <div class="head">
+                <a class="name permalink" href="#308-dashboard-portfolio-chart-zero">308-dashboard-portfolio-chart-zero</a>
+                <button class="copy-link" type="button" data-target="308-dashboard-portfolio-chart-zero" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">dashboard_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/308-dashboard-portfolio-chart-zero.png"
+                  alt="Bestandsentwicklung, Fenster durchgängig null"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe <b>Bestandsentwicklung</b> bei einem durchgängig null
+                gesetzten Fenster; das Chart bleibt sichtbar.
+              </div>
+            </div>
+            <div class="test" id="309-dashboard-portfolio-chart-zero-collapsed">
+              <div class="head">
+                <a class="name permalink" href="#309-dashboard-portfolio-chart-zero-collapsed">309-dashboard-portfolio-chart-zero-collapsed</a>
+                <button class="copy-link" type="button" data-target="309-dashboard-portfolio-chart-zero-collapsed" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">dashboard_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/309-dashboard-portfolio-chart-zero-collapsed.png"
+                  alt="Bestandsentwicklung Max, Kurve fällt auf null"
+                />
+              </div>
+              <div class="desc">
+                Kundenreport <b>Max</b>: ältere Bestände zeichnen eine Kurve und
+                fallen danach auf null.
+              </div>
+            </div>
+            <div class="test" id="310-dashboard-portfolio-chart-zero-collapsed-1j">
+              <div class="head">
+                <a class="name permalink" href="#310-dashboard-portfolio-chart-zero-collapsed-1j">310-dashboard-portfolio-chart-zero-collapsed-1j</a>
+                <button class="copy-link" type="button" data-target="310-dashboard-portfolio-chart-zero-collapsed-1j" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">dashboard_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/310-dashboard-portfolio-chart-zero-collapsed-1j.png"
+                  alt="Bestandsentwicklung 1J, sichtbare Nulllinie"
+                />
+              </div>
+              <div class="desc">
+                Kundenreport <b>1J</b>: aktuelle Nullwerte halten eine sichtbare
+                Nulllinie. Titel <b>Bestandsentwicklung</b>.
+              </div>
+            </div>
+            <div class="test" id="311-dashboard-portfolio-chart-zero-collapsed-1m">
+              <div class="head">
+                <a class="name permalink" href="#311-dashboard-portfolio-chart-zero-collapsed-1m">311-dashboard-portfolio-chart-zero-collapsed-1m</a>
+                <button class="copy-link" type="button" data-target="311-dashboard-portfolio-chart-zero-collapsed-1m" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">dashboard_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/311-dashboard-portfolio-chart-zero-collapsed-1m.png"
+                  alt="Bestandsentwicklung 1M, sichtbare Nulllinie"
+                />
+              </div>
+              <div class="desc">
+                Kundenreport <b>1M</b>: aktuelle Nullwerte halten eine sichtbare
+                Nulllinie. Titel <b>Bestandsentwicklung</b>.
+              </div>
+            </div>
+            <div class="test" id="312-dashboard-portfolio-chart-zero-collapsed-1w">
+              <div class="head">
+                <a class="name permalink" href="#312-dashboard-portfolio-chart-zero-collapsed-1w">312-dashboard-portfolio-chart-zero-collapsed-1w</a>
+                <button class="copy-link" type="button" data-target="312-dashboard-portfolio-chart-zero-collapsed-1w" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">dashboard_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/312-dashboard-portfolio-chart-zero-collapsed-1w.png"
+                  alt="Bestandsentwicklung 1W, sichtbare Nulllinie"
+                />
+              </div>
+              <div class="desc">
+                Kundenreport <b>1W</b>: aktuelle Nullwerte halten eine sichtbare
+                Nulllinie. Titel <b>Bestandsentwicklung</b>.
+              </div>
+            </div>
+            <div class="test" id="313-dashboard-portfolio-chart-zero-collapsed-3m">
+              <div class="head">
+                <a class="name permalink" href="#313-dashboard-portfolio-chart-zero-collapsed-3m">313-dashboard-portfolio-chart-zero-collapsed-3m</a>
+                <button class="copy-link" type="button" data-target="313-dashboard-portfolio-chart-zero-collapsed-3m" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">dashboard_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/313-dashboard-portfolio-chart-zero-collapsed-3m.png"
+                  alt="Bestandsentwicklung 3M, sichtbare Nulllinie"
+                />
+              </div>
+              <div class="desc">
+                Kundenreport <b>3M</b>: aktuelle Nullwerte halten eine sichtbare
+                Nulllinie. Titel <b>Bestandsentwicklung</b>.
+              </div>
+            </div>
           </div>
         </details>
 
@@ -3960,7 +4089,7 @@
                 <div class="file">test/goldens/screens/dashboard/</div>
               </div>
               <div class="rhs">
-                <b>2 Screens</b>
+                <b>10 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/dashboard"
@@ -4005,6 +4134,137 @@
               </div>
               <div class="desc">
                 Ansicht mit vorhandenem Guthaben: Oben die Aktionen <b>Kaufen</b> und <b>Verkaufen</b>, darunter der Abschnitt <b>Bestand</b> mit <b>REALU 153.00 CHF</b> und dem Detail <b>100 × 1.53 CHF</b>. Die Karte <b>Letzte Transaktionen</b> listet die jüngsten Bewegungen (<b>+ 50 REALU</b>, <b>- 20 REALU</b>, <b>+ 100 REALU</b>) mit Datum und schliesst mit dem Link <b>Transaktionshistorie</b>.
+              </div>
+            </div>
+            <div class="test" id="315-holding-empfangen">
+              <div class="head">
+                <a class="name permalink" href="#315-holding-empfangen">315-holding-empfangen</a>
+                <button class="copy-link" type="button" data-target="315-holding-empfangen" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">holding_amount_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/315-holding-empfangen.png"
+                  alt="Bestand nach Empfangen, 77994"
+                />
+              </div>
+              <div class="desc">
+                Nur <b>Empfangen</b>, Abschnitt <b>Bestand</b> 77994, letzte Zeilen <b>Empfangen</b>.
+              </div>
+            </div>
+            <div class="test" id="316-holding-kauf">
+              <div class="head">
+                <a class="name permalink" href="#316-holding-kauf">316-holding-kauf</a>
+                <button class="copy-link" type="button" data-target="316-holding-kauf" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">holding_amount_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/316-holding-kauf.png"
+                  alt="Bestand nach Kauf, 85194"
+                />
+              </div>
+              <div class="desc">
+                Nach <b>Kauf</b>, Abschnitt <b>Bestand</b> 85194, letzte Zeilen <b>Kauf</b> und <b>Empfangen</b>.
+              </div>
+            </div>
+            <div class="test" id="317-holding-kauf-chf">
+              <div class="head">
+                <a class="name permalink" href="#317-holding-kauf-chf">317-holding-kauf-chf</a>
+                <button class="copy-link" type="button" data-target="317-holding-kauf-chf" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">holding_amount_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/317-holding-kauf-chf.png"
+                  alt="Bestand nach Kauf in CHF"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe <b>Kauf</b>-Ansicht in CHF. Abschnitt <b>Bestand</b>.
+              </div>
+            </div>
+            <div class="test" id="318-holding-kauf-en">
+              <div class="head">
+                <a class="name permalink" href="#318-holding-kauf-en">318-holding-kauf-en</a>
+                <button class="copy-link" type="button" data-target="318-holding-kauf-en" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">holding_amount_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/318-holding-kauf-en.png"
+                  alt="Bestand nach Kauf, englische Beschriftung"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Kauf-Ansicht auf Englisch, Beschriftungen <b>Buy</b> und
+                <b>Received</b>.
+              </div>
+            </div>
+            <div class="test" id="319-holding-kauf-hidden">
+              <div class="head">
+                <a class="name permalink" href="#319-holding-kauf-hidden">319-holding-kauf-hidden</a>
+                <button class="copy-link" type="button" data-target="319-holding-kauf-hidden" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">holding_amount_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/319-holding-kauf-hidden.png"
+                  alt="Bestand nach Kauf, Beträge ausgeblendet"
+                />
+              </div>
+              <div class="desc">
+                <b>Kauf</b> mit ausgeblendeten Beträgen. Abschnitt <b>Bestand</b>.
+              </div>
+            </div>
+            <div class="test" id="320-holding-transfer-in">
+              <div class="head">
+                <a class="name permalink" href="#320-holding-transfer-in">320-holding-transfer-in</a>
+                <button class="copy-link" type="button" data-target="320-holding-transfer-in" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">holding_amount_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/320-holding-transfer-in.png"
+                  alt="Bestand nach Empfangen on-chain, 78094"
+                />
+              </div>
+              <div class="desc">
+                Eingehende On-Chain-Bewegung, Beschriftung <b>Empfangen</b>,
+                Bestand 78094.
+              </div>
+            </div>
+            <div class="test" id="321-holding-transfer-out">
+              <div class="head">
+                <a class="name permalink" href="#321-holding-transfer-out">321-holding-transfer-out</a>
+                <button class="copy-link" type="button" data-target="321-holding-transfer-out" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">holding_amount_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/321-holding-transfer-out.png"
+                  alt="Bestand nach Gesendet on-chain, 85094"
+                />
+              </div>
+              <div class="desc">
+                Ausgehende On-Chain-Bewegung, Beschriftung <b>Gesendet</b>,
+                Bestand 85094.
+              </div>
+            </div>
+            <div class="test" id="322-holding-verkauf">
+              <div class="head">
+                <a class="name permalink" href="#322-holding-verkauf">322-holding-verkauf</a>
+                <button class="copy-link" type="button" data-target="322-holding-verkauf" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">holding_amount_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/322-holding-verkauf.png"
+                  alt="Bestand nach Verkauf, 77994"
+                />
+              </div>
+              <div class="desc">
+                Nach <b>Verkauf</b>, Abschnitt <b>Bestand</b> 77994, letzte Zeilen <b>Verkauf</b>.
               </div>
             </div>
           </div>
@@ -4064,7 +4324,7 @@
                 <div class="file">test/goldens/screens/transaction_history/</div>
               </div>
               <div class="rhs">
-                <b>3 Screens</b>
+                <b>4 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/transaction_history"
@@ -4125,6 +4385,22 @@
               </div>
               <div class="desc">
                 Nach Antippen des Feldes <b>Anfangsdatum</b> öffnet sich der <b>Kalender-Dialog</b> (hier auf Mai 2025) über der abgedunkelten Seite. Mit <b>OK</b> wird das gewählte Datum übernommen und der Verlauf neu gefiltert, <b>Cancel</b> schliesst den Dialog ohne Änderung. Der Golden ist ohne deutsche Locale aufgenommen, daher englische Beschriftungen und ein überlagertes Kalenderraster.
+              </div>
+            </div>
+            <div class="test" id="386-transaction-history-transfer-labels">
+              <div class="head">
+                <a class="name permalink" href="#386-transaction-history-transfer-labels">386-transaction-history-transfer-labels</a>
+                <button class="copy-link" type="button" data-target="386-transaction-history-transfer-labels" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">transaction_history_transfer_labels_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/386-transaction-history-transfer-labels.png"
+                  alt="Verlauf mit Kauf, Empfangen, Gesendet, Verkauf"
+                />
+              </div>
+              <div class="desc">
+                Verlauf mit den sichtbaren Labels <b>Kauf</b>, <b>Empfangen</b>, <b>Gesendet</b> und <b>Verkauf</b>.
               </div>
             </div>
           </div>
@@ -4308,7 +4584,7 @@
                 <div class="file">test/goldens/screens/buy/</div>
               </div>
               <div class="rhs">
-                <b>4 Screens</b>
+                <b>6 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/buy"
@@ -4387,6 +4663,39 @@
                 Die <b>Währungsliste konnte nicht geladen werden</b>: eine <b>rote Snackbar</b> meldet den Fehler und die Währungsauswahl ist <b>deaktiviert</b>. Dieser Zustand tritt auf, wenn der Abruf der kaufbaren Währungen fehlschlägt.
               </div>
             </div>
+            <div class="test" id="304-buy-charged-amount">
+              <div class="head">
+                <a class="name permalink" href="#304-buy-charged-amount">304-buy-charged-amount</a>
+                <button class="copy-link" type="button" data-target="304-buy-charged-amount" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">buy_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/304-buy-charged-amount.png"
+                  alt="Eingegebener Betrag bleibt, genaue Belastung unter dem Feld"
+                />
+              </div>
+              <div class="desc">
+                Der eingegebene Betrag bleibt stehen, und unter dem Feld
+                erscheint <b>Genau belastet</b>.
+              </div>
+            </div>
+            <div class="test" id="305-buy-max-amount-exceeded">
+              <div class="head">
+                <a class="name permalink" href="#305-buy-max-amount-exceeded">305-buy-max-amount-exceeded</a>
+                <button class="copy-link" type="button" data-target="305-buy-max-amount-exceeded" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">buy_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/305-buy-max-amount-exceeded.png"
+                  alt="Maximalbetrag: 90000 CHF"
+                />
+              </div>
+              <div class="desc">
+                Der Fehler zeigt <b>Maximalbetrag: 90000 CHF</b>.
+              </div>
+            </div>
           </div>
         </details>
 
@@ -4400,7 +4709,7 @@
                 <div class="file">test/goldens/screens/buy/</div>
               </div>
               <div class="rhs">
-                <b>3 Screens</b>
+                <b>5 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/buy"
@@ -4429,6 +4738,23 @@
               </div>
               <div class="desc">
                 Der Kauf ist gesperrt, weil dem Konto eine <b>primäre E-Mail-Adresse</b> fehlt. Es wird kein Info-Block angezeigt, sondern nur die Schaltfläche <b>Weiter</b>, die zur E-Mail-Erfassung führt; danach wird das Angebot erneut geprüft.
+              </div>
+            </div>
+            <div class="test" id="307-buy-primary-email-not-confirmed">
+              <div class="head">
+                <a class="name permalink" href="#307-buy-primary-email-not-confirmed">307-buy-primary-email-not-confirmed</a>
+                <button class="copy-link" type="button" data-target="307-buy-primary-email-not-confirmed" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">buy_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/307-buy-primary-email-not-confirmed.png"
+                  alt="Primäre E-Mail noch nicht bestätigt"
+                />
+              </div>
+              <div class="desc">
+                Fehlerzustand, weil die <b>primäre E-Mail-Adresse</b> noch nicht
+                bestätigt ist.
               </div>
             </div>
             <div class="test" id="108-buy-bitbox-disconnected">
@@ -4461,6 +4787,23 @@
               </div>
               <div class="desc">
                 Die Kursabfrage ist <b>fehlgeschlagen</b>. Der Info-Block zeigt die <b>API-Fehlermeldung unverändert</b>, darunter die Schaltfläche <b>Wiederholen</b>, die das Angebot neu abruft. Die App wählt keinen eigenen Text.
+              </div>
+            </div>
+            <div class="test" id="306-buy-price-source-unavailable-empty">
+              <div class="head">
+                <a class="name permalink" href="#306-buy-price-source-unavailable-empty">306-buy-price-source-unavailable-empty</a>
+                <button class="copy-link" type="button" data-target="306-buy-price-source-unavailable-empty" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">buy_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/306-buy-price-source-unavailable-empty.png"
+                  alt="Kursquelle nicht verfügbar, nur Wiederholen"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe fehlgeschlagene Kursabfrage mit leerer Meldung: sichtbar
+                ist nur die Schaltfläche <b>Wiederholen</b>.
               </div>
             </div>
           </div>
@@ -4660,7 +5003,7 @@
                 <div class="file">test/goldens/screens/sell/</div>
               </div>
               <div class="rhs">
-                <b>3 Screens</b>
+                <b>5 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/sell"
@@ -4705,6 +5048,38 @@
               </div>
               <div class="desc">
                 Dieselbe Maske, sobald ein <b>Guthaben vorhanden</b> ist: im Feld <b>Sie verkaufen</b> erscheint zusätzlich der <b>MAX</b>-Button für den Gesamtbestand. Solange kein Bankkonto gewählt ist, bleibt der Verkaufsbutton deaktiviert.
+              </div>
+            </div>
+            <div class="test" id="361-sell-holding-kauf">
+              <div class="head">
+                <a class="name permalink" href="#361-sell-holding-kauf">361-sell-holding-kauf</a>
+                <button class="copy-link" type="button" data-target="361-sell-holding-kauf" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/361-sell-holding-kauf.png"
+                  alt="Verkauf, Bestand nach Kauf, Max 85194"
+                />
+              </div>
+              <div class="desc">
+                Bestand nach Kauf: <b>MAX</b> füllt 85194.
+              </div>
+            </div>
+            <div class="test" id="362-sell-holding-verkauf">
+              <div class="head">
+                <a class="name permalink" href="#362-sell-holding-verkauf">362-sell-holding-verkauf</a>
+                <button class="copy-link" type="button" data-target="362-sell-holding-verkauf" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/362-sell-holding-verkauf.png"
+                  alt="Verkauf, Bestand nach Verkauf, Max 77994"
+                />
+              </div>
+              <div class="desc">
+                Bestand nach Verkauf: <b>MAX</b> füllt 77994.
               </div>
             </div>
             <div class="test" id="120-sell-bank-account-selected">
@@ -4796,7 +5171,7 @@
                 <div class="file">test/goldens/screens/sell/</div>
               </div>
               <div class="rhs">
-                <b>3 Screens</b>
+                <b>5 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/sell"
@@ -4841,6 +5216,40 @@
               </div>
               <div class="desc">
                 Derselbe Bestätigungsdialog unmittelbar nach dem Tippen auf <b>Bestätigen</b>: der Button zeigt einen <b>Ladeindikator</b> und ist ausgegraut, während der Verkauf an die Zahlungsschnittstelle übermittelt wird.
+              </div>
+            </div>
+            <div class="test" id="359-sell-confirm-sheet-eur">
+              <div class="head">
+                <a class="name permalink" href="#359-sell-confirm-sheet-eur">359-sell-confirm-sheet-eur</a>
+                <button class="copy-link" type="button" data-target="359-sell-confirm-sheet-eur" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/359-sell-confirm-sheet-eur.png"
+                  alt="Verkaufsbestätigung mit Euro-Betrag"
+                />
+              </div>
+              <div class="desc">
+                Die Prüfkarte <b>Verkauf prüfen &amp; bestätigen</b> zeigt den gespeicherten Euro-Betrag, weil EUR
+                gewählt ist.
+              </div>
+            </div>
+            <div class="test" id="360-sell-confirm-sheet-eur-settings-chf-stored">
+              <div class="head">
+                <a class="name permalink" href="#360-sell-confirm-sheet-eur-settings-chf-stored">360-sell-confirm-sheet-eur-settings-chf-stored</a>
+                <button class="copy-link" type="button" data-target="360-sell-confirm-sheet-eur-settings-chf-stored" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/360-sell-confirm-sheet-eur-settings-chf-stored.png"
+                  alt="Verkaufsbestätigung behält Frankenbetrag"
+                />
+              </div>
+              <div class="desc">
+                Die Prüfkarte <b>Verkauf prüfen &amp; bestätigen</b> behält den gespeicherten Frankenbetrag, weil EUR
+                gewählt ist, aber kein Euro gespeichert war.
               </div>
             </div>
             <div class="test" id="125-sell-executed-sheet">
@@ -4948,7 +5357,7 @@
                 <div class="file">test/goldens/screens/sell_bitbox/</div>
               </div>
               <div class="rhs">
-                <b>3 Screens</b>
+                <b>5 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/sell_bitbox"
@@ -4995,6 +5404,40 @@
                 Die Prüfkarte für den Tausch mit dem Titel <b>REALU → ZCHF tauschen</b>: Sie zeigt <b>Sie senden 100 REALU</b> und <b>Sie erhalten ≈ 100.00 ZCHF</b>, den Hinweis zur Bestätigung über den BrokerBot sowie einen <b>Bestätigen</b>-Button. Nach dem Tippen muss der Tausch auf der BitBox freigegeben werden.
               </div>
             </div>
+            <div class="test" id="365-sell-bitbox-awaiting-swap-confirm-stored-chf">
+              <div class="head">
+                <a class="name permalink" href="#365-sell-bitbox-awaiting-swap-confirm-stored-chf">365-sell-bitbox-awaiting-swap-confirm-stored-chf</a>
+                <button class="copy-link" type="button" data-target="365-sell-bitbox-awaiting-swap-confirm-stored-chf" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_bitbox_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/365-sell-bitbox-awaiting-swap-confirm-stored-chf.png"
+                  alt="BitBox-Tausch, ZCHF und gespeicherter Frankenbetrag"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Tausch-Prüfkarte <b>REALU → ZCHF tauschen</b>: ZCHF-Zeile plus gespeicherter
+                Frankenbetrag, weil EUR gewählt ist.
+              </div>
+            </div>
+            <div class="test" id="366-sell-bitbox-awaiting-swap-confirm-stored-eur">
+              <div class="head">
+                <a class="name permalink" href="#366-sell-bitbox-awaiting-swap-confirm-stored-eur">366-sell-bitbox-awaiting-swap-confirm-stored-eur</a>
+                <button class="copy-link" type="button" data-target="366-sell-bitbox-awaiting-swap-confirm-stored-eur" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_bitbox_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/366-sell-bitbox-awaiting-swap-confirm-stored-eur.png"
+                  alt="BitBox-Tausch, ZCHF und gespeicherter Euro-Betrag"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Tausch-Prüfkarte <b>REALU → ZCHF tauschen</b>: ZCHF-Zeile plus gespeicherter
+                Euro-Betrag.
+              </div>
+            </div>
             <div class="test" id="131-sell-bitbox-swapping">
               <div class="head">
                 <a class="name permalink" href="#131-sell-bitbox-swapping">131-sell-bitbox-swapping</a>
@@ -5024,7 +5467,7 @@
                 <div class="file">test/goldens/screens/sell_bitbox/</div>
               </div>
               <div class="rhs">
-                <b>3 Screens</b>
+                <b>5 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/sell_bitbox"
@@ -5053,6 +5496,40 @@
               </div>
               <div class="desc">
                 Die Prüfkarte für Schritt 3 mit dem Titel <b>ZCHF an DFX senden</b>: Sie zeigt <b>Sie senden 100.00 ZCHF</b> und als <b>DFX-Einzahlung</b> die gekürzte Zieladresse (z. B. 0xDEP0…1234), dazu den Hinweis zur BitBox-Bestätigung und einen <b>Bestätigen</b>-Button.
+              </div>
+            </div>
+            <div class="test" id="363-sell-bitbox-awaiting-deposit-confirm-stored-chf">
+              <div class="head">
+                <a class="name permalink" href="#363-sell-bitbox-awaiting-deposit-confirm-stored-chf">363-sell-bitbox-awaiting-deposit-confirm-stored-chf</a>
+                <button class="copy-link" type="button" data-target="363-sell-bitbox-awaiting-deposit-confirm-stored-chf" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_bitbox_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/363-sell-bitbox-awaiting-deposit-confirm-stored-chf.png"
+                  alt="BitBox-Einzahlung, ZCHF und gespeicherter Frankenbetrag"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Einzahlungs-Prüfkarte <b>ZCHF an DFX senden</b>: ZCHF-Zeile plus gespeicherter
+                Frankenbetrag, weil EUR gewählt ist.
+              </div>
+            </div>
+            <div class="test" id="364-sell-bitbox-awaiting-deposit-confirm-stored-eur">
+              <div class="head">
+                <a class="name permalink" href="#364-sell-bitbox-awaiting-deposit-confirm-stored-eur">364-sell-bitbox-awaiting-deposit-confirm-stored-eur</a>
+                <button class="copy-link" type="button" data-target="364-sell-bitbox-awaiting-deposit-confirm-stored-eur" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_bitbox_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/364-sell-bitbox-awaiting-deposit-confirm-stored-eur.png"
+                  alt="BitBox-Einzahlung, ZCHF und gespeicherter Euro-Betrag"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Einzahlungs-Prüfkarte <b>ZCHF an DFX senden</b>: ZCHF-Zeile plus gespeicherter
+                Euro-Betrag.
               </div>
             </div>
             <div class="test" id="133-sell-bitbox-depositing">
@@ -5188,7 +5665,7 @@
                 />
               </div>
               <div class="desc">
-                Der <b>Startzustand</b> des BitBox-Kopplungs-Sheets, solange noch kein Gerät verbunden ist. Titel <b>BitBox verbinden</b> mit der Aufforderung, die BitBox mit dem Smartphone zu verbinden, und nur einem <b>Abbrechen</b>-Button; die App wartet im Hintergrund, bis eine BitBox gefunden wird. Dies ist die Android-Textvariante ohne Bluetooth-Hinweis.
+                Der <b>Startzustand</b> des BitBox-Kopplungs-Sheets, solange noch kein Gerät verbunden ist. Titel <b>BitBox verbinden</b> mit der Aufforderung, die BitBox mit dem Smartphone zu verbinden, und nur einem <b>Abbrechen</b>-Button; die App wartet im Hintergrund, bis eine BitBox gefunden wird. Dies ist die Android-Textvariante ohne Bluetooth-Hinweis. Derselbe Screen öffnet sich als Sheet, wenn die BitBox später erneut gekoppelt werden muss.
               </div>
             </div>
             <div class="test" id="138-connect-bitbox-page-default-ios">
@@ -5712,7 +6189,7 @@
                 <div class="file">test/goldens/screens/kyc/</div>
               </div>
               <div class="rhs">
-                <b>11 Screens</b>
+                <b>14 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/kyc"
@@ -5789,6 +6266,41 @@
               </div>
               <div class="desc">
                 Nach Antippen von Weiter bei leerem Formular erhalten die Pflichtfelder (Vorname, Nachname, Geburtsdatum, Staatsangehörigkeit) einen <b>roten Fehlerrahmen</b>. Nur das Telefonfeld zeigt zusätzlich einen Fehlertext.
+              </div>
+            </div>
+            <div class="test" id="324-kyc-personal-data-page-default">
+              <div class="head">
+                <a class="name permalink" href="#324-kyc-personal-data-page-default">324-kyc-personal-data-page-default</a>
+                <button class="copy-link" type="button" data-target="324-kyc-personal-data-page-default" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">kyc_personal_data_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/324-kyc-personal-data-page-default.png"
+                  alt="Persönliche Daten, vorausgefüllt"
+                />
+              </div>
+              <div class="desc">
+                Eigene Seite <b>Persönliche Daten</b>, vorausgefüllt, Text
+                <b>Bitte überprüfen Sie Ihre Angaben und korrigieren Sie alles, was nicht mit Ihrem Ausweisdokument übereinstimmt.</b>
+                Schaltfläche <b>Weiter</b>. Nicht der leere Registrierungsschritt.
+              </div>
+            </div>
+            <div class="test" id="325-kyc-personal-data-page-missing-user-data">
+              <div class="head">
+                <a class="name permalink" href="#325-kyc-personal-data-page-missing-user-data">325-kyc-personal-data-page-missing-user-data</a>
+                <button class="copy-link" type="button" data-target="325-kyc-personal-data-page-missing-user-data" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">kyc_personal_data_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/325-kyc-personal-data-page-missing-user-data.png"
+                  alt="Persönliche Daten, Fehler beim Laden"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Seite ohne Nutzerdaten. Titel <b>Persönliche Daten</b>,
+                Text <b>Fehler beim Laden</b>, Schaltfläche <b>Aktualisieren</b>.
               </div>
             </div>
             <div class="test" id="166-kyc-registration-page-address-step">
@@ -5869,6 +6381,22 @@
               </div>
               <div class="desc">
                 Rote SnackBar, wenn die Übermittlung fehlschlägt: bei abgebrochener BitBox-Signatur (hier) <b>Signatur abgebrochen — bitte BitBox erneut bestätigen</b>, sonst die generische bzw. Server-Meldung. Die Formulareingaben bleiben erhalten.
+              </div>
+            </div>
+            <div class="test" id="326-kyc-registration-page-submit-rejected-snackbar">
+              <div class="head">
+                <a class="name permalink" href="#326-kyc-registration-page-submit-rejected-snackbar">326-kyc-registration-page-submit-rejected-snackbar</a>
+                <button class="copy-link" type="button" data-target="326-kyc-registration-page-submit-rejected-snackbar" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">kyc_registration_page_states_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/326-kyc-registration-page-submit-rejected-snackbar.png"
+                  alt="Registration date must be today"
+                />
+              </div>
+              <div class="desc">
+                Rote SnackBar mit dem Servertext <b>Registration date must be today</b>.
               </div>
             </div>
             <div class="test" id="171-kyc-registration-page-forwarding-failed-snackbar">
@@ -6292,7 +6820,7 @@
                 <div class="file">test/goldens/screens/kyc/</div>
               </div>
               <div class="rhs">
-                <b>11 Screens</b>
+                <b>12 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/kyc"
@@ -6483,6 +7011,26 @@
                 Die Seite <b>Signatur nicht verfügbar</b>: im Debug-Modus (Adresse plus Signatur) ist die erforderliche EIP-712-Signatur technisch nicht möglich. Der Nutzer wird gebeten, eine Software-Wallet oder BitBox zu verwenden.
               </div>
             </div>
+            <div class="test" id="331-kyc-unsupported-step-page-default">
+              <div class="head">
+                <a class="name permalink" href="#331-kyc-unsupported-step-page-default">331-kyc-unsupported-step-page-default</a>
+                <button class="copy-link" type="button" data-target="331-kyc-unsupported-step-page-default" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">kyc_unsupported_step_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/331-kyc-unsupported-step-page-default.png"
+                  alt="Dieser Schritt wird anderswo fortgesetzt"
+                />
+              </div>
+              <div class="desc">
+                App-Leiste <b>Eröffnungsprozess</b>. Titel
+                <b>Dieser Schritt wird anderswo fortgesetzt</b>. Der Text beginnt
+                mit <b>Der nächste Schritt Ihrer Verifizierung kann in dieser App nicht abgeschlossen werden.</b>
+                Schaltflächen <b>Aktualisieren</b> und <b>Support kontaktieren</b>.
+                Das ist nicht die Signaturseite 203.
+              </div>
+            </div>
           </div>
         </details>
 
@@ -6496,7 +7044,7 @@
                 <div class="file">test/goldens/screens/kyc/</div>
               </div>
               <div class="rhs">
-                <b>7 Screens</b>
+                <b>8 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/kyc"
@@ -6591,6 +7139,23 @@
                 Die Seite <b>Registrierung wird geprüft</b>: die Anmeldung wird vom Team manuell geprüft. Der Nutzer muss nichts tun, der Status aktualisiert sich automatisch; ein Aktualisieren-Button ist vorhanden.
               </div>
             </div>
+            <div class="test" id="323-kyc-manual-review-page-rejection">
+              <div class="head">
+                <a class="name permalink" href="#323-kyc-manual-review-page-rejection">323-kyc-manual-review-page-rejection</a>
+                <button class="copy-link" type="button" data-target="323-kyc-manual-review-page-rejection" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">kyc_manual_review_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/323-kyc-manual-review-page-rejection.png"
+                  alt="Manuelle Prüfung mit Ablehnungssatz"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe manuelle Prüfung <b>Registrierung wird geprüft</b> mit dem Ablehnungssatz
+                <b>Please enter your full name (first and last name).</b>
+              </div>
+            </div>
             <div class="test" id="209-kyc-account-merge-page-default">
               <div class="head">
                 <a class="name permalink" href="#209-kyc-account-merge-page-default">209-kyc-account-merge-page-default</a>
@@ -6636,7 +7201,7 @@
                 <div class="file">test/goldens/screens/settings/</div>
               </div>
               <div class="rhs">
-                <b>2 Screens</b>
+                <b>3 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/settings"
@@ -6665,6 +7230,23 @@
               </div>
               <div class="desc">
                 Zeigt die Einstellungsseite, wenn eine <b>BitBox-Hardware-Wallet</b> geöffnet ist. Anders als bei einer Software-Wallet fehlt hier die Kachel <b>Wallet-Sicherung</b>, weil die Wiederherstellungsphrase bei einer Hardware-Wallet auf dem Gerät selbst liegt. Die Kachel <b>Netzwerk</b> ist nur in Entwickler-Builds sichtbar.
+              </div>
+            </div>
+            <div class="test" id="376-settings-page-network-options-on">
+              <div class="head">
+                <a class="name permalink" href="#376-settings-page-network-options-on">376-settings-page-network-options-on</a>
+                <button class="copy-link" type="button" data-target="376-settings-page-network-options-on" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">settings_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/376-settings-page-network-options-on.png"
+                  alt="Einstellungen, Netzwerk-Zeile sichtbar"
+                />
+              </div>
+              <div class="desc">
+                Mit eingeschalteten Netzwerk-Optionen ist die Zeile
+                <b>Netzwerk</b> sichtbar.
               </div>
             </div>
             <div class="test" id="212-settings-confirm-logout-wallet-sheet-checked">
@@ -7680,7 +8262,7 @@
                 <div class="file">test/goldens/screens/support/</div>
               </div>
               <div class="rhs">
-                <b>3 Screens</b>
+                <b>7 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/support"
@@ -7741,6 +8323,71 @@
               </div>
               <div class="desc">
                 Das Ticket-Formular während des Absendens: die Anliegen-Tags und das Nachrichtenfeld sind abgeblendet, die Schaltfläche <b>Senden</b> zeigt eine Ladeanimation. Das Anhang-Feld darunter bleibt unverändert sichtbar. Dieser Zustand erscheint, nachdem der Nutzer auf Senden getippt hat, solange das Ticket an den Server übermittelt wird.
+              </div>
+            </div>
+            <div class="test" id="381-support-create-ticket-page-attached">
+              <div class="head">
+                <a class="name permalink" href="#381-support-create-ticket-page-attached">381-support-create-ticket-page-attached</a>
+                <button class="copy-link" type="button" data-target="381-support-create-ticket-page-attached" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">support_create_ticket_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/381-support-create-ticket-page-attached.png"
+                  alt="Support-Ticket mit ausgewähltem Anhang"
+                />
+              </div>
+              <div class="desc">
+                Ausgefülltes Formular <b>Neues Ticket erstellen</b> mit ausgewähltem Anhang.
+              </div>
+            </div>
+            <div class="test" id="382-support-create-ticket-page-error-snackbar">
+              <div class="head">
+                <a class="name permalink" href="#382-support-create-ticket-page-error-snackbar">382-support-create-ticket-page-error-snackbar</a>
+                <button class="copy-link" type="button" data-target="382-support-create-ticket-page-error-snackbar" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">support_create_ticket_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/382-support-create-ticket-page-error-snackbar.png"
+                  alt="Internal server error"
+                />
+              </div>
+              <div class="desc">
+                Rote SnackBar mit <b>RealUnitApiException: Internal server error (code: UNKNOWN, statusCode: 500)</b>.
+              </div>
+            </div>
+            <div class="test" id="383-support-create-ticket-page-success-snackbar">
+              <div class="head">
+                <a class="name permalink" href="#383-support-create-ticket-page-success-snackbar">383-support-create-ticket-page-success-snackbar</a>
+                <button class="copy-link" type="button" data-target="383-support-create-ticket-page-success-snackbar" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">support_create_ticket_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/383-support-create-ticket-page-success-snackbar.png"
+                  alt="Ticket erstellt"
+                />
+              </div>
+              <div class="desc">
+                Grüne SnackBar <b>Ticket erstellt</b> über dem Support-Host, nachdem das Formular geschlossen ist.
+              </div>
+            </div>
+            <div class="test" id="393-image-source-sheet">
+              <div class="head">
+                <a class="name permalink" href="#393-image-source-sheet">393-image-source-sheet</a>
+                <button class="copy-link" type="button" data-target="393-image-source-sheet" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">image_source_sheet_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/393-image-source-sheet.png"
+                  alt="Sheet Foto aufnehmen oder aus Galerie wählen"
+                />
+              </div>
+              <div class="desc">
+                <b>Foto aufnehmen</b> und <b>Aus Galerie wählen</b>. Kamera und
+                Galerie selbst sind nicht im Bild.
               </div>
             </div>
           </div>
@@ -8548,7 +9195,7 @@
                 <div class="file">test/goldens/screens/pay/</div>
               </div>
               <div class="rhs">
-                <b>3 Screens</b>
+                <b>10 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/pay"
@@ -8627,6 +9274,543 @@
                 Dieselbe Bestätigungsseite mit Empfänger, REALU-Anteilzeilen und
                 dem Aufrundungshinweis unter den Beträgen.
                 Golden-Quelle: <code>pay_quote_page_ready_with_merchant.png</code>.
+              </div>
+            </div>
+            <div class="test" id="335-pay-quote-page-expired">
+              <div class="head">
+                <a class="name permalink" href="#335-pay-quote-page-expired">335-pay-quote-page-expired</a>
+                <button class="copy-link" type="button" data-target="335-pay-quote-page-expired" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">pay_quote_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/335-pay-quote-page-expired.png"
+                  alt="Zahlungsangebot abgelaufen"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Bestätigungsseite. Die Meldung lautet <b>Das Zahlungsangebot ist abgelaufen. Bitte scannen Sie den Code erneut.</b>
+              </div>
+            </div>
+            <div class="test" id="336-pay-quote-page-loading">
+              <div class="head">
+                <a class="name permalink" href="#336-pay-quote-page-loading">336-pay-quote-page-loading</a>
+                <button class="copy-link" type="button" data-target="336-pay-quote-page-loading" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">pay_quote_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/336-pay-quote-page-loading.png"
+                  alt="Zahlungsangebot wird geladen"
+                />
+              </div>
+              <div class="desc">
+                Ladezustand der Angebotsseite. Titel <b>Zahlung bestätigen</b>.
+              </div>
+            </div>
+            <div class="test" id="337-pay-quote-page-ready-eur">
+              <div class="head">
+                <a class="name permalink" href="#337-pay-quote-page-ready-eur">337-pay-quote-page-ready-eur</a>
+                <button class="copy-link" type="button" data-target="337-pay-quote-page-ready-eur" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">pay_quote_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/337-pay-quote-page-ready-eur.png"
+                  alt="Zahlungsangebot bereit, EUR-Beleg"
+                />
+              </div>
+              <div class="desc">
+                Bereites Angebot. Titel <b>Zahlung bestätigen</b>: der gespeicherte EUR-Beleg erscheint, weil
+                EUR gewählt ist.
+              </div>
+            </div>
+            <div class="test" id="332-pay-process-page-awaiting-settlement">
+              <div class="head">
+                <a class="name permalink" href="#332-pay-process-page-awaiting-settlement">332-pay-process-page-awaiting-settlement</a>
+                <button class="copy-link" type="button" data-target="332-pay-process-page-awaiting-settlement" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">pay_process_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/332-pay-process-page-awaiting-settlement.png"
+                  alt="Bezahlen, Warte auf Settlement"
+                />
+              </div>
+              <div class="desc">
+                Zahlungsablauf, während auf die Settlement gewartet wird. Statuszeile
+                <b>Zahlung wird abgeschlossen</b>.
+              </div>
+            </div>
+            <div class="test" id="333-pay-process-page-pay-retry">
+              <div class="head">
+                <a class="name permalink" href="#333-pay-process-page-pay-retry">333-pay-process-page-pay-retry</a>
+                <button class="copy-link" type="button" data-target="333-pay-process-page-pay-retry" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">pay_process_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/333-pay-process-page-pay-retry.png"
+                  alt="Bezahlen, erneuter Zahlungsversuch"
+                />
+              </div>
+              <div class="desc">
+                Zahlungsablauf mit der Beschriftung für den erneuten
+                Zahlungsversuch. Titel <b>Schließen Sie Ihre Zahlung ab</b>.
+              </div>
+            </div>
+            <div class="test" id="334-pay-process-page-swapping">
+              <div class="head">
+                <a class="name permalink" href="#334-pay-process-page-swapping">334-pay-process-page-swapping</a>
+                <button class="copy-link" type="button" data-target="334-pay-process-page-swapping" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">pay_process_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/334-pay-process-page-swapping.png"
+                  alt="Bezahlen, Tausch läuft"
+                />
+              </div>
+              <div class="desc">
+                Zahlungsablauf während des laufenden Tauschs. Statuszeile
+                <b>REALU wird gegen CHF verkauft</b>.
+              </div>
+            </div>
+            <div class="test" id="338-pay-scan-page-scanning">
+              <div class="head">
+                <a class="name permalink" href="#338-pay-scan-page-scanning">338-pay-scan-page-scanning</a>
+                <button class="copy-link" type="button" data-target="338-pay-scan-page-scanning" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">pay_scan_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/338-pay-scan-page-scanning.png"
+                  alt="Bezahlen, Scan mit Kamera-Platzhalter"
+                />
+              </div>
+              <div class="desc">
+                Scan-Seite im Scan-Zustand mit Platzhalter für die Kamera. Titel
+                <b>Zahlungscode scannen</b>.
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <hr class="sep" />
+
+        <details id="spec-82" class="spec" open>
+          <summary>
+            <div class="spec-head">
+              <div class="lhs">
+                <h2><span class="num">82</span>Senden</h2>
+                <div class="file">test/goldens/screens/send/</div>
+              </div>
+              <div class="rhs">
+                <b>9 Screens</b>
+                <div class="links">
+                  <a
+                    href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/send"
+                    >Goldens ↗</a
+                  >
+                </div>
+              </div>
+            </div>
+          </summary>
+          <p class="spec-intro">
+            Senden von REALU, vom Hinweis bis zur Signatur, plus die Bestandszeile danach.
+          </p>
+
+          <div class="tests cols-2">
+            <div class="test" id="373-send-info-page">
+              <div class="head">
+                <a class="name permalink" href="#373-send-info-page">373-send-info-page</a>
+                <button class="copy-link" type="button" data-target="373-send-info-page" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/373-send-info-page.png"
+                  alt="Bevor Sie senden"
+                />
+              </div>
+              <div class="desc">
+                Der Screen heisst <b>Bevor Sie senden</b>. Der Text lautet <b>Sie können REALU an eine andere Wallet-Adresse senden, die bei RealUnit registriert ist, etwa an eine eigene Hardware-Wallet oder an eine andere Aktionärin oder einen anderen Aktionär.</b> <b>Prüfen Sie die Empfängeradresse vor dem Bestätigen sorgfältig. Eine Übertragung ist endgültig und kann von RealUnit nicht rückgängig gemacht werden.</b>
+              </div>
+            </div>
+            <div class="test" id="375-send-recipient-page-empty">
+              <div class="head">
+                <a class="name permalink" href="#375-send-recipient-page-empty">375-send-recipient-page-empty</a>
+                <button class="copy-link" type="button" data-target="375-send-recipient-page-empty" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/375-send-recipient-page-empty.png"
+                  alt="Empfänger scannen"
+                />
+              </div>
+              <div class="desc">
+                Leere Empfängerseite. Titel <b>Empfänger scannen</b>.
+              </div>
+            </div>
+            <div class="test" id="367-send-amount-page-empty">
+              <div class="head">
+                <a class="name permalink" href="#367-send-amount-page-empty">367-send-amount-page-empty</a>
+                <button class="copy-link" type="button" data-target="367-send-amount-page-empty" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/367-send-amount-page-empty.png"
+                  alt="Zu sendender Betrag"
+                />
+              </div>
+              <div class="desc">
+                Leere Betragsseite. Titel <b>Zu sendender Betrag</b>.
+              </div>
+            </div>
+            <div class="test" id="368-send-amount-page-insufficient">
+              <div class="head">
+                <a class="name permalink" href="#368-send-amount-page-insufficient">368-send-amount-page-insufficient</a>
+                <button class="copy-link" type="button" data-target="368-send-amount-page-insufficient" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/368-send-amount-page-insufficient.png"
+                  alt="Nicht genügend REALU"
+                />
+              </div>
+              <div class="desc">
+                Ein Betrag über dem Bestand. Der Fehler lautet <b>Nicht genügend REALU in Ihrer Wallet.</b>
+              </div>
+            </div>
+            <div class="test" id="369-send-confirm-page">
+              <div class="head">
+                <a class="name permalink" href="#369-send-confirm-page">369-send-confirm-page</a>
+                <button class="copy-link" type="button" data-target="369-send-confirm-page" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/369-send-confirm-page.png"
+                  alt="Überweisung prüfen"
+                />
+              </div>
+              <div class="desc">
+                Zusammenfassung. Titel <b>Überweisung prüfen</b>.
+              </div>
+            </div>
+            <div class="test" id="374-send-process-page-signing">
+              <div class="head">
+                <a class="name permalink" href="#374-send-process-page-signing">374-send-process-page-signing</a>
+                <button class="copy-link" type="button" data-target="374-send-process-page-signing" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/374-send-process-page-signing.png"
+                  alt="REALU wird gesendet"
+                />
+              </div>
+              <div class="desc">
+                Signatur läuft. Titel <b>REALU wird gesendet</b>, Statuszeile <b>Überweisung wird gesendet</b>.
+              </div>
+            </div>
+            <div class="test" id="370-send-holding-kauf">
+              <div class="head">
+                <a class="name permalink" href="#370-send-holding-kauf">370-send-holding-kauf</a>
+                <button class="copy-link" type="button" data-target="370-send-holding-kauf" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/370-send-holding-kauf.png"
+                  alt="Senden, Bestand nach Kauf"
+                />
+              </div>
+              <div class="desc">
+                Bestand nach einem Kauf. Die Richtung auf dem Bild ist
+                <b>Kauf</b>, verfügbar 85194.
+              </div>
+            </div>
+            <div class="test" id="371-send-holding-transfer-in">
+              <div class="head">
+                <a class="name permalink" href="#371-send-holding-transfer-in">371-send-holding-transfer-in</a>
+                <button class="copy-link" type="button" data-target="371-send-holding-transfer-in" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/371-send-holding-transfer-in.png"
+                  alt="Senden, Bestand nach Empfangen"
+                />
+              </div>
+              <div class="desc">
+                Eingehende On-Chain-Bewegung. Die Beschriftung auf dem Bild ist
+                <b>Empfangen</b>, verfügbar 78094.
+              </div>
+            </div>
+            <div class="test" id="372-send-holding-transfer-out">
+              <div class="head">
+                <a class="name permalink" href="#372-send-holding-transfer-out">372-send-holding-transfer-out</a>
+                <button class="copy-link" type="button" data-target="372-send-holding-transfer-out" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/372-send-holding-transfer-out.png"
+                  alt="Senden, Bestand nach Gesendet"
+                />
+              </div>
+              <div class="desc">
+                Ausgehende On-Chain-Bewegung. Die Beschriftung auf dem Bild ist
+                <b>Gesendet</b>, verfügbar 85094.
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <hr class="sep" />
+
+        <details id="spec-83" class="spec" open>
+          <summary>
+            <div class="spec-head">
+              <div class="lhs">
+                <h2><span class="num">83</span>Start und Aktualisierung</h2>
+                <div class="file">test/goldens/screens/startup_failure/ · test/goldens/screens/update_required/</div>
+              </div>
+              <div class="rhs">
+                <b>8 Screens</b>
+                <div class="links">
+                  <a
+                    href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/startup_failure"
+                    >startup_failure Goldens ↗</a
+                  >
+                  <a
+                    href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/update_required"
+                    >update_required Goldens ↗</a
+                  >
+                </div>
+              </div>
+            </div>
+          </summary>
+          <p class="spec-intro">
+            Zwei Fälle, die den normalen Start ersetzen: die App kann nicht starten, oder eine Aktualisierung ist erzwungen.
+          </p>
+
+          <div class="tests cols-2">
+            <div class="test" id="377-startup-failure-page-action-failed">
+              <div class="head">
+                <a class="name permalink" href="#377-startup-failure-page-action-failed">377-startup-failure-page-action-failed</a>
+                <button class="copy-link" type="button" data-target="377-startup-failure-page-action-failed" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">startup_failure_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/377-startup-failure-page-action-failed.png"
+                  alt="App konnte nicht gestartet werden, Aktion fehlgeschlagen"
+                />
+              </div>
+              <div class="desc">
+                Titel <b>Die App konnte nicht gestartet werden</b>. Zusätzliche
+                rote Zeile <b>Das hat nicht funktioniert. Bitte versuchen Sie es erneut.</b>
+                Schaltflächen <b>Wiederholen</b> und <b>Support kontaktieren</b>.
+                Kein Wallet-Zurücksetzen. Der Text ist der generische Startfehler.
+              </div>
+            </div>
+            <div class="test" id="378-startup-failure-page-key-missing">
+              <div class="head">
+                <a class="name permalink" href="#378-startup-failure-page-key-missing">378-startup-failure-page-key-missing</a>
+                <button class="copy-link" type="button" data-target="378-startup-failure-page-key-missing" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">startup_failure_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/378-startup-failure-page-key-missing.png"
+                  alt="Startfehler, Schlüssel fehlt, Zurücksetzen angeboten"
+                />
+              </div>
+              <div class="desc">
+                Der Schlüssel fehlt. Der Text beginnt mit
+                <b>Die Wallet-Daten auf diesem Gerät können nicht mehr entsperrt werden</b>.
+                Schaltflächen <b>Wiederholen</b>, <b>Wallet zurücksetzen</b>,
+                <b>Support kontaktieren</b>.
+              </div>
+            </div>
+            <div class="test" id="379-startup-failure-page-retry">
+              <div class="head">
+                <a class="name permalink" href="#379-startup-failure-page-retry">379-startup-failure-page-retry</a>
+                <button class="copy-link" type="button" data-target="379-startup-failure-page-retry" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">startup_failure_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/379-startup-failure-page-retry.png"
+                  alt="Startfehler, nur Wiederholen"
+                />
+              </div>
+              <div class="desc">
+                Generischer Startfehler, ohne rote Zusatzzeile und ohne Zurücksetzen.
+                Text <b>Beim Starten der App ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut. Falls das Problem weiterhin besteht, starten Sie Ihr Gerät neu oder kontaktieren Sie unseren Support.</b>
+                Schaltflächen <b>Wiederholen</b> und <b>Support kontaktieren</b>.
+              </div>
+            </div>
+            <div class="test" id="380-startup-failure-reset-sheet-default">
+              <div class="head">
+                <a class="name permalink" href="#380-startup-failure-reset-sheet-default">380-startup-failure-reset-sheet-default</a>
+                <button class="copy-link" type="button" data-target="380-startup-failure-reset-sheet-default" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">startup_failure_reset_sheet_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/380-startup-failure-reset-sheet-default.png"
+                  alt="Sheet RealUnit Wallet zurücksetzen, Checkbox leer"
+                />
+              </div>
+              <div class="desc">
+                Sheet <b>RealUnit Wallet zurücksetzen</b>. Warnt, dass die
+                Wallet-Daten auf diesem Gerät gelöscht werden. Die Checkbox
+                <b>Ich habe meine Wiederherstellungsphrase oder meine BitBox.</b>
+                ist nicht gesetzt, deshalb ist <b>Zurücksetzen</b> inaktiv.
+                Daneben <b>Schließen</b>.
+              </div>
+            </div>
+            <div class="test" id="389-update-required-page-ready">
+              <div class="head">
+                <a class="name permalink" href="#389-update-required-page-ready">389-update-required-page-ready</a>
+                <button class="copy-link" type="button" data-target="389-update-required-page-ready" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">update_required_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/389-update-required-page-ready.png"
+                  alt="Aktualisierung erforderlich, Store-Link"
+                />
+              </div>
+              <div class="desc">
+                Erzwungene Aktualisierung mit Store-Link, ohne Wallet. Titel
+                <b>Aktualisierung erforderlich</b>. Text
+                <b>Diese Version der App kann nicht mehr verwendet werden. Bitte aktualisieren Sie, um fortzufahren</b>.
+                Schaltfläche <b>Aktualisieren</b>. Kein Hinweis auf
+                Nichtverfügbarkeit, keine Sicherung, kein Empfangen, keine
+                GitHub-Schaltfläche.
+              </div>
+            </div>
+            <div class="test" id="390-update-required-page-unavailable">
+              <div class="head">
+                <a class="name permalink" href="#390-update-required-page-unavailable">390-update-required-page-unavailable</a>
+                <button class="copy-link" type="button" data-target="390-update-required-page-unavailable" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">update_required_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/390-update-required-page-unavailable.png"
+                  alt="Aktualisierung erforderlich, Update nicht verfügbar"
+                />
+              </div>
+              <div class="desc">
+                Ohne Store-Link. Text plus
+                <b>Update nicht verfügbar. Bitte später erneut versuchen</b>.
+                Keine Schaltfläche <b>Aktualisieren</b>.
+              </div>
+            </div>
+            <div class="test" id="391-update-required-page-software-wallet">
+              <div class="head">
+                <a class="name permalink" href="#391-update-required-page-software-wallet">391-update-required-page-software-wallet</a>
+                <button class="copy-link" type="button" data-target="391-update-required-page-software-wallet" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">update_required_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/391-update-required-page-software-wallet.png"
+                  alt="Aktualisierung erforderlich, Software-Wallet"
+                />
+              </div>
+              <div class="desc">
+                Store-Link und geladene Software-Wallet, Adresswiederherstellung
+                nicht nötig. Schaltflächen <b>Aktualisieren</b>,
+                <b>Wiederherstellungsphrase sichern</b>, <b>Empfangen</b>.
+              </div>
+            </div>
+            <div class="test" id="392-update-required-page-github-secondary">
+              <div class="head">
+                <a class="name permalink" href="#392-update-required-page-github-secondary">392-update-required-page-github-secondary</a>
+                <button class="copy-link" type="button" data-target="392-update-required-page-github-secondary" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">update_required_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/392-update-required-page-github-secondary.png"
+                  alt="Aktualisierung erforderlich, GitHub-Download"
+                />
+              </div>
+              <div class="desc">
+                Store-Link und ein abweichender GitHub-Link, ohne Wallet.
+                Schaltflächen <b>Aktualisieren</b> und <b>Von GitHub laden</b>.
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <hr class="sep" />
+
+        <details id="spec-84" class="spec" open>
+          <summary>
+            <div class="spec-head">
+              <div class="lhs">
+                <h2><span class="num">84</span>In-App-Browser</h2>
+                <div class="file">test/goldens/screens/web_view/</div>
+              </div>
+              <div class="rhs">
+                <b>2 Screens</b>
+                <div class="links">
+                  <a
+                    href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/web_view"
+                    >Goldens ↗</a
+                  >
+                </div>
+              </div>
+            </div>
+          </summary>
+          <p class="spec-intro">
+            Nur die App-Leiste. Die Seite darunter ist die Website selbst und gehört nicht zum Bild.
+          </p>
+
+          <div class="tests cols-2">
+            <div class="test" id="394-web-view-chrome">
+              <div class="head">
+                <a class="name permalink" href="#394-web-view-chrome">394-web-view-chrome</a>
+                <button class="copy-link" type="button" data-target="394-web-view-chrome" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">web_view_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/394-web-view-chrome.png"
+                  alt="In-App-Browser, App-Leiste ohne externes Symbol"
+                />
+              </div>
+              <div class="desc">
+                App-Leiste, Zurück-Pfeil, fetter Titel <b>RealUnit</b>, ohne
+                Symbol für den externen Browser. Der Seitenbereich ist die
+                Website und gehört nicht zu dieser Baseline.
+              </div>
+            </div>
+            <div class="test" id="395-web-view-chrome-external">
+              <div class="head">
+                <a class="name permalink" href="#395-web-view-chrome-external">395-web-view-chrome-external</a>
+                <button class="copy-link" type="button" data-target="395-web-view-chrome-external" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">web_view_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/395-web-view-chrome-external.png"
+                  alt="In-App-Browser, App-Leiste mit externem Symbol"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Leiste plus das Symbol für den externen Browser. Titel
+                <b>RealUnit</b>. Der Seitenbereich ist die Website und gehört nicht zu dieser Baseline.
               </div>
             </div>
           </div>
@@ -11437,6 +12621,89 @@
               offene Einladung mit Kopieren und Versenden.
             </div>
           </div>
+          <div class="test" id="351-referral-overview-page-empty">
+            <div class="head">
+              <a class="name permalink" href="#351-referral-overview-page-empty">351-referral-overview-page-empty</a>
+              <button class="copy-link" type="button" data-target="351-referral-overview-page-empty" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_overview_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/351-referral-overview-page-empty.png"
+                alt="Empfehlungs-Übersicht leer, Zähler null"
+              />
+            </div>
+            <div class="desc">
+              Leere Übersicht mit Zählern auf null. Titel <b>Ihre Empfehlungen</b>.
+            </div>
+          </div>
+          <div class="test" id="352-referral-overview-page-eur">
+            <div class="head">
+              <a class="name permalink" href="#352-referral-overview-page-eur">352-referral-overview-page-eur</a>
+              <button class="copy-link" type="button" data-target="352-referral-overview-page-eur" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_overview_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/352-referral-overview-page-eur.png"
+                alt="Empfehlungs-Übersicht mit Euro-Betrag"
+              />
+            </div>
+            <div class="desc">
+              Die Übersichtskachel <b>Insgesamt erhalten</b> zeigt den gespeicherten Euro-Betrag, weil
+              EUR gewählt ist.
+            </div>
+          </div>
+          <div class="test" id="353-referral-overview-page-failure">
+            <div class="head">
+              <a class="name permalink" href="#353-referral-overview-page-failure">353-referral-overview-page-failure</a>
+              <button class="copy-link" type="button" data-target="353-referral-overview-page-failure" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/353-referral-overview-page-failure.png"
+                alt="Empfehlungs-Übersicht, nicht verfügbar"
+              />
+            </div>
+            <div class="desc">
+              Die Übersicht mit nicht verfügbarem Fehler. Titel <b>Ihre Empfehlungen</b>.
+              Text <b>Wir konnten den Code gerade nicht prüfen. Bitte versuchen Sie es später erneut.</b>
+            </div>
+          </div>
+          <div class="test" id="354-referral-overview-page-invites-error">
+            <div class="head">
+              <a class="name permalink" href="#354-referral-overview-page-invites-error">354-referral-overview-page-invites-error</a>
+              <button class="copy-link" type="button" data-target="354-referral-overview-page-invites-error" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/354-referral-overview-page-invites-error.png"
+                alt="Empfehlungs-Übersicht, Fehler in der Einladungsliste"
+              />
+            </div>
+            <div class="desc">
+              Die Übersicht, wenn die Einladungsliste fehlschlägt. Text
+              <b>Wir konnten den Code gerade nicht prüfen. Bitte versuchen Sie es später erneut.</b>
+            </div>
+          </div>
+          <div class="test" id="355-referral-overview-page-loading">
+            <div class="head">
+              <a class="name permalink" href="#355-referral-overview-page-loading">355-referral-overview-page-loading</a>
+              <button class="copy-link" type="button" data-target="355-referral-overview-page-loading" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/355-referral-overview-page-loading.png"
+                alt="Empfehlungs-Übersicht, Ladezustand"
+              />
+            </div>
+            <div class="desc">
+              Die Übersicht im Ladezustand. Text <b>Empfehlungen werden geladen…</b>
+            </div>
+          </div>
           <div class="test" id="277-kyc-registration-referral">
             <div class="head">
               <a class="name permalink" href="#277-kyc-registration-referral">277-kyc-registration-referral</a>
@@ -11486,6 +12753,57 @@
             </div>
             <div class="desc">
               Gate für nicht berechtigte Nutzer, Schließen mit Tastaturfokus.
+            </div>
+          </div>
+          <div class="test" id="348-referral-gate-failure">
+            <div class="head">
+              <a class="name permalink" href="#348-referral-gate-failure">348-referral-gate-failure</a>
+              <button class="copy-link" type="button" data-target="348-referral-gate-failure" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/348-referral-gate-failure.png"
+                alt="Empfehlungs-Gate, nicht verfügbar"
+              />
+            </div>
+            <div class="desc">
+              Dasselbe Gate mit nicht verfügbarem Fehler. Titel <b>Empfehlungen</b>.
+              Text <b>Wir konnten den Code gerade nicht prüfen. Bitte versuchen Sie es später erneut.</b>
+            </div>
+          </div>
+          <div class="test" id="349-referral-gate-loading">
+            <div class="head">
+              <a class="name permalink" href="#349-referral-gate-loading">349-referral-gate-loading</a>
+              <button class="copy-link" type="button" data-target="349-referral-gate-loading" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/349-referral-gate-loading.png"
+                alt="Empfehlungs-Gate, Ladezustand"
+              />
+            </div>
+            <div class="desc">
+              Dasselbe Gate im Ladezustand. Titel <b>Empfehlungen</b>.
+              Text <b>Empfehlungen werden geladen…</b>
+            </div>
+          </div>
+          <div class="test" id="350-referral-gate-quota">
+            <div class="head">
+              <a class="name permalink" href="#350-referral-gate-quota">350-referral-gate-quota</a>
+              <button class="copy-link" type="button" data-target="350-referral-gate-quota" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/350-referral-gate-quota.png"
+                alt="Empfehlungs-Gate, Quartalslimit"
+              />
+            </div>
+            <div class="desc">
+              Dasselbe Gate bei erreichtem Quartalslimit. Titel <b>Empfehlungen</b>.
+              Text <b>In diesem Quartal sind keine weiteren Prämien möglich.</b>
             </div>
           </div>
           <div class="test" id="280-referral-create-invite">
@@ -11540,6 +12858,40 @@
               fixiert im Zeitpunkt der Gutschrift.
             </div>
           </div>
+          <div class="test" id="356-referral-payout-transaction-row-eur">
+            <div class="head">
+              <a class="name permalink" href="#356-referral-payout-transaction-row-eur">356-referral-payout-transaction-row-eur</a>
+              <button class="copy-link" type="button" data-target="356-referral-payout-transaction-row-eur" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_surfaces_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/356-referral-payout-transaction-row-eur.png"
+                alt="Prämiienzeile mit gespeichertem Euro-Betrag"
+              />
+            </div>
+            <div class="desc">
+              Dieselbe Prämiienzeile <b>Empfehlungsprämie</b> mit dem gespeicherten Euro-Betrag, weil
+              EUR gewählt ist.
+            </div>
+          </div>
+          <div class="test" id="357-referral-payout-transaction-row-eur-chf-only">
+            <div class="head">
+              <a class="name permalink" href="#357-referral-payout-transaction-row-eur-chf-only">357-referral-payout-transaction-row-eur-chf-only</a>
+              <button class="copy-link" type="button" data-target="357-referral-payout-transaction-row-eur-chf-only" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_surfaces_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/357-referral-payout-transaction-row-eur-chf-only.png"
+                alt="Prämiienzeile behält gespeicherten Frankenbetrag"
+              />
+            </div>
+            <div class="desc">
+              Dieselbe Prämiienzeile <b>Empfehlungsprämie</b> behält den gespeicherten Frankenbetrag,
+              weil EUR gewählt ist, aber kein Euro gespeichert war.
+            </div>
+          </div>
           <div class="test" id="283-referral-terms-readonly">
             <div class="head">
               <a class="name permalink" href="#283-referral-terms-readonly">283-referral-terms-readonly</a>
@@ -11558,6 +12910,24 @@
               ohne Checkbox und ohne «Einladungslink erstellen».
             </div>
           </div>
+          <div class="test" id="358-referral-terms-page-error">
+            <div class="head">
+              <a class="name permalink" href="#358-referral-terms-page-error">358-referral-terms-page-error</a>
+              <button class="copy-link" type="button" data-target="358-referral-terms-page-error" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/358-referral-terms-page-error.png"
+                alt="Teilnahmebedingungen, Fehler beim Annehmen"
+              />
+            </div>
+            <div class="desc">
+              Die Teilnahmebedingungen mit Fehler beim Annehmen. Titel
+              <b>Teilnahmebedingungen Referral-Programm</b>. Text
+              <b>Wir konnten den Code gerade nicht prüfen. Bitte versuchen Sie es später erneut.</b>
+            </div>
+          </div>
           <div class="test" id="284-referral-create-name">
             <div class="head">
               <a class="name permalink" href="#284-referral-create-name">284-referral-create-name</a>
@@ -11573,6 +12943,91 @@
             <div class="desc">
               Einladung erstellen: Vorname der eingeladenen Person, Button
               «Einladungslink erstellen».
+            </div>
+          </div>
+          <div class="test" id="343-referral-create-page-creating">
+            <div class="head">
+              <a class="name permalink" href="#343-referral-create-page-creating">343-referral-create-page-creating</a>
+              <button class="copy-link" type="button" data-target="343-referral-create-page-creating" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/343-referral-create-page-creating.png"
+                alt="Einladung erstellen, wird angelegt"
+              />
+            </div>
+            <div class="desc">
+              Die Erstellseite während des Anlegens. Titel <b>Einladungslink erstellen</b>.
+              Text <b>Einladung wird erstellt…</b>
+            </div>
+          </div>
+          <div class="test" id="344-referral-create-page-error">
+            <div class="head">
+              <a class="name permalink" href="#344-referral-create-page-error">344-referral-create-page-error</a>
+              <button class="copy-link" type="button" data-target="344-referral-create-page-error" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/344-referral-create-page-error.png"
+                alt="Einladung erstellen, ungültiger Fehler"
+              />
+            </div>
+            <div class="desc">
+              Die Erstellseite mit ungültigem Fehler. Titel <b>Einladungslink erstellen</b>.
+              Text <b>Dieser Code ist ungültig oder abgelaufen.</b>
+            </div>
+          </div>
+          <div class="test" id="345-referral-create-page-loading">
+            <div class="head">
+              <a class="name permalink" href="#345-referral-create-page-loading">345-referral-create-page-loading</a>
+              <button class="copy-link" type="button" data-target="345-referral-create-page-loading" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/345-referral-create-page-loading.png"
+                alt="Einladung erstellen, Ladezustand"
+              />
+            </div>
+            <div class="desc">
+              Die Erstellseite im Ladezustand. Titel <b>Einladungslink erstellen</b>.
+              Text <b>Empfehlungen werden geladen…</b>
+            </div>
+          </div>
+          <div class="test" id="346-referral-create-page-not-eligible">
+            <div class="head">
+              <a class="name permalink" href="#346-referral-create-page-not-eligible">346-referral-create-page-not-eligible</a>
+              <button class="copy-link" type="button" data-target="346-referral-create-page-not-eligible" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/346-referral-create-page-not-eligible.png"
+                alt="Einladung erstellen, nicht berechtigt"
+              />
+            </div>
+            <div class="desc">
+              Die Erstellseite, weil keine Berechtigung vorliegt. Titel <b>Einladungslink erstellen</b>.
+              Text <b>Das Empfehlungsprogramm steht verifizierten Aktionären mit dem erforderlichen Bestand zur Verfügung.</b>
+            </div>
+          </div>
+          <div class="test" id="347-referral-create-page-quota">
+            <div class="head">
+              <a class="name permalink" href="#347-referral-create-page-quota">347-referral-create-page-quota</a>
+              <button class="copy-link" type="button" data-target="347-referral-create-page-quota" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/347-referral-create-page-quota.png"
+                alt="Einladung erstellen, Quartalslimit"
+              />
+            </div>
+            <div class="desc">
+              Die Erstellseite bei erreichtem Quartalslimit. Titel <b>Einladungslink erstellen</b>.
+              Text <b>In diesem Quartal sind keine weiteren Prämien möglich.</b>
             </div>
           </div>
           <div class="test" id="285-settings-referral-eligible">
@@ -11659,6 +13114,39 @@
               Frankenwert, fixiert im Zeitpunkt der Gutschrift (TB Ziff. 6).
             </div>
           </div>
+          <div class="test" id="384-transaction-history-page-referral-payout-chf-only">
+            <div class="head">
+              <a class="name permalink" href="#384-transaction-history-page-referral-payout-chf-only">384-transaction-history-page-referral-payout-chf-only</a>
+              <button class="copy-link" type="button" data-target="384-transaction-history-page-referral-payout-chf-only" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">transaction_history_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/384-transaction-history-page-referral-payout-chf-only.png"
+                alt="Empfehlungsprämie bleibt in CHF"
+              />
+            </div>
+            <div class="desc">
+              Dieselbe Historienzeile <b>Empfehlungsprämie</b> wie 288. Ist EUR gewählt, aber kein
+              EUR-Betrag gespeichert, bleibt der fixierte Frankenwert.
+            </div>
+          </div>
+          <div class="test" id="385-transaction-history-page-referral-payout-eur">
+            <div class="head">
+              <a class="name permalink" href="#385-transaction-history-page-referral-payout-eur">385-transaction-history-page-referral-payout-eur</a>
+              <button class="copy-link" type="button" data-target="385-transaction-history-page-referral-payout-eur" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">transaction_history_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/385-transaction-history-page-referral-payout-eur.png"
+                alt="Empfehlungsprämie in EUR"
+              />
+            </div>
+            <div class="desc">
+              Dieselbe Zeile <b>Empfehlungsprämie</b> wie 288, mit dem gespeicherten EUR-Betrag, wenn EUR gewählt ist.
+            </div>
+          </div>
           <div class="test" id="289-dashboard-referral-entry-and-payout">
             <div class="head">
               <a class="name permalink" href="#289-dashboard-referral-entry-and-payout">289-dashboard-referral-entry-and-payout</a>
@@ -11676,6 +13164,22 @@
               erfolgreicher Weiterempfehlung») und Prämie in den letzten Transaktionen.
             </div>
           </div>
+          <div class="test" id="314-dashboard-referral-entry-and-payout-eur">
+            <div class="head">
+              <a class="name permalink" href="#314-dashboard-referral-entry-and-payout-eur">314-dashboard-referral-entry-and-payout-eur</a>
+              <button class="copy-link" type="button" data-target="314-dashboard-referral-entry-and-payout-eur" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">dashboard_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/314-dashboard-referral-entry-and-payout-eur.png"
+                alt="Dashboard-Karte Empfehlungen, Prämie in EUR"
+              />
+            </div>
+            <div class="desc">
+              Dieselbe Karte <b>Empfehlungen</b> und dieselbe Prämie in den letzten Transaktionen wie 289, die Beträge aber in EUR.
+            </div>
+          </div>
           <div class="test" id="290-kyc-registration-referral-promo">
             <div class="head">
               <a class="name permalink" href="#290-kyc-registration-referral-promo">290-kyc-registration-referral-promo</a>
@@ -11691,6 +13195,70 @@
             <div class="desc">
               Nach Prüfung erscheint der von RealUnit vorgegebene
               Aktionstext in einem eigenen Fenster (Schließen oder Tippen daneben).
+            </div>
+          </div>
+          <div class="test" id="327-kyc-registration-referral-step-invalid">
+            <div class="head">
+              <a class="name permalink" href="#327-kyc-registration-referral-step-invalid">327-kyc-registration-referral-step-invalid</a>
+              <button class="copy-link" type="button" data-target="327-kyc-registration-referral-step-invalid" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">kyc_registration_referral_step_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/327-kyc-registration-referral-step-invalid.png"
+                alt="Empfehlungscode ungültig oder abgelaufen"
+              />
+            </div>
+            <div class="desc">
+              Dieselbe Code-Eingabe. Nach der Prüfung steht <b>Dieser Code ist ungültig oder abgelaufen.</b> — nicht «Einladung erkannt».
+            </div>
+          </div>
+          <div class="test" id="328-kyc-registration-referral-step-loading">
+            <div class="head">
+              <a class="name permalink" href="#328-kyc-registration-referral-step-loading">328-kyc-registration-referral-step-loading</a>
+              <button class="copy-link" type="button" data-target="328-kyc-registration-referral-step-loading" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">kyc_registration_referral_step_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/328-kyc-registration-referral-step-loading.png"
+                alt="Empfehlungscode wird geprüft"
+              />
+            </div>
+            <div class="desc">
+              Dieselbe Code-Eingabe, während die Prüfung läuft: <b>Code wird geprüft…</b>
+            </div>
+          </div>
+          <div class="test" id="329-kyc-registration-referral-step-spent">
+            <div class="head">
+              <a class="name permalink" href="#329-kyc-registration-referral-step-spent">329-kyc-registration-referral-step-spent</a>
+              <button class="copy-link" type="button" data-target="329-kyc-registration-referral-step-spent" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">kyc_registration_referral_step_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/329-kyc-registration-referral-step-spent.png"
+                alt="Empfehlungscode bereits verwendet"
+              />
+            </div>
+            <div class="desc">
+              Nach der Prüfung <b>Dieser Einladungs- oder Promo-Code wurde bereits verwendet.</b>
+            </div>
+          </div>
+          <div class="test" id="330-kyc-registration-referral-step-unavailable">
+            <div class="head">
+              <a class="name permalink" href="#330-kyc-registration-referral-step-unavailable">330-kyc-registration-referral-step-unavailable</a>
+              <button class="copy-link" type="button" data-target="330-kyc-registration-referral-step-unavailable" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">kyc_registration_referral_step_states_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/330-kyc-registration-referral-step-unavailable.png"
+                alt="Empfehlungscode gerade nicht prüfbar"
+              />
+            </div>
+            <div class="desc">
+              Die Prüfung ist gerade nicht möglich: <b>Wir konnten den Code gerade nicht prüfen. Bitte versuchen Sie es später erneut.</b>
             </div>
           </div>
           <div class="test" id="291-referral-bind-error-invalid">
@@ -11733,6 +13301,54 @@
               API-Code <code>ALREADY_REGISTERED</code>.
             </div>
           </div>
+          <div class="test" id="340-referral-bind-error-already-bound">
+            <div class="head">
+              <a class="name permalink" href="#340-referral-bind-error-already-bound">340-referral-bind-error-already-bound</a>
+              <button class="copy-link" type="button" data-target="340-referral-bind-error-already-bound" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_bind_error_dialog_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/340-referral-bind-error-already-bound.png"
+                alt="Dashboard-Overlay: Bereits ein Code eingelöst"
+              />
+            </div>
+            <div class="desc">
+              Derselbe Dashboard-Overlay wie bei 292. Titel <b>Bereits ein Code eingelöst</b>, Body <b>Sie haben bereits einen Einladungs- oder Promo-Code eingelöst.</b> <b>Schließen</b> mit Tastaturfokus.
+            </div>
+          </div>
+          <div class="test" id="341-referral-bind-error-self-referral">
+            <div class="head">
+              <a class="name permalink" href="#341-referral-bind-error-self-referral">341-referral-bind-error-self-referral</a>
+              <button class="copy-link" type="button" data-target="341-referral-bind-error-self-referral" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_bind_error_dialog_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/341-referral-bind-error-self-referral.png"
+                alt="Dashboard-Overlay: Eigene Einladung"
+              />
+            </div>
+            <div class="desc">
+              Derselbe Overlay. Titel <b>Eigene Einladung</b>, Body <b>Sie können Ihre eigene Einladung nicht einlösen.</b>
+            </div>
+          </div>
+          <div class="test" id="342-referral-bind-error-spent">
+            <div class="head">
+              <a class="name permalink" href="#342-referral-bind-error-spent">342-referral-bind-error-spent</a>
+              <button class="copy-link" type="button" data-target="342-referral-bind-error-spent" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_bind_error_dialog_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/342-referral-bind-error-spent.png"
+                alt="Dashboard-Overlay: Code bereits eingelöst"
+              />
+            </div>
+            <div class="desc">
+              Derselbe Overlay. Titel <b>Code bereits eingelöst</b>, Body <b>Dieser Einladungs- oder Promo-Code wurde bereits verwendet.</b>
+            </div>
+          </div>
           <div class="test" id="303-referral-bind-invite-recognized">
             <div class="head">
               <a class="name permalink" href="#303-referral-bind-invite-recognized">303-referral-bind-invite-recognized</a>
@@ -11750,6 +13366,54 @@
               Overlay auf dem Dashboard (Kurschart), ohne Titel, Body
               «Einladung von Björn erkannt. Sind Sie verifiziert und umfasst Ihr erster Kauf mindestens 200 Aktientoken, kann Björn dafür eine Prämie gemäss Teilnahmebedingungen erhalten.»,
               <b>Schließen</b> mit Tastaturfokus, nicht per Barrier schliessbar.
+            </div>
+          </div>
+          <div class="test" id="387-referral-bind-promo">
+            <div class="head">
+              <a class="name permalink" href="#387-referral-bind-promo">387-referral-bind-promo</a>
+              <button class="copy-link" type="button" data-target="387-referral-bind-promo" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_bind_error_dialog_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/387-referral-bind-promo.png"
+                alt="Dashboard-Overlay: Aktion"
+              />
+            </div>
+            <div class="desc">
+              Nach einem erfolgreichen Promo-Bind, Overlay auf dem Dashboard. Titel <b>Aktion</b>. Der Body ist der Kampagnentext; das Bild zeigt <b>Beispieltext der Aktion.</b> <b>Schließen</b> mit Tastaturfokus. Kein roter Fehlerstil.
+            </div>
+          </div>
+          <div class="test" id="388-referral-bind-unavailable">
+            <div class="head">
+              <a class="name permalink" href="#388-referral-bind-unavailable">388-referral-bind-unavailable</a>
+              <button class="copy-link" type="button" data-target="388-referral-bind-unavailable" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_bind_error_dialog_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/388-referral-bind-unavailable.png"
+                alt="Dashboard-Overlay: Code gerade nicht prüfbar"
+              />
+            </div>
+            <div class="desc">
+              Der Code kann gerade nicht geprüft werden. Kein roter Fehlerstil. Body <b>Wir konnten den Code gerade nicht prüfen. Bitte versuchen Sie es später erneut.</b> <b>Wiederholen</b> (sekundär, nicht im Ladezustand) und <b>Schließen</b>.
+            </div>
+          </div>
+          <div class="test" id="396-referral-bind-unavailable-retrying">
+            <div class="head">
+              <a class="name permalink" href="#396-referral-bind-unavailable-retrying">396-referral-bind-unavailable-retrying</a>
+              <button class="copy-link" type="button" data-target="396-referral-bind-unavailable-retrying" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_bind_error_dialog_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/396-referral-bind-unavailable-retrying.png"
+                alt="Dashboard-Overlay: Code nicht prüfbar, Wiederholen lädt"
+              />
+            </div>
+            <div class="desc">
+              Dieselbe Meldung wie 388. Neben <b>Wiederholen</b> läuft eine Ladeanzeige, der Knopf ist nicht tippbar. <b>Schließen</b> ist ebenfalls nicht tippbar.
             </div>
           </div>
         </details>
