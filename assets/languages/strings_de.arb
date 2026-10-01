@@ -290,7 +290,7 @@
   "referralCreating": "Einladung wird erstellt…",
   "referralGuestName": "Name der eingeladenen Person",
   "referralGuestNameRequired": "Bitte den Vornamen der eingeladenen Person eingeben.",
-  "referralInviteRecognized": "Einladung von ${inviter} erkannt. ${inviter} erhält seine Prämie automatisch, sobald Sie verifiziert sind und Ihren ersten Kauf abgeschlossen haben.",
+  "referralInviteRecognized": "Einladung von ${inviter} erkannt. Sind Sie verifiziert und umfasst Ihr erster Kauf mindestens 200 Aktientoken, kann ${inviter} dafür eine Prämie gemäss Teilnahmebedingungen erhalten.",
   "referralInvitesLoading": "Offene Einladungen werden geladen…",
   "referralInviteUrlLabel": "Persönlicher Einladungslink",
   "referralLoading": "Empfehlungen werden geladen…",

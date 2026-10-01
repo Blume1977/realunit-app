@@ -547,7 +547,7 @@ void main() {
 
       expect(
         find.text(
-          'Einladung von Björn erkannt. Björn erhält seine Prämie automatisch, sobald Sie verifiziert sind und Ihren ersten Kauf abgeschlossen haben.',
+          'Einladung von Björn erkannt. Sind Sie verifiziert und umfasst Ihr erster Kauf mindestens 200 Aktientoken, kann Björn dafür eine Prämie gemäss Teilnahmebedingungen erhalten.',
         ),
         findsOneWidget,
       );

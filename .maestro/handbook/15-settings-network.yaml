@@ -7,8 +7,64 @@
 # dropped (Maestro/XCUITest tap-loss on Apple Silicon + iOS 26,
 # mobile-dev-inc/maestro#3137). Each gate stops its loop the instant the
 # screen changes, so surplus iterations no-op.
+#
+# The Network settings row exists only while insider network options are
+# on. A fresh simulator has them off, so this flow unlocks insider
+# features and enables Netzwerkoptionen before the existing Mainnet
+# assertion. Unlocking also turns on pay, send, promo and referral; that
+# is existing app behaviour of the 7-tap unlock and is left as-is.
+#
+# Stop tapping the version line when the Insider Funktionen row is
+# visible. The snackbar uses a hyphen (Insider-Funktionen) and must not
+# be the stop condition. Netzwerkoptionen is tapped once, not retried:
+# a second tap would turn the option off.
 appId: swiss.realunit.app
 ---
+- repeat:
+    times: 3
+    commands:
+      - runFlow:
+          when:
+            notVisible: 'Einstellungen'
+          commands:
+            - tapOn:
+                point: 8%,8%
+                optional: true
+- waitForAnimationToEnd
+- repeat:
+    times: 20
+    commands:
+      - runFlow:
+          when:
+            notVisible: 'Insider Funktionen'
+          commands:
+            - tapOn:
+                text: 'Version .*'
+                optional: true
+- extendedWaitUntil:
+    visible:
+      text: 'Insider Funktionen'
+    timeout: 8000
+- repeat:
+    times: 3
+    commands:
+      - runFlow:
+          when:
+            notVisible: 'Netzwerkoptionen'
+          commands:
+            - tapOn:
+                text: 'Insider Funktionen'
+                optional: true
+- extendedWaitUntil:
+    visible:
+      text: 'Netzwerkoptionen'
+    timeout: 8000
+- tapOn:
+    text: 'Netzwerkoptionen'
+- extendedWaitUntil:
+    notVisible:
+      text: 'Insider-Funktionen freigeschaltet'
+    timeout: 10000
 - repeat:
     times: 3
     commands:
