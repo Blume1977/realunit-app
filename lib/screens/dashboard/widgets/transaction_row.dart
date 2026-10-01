@@ -6,7 +6,6 @@ import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/io/format_frozen_chf.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/styles/colors.dart';
-import 'package:realunit_wallet/styles/icons.dart';
 import 'package:realunit_wallet/widgets/frozen_chf_label.dart';
 import 'package:realunit_wallet/widgets/hide_amount_text.dart';
 import 'package:realunit_wallet/widgets/transaction_title_label.dart';
@@ -14,31 +13,18 @@ import 'package:realunit_wallet/widgets/transaction_title_label.dart';
 class TransactionRow extends StatelessWidget {
   final Transaction transaction;
   final String walletAddress;
-  final Color firstRowTextColor;
-  final Color secondRowTextColor;
-  final bool showBlockchainIcon;
 
   const TransactionRow({
     super.key,
     required this.transaction,
     required this.walletAddress,
-    this.firstRowTextColor = RealUnitColors.realUnitBlack,
-    this.secondRowTextColor = RealUnitColors.neutral400,
-    this.showBlockchainIcon = false,
   });
 
   bool get _isOutbound => transaction.isOutbound(walletAddress);
 
   @override
   Widget build(BuildContext context) =>
-      [TransactionTypes.savingsAdd, TransactionTypes.savingsRemove].contains(transaction.type)
-      ? SavingsTransactionRow(
-          transaction: transaction,
-          firstRowTextColor: firstRowTextColor,
-          secondRowTextColor: secondRowTextColor,
-          showBlockchainIcon: showBlockchainIcon,
-        )
-      : transaction.type == TransactionTypes.referralPayout
+      transaction.type == TransactionTypes.referralPayout
       ? ReferralPayoutTransactionRow(transaction: transaction)
       : InkWell(
           child: Container(
@@ -224,90 +210,4 @@ class ReferralPayoutTransactionRow extends StatelessWidget {
       },
     );
   }
-}
-
-class SavingsTransactionRow extends StatelessWidget {
-  final Transaction transaction;
-  final Color firstRowTextColor;
-  final Color secondRowTextColor;
-  final bool showBlockchainIcon;
-
-  const SavingsTransactionRow({
-    super.key,
-    required this.transaction,
-    this.firstRowTextColor = RealUnitColors.realUnitBlack,
-    this.secondRowTextColor = RealUnitColors.neutral400,
-    this.showBlockchainIcon = false,
-  });
-
-  TextStyle get _firstRowTextStyle =>
-      TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: firstRowTextColor);
-
-  TextStyle get _secondRowTextStyle => TextStyle(fontSize: 12, color: secondRowTextColor);
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-    child: Container(
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: RealUnitColors.basic.white,
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (transaction.type == TransactionTypes.savingsRemove)
-                const CollectInterestIcon(size: 24),
-              if (transaction.type == TransactionTypes.savingsAdd)
-                const Icon(Icons.savings, size: 24),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            transaction.type == TransactionTypes.savingsAdd
-                                ? S.of(context).savingsAdd
-                                : S.of(context).savingsRemove,
-                            style: _firstRowTextStyle,
-                          ),
-                          const Spacer(),
-                          HideAmountText(
-                            leadingSymbol: '',
-                            amount: transaction.amount,
-                            decimals: transaction.asset.decimals,
-                            fractionalDigits: 2,
-                            trimZeros: false,
-                            trailingSymbol: transaction.asset.symbol,
-                            style: _firstRowTextStyle,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            DateFormat('MMM dd, yyyy').format(transaction.timestamp.toLocal()),
-                            style: _secondRowTextStyle,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
 }

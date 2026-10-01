@@ -85,8 +85,8 @@ extension TransactionStorage on AppDatabase {
             ..where(
               (row) => Expression.and([
                 row.asset.isIn(assets),
-                // 2 = tokenTransfer, 5 = referralPayout (Offerte Punkt 2).
-                row.type.isIn([2, 5]),
+                // 2 = tokenTransfer, 3 = referralPayout
+                row.type.isIn([2, 3]),
                 _involvesWallet(row, wallet),
               ]),
             )
@@ -102,25 +102,8 @@ extension TransactionStorage on AppDatabase {
             ..where(
               (row) => Expression.and([
                 row.asset.isIn(assets),
-                // 2 = tokenTransfer, 5 = referralPayout (Offerte Punkt 2).
-                row.type.isIn([2, 5]),
-                _involvesWallet(row, wallet),
-              ]),
-            )
-            ..orderBy([(u) => OrderingTerm(expression: u.timeStamp, mode: OrderingMode.desc)])
-            ..limit(limit))
-          .watch();
-
-  Stream<List<TransactionData>> watchTransfersOfSavingsLimit(
-    Iterable<int> assets,
-    String wallet,
-    int limit,
-  ) =>
-      (select(transactions)
-            ..where(
-              (row) => Expression.and([
-                row.asset.isIn(assets),
-                row.type.isIn([3, 4]),
+                // 2 = tokenTransfer, 3 = referralPayout
+                row.type.isIn([2, 3]),
                 _involvesWallet(row, wallet),
               ]),
             )

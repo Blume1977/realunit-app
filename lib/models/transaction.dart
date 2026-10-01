@@ -5,8 +5,6 @@ enum TransactionTypes {
   transfer,
   genericContractCall,
   tokenTransfer,
-  savingsAdd,
-  savingsRemove,
   /// Referral/promo payout credited via the API. [Transaction.data] holds the
   /// CHF value frozen at credit (decimal string); never recompute from price.
   referralPayout,

@@ -773,15 +773,6 @@ void main() {
             timestamp: DateTime.utc(2026, 8, 24, 9),
           ),
         );
-        await repo.insertTransaction(
-          buildTokenTransfer(
-            txId: 'tx-savings',
-            height: 3,
-            type: TransactionTypes.savingsAdd,
-            senderOverride: 'wallet-address',
-            timestamp: DateTime.utc(2026, 8, 24, 11),
-          ),
-        );
 
         final history = await repo.watchTransactionsOfAssets([
           tokenAssetMainnet,
@@ -819,54 +810,6 @@ void main() {
       expect(first, hasLength(2));
       // Newest first by timestamp, so tx-2 (Jan 3) and tx-1 (Jan 2).
       expect(first.map((t) => t.txId), ['tx-2', 'tx-1']);
-    });
-
-    test('watchTransactionsSavings only emits savingsAdd / savingsRemove rows', () async {
-      await repo.insertTransaction(
-        buildTokenTransfer(
-          txId: 'tx-add',
-          height: 1,
-          type: TransactionTypes.savingsAdd,
-          senderOverride: 'wallet-address',
-        ),
-      );
-      await repo.insertTransaction(
-        buildTokenTransfer(
-          txId: 'tx-remove',
-          height: 2,
-          type: TransactionTypes.savingsRemove,
-          senderOverride: 'wallet-address',
-        ),
-      );
-      // tokenTransfer / referralPayout → must NOT appear in the savings stream.
-      await repo.insertTransaction(
-        buildTokenTransfer(
-          txId: 'tx-token',
-          height: 3,
-          senderOverride: 'wallet-address',
-        ),
-      );
-      await repo.insertTransaction(
-        buildTokenTransfer(
-          txId: 'tx-prize',
-          height: 4,
-          type: TransactionTypes.referralPayout,
-          senderOverride: kReferralPayoutSenderAddress,
-          receiverOverride: 'wallet-address',
-        ),
-      );
-
-      final stream = repo.watchTransactionsSavings(
-        [tokenAssetMainnet],
-        'wallet-address',
-        10,
-      );
-
-      final first = await stream.first;
-      expect(
-        first.map((t) => t.txId).toSet(),
-        {'tx-add', 'tx-remove'},
-      );
     });
   });
 }

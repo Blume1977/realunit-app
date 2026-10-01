@@ -84,16 +84,18 @@ void main() {
   });
 
   group('$TransactionTypes', () {
-    test('exposes the six expected entries (catches accidental additions)', () {
+    test('exposes the four expected entries (catches accidental additions)', () {
       // A new type added without updating the rendering switch would
       // silently break the UI. Pin the count.
-      expect(TransactionTypes.values, hasLength(6));
+      expect(TransactionTypes.values, hasLength(4));
       expect(TransactionTypes.values, contains(TransactionTypes.transfer));
-      expect(TransactionTypes.values, contains(TransactionTypes.tokenTransfer));
-      expect(TransactionTypes.values, contains(TransactionTypes.savingsAdd));
-      expect(TransactionTypes.values, contains(TransactionTypes.savingsRemove));
       expect(TransactionTypes.values, contains(TransactionTypes.genericContractCall));
+      expect(TransactionTypes.values, contains(TransactionTypes.tokenTransfer));
       expect(TransactionTypes.values, contains(TransactionTypes.referralPayout));
+      expect(TransactionTypes.transfer.index, 0);
+      expect(TransactionTypes.genericContractCall.index, 1);
+      expect(TransactionTypes.tokenTransfer.index, 2);
+      expect(TransactionTypes.referralPayout.index, 3);
     });
   });
 }

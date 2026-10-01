@@ -152,14 +152,5 @@ void main() {
 
       expect(rows.map((r) => r.txId), ['tx-limit']);
     });
-
-    test('watchTransfersOfSavingsLimit matches a checksummed address', () async {
-      // Savings uses transfer types 3 / 4.
-      await insert('tx-savings', checksummed, other, 3);
-
-      final rows = await db.watchTransfersOfSavingsLimit({assetId}, walletLower, 10).first;
-
-      expect(rows.map((r) => r.txId), ['tx-savings']);
-    });
   });
 }

@@ -235,16 +235,6 @@ class TransactionRepository {
         .transform<List<Transaction>>(_transformer);
   }
 
-  Stream<List<Transaction>> watchTransactionsSavings(
-    Iterable<Asset> assets,
-    String wallet,
-    int limit,
-  ) {
-    return _appDatabase
-        .watchTransfersOfSavingsLimit(assets.map((e) => e.id), wallet, limit)
-        .transform<List<Transaction>>(_transformer);
-  }
-
   StreamTransformer<List<TransactionData>, List<Transaction>> get _transformer =>
       StreamTransformer<List<TransactionData>, List<Transaction>>.fromHandlers(
         handleData: (rawTransactions, sink) async {

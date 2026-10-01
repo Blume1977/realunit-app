@@ -18,8 +18,8 @@ void main() {
   });
 
   group('AppDatabase schema', () {
-    test('schema version is 3', () {
-      expect(db.schemaVersion, 3);
+    test('schema version is 4', () {
+      expect(db.schemaVersion, 4);
     });
 
     test('creates all expected tables on fresh database', () async {
@@ -129,22 +129,42 @@ void main() {
       expect(columns.map((r) => r.read<String>('name')), contains('category'));
     });
 
-    test('onUpgrade does nothing when starting at v3 or later', () async {
-      // The `if (from <` guards mean an upgrade from v3 → v4 (a future
-      // version) must NOT try to recreate the table or the column. We
-      // assert that by leaving both in place and running the callback,
-      // which would throw "already exists" if a guard regressed.
+    test('onUpgrade from v3 → v4 deletes leftover savings rows and remaps referral payouts', () async {
+      await db.insertTransactions(1, 'tx-token', 1, '0xA', '0xB', '100', 1, 2, '', '', '', DateTime.now());
+      await db.insertTransactions(1, 'tx-savings-add', 1, '0xA', '0xB', '100', 1, 3, '', '', '', DateTime.now());
+      await db.insertTransactions(1, 'tx-savings-remove', 1, '0xA', '0xB', '100', 1, 4, '', '', '', DateTime.now());
+      await db.insertTransactions(1, 'tx-referral', 1, '0xA', '0xB', '100', 1, 5, '', '', '', DateTime.now());
+
       final strategy = db.migration;
       final migrator = Migrator(db);
-      // from == 3 → guards short-circuit, no SQL executed.
       await strategy.onUpgrade(migrator, 3, 4);
 
-      final rows = await db
+      final rows = await db.select(db.transactions).get();
+      expect(rows, hasLength(2));
+      expect(rows.firstWhere((r) => r.txId == 'tx-token').type, 2);
+      expect(rows.where((r) => r.txId == 'tx-savings-add'), isEmpty);
+      expect(rows.where((r) => r.txId == 'tx-savings-remove'), isEmpty);
+      expect(rows.firstWhere((r) => r.txId == 'tx-referral').type, 3);
+
+      final dfxRows = await db
           .customSelect(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='dfx_transaction_details'",
           )
           .get();
+      expect(dfxRows, hasLength(1));
+    });
+
+    test('onUpgrade from v4 → v5 leaves a type-3 row unchanged', () async {
+      await db.insertTransactions(1, 'tx-referral', 1, '0xA', '0xB', '100', 1, 3, '', '', '', DateTime.now());
+
+      final strategy = db.migration;
+      final migrator = Migrator(db);
+      await strategy.onUpgrade(migrator, 4, 5);
+
+      final rows = await db.select(db.transactions).get();
       expect(rows, hasLength(1));
+      expect(rows.single.txId, 'tx-referral');
+      expect(rows.single.type, 3);
     });
   });
 }

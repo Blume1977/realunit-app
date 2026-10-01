@@ -68,19 +68,9 @@ class RecoveryKeyIcon extends _CustomIcon {
       : super(iconPath: 'assets/images/icons/recovery_key.svg');
 }
 
-class CollectInterestIcon extends _CustomIcon {
-  const CollectInterestIcon({super.size, super.color})
-      : super(iconPath: 'assets/images/icons/collect_interest.svg');
-}
-
 class GrowthIcon extends _CustomIcon {
   const GrowthIcon({super.size, super.color})
       : super(iconPath: 'assets/images/icons/growth.svg');
-}
-
-class SavingsIcon extends _CustomIcon {
-  const SavingsIcon({super.size, super.color})
-      : super(iconPath: 'assets/images/icons/savings.svg');
 }
 
 class RealUnitIcon extends _CustomIcon {
