@@ -19,6 +19,11 @@ enum SendProcessFailureReason {
   /// API message carries the specific detail.
   invalidRequest,
 
+  /// The recipient address is not registered with RealUnit (API 400
+  /// `RECIPIENT_NOT_REGISTERED`). Rendered with RealUnit's approved copy, not
+  /// the API's English message.
+  recipientNotRegistered,
+
   /// The API requires the user to complete registration or a higher KYC level
   /// before this transfer can proceed (403 REGISTRATION_REQUIRED /
   /// KYC_LEVEL_REQUIRED).

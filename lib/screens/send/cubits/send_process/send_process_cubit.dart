@@ -258,12 +258,16 @@ class SendProcessCubit extends Cubit<SendProcessState> {
     emit(nextState);
   }
 
-  /// Maps an API error to a typed failure reason. A 400 from `PUT /transfer`
-  /// covers both an invalid recipient and insufficient REALU; both render a
-  /// generic "could not prepare the transfer" message keyed off the API text,
-  /// so they share [SendProcessFailureReason.invalidRequest]. A 403 (including
-  /// unmapped compliance codes) maps to [registrationOrKycRequired].
+  /// Maps an API error to a typed failure reason. The API's
+  /// `RECIPIENT_NOT_REGISTERED` code maps to [recipientNotRegistered]. Any
+  /// other 400 from `PUT /transfer` (invalid recipient, insufficient REALU)
+  /// renders a generic "could not prepare the transfer" message keyed off the
+  /// API text, so they share [SendProcessFailureReason.invalidRequest]. A 403
+  /// (including unmapped compliance codes) maps to [registrationOrKycRequired].
   static SendProcessFailureReason _reasonForApi(ApiException e) {
+    if (e.code == 'RECIPIENT_NOT_REGISTERED') {
+      return SendProcessFailureReason.recipientNotRegistered;
+    }
     if (e.statusCode == 503) {
       return SendProcessFailureReason.gasFundingUnavailable;
     }

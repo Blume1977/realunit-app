@@ -204,9 +204,9 @@ void main() {
       when(() => processCubit.state).thenReturn(const SendProcessInitial());
     });
 
-    // Terminal states (success/failure) are surfaced via a modal sheet from the
-    // listener, not the build tree — exercised in the widget test. The build
-    // tree shows the in-progress indicator with a per-state label.
+    // Success and the older failure reasons stay in the widget test: the sheet
+    // is a modal from the listener, not the build tree. The unregistered
+    // recipient wording is its own surface and has a baseline below.
     goldenTest(
       'in-progress signing state',
       fileName: 'send_process_page_signing',
@@ -216,6 +216,39 @@ void main() {
       pumpBeforeTest: pumpOnce,
       builder: () {
         when(() => processCubit.state).thenReturn(const SendProcessSigning());
+        return wrapForGolden(
+          BlocProvider<SendProcessCubit>.value(
+            value: processCubit,
+            child: const SendProcessView(),
+          ),
+        );
+      },
+    );
+
+    goldenTest(
+      'unregistered recipient failure sheet',
+      fileName: 'send_process_recipient_not_registered',
+      constraints: phoneConstraints,
+      // The page behind the sheet keeps a CupertinoActivityIndicator spinning,
+      // so pumpAndSettle never returns. Fixed pumps open the modal the same
+      // way the responsive matrix test does.
+      pumpBeforeTest: (tester) async {
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
+      },
+      builder: () {
+        whenListen(
+          processCubit,
+          Stream<SendProcessState>.value(
+            const SendProcessFailure(
+              SendProcessFailureReason.recipientNotRegistered,
+              message: 'Recipient is not a registered RealUnit shareholder',
+            ),
+          ),
+          initialState: const SendProcessSigning(),
+        );
         return wrapForGolden(
           BlocProvider<SendProcessCubit>.value(
             value: processCubit,

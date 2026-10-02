@@ -1198,14 +1198,14 @@
             <span>📱 <b>App:</b> RealUnit Wallet (Flutter)</span>
             <span>📂 <b>Code:</b>
               <a href="https://github.com/RealUnitCH/app">RealUnitCH/app</a></span>
-            <span>🧪 <b>Tests:</b> 412 Visual-Regression Goldens (412 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
+            <span>🧪 <b>Tests:</b> 413 Visual-Regression Goldens (413 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
           </div>
         </section>
 
         <section id="architecture" style="margin-top: 40px">
           <h3 style="margin-top: 0">Single Source of Truth</h3>
           <p>
-            Die 412 App-Screenshots dieser Seite sind Goldens aus
+            Die 413 App-Screenshots dieser Seite sind Goldens aus
             <code>test/goldens/{screens,widgets}/&lt;feature&gt;/goldens/macos/&lt;file&gt;.png</code>.
             Welcher Golden welcher Handbook-Slot ist, definiert die Mapping-Tabelle in
             <code>scripts/assemble-handbook-screenshots.sh</code>. Der Docker-Build
@@ -1245,7 +1245,7 @@
               <b>Pipeline:</b> Page-Edit → <code>flutter test --update-goldens test/goldens/</code>
               auf dem self-hosted Runner (Hardware-Determinismus) → neue Baseline committen →
               <code>handbook-deploy.yaml</code> baut das Docker-Image aus dem gepushten Branch
-              und assembliert die 412 Slots aus <code>test/goldens/</code> → Push auf
+              und assembliert die 413 Slots aus <code>test/goldens/</code> → Push auf
               <code>staging</code> deployt das Handbook-Image nach Produktion, via
               Cloudflare Tunnel.
             </p>
@@ -9629,6 +9629,23 @@
               </div>
               <div class="desc">
                 Signatur läuft. Titel <b>REALU wird gesendet</b>, Statuszeile <b>Überweisung wird gesendet</b>.
+              </div>
+            </div>
+            <div class="test" id="404-send-process-recipient-not-registered">
+              <div class="head">
+                <a class="name permalink" href="#404-send-process-recipient-not-registered">404-send-process-recipient-not-registered</a>
+                <button class="copy-link" type="button" data-target="404-send-process-recipient-not-registered" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">send_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/404-send-process-recipient-not-registered.png"
+                  alt="Überweisung fehlgeschlagen"
+                />
+              </div>
+              <div class="desc">
+                Empfänger nicht registriert. Titel <b>Überweisung fehlgeschlagen</b>.
+                Der Text beginnt mit <b>Diese Adresse ist bei RealUnit nicht registriert</b>.
               </div>
             </div>
             <div class="test" id="370-send-holding-kauf">

@@ -405,6 +405,7 @@
   "sendFailureGasUnavailable": "Überweisungen sind vorübergehend nicht verfügbar. Ihre REALU bleiben unangetastet – bitte versuchen Sie es später erneut.",
   "sendFailureGeneric": "Bei der Überweisung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
   "sendFailureInvalidRequest": "Die Überweisung konnte nicht vorbereitet werden. Bitte prüfen Sie Empfänger und Betrag und versuchen Sie es erneut.",
+  "sendFailureRecipientNotRegistered": "Diese Adresse ist bei RealUnit nicht registriert. Registrieren lässt sie sich in der RealUnit App oder unter realunit.ch/token-kaufen. Anschliessend kann diese Adresse REALU empfangen.\n\nFragen zur Registrierung beantworten wir gerne unter info@realunit.ch.",
   "sendFailureRegistrationOrKycRequired": "Bitte schliessen Sie zuerst Ihre Registrierung oder Identitätsprüfung ab, um REALU zu senden.",
   "sendFailureSignatureCancelled": "Die Signatur wurde abgebrochen. Ihre REALU bleiben unangetastet.",
   "sendFailureSignatureUnsupported": "Diese Wallet kann keine gaslosen Überweisungen signieren. Wechseln Sie zu einer Software-Wallet, um REALU zu senden.",
