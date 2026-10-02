@@ -184,5 +184,40 @@ void main() {
       await cubit.close();
       completer.completeError(Exception('late'));
     });
+
+    test('generateExchangeReceipt writes the PDF and emits Success with the file path', () async {
+      final pdfBytes = utf8.encode('%PDF-1.4 fake-tx');
+      when(
+        () => service.getExchangeReceipt(any()),
+      ).thenAnswer((_) async => PdfDto(pdfData: base64Encode(pdfBytes)));
+
+      final cubit = buildCubit();
+      final emissions = expectLater(
+        cubit.stream,
+        emitsInOrder(<Matcher>[
+          isA<TransactionHistoryReceiptLoading>(),
+          isA<TransactionHistoryReceiptSuccess>(),
+        ]),
+      );
+
+      await cubit.generateExchangeReceipt('tx-42');
+      await emissions;
+
+      expect(cubit.state, isA<TransactionHistoryReceiptSuccess>());
+      final success = cubit.state as TransactionHistoryReceiptSuccess;
+      expect(success.receiptPath, contains('receipt_exchange_tx-42.pdf'));
+      verify(() => service.getExchangeReceipt('tx-42')).called(1);
+    });
+
+    test('generateExchangeReceipt emits Failure on service error', () async {
+      when(
+        () => service.getExchangeReceipt(any()),
+      ).thenAnswer((_) async => throw Exception('network'));
+
+      final cubit = buildCubit();
+      await cubit.generateExchangeReceipt('tx-42');
+
+      expect(cubit.state, isA<TransactionHistoryReceiptFailure>());
+    });
   });
 }

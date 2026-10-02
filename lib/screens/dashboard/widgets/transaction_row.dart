@@ -5,6 +5,7 @@ import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/io/format_frozen_chf.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
+import 'package:realunit_wallet/screens/transaction_history/transaction_detail_page.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/frozen_chf_label.dart';
 import 'package:realunit_wallet/widgets/hide_amount_text.dart';
@@ -25,8 +26,12 @@ class TransactionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       transaction.type == TransactionTypes.referralPayout
-      ? ReferralPayoutTransactionRow(transaction: transaction)
+      ? ReferralPayoutTransactionRow(
+          transaction: transaction,
+          walletAddress: walletAddress,
+        )
       : InkWell(
+          onTap: () => openTransactionDetail(context, transaction, walletAddress),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -110,8 +115,13 @@ class TransactionRow extends StatelessWidget {
 
 class ReferralPayoutTransactionRow extends StatelessWidget {
   final Transaction transaction;
+  final String walletAddress;
 
-  const ReferralPayoutTransactionRow({super.key, required this.transaction});
+  const ReferralPayoutTransactionRow({
+    super.key,
+    required this.transaction,
+    this.walletAddress = '',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +156,7 @@ class ReferralPayoutTransactionRow extends StatelessWidget {
           ),
           child: ExcludeSemantics(
             child: InkWell(
+              onTap: () => openTransactionDetail(context, transaction, walletAddress),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),

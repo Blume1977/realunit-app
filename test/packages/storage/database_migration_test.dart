@@ -18,8 +18,8 @@ void main() {
   });
 
   group('AppDatabase schema', () {
-    test('schema version is 4', () {
-      expect(db.schemaVersion, 4);
+    test('schema version is 5', () {
+      expect(db.schemaVersion, 5);
     });
 
     test('creates all expected tables on fresh database', () async {
@@ -121,12 +121,44 @@ void main() {
     test('onUpgrade from v2 → v3 adds the category column with its default', () async {
       await db.customStatement('ALTER TABLE transactions DROP COLUMN category');
 
+      final details = db.dfxTransactionDetails;
+      for (final column in [
+        details.inputAmount,
+        details.inputAsset,
+        details.outputAmount,
+        details.outputAsset,
+      ]) {
+        await db.customStatement(
+          'ALTER TABLE dfx_transaction_details DROP COLUMN ${column.name}',
+        );
+      }
+
       final strategy = db.migration;
       final migrator = Migrator(db);
       await strategy.onUpgrade(migrator, 2, 3);
 
       final columns = await db.customSelect("PRAGMA table_info('transactions')").get();
       expect(columns.map((r) => r.read<String>('name')), contains('category'));
+
+      final detailsColumns = await db
+          .customSelect("PRAGMA table_info('dfx_transaction_details')")
+          .get();
+      expect(
+        detailsColumns.map((r) => r.read<String>('name')),
+        isNot(contains(details.inputAmount.name)),
+      );
+      expect(
+        detailsColumns.map((r) => r.read<String>('name')),
+        isNot(contains(details.inputAsset.name)),
+      );
+      expect(
+        detailsColumns.map((r) => r.read<String>('name')),
+        isNot(contains(details.outputAmount.name)),
+      );
+      expect(
+        detailsColumns.map((r) => r.read<String>('name')),
+        isNot(contains(details.outputAsset.name)),
+      );
     });
 
     test('onUpgrade from v3 → v4 deletes leftover savings rows and remaps referral payouts', () async {
@@ -154,8 +186,20 @@ void main() {
       expect(dfxRows, hasLength(1));
     });
 
-    test('onUpgrade from v4 → v5 leaves a type-3 row unchanged', () async {
+    test('onUpgrade from v4 → v5 adds the amount columns and leaves a type-3 row unchanged', () async {
       await db.insertTransactions(1, 'tx-referral', 1, '0xA', '0xB', '100', 1, 3, '', '', '', DateTime.now());
+
+      final details = db.dfxTransactionDetails;
+      for (final column in [
+        details.inputAmount,
+        details.inputAsset,
+        details.outputAmount,
+        details.outputAsset,
+      ]) {
+        await db.customStatement(
+          'ALTER TABLE dfx_transaction_details DROP COLUMN ${column.name}',
+        );
+      }
 
       final strategy = db.migration;
       final migrator = Migrator(db);
@@ -165,6 +209,62 @@ void main() {
       expect(rows, hasLength(1));
       expect(rows.single.txId, 'tx-referral');
       expect(rows.single.type, 3);
+
+      final columns = await db
+          .customSelect("PRAGMA table_info('dfx_transaction_details')")
+          .get();
+      expect(
+        columns.map((r) => r.read<String>('name')),
+        containsAll([
+          details.inputAmount.name,
+          details.inputAsset.name,
+          details.outputAmount.name,
+          details.outputAsset.name,
+        ]),
+      );
+    });
+
+    test('onUpgrade from v3 → v5 remaps referral payouts and adds the amount columns', () async {
+      await db.insertTransactions(1, 'tx-token', 1, '0xA', '0xB', '100', 1, 2, '', '', '', DateTime.now());
+      await db.insertTransactions(1, 'tx-savings-add', 1, '0xA', '0xB', '100', 1, 3, '', '', '', DateTime.now());
+      await db.insertTransactions(1, 'tx-savings-remove', 1, '0xA', '0xB', '100', 1, 4, '', '', '', DateTime.now());
+      await db.insertTransactions(1, 'tx-referral', 1, '0xA', '0xB', '100', 1, 5, '', '', '', DateTime.now());
+
+      final details = db.dfxTransactionDetails;
+      for (final column in [
+        details.inputAmount,
+        details.inputAsset,
+        details.outputAmount,
+        details.outputAsset,
+      ]) {
+        await db.customStatement(
+          'ALTER TABLE dfx_transaction_details DROP COLUMN ${column.name}',
+        );
+      }
+
+      final strategy = db.migration;
+      final migrator = Migrator(db);
+      await strategy.onUpgrade(migrator, 3, 5);
+
+      final rows = await db.select(db.transactions).get();
+      expect(rows, hasLength(2));
+      expect(rows.firstWhere((r) => r.txId == 'tx-token').type, 2);
+      expect(rows.where((r) => r.txId == 'tx-savings-add'), isEmpty);
+      expect(rows.where((r) => r.txId == 'tx-savings-remove'), isEmpty);
+      expect(rows.firstWhere((r) => r.txId == 'tx-referral').type, 3);
+
+      final columns = await db
+          .customSelect("PRAGMA table_info('dfx_transaction_details')")
+          .get();
+      expect(
+        columns.map((r) => r.read<String>('name')),
+        containsAll([
+          details.inputAmount.name,
+          details.inputAsset.name,
+          details.outputAmount.name,
+          details.outputAsset.name,
+        ]),
+      );
     });
   });
 }

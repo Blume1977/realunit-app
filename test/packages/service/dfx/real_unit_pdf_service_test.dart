@@ -204,6 +204,38 @@ void main() {
         );
       });
     });
+
+    group('getExchangeReceipt', () {
+      test('POSTs the txHash to the exchange-receipt endpoint', () async {
+        Map<String, dynamic>? body;
+        String? path;
+        final client = MockClient((request) async {
+          body = jsonDecode(request.body) as Map<String, dynamic>;
+          path = request.url.path;
+          return http.Response(jsonEncode({'pdfData': 'EXCHANGE'}), 200);
+        });
+
+        final pdf = await build(client).getExchangeReceipt('0xabc');
+
+        expect(pdf.pdfData, 'EXCHANGE');
+        expect(path, '/v1/realunit/transactions/receipt/exchange');
+        expect(body!['txHash'], '0xabc');
+        expect(body!.containsKey('currency'), isFalse);
+        expect(body!.containsKey('language'), isFalse);
+      });
+
+      test('throws ApiException on non-2xx', () async {
+        final client = MockClient((_) async => http.Response(
+              jsonEncode({'statusCode': 404, 'message': 'no tx'}),
+              404,
+            ));
+
+        expect(
+          () => build(client).getExchangeReceipt('0xmissing'),
+          throwsA(isA<ApiException>()),
+        );
+      });
+    });
   });
 
   group('malformed JSON responses', () {

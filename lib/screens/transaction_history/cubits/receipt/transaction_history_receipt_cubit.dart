@@ -47,10 +47,34 @@ class TransactionHistoryReceiptCubit extends Cubit<TransactionHistoryReceiptStat
     }
   }
 
-  Future<File> _createFileFromBytes(String data, String dfxId) async {
+  Future<void> generateExchangeReceipt(String txId) async {
+    try {
+      emit(const TransactionHistoryReceiptLoading());
+
+      final response = await _pdfService.getExchangeReceipt(txId);
+      if (isClosed) return;
+      final file = await _createFileFromBytes(
+        response.pdfData,
+        txId,
+        filePrefix: 'receipt_exchange',
+      );
+      if (isClosed) return;
+
+      emit(TransactionHistoryReceiptSuccess(file.path));
+    } catch (e) {
+      if (isClosed) return;
+      emit(TransactionHistoryReceiptFailure(ApiException.userFacingMessage(e)));
+    }
+  }
+
+  Future<File> _createFileFromBytes(
+    String data,
+    String dfxId, {
+    String filePrefix = 'receipt',
+  }) async {
     final bytes = base64Decode(data);
     final tempDir = await _directory.getTemporaryDirectory();
-    final file = File('${tempDir.path}/receipt_$dfxId.pdf');
+    final file = File('${tempDir.path}/${filePrefix}_$dfxId.pdf');
     await file.writeAsBytes(bytes, flush: true);
     return file;
   }

@@ -14,6 +14,7 @@ class RealUnitPdfService extends DFXAuthService {
   static const _balancePath = '/v1/realunit/balance/pdf';
   static const _transactionsReceiptMultiPath = 'v1/realunit/transactions/receipt/multi';
   static const _transactionsReceiptSinglePath = '/v1/realunit/transactions/receipt/single';
+  static const _transactionsReceiptExchangePath = '/v1/realunit/transactions/receipt/exchange';
 
   RealUnitPdfService(super.appStore, super.walletService);
 
@@ -80,6 +81,24 @@ class RealUnitPdfService extends DFXAuthService {
         'Content-Type': 'application/json',
       },
       body: jsonEncode(SingleReceiptDto(txId: id, currency: currency, language: language)),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      final errorJson = jsonDecode(response.body) as Map<String, dynamic>;
+      throw ApiException.fromJson(errorJson, httpStatusCode: response.statusCode);
+    }
+
+    return PdfDto.fromJson(jsonDecode(response.body));
+  }
+
+  Future<PdfDto> getExchangeReceipt(String txId) async {
+    final uri = buildUri(host, _transactionsReceiptExchangePath);
+    final response = await authenticatedPost(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'txHash': txId}),
     );
 
     if (response.statusCode != 200 && response.statusCode != 201) {

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
@@ -7,6 +8,7 @@ import 'package:realunit_wallet/screens/buy/buy_page.dart';
 import 'package:realunit_wallet/screens/buy/buy_payment_details_page.dart';
 import 'package:realunit_wallet/screens/create_wallet/create_wallet_page.dart';
 import 'package:realunit_wallet/screens/dashboard/dashboard_page.dart';
+import 'package:realunit_wallet/screens/dashboard/widgets/pending_transaction_detail_page.dart';
 import 'package:realunit_wallet/screens/debug_auth/debug_auth_page.dart';
 import 'package:realunit_wallet/screens/hardware_connect_bitbox/bitbox_address_recovery_page.dart';
 import 'package:realunit_wallet/screens/home/home_page.dart';
@@ -47,6 +49,7 @@ import 'package:realunit_wallet/screens/support/subpages/support_create_ticket_p
 import 'package:realunit_wallet/screens/support/subpages/support_email_capture_page.dart';
 import 'package:realunit_wallet/screens/support/subpages/support_tickets_page.dart';
 import 'package:realunit_wallet/screens/support/support_page.dart';
+import 'package:realunit_wallet/screens/transaction_history/transaction_detail_page.dart';
 import 'package:realunit_wallet/screens/transaction_history/transaction_history_page.dart';
 import 'package:realunit_wallet/screens/update_required/update_required_page.dart';
 import 'package:realunit_wallet/screens/verify_seed/verify_seed_page.dart';
@@ -155,6 +158,20 @@ final GoRouter routerConfig = GoRouter(
           name: AppRoutes.transactionHistory,
           path: 'transactionHistory',
           builder: (_, _) => const TransactionHistoryPage(),
+        ),
+        GoRoute(
+          name: AppRoutes.transactionDetail,
+          path: 'transactionDetail',
+          builder: (context, state) {
+            final extra = state.extra;
+            if (extra is TransactionDetailArgs) {
+              return TransactionDetailPage(args: extra);
+            }
+            if (extra is PendingTransactionDetailArgs) {
+              return PendingTransactionDetailPage(args: extra);
+            }
+            return const _MissingTransactionDetail();
+          },
         ),
       ],
     ),
@@ -411,3 +428,25 @@ final GoRouter routerConfig = GoRouter(
     ),
   ],
 );
+
+class _MissingTransactionDetail extends StatefulWidget {
+  const _MissingTransactionDetail();
+
+  @override
+  State<_MissingTransactionDetail> createState() => _MissingTransactionDetailState();
+}
+
+class _MissingTransactionDetailState extends State<_MissingTransactionDetail> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && context.canPop()) {
+        context.pop();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
+}

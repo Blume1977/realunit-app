@@ -254,7 +254,7 @@ The app supports three wallet modes (`software`, `bitbox`, `debug`) with differe
   1. A golden test under `test/goldens/` whose PNG shows that exact surface. Do not generate the PNG on a laptop; `golden-regenerate.yaml` commits it.
   2. A row in `scripts/assemble-handbook-screenshots.sh`.
   3. A block in `docs/handbook/de/index.html` that shows that PNG and quotes the visible title or the visible error text.
-  The in-app web view's page body is the external site. The app chrome around it still needs its own baseline, and the handbook text says the page body is not part of that picture. These baselines are the 405 screenshots served at `handbook.realunit.app`. The Handbook Build Check fails if a mapped PNG is missing. A pull request that leaves any of the three out is not ready for review.
+  The in-app web view's page body is the external site. The app chrome around it still needs its own baseline, and the handbook text says the page body is not part of that picture. These baselines are the 412 screenshots served at `handbook.realunit.app`. The Handbook Build Check fails if a mapped PNG is missing. A pull request that leaves any of the three out is not ready for review.
   - Why: a screen, a popup, or an error message that the handbook does not show is invisible until a person happens to open it. One baseline per surface is what makes the gap fail in review instead of in production.
   - See: [`docs/visual-regression-tests.md`](docs/visual-regression-tests.md) section "Handbook screenshots are sourced from Goldens".
 

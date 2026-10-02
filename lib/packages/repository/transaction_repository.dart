@@ -99,6 +99,10 @@ class TransactionRepository {
         rate: transaction.rate.toString(),
         inputTxId: transaction.inputTxId,
         outputTxId: transaction.outputTxId,
+        inputAmount: transaction.inputAmount?.toString(),
+        inputAsset: transaction.inputAsset,
+        outputAmount: transaction.outputAmount?.toString(),
+        outputAsset: transaction.outputAsset,
       );
       return;
     }
@@ -108,6 +112,10 @@ class TransactionRepository {
       rate: transaction.rate.toString(),
       inputTxId: transaction.inputTxId,
       outputTxId: transaction.outputTxId,
+      inputAmount: transaction.inputAmount?.toString(),
+      inputAsset: transaction.inputAsset,
+      outputAmount: transaction.outputAmount?.toString(),
+      outputAsset: transaction.outputAsset,
     );
   }
 
@@ -120,6 +128,10 @@ class TransactionRepository {
       rate: transaction.rate.toString(),
       inputTxId: transaction.inputTxId,
       outputTxId: transaction.outputTxId,
+      inputAmount: transaction.inputAmount?.toString(),
+      inputAsset: transaction.inputAsset,
+      outputAmount: transaction.outputAmount?.toString(),
+      outputAsset: transaction.outputAsset,
     );
   }
 
@@ -184,6 +196,10 @@ class TransactionRepository {
             rate: double.tryParse(dfxDetails.rate ?? ''),
             inputTxId: dfxDetails.inputTxId,
             outputTxId: dfxDetails.outputTxId,
+            inputAmount: double.tryParse(dfxDetails.inputAmount ?? ''),
+            inputAsset: dfxDetails.inputAsset,
+            outputAmount: double.tryParse(dfxDetails.outputAmount ?? ''),
+            outputAsset: dfxDetails.outputAsset,
             height: txData.height,
             txId: txData.txId,
             chainId: txData.chainId,
@@ -269,6 +285,10 @@ class TransactionRepository {
                   rate: double.tryParse(dfxDetails.rate ?? ''),
                   inputTxId: dfxDetails.inputTxId,
                   outputTxId: dfxDetails.outputTxId,
+                  inputAmount: double.tryParse(dfxDetails.inputAmount ?? ''),
+                  inputAsset: dfxDetails.inputAsset,
+                  outputAmount: double.tryParse(dfxDetails.outputAmount ?? ''),
+                  outputAsset: dfxDetails.outputAsset,
                   height: transactionData.height,
                   txId: transactionData.txId,
                   chainId: transactionData.chainId,

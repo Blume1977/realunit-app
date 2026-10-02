@@ -59,6 +59,10 @@ class TransactionHistoryService extends DFXAuthService {
             rate: matchingTransaction.rate,
             inputTxId: matchingTransaction.inputTxId,
             outputTxId: matchingTransaction.outputTxId,
+            inputAmount: matchingTransaction.inputAmount,
+            inputAsset: matchingTransaction.inputAsset,
+            outputAmount: matchingTransaction.outputAmount,
+            outputAsset: matchingTransaction.outputAsset,
             height: 0, // TODO
             txId: txId,
             chainId: appStore.apiConfig.asset.chainId,

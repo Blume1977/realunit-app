@@ -21,7 +21,7 @@ deployten Image (`handbook.realunit.app`).
 
 ## Screenshots regenerieren
 
-Es gibt keinen separaten Regeneration-Schritt: Die 405 Handbook-Screenshots
+Es gibt keinen separaten Regeneration-Schritt: Die 412 Handbook-Screenshots
 sind direkt die Golden-Baselines unter `test/goldens/` (gemappt in
 `scripts/assemble-handbook-screenshots.sh`). Eine UI-Änderung an einer der
 gemappten Pages produziert beim `flutter test test/goldens` einen Diff —
@@ -196,12 +196,14 @@ Vorab-Anschauen während eines Template-Refactors.)
 
 ## Transaktionsbelege
 
-Die Sektion **B — Transaktionsbelege** verlinkt acht Muster-PDFs, die das
+Die Sektion **B — Transaktionsbelege** verlinkt zwölf Muster-PDFs, die das
 Backend erzeugt — Transaktionshistorie, Transaktionsbestätigung,
-Verkauf-Bestätigung und Übertragung, jeweils in DE und EN.
+Verkauf-Bestätigung und Übertragung, jeweils in DE und EN, sowie den
+DFX-Beleg für den Tausch von ZCHF in CHF und von ZCHF in EUR, jeweils DE
+und EN.
 Anders als die Mail-Previews werden diese PDFs **nicht** hier generiert — sie
 liegen bereits committet im api-Repo unter `docs/examples/realunit-receipt/`
-(gerendert vom `SwissQRService` via `realunit-receipt-example.spec.ts`) und
+(die acht `transaction-*.pdf` gerendert vom `SwissQRService` via `realunit-receipt-example.spec.ts`, die vier `exchange-zchf-*.pdf` via `realunit-exchange-receipt-example.spec.ts`) und
 werden beim Handbook-Build nur ins Image kopiert (Step "Stage RealUnit receipt
 examples from api repo" in `handbook.yaml`; Zielverzeichnis
 `docs/handbook/receipts/` ist gitignored). Single Source of Truth ist das
@@ -222,7 +224,8 @@ open docs/handbook/de/index.html   # Sektion "B — Transaktionsbelege"
 ```
 
 Zum Regenerieren der Muster-PDFs selbst siehe das api-Repo
-(`GENERATE_RECEIPT_EXAMPLES=true npm test -- realunit-receipt-example`).
+(`GENERATE_RECEIPT_EXAMPLES=true npm test -- realunit-receipt-example`,
+`GENERATE_EXCHANGE_RECEIPT_EXAMPLES=true npm test -- realunit-exchange-receipt-example`).
 
 ## Vermögensübersicht
 

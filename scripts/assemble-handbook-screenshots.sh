@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Assemble the 405 handbook screenshots from the visual-regression Golden
+# Assemble the 412 handbook screenshots from the visual-regression Golden
 # baselines. The flat `NN-name.png` output layout matches what
 # docs/handbook/de/index.html links to (`<img src="../screenshots/NN-name.png">`
 # — the relative path resolves to `docs/handbook/screenshots/NN-name.png`).
@@ -447,6 +447,13 @@ MAPPING=(
   "393-image-source-sheet=screens/support/goldens/macos/image_source_sheet.png"
   "394-web-view-chrome=screens/web_view/goldens/macos/web_view_chrome.png"
   "395-web-view-chrome-external=screens/web_view/goldens/macos/web_view_chrome_external.png"
+  "397-pending-transaction-detail=screens/dashboard/goldens/macos/pending_transaction_detail.png"
+  "398-pending-transaction-detail-sell=screens/dashboard/goldens/macos/pending_transaction_detail_sell.png"
+  "399-transaction-detail-sale=screens/transaction_history/goldens/macos/transaction_detail_sale.png"
+  "400-transaction-detail-purchase=screens/transaction_history/goldens/macos/transaction_detail_purchase.png"
+  "401-transaction-detail-received=screens/transaction_history/goldens/macos/transaction_detail_received.png"
+  "402-transaction-detail-sent=screens/transaction_history/goldens/macos/transaction_detail_sent.png"
+  "403-transaction-detail-referral=screens/transaction_history/goldens/macos/transaction_detail_referral.png"
 )
 
 missing=()
