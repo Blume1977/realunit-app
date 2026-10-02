@@ -54,6 +54,23 @@ void main() {
       expect(sendButton(), findsNothing);
     });
 
+    testWidgets(
+        'shows the address above the QR code without a heading '
+        'and with the REALU-only hint', (tester) async {
+      await tester.pumpApp(wrapPage(const SettingsWalletAddressPage()));
+
+      final qr = tester.widget<QRAddressWidget>(find.byType(QRAddressWidget));
+      expect(qr.addressAbove, isTrue);
+      expect(
+        find.text('${S.current.realunitWallet} ${S.current.address}'),
+        findsNothing,
+      );
+      expect(
+        S.current.walletAddressDisclaimer,
+        anyOf(contains('nur REALU'), contains('only REALU')),
+      );
+    });
+
     testWidgets('shows Send when walletFeatureSend is true', (tester) async {
       when(() => settingsBloc.state)
           .thenReturn(const SettingsState(walletFeatureSend: true));

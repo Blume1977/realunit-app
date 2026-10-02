@@ -547,7 +547,7 @@
   "verifySeedTitle": "Sicherung überprüfen",
   "verifySeedWordLabel": "Wort ${position}",
   "walletAddress": "Wallet-Adresse",
-  "walletAddressDisclaimer": "Die Adresse soll nur zum Empfangen von RealUnit Aktientoken verwendet werden.",
+  "walletAddressDisclaimer": "Senden Sie an diese Adresse nur REALU. Andere Token werden in der App nicht angezeigt.",
   "website": "Website",
   "without": "Ohne",
   "year": "Jahr",

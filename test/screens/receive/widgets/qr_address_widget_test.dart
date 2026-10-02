@@ -37,6 +37,32 @@ void main() {
       );
     });
 
+    testWidgets('shows the address below the QR code by default',
+        (tester) async {
+      await tester.pumpWidget(_host(
+        const QRAddressWidget(uri: 'ethereum:$_address', subtitle: _address),
+      ));
+
+      final qrTop = tester.getTopLeft(find.byType(QrImageView)).dy;
+      final addressTop = tester.getTopLeft(find.byType(InkWell)).dy;
+      expect(addressTop, greaterThan(qrTop));
+    });
+
+    testWidgets('shows the address above the QR code when addressAbove is set',
+        (tester) async {
+      await tester.pumpWidget(_host(
+        const QRAddressWidget(
+          uri: 'ethereum:$_address',
+          subtitle: _address,
+          addressAbove: true,
+        ),
+      ));
+
+      final qrTop = tester.getTopLeft(find.byType(QrImageView)).dy;
+      final addressTop = tester.getTopLeft(find.byType(InkWell)).dy;
+      expect(addressTop, lessThan(qrTop));
+    });
+
     testWidgets('renders a copy icon next to the address', (tester) async {
       await tester.pumpWidget(_host(
         const QRAddressWidget(uri: '', subtitle: _address),

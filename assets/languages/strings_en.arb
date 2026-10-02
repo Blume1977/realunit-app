@@ -547,7 +547,7 @@
   "verifySeedTitle": "Verify your backup",
   "verifySeedWordLabel": "Word ${position}",
   "walletAddress": "Wallet address",
-  "walletAddressDisclaimer": "The address should only be used to receive RealUnit stock tokens.",
+  "walletAddressDisclaimer": "Send only REALU to this address. Other tokens are not shown in the app.",
   "website": "Website",
   "without": "Without",
   "year": "Year",
