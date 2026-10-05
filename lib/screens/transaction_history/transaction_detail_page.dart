@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/models/dfx_transaction.dart';
@@ -17,6 +16,7 @@ import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import 'package:realunit_wallet/widgets/frozen_chf_label.dart';
 import 'package:realunit_wallet/widgets/hide_amount_text.dart';
 import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
+import 'package:realunit_wallet/widgets/transaction_date_label.dart';
 import 'package:realunit_wallet/widgets/transaction_title_label.dart';
 
 class TransactionDetailArgs {
@@ -115,7 +115,7 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
                     ),
                   ),
                   Text(
-                    _formattedDate(),
+                    transactionDateLabel(transaction.timestamp),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: RealUnitColors.neutral500,
                     ),
@@ -211,15 +211,6 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
     return 0;
   }
 
-  String _formattedDate() {
-    final transaction = widget.args.transaction;
-    final local = transaction.timestamp.toLocal();
-    if (transaction.type == TransactionTypes.referralPayout) {
-      return DateFormat('dd.MM.yyyy | H:mm').format(local);
-    }
-    return DateFormat('MMM dd, yyyy | H:mm').format(local);
-  }
-
   List<Widget> _fieldRows(BuildContext context) {
     final transaction = widget.args.transaction;
     final s = S.of(context);
@@ -232,17 +223,22 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
 
     if (transaction is DfxTransaction) {
       final hideAmounts = context.watch<SettingsBloc>().state.hideAmounts;
-      void addLeg(double? amount, String? asset) {
+      // A sale has two different amounts: the proceeds of the share sale and what DFX pays out after
+      // its fee. Naming them keeps them apart from each other and from the two receipts.
+      final isSale = transaction.category == TransferCategory.sale;
+      final inputLabel = isSale ? s.saleProceedsIn : s.amountIn;
+      final outputLabel = isSale ? s.payoutIn : s.amountIn;
+      void addLeg(String label, double? amount, String? asset) {
         if (amount == null || asset == null || asset.isEmpty) return;
         if (asset == transaction.asset.symbol) return;
         addField(
-          '${s.amountIn} $asset',
+          '$label $asset',
           hideAmounts ? '***.**' : amount.toStringAsFixed(2),
         );
       }
 
-      addLeg(transaction.inputAmount, transaction.inputAsset);
-      addLeg(transaction.outputAmount, transaction.outputAsset);
+      addLeg(inputLabel, transaction.inputAmount, transaction.inputAsset);
+      addLeg(outputLabel, transaction.outputAmount, transaction.outputAsset);
     }
 
     addField(s.transactionDetailNote, transaction.note);
