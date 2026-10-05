@@ -1198,14 +1198,14 @@
             <span>📱 <b>App:</b> RealUnit Wallet (Flutter)</span>
             <span>📂 <b>Code:</b>
               <a href="https://github.com/RealUnitCH/app">RealUnitCH/app</a></span>
-            <span>🧪 <b>Tests:</b> 424 Visual-Regression Goldens (424 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
+            <span>🧪 <b>Tests:</b> 425 Visual-Regression Goldens (425 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
           </div>
         </section>
 
         <section id="architecture" style="margin-top: 40px">
           <h3 style="margin-top: 0">Single Source of Truth</h3>
           <p>
-            Die 424 App-Screenshots dieser Seite sind Goldens aus
+            Die 425 App-Screenshots dieser Seite sind Goldens aus
             <code>test/goldens/{screens,widgets}/&lt;feature&gt;/goldens/macos/&lt;file&gt;.png</code>.
             Welcher Golden welcher Handbook-Slot ist, definiert die Mapping-Tabelle in
             <code>scripts/assemble-handbook-screenshots.sh</code>. Der Docker-Build
@@ -1245,7 +1245,7 @@
               <b>Pipeline:</b> Page-Edit → <code>flutter test --update-goldens test/goldens/</code>
               auf dem self-hosted Runner (Hardware-Determinismus) → neue Baseline committen →
               <code>handbook-deploy.yaml</code> baut das Docker-Image aus dem gepushten Branch
-              und assembliert die 424 Slots aus <code>test/goldens/</code> → Push auf
+              und assembliert die 425 Slots aus <code>test/goldens/</code> → Push auf
               <code>staging</code> deployt das Handbook-Image nach Produktion, via
               Cloudflare Tunnel.
             </p>
@@ -4119,7 +4119,7 @@
                 />
               </div>
               <div class="desc">
-                Unter dem Kurschart erscheint die Karte <b>Ausstehende Transaktionen</b> mit noch laufenden DFX-Aufträgen: <b>Kauf / In Bearbeitung / 500 CHF</b> und <b>Verkauf / Warte auf Zahlung / 30 REALU</b>, jeweils mit Datum und drehendem Ladeindikator. Der Nutzer sieht dies, solange ein Kauf oder Verkauf beim Zahlungsdienst noch nicht abgeschlossen ist; da hier noch kein Guthaben vorliegt, folgen darunter Token-Illustration und Kaufen-Button. Ein Tipp auf eine Zeile öffnet diesen Auftrag auf einer eigenen Seite, mit dem Betrag und dem Status, und ohne Beleg-Button.
+                Unter dem Kurschart erscheint die Karte <b>Ausstehende Transaktionen</b> mit noch laufenden DFX-Aufträgen: <b>Kauf / In Bearbeitung / 500 CHF</b> und <b>Verkauf / Warte auf REALU / 30 REALU</b>, jeweils mit Datum und drehendem Ladeindikator. Der Nutzer sieht dies, solange ein Kauf oder Verkauf beim Zahlungsdienst noch nicht abgeschlossen ist; da hier noch kein Guthaben vorliegt, folgen darunter Token-Illustration und Kaufen-Button. Ein Tipp auf eine Zeile öffnet diesen Auftrag auf einer eigenen Seite, mit dem Betrag und dem Status, und ohne Beleg-Button.
               </div>
             </div>
             <div class="test" id="397-pending-transaction-detail">
@@ -4135,7 +4135,7 @@
                 />
               </div>
               <div class="desc">
-                Die Seite eines noch offenen Kaufs zeigt den Titel <b>Kauf</b>, den Betrag <b>5000.00 CHF</b> und den Status <b>In Bearbeitung</b>. Es gibt keinen IBAN und keinen Beleg-Button.
+                Die Seite eines noch offenen Kaufs zeigt den Titel <b>Kauf</b>, den Betrag <b>5000.00 CHF</b>, den Status <b>In Bearbeitung</b> und das Feld <b>Betrag in REALU</b> mit <b>ca. 50.00</b>. Das «ca.» steht dort, weil die Stückzahl erst bei der Ausführung feststeht. Es gibt keinen IBAN und keinen Beleg-Button.
               </div>
             </div>
             <div class="test" id="398-pending-transaction-detail-sell">
@@ -4151,7 +4151,23 @@
                 />
               </div>
               <div class="desc">
-                Die Seite eines noch offenen Verkaufs zeigt den Titel <b>Verkauf</b>, den Betrag <b>30.00 REALU</b>, den Status <b>Warte auf Zahlung</b> und das Feld <b>Betrag in CHF</b> mit <b>2970.00</b>. Es gibt keinen Button <b>Beleg</b> und keinen Button <b>RealUnit-Verkauf</b>.
+                Die Seite eines noch offenen Verkaufs zeigt den Titel <b>Verkauf</b>, den Betrag <b>30.00 REALU</b>, den Status <b>Warte auf REALU</b> und das Feld <b>Betrag in CHF</b> mit <b>ca. 2970.00</b>. Es gibt keinen Button <b>Beleg</b> und keinen Button <b>RealUnit-Verkauf</b>.
+              </div>
+            </div>
+            <div class="test" id="410-pending-transaction-detail-waiting-for-payment">
+              <div class="head">
+                <a class="name permalink" href="#410-pending-transaction-detail-waiting-for-payment">410-pending-transaction-detail-waiting-for-payment</a>
+                <button class="copy-link" type="button" data-target="410-pending-transaction-detail-waiting-for-payment" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/dashboard/goldens/macos/pending_transaction_detail_waiting_for_payment.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/410-pending-transaction-detail-waiting-for-payment.png"
+                  alt="Offener Kauf, der auf die Zahlung wartet"
+                />
+              </div>
+              <div class="desc">
+                Die Seite eines offenen Kaufs, dessen Banküberweisung noch nicht eingegangen ist, zeigt den Titel <b>Kauf</b>, den Betrag <b>5000.00 CHF</b>, den Status <b>Warte auf Zahlung</b> und das Feld <b>Betrag in REALU</b> mit <b>ca. 50.00</b>. Bei einem offenen Verkauf steht an derselben Stelle <b>Warte auf REALU</b>.
               </div>
             </div>
             <div class="test" id="93-dashboard-recent-transactions">
@@ -4461,7 +4477,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Ein Tippen auf eine Buchung öffnet ihre Detailseite. Die Seite zeigt Betrag, Datum und eine Notiz nur, wenn eine vorhanden ist. Hat die Buchung einen Betrag in CHF, EUR oder ZCHF, zeigt sie diesen. Sie zeigt keine Wallet-Adresse und keine Transaktions-ID. Ausser bei einer Empfehlungsprämie liegen dort die Beleg-Buttons. Ein Verkauf hat zwei Buttons: RealUnit-Verkauf und Tausch ZCHF in CHF/EUR. Jede andere Buchung ausser der Empfehlungsprämie hat einen Button Beleg. Der Sammelbeleg über den grossen PDF-Button bleibt unverändert. Die folgenden Zustände zeigen die Beleg-Erzeugung und den Fehlerfall auf der Detailseite.
+            Ein Tippen auf eine Buchung öffnet ihre Detailseite. Die Seite zeigt Betrag, Datum und eine Notiz nur, wenn eine vorhanden ist. Hat die Buchung einen Betrag in CHF, EUR oder ZCHF, zeigt sie diesen; bei einem Verkauf heissen die Felder Verkaufserlös und Auszahlung. Sie zeigt keine Wallet-Adresse und keine Transaktions-ID. Ausser bei einer Empfehlungsprämie liegen dort die Beleg-Buttons. Ein Verkauf hat zwei Buttons: RealUnit-Verkauf und Auszahlung (DFX AG). Jede andere Buchung ausser der Empfehlungsprämie hat einen Button Beleg. Der Sammelbeleg über den grossen PDF-Button bleibt unverändert. Die folgenden Zustände zeigen die Beleg-Erzeugung und den Fehlerfall auf der Detailseite.
           </p>
 
           <div class="tests cols-2">
@@ -4478,7 +4494,7 @@
                 />
               </div>
               <div class="desc">
-                Die Detailseite eines Verkaufs zeigt den Titel <b>Verkauf</b>, den Abschnitt <b>Belege</b>, die Buttons <b>RealUnit-Verkauf</b> und <b>Tausch ZCHF in CHF/EUR</b> und das Feld <b>Betrag in CHF</b> mit <b>1980.00</b>. Sie zeigt keine Transaktions-ID und keine Zeile <b>Absender</b> oder <b>Empfänger</b>.
+                Die Detailseite eines Verkaufs zeigt den Titel <b>Verkauf</b>, den Abschnitt <b>Belege</b>, die Buttons <b>RealUnit-Verkauf</b> und <b>Auszahlung (DFX AG)</b> und die Felder <b>Verkaufserlös in ZCHF</b> mit <b>2000.00</b> und <b>Auszahlung in CHF</b> mit <b>1980.20</b>. Der Verkaufserlös entspricht dem RealUnit-Beleg, die Auszahlung dem DFX-Beleg nach Abzug der Gebühren DFX. Sie zeigt keine Transaktions-ID und keine Zeile <b>Absender</b> oder <b>Empfänger</b>.
               </div>
             </div>
             <div class="test" id="400-transaction-detail-purchase">
@@ -4494,7 +4510,7 @@
                 />
               </div>
               <div class="desc">
-                Die Detailseite eines Kaufs zeigt den Titel <b>Kauf</b>, den Betrag <b>+ 50 REALU</b>, den Abschnitt <b>Belege</b>, den Button <b>Beleg</b> und das Feld <b>Betrag in CHF</b> mit <b>5000.00</b>. Sie zeigt nicht <b>RealUnit-Verkauf</b> und nicht <b>Tausch ZCHF in CHF/EUR</b>.
+                Die Detailseite eines Kaufs zeigt den Titel <b>Kauf</b>, den Betrag <b>+ 50 REALU</b>, den Abschnitt <b>Belege</b>, den Button <b>Beleg</b> und das Feld <b>Betrag in CHF</b> mit <b>5000.00</b>. Sie zeigt nicht <b>RealUnit-Verkauf</b> und nicht <b>Auszahlung (DFX AG)</b>.
               </div>
             </div>
             <div class="test" id="401-transaction-detail-received">

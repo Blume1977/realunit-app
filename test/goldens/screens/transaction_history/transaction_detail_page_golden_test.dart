@@ -26,11 +26,13 @@ void main() {
   late MockSettingsBloc settingsBloc;
   late _MockTransactionHistoryReceiptCubit receiptCubit;
 
+  // A real sale reaches DFX as ZCHF (the proceeds of the share sale) and leaves it as the payout
+  // after the DFX fee.
   final sale = DfxTransaction(
     dfxId: 1,
-    inputAmount: 20,
-    inputAsset: 'REALU',
-    outputAmount: 1980,
+    inputAmount: 2000,
+    inputAsset: 'ZCHF',
+    outputAmount: 1980.2,
     outputAsset: 'CHF',
     height: 0,
     txId: 'tx-sale-sheet',
@@ -182,9 +184,12 @@ void main() {
         expect(find.text('Verkauf'), findsOneWidget);
         expect(find.text('Belege'), findsOneWidget);
         expect(find.text('RealUnit-Verkauf'), findsOneWidget);
-        expect(find.text('Tausch ZCHF in CHF/EUR'), findsOneWidget);
-        expect(find.text('Betrag in CHF'), findsOneWidget);
-        expect(find.text('1980.00'), findsOneWidget);
+        expect(find.text('Auszahlung (DFX AG)'), findsOneWidget);
+        expect(find.text('Verkaufserlös in ZCHF'), findsOneWidget);
+        expect(find.text('2000.00'), findsOneWidget);
+        expect(find.text('Auszahlung in CHF'), findsOneWidget);
+        expect(find.text('1980.20'), findsOneWidget);
+        expect(find.textContaining('Betrag in'), findsNothing);
         expect(find.text('tx-sale-sheet'), findsNothing);
         expect(find.text('Absender'), findsNothing);
         expect(find.text('Empfänger'), findsNothing);
@@ -221,7 +226,7 @@ void main() {
         expect(find.text('Betrag in CHF'), findsOneWidget);
         expect(find.text('5000.00'), findsOneWidget);
         expect(find.text('RealUnit-Verkauf'), findsNothing);
-        expect(find.text('Tausch ZCHF in CHF/EUR'), findsNothing);
+        expect(find.text('Auszahlung (DFX AG)'), findsNothing);
         expect(
           find.text('0x1111111111111111111111111111111111111111'),
           findsNothing,

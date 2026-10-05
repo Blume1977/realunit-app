@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/transactions/dto/transactions_dto.dart';
 import 'package:realunit_wallet/screens/dashboard/widgets/pending_transaction_detail_page.dart';
 import 'package:realunit_wallet/styles/colors.dart';
+import 'package:realunit_wallet/widgets/pending_transaction_status_label.dart';
+import 'package:realunit_wallet/widgets/transaction_date_label.dart';
 
 class PendingTransactionRow extends StatelessWidget {
   final TransactionDto transaction;
@@ -49,9 +50,7 @@ class PendingTransactionRow extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    transaction.state == .waitingForPayment
-                        ? S.of(context).transactionWaitingForPayment
-                        : S.of(context).transactionPending,
+                    pendingTransactionStatusLabel(context, transaction),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: RealUnitColors.neutral500,
                     ),
@@ -74,7 +73,7 @@ class PendingTransactionRow extends StatelessWidget {
                     ),
                   if (transaction.date != null)
                     Text(
-                      DateFormat('MMM dd, yyyy').format(transaction.date!.toLocal()),
+                      transactionDateLabel(transaction.date!, withTime: false),
                       textAlign: .end,
                       maxLines: 1,
                       overflow: .ellipsis,

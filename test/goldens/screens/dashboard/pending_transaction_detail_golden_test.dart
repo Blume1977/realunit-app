@@ -31,6 +31,18 @@ void main() {
     targetAccount: '0x1111111111111111111111111111111111111111',
   );
 
+  final buyWaitingForPayment = TransactionDto(
+    type: TransactionType.buy,
+    inputAmount: 5000,
+    inputAsset: 'CHF',
+    outputAmount: 50,
+    outputAsset: 'REALU',
+    state: TransactionState.waitingForPayment,
+    date: DateTime.utc(2026, 5, 15, 10),
+    sourceAccount: 'CH9300762011623852957',
+    targetAccount: '0x1111111111111111111111111111111111111111',
+  );
+
   goldenTest(
     'pending transaction detail',
     fileName: 'pending_transaction_detail',
@@ -40,6 +52,8 @@ void main() {
       expect(find.text('Kauf'), findsOneWidget);
       expect(find.text('5000.00 CHF'), findsOneWidget);
       expect(find.text('In Bearbeitung'), findsOneWidget);
+      expect(find.text('Betrag in REALU'), findsOneWidget);
+      expect(find.text('ca. 50.00'), findsOneWidget);
       expect(find.text('CH9300762011623852957'), findsNothing);
       expect(find.text('IBAN'), findsNothing);
       expect(
@@ -63,9 +77,10 @@ void main() {
       await tester.pump();
       expect(find.text('Verkauf'), findsOneWidget);
       expect(find.text('30.00 REALU'), findsOneWidget);
-      expect(find.text('Warte auf Zahlung'), findsOneWidget);
+      expect(find.text('Warte auf Eingang der REALU'), findsOneWidget);
+      expect(find.text('Warte auf Zahlung'), findsNothing);
       expect(find.text('Betrag in CHF'), findsOneWidget);
-      expect(find.text('2970.00'), findsOneWidget);
+      expect(find.text('ca. 2970.00'), findsOneWidget);
       expect(find.text('CH9300762011623852957'), findsNothing);
       expect(find.text('IBAN'), findsNothing);
       expect(
@@ -78,6 +93,27 @@ void main() {
     builder: () => wrapForGolden(
       PendingTransactionDetailPage(
         args: PendingTransactionDetailArgs(transaction: sell),
+      ),
+    ),
+  );
+
+  // This test does not commit a PNG; the regenerate workflow writes it.
+  goldenTest(
+    'pending buy transaction detail waiting for payment',
+    fileName: 'pending_transaction_detail_waiting_for_payment',
+    constraints: phoneConstraints,
+    pumpBeforeTest: (tester) async {
+      await tester.pump();
+      expect(find.text('Kauf'), findsOneWidget);
+      expect(find.text('5000.00 CHF'), findsOneWidget);
+      expect(find.text('Warte auf Zahlung'), findsOneWidget);
+      expect(find.text('Warte auf Eingang der REALU'), findsNothing);
+      expect(find.text('Betrag in REALU'), findsOneWidget);
+      expect(find.text('ca. 50.00'), findsOneWidget);
+    },
+    builder: () => wrapForGolden(
+      PendingTransactionDetailPage(
+        args: PendingTransactionDetailArgs(transaction: buyWaitingForPayment),
       ),
     ),
   );

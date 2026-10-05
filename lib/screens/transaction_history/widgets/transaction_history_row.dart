@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/io/format_frozen_chf.dart';
@@ -9,6 +8,7 @@ import 'package:realunit_wallet/screens/transaction_history/transaction_detail_p
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/frozen_chf_label.dart';
 import 'package:realunit_wallet/widgets/hide_amount_text.dart';
+import 'package:realunit_wallet/widgets/transaction_date_label.dart';
 import 'package:realunit_wallet/widgets/transaction_title_label.dart';
 
 class TransactionHistoryRow extends StatelessWidget {
@@ -102,13 +102,7 @@ class TransactionHistoryRowView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      transaction.type == TransactionTypes.referralPayout
-                          ? DateFormat(
-                              'dd.MM.yyyy | H:mm',
-                            ).format(transaction.timestamp.toLocal())
-                          : DateFormat(
-                              'MMM dd, yyyy | H:mm',
-                            ).format(transaction.timestamp.toLocal()),
+                      transactionDateLabel(transaction.timestamp),
                       style: const TextStyle(
                         fontSize: 12,
                         height: 16 / 12,
@@ -147,9 +141,7 @@ class TransactionHistoryRowView extends StatelessWidget {
     if (transaction.type != TransactionTypes.referralPayout) return row;
     final s = S.of(context);
     final settings = context.watch<SettingsBloc>().state;
-    final date = DateFormat(
-      'dd.MM.yyyy | H:mm',
-    ).format(transaction.timestamp.toLocal());
+    final date = transactionDateLabel(transaction.timestamp);
     final chf = transaction.data;
     return Semantics(
       container: true,

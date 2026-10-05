@@ -38,8 +38,14 @@ void main() {
         expect(find.text('Kauf'), findsOneWidget);
         expect(find.text('5000.00 CHF'), findsOneWidget);
         expect(find.text('Betrag in REALU'), findsOneWidget);
-        expect(find.text('50.00'), findsOneWidget);
+        expect(find.text('ca. 50.00'), findsOneWidget);
         expect(find.text('In Bearbeitung'), findsOneWidget);
+        expect(
+          find.text(
+            '15.05.2026 | ${DateTime.utc(2026, 5, 15, 10).toLocal().hour}:00',
+          ),
+          findsOneWidget,
+        );
         expect(find.text('CH9300762011623852957'), findsNothing);
         expect(find.text('IBAN'), findsNothing);
         expect(
@@ -48,6 +54,51 @@ void main() {
         );
         expect(find.text('Beleg'), findsNothing);
         expect(find.text('RealUnit-Verkauf'), findsNothing);
+      },
+    );
+
+    testWidgets('buy waiting for the bank payment says so', (tester) async {
+      await tester.pumpApp(
+        const PendingTransactionDetailPage(
+          args: PendingTransactionDetailArgs(
+            transaction: TransactionDto(
+              type: TransactionType.buy,
+              inputAmount: 5000,
+              inputAsset: 'CHF',
+              state: TransactionState.waitingForPayment,
+            ),
+          ),
+        ),
+        locale: const Locale('de'),
+      );
+
+      expect(find.text('Warte auf Zahlung'), findsOneWidget);
+      expect(find.text('Warte auf Eingang der REALU'), findsNothing);
+    });
+
+    testWidgets(
+      'sell waiting for the tokens names the tokens and marks the payout as approximate',
+      (tester) async {
+        await tester.pumpApp(
+          const PendingTransactionDetailPage(
+            args: PendingTransactionDetailArgs(
+              transaction: TransactionDto(
+                type: TransactionType.sell,
+                inputAmount: 30,
+                inputAsset: 'REALU',
+                outputAmount: 2970,
+                outputAsset: 'CHF',
+                state: TransactionState.waitingForPayment,
+              ),
+            ),
+          ),
+          locale: const Locale('de'),
+        );
+
+        expect(find.text('Warte auf Eingang der REALU'), findsOneWidget);
+        expect(find.text('Warte auf Zahlung'), findsNothing);
+        expect(find.text('Betrag in CHF'), findsOneWidget);
+        expect(find.text('ca. 2970.00'), findsOneWidget);
       },
     );
 
