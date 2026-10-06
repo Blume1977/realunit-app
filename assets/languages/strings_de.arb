@@ -539,7 +539,7 @@
   "transactionSent": "Gesendet",
   "transactionSwap": "Tausch",
   "transactionWaitingForPayment": "Warte auf Zahlung",
-  "transactionWaitingForTokens": "Warte auf Eingang der REALU",
+  "transactionWaitingForTokens": "Warte auf REALU",
   "twoFa": "2-Faktor Authentifizierung",
   "twoFaCodeRequired": "Code ist erforderlich",
   "twoFaCodeTooShort": "Der Code sollte 6 Ziffern lang sein",
