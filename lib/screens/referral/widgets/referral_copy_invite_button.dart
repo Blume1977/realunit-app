@@ -24,10 +24,17 @@ class ReferralCopyInviteButton extends StatefulWidget {
 }
 
 class _ReferralCopyInviteButtonState extends State<ReferralCopyInviteButton> {
+  /// How long a clipboard write may stay silent before the button treats the
+  /// attempt as unsuccessful.
+  static const _clipboardWriteTimeout = Duration(seconds: 2);
+
   Timer? _reset;
+  Timer? _copyTimeout;
+  Completer<bool>? _settled;
   bool _copied = false;
   bool _failed = false;
   bool _copying = false;
+  int _copyGeneration = 0;
 
   @override
   void didUpdateWidget(ReferralCopyInviteButton oldWidget) {
@@ -43,46 +50,77 @@ class _ReferralCopyInviteButtonState extends State<ReferralCopyInviteButton> {
 
   @override
   void dispose() {
+    // Bump first: mounted is still true during dispose, so a continuation
+    // must see the generation change and return before setState.
+    _copyGeneration++;
     _reset?.cancel();
+    _copyTimeout?.cancel();
+    // Release a still-awaiting _copy() so its future cannot outlive the state.
+    final settled = _settled;
+    _settled = null;
+    if (settled != null && !settled.isCompleted) settled.complete(false);
     super.dispose();
   }
 
   Future<void> _copy() async {
     if (_copying) return;
+    final generation = ++_copyGeneration;
     setState(() {
       _copying = true;
       _failed = false;
       _copied = false;
     });
     final text = widget.text;
+    // Own the timeout instead of using Future.timeout: its timer cannot be
+    // cancelled, so a write that never returns would leave a pending timer and
+    // throw a TimeoutException into a future nobody awaits.
+    final settled = Completer<bool>();
+    _settled = settled;
+    _copyTimeout?.cancel();
+    final timeout = Timer(_clipboardWriteTimeout, () {
+      if (!settled.isCompleted) settled.complete(false);
+    });
+    _copyTimeout = timeout;
+    unawaited(() async {
+      try {
+        await Clipboard.setData(ClipboardData(text: text));
+        if (!settled.isCompleted) settled.complete(true);
+      } catch (_) {
+        if (!settled.isCompleted) settled.complete(false);
+      }
+    }());
     try {
-      await Clipboard.setData(ClipboardData(text: text)).timeout(
-        const Duration(seconds: 2),
-      );
-      if (!mounted || widget.text != text) return;
-      setState(() {
-        _copied = true;
-        _failed = false;
-      });
-      _reset?.cancel();
-      _reset = Timer(const Duration(seconds: 2), () {
-        if (mounted) setState(() => _copied = false);
-      });
-    } catch (_) {
-      if (!mounted || widget.text != text) return;
-      setState(() {
-        _copied = false;
-        _failed = true;
-      });
-      _reset?.cancel();
-      _reset = Timer(const Duration(seconds: 2), () {
-        if (mounted) setState(() => _failed = false);
-      });
-    } finally {
-      if (mounted) {
-        setState(() => _copying = false);
+      final succeeded = await settled.future;
+      // Cancel our own timer, but only clear the fields while they still point
+      // at this operation: a late reply must not drop a newer copy's timeout.
+      timeout.cancel();
+      if (identical(_copyTimeout, timeout)) _copyTimeout = null;
+      if (identical(_settled, settled)) _settled = null;
+      if (!mounted || generation != _copyGeneration || widget.text != text) {
+        return;
+      }
+      if (succeeded) {
+        setState(() {
+          _copied = true;
+          _failed = false;
+        });
+        _reset?.cancel();
+        _reset = Timer(const Duration(seconds: 2), () {
+          if (mounted) setState(() => _copied = false);
+        });
       } else {
-        _copying = false;
+        setState(() {
+          _copied = false;
+          _failed = true;
+        });
+        _reset?.cancel();
+        _reset = Timer(const Duration(seconds: 2), () {
+          if (mounted) setState(() => _failed = false);
+        });
+      }
+    } finally {
+      if (mounted && generation == _copyGeneration) {
+        setState(() => _copying = false);
       }
     }
   }

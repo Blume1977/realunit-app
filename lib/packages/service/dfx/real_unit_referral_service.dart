@@ -131,6 +131,32 @@ class RealUnitReferralService extends DFXAuthService {
     );
   }
 
+  /// Get-or-create the account's one open impersonal invite.
+  Future<ReferralCreatedInviteDto> createImpersonalInvite() async {
+    final uri = buildUri(host, '$_basePath/invites');
+    final response = await _timed(
+      authenticatedPost(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'kind': 'Impersonal'}),
+      ),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw ApiException.fromBody(
+        response.body,
+        httpStatusCode: response.statusCode,
+      );
+    }
+
+    return ReferralCreatedInviteDto.fromJson(
+      referralJsonObject(
+        jsonDecode(response.body),
+        markers: const ['code', 'url', 'guestName', 'kind'],
+      ),
+    );
+  }
+
   Future<List<ReferralInviteDto>> getInvites() async {
     final uri = buildUri(host, '$_basePath/invites');
     final response = await _timed(

@@ -1789,4 +1789,188 @@ void main() {
       expect(find.text('create-form'), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'impersonal invite shows prize count and hides the guest name',
+    (tester) async {
+      const summary = ReferralSummaryDto(
+        eligible: true,
+        termsAccepted: true,
+        openCount: 1,
+        creditedCount: 0,
+        realuSum: 0,
+        chfSum: 0,
+      );
+      final invites = [
+        ReferralInviteDto(
+          id: 1,
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: 'Hidden',
+          status: 'Open',
+          created: DateTime.utc(2026, 8, 1),
+          kind: 'impersonal',
+          prizeCount: 2,
+        ),
+      ];
+      when(() => cubit.state).thenReturn(
+        ReferralOverviewLoaded(summary: summary, invites: invites),
+      );
+      whenListen(
+        cubit,
+        const Stream<ReferralState>.empty(),
+        initialState: ReferralOverviewLoaded(summary: summary, invites: invites),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: realUnitTheme,
+          locale: const Locale('de'),
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<ReferralCubit>.value(value: cubit),
+              BlocProvider<SettingsBloc>.value(value: settings),
+            ],
+            child: const ReferralOverviewPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Unpersönlicher Einladungslink'), findsOneWidget);
+      expect(find.text('2 Prämien'), findsOneWidget);
+      expect(find.text('Hidden'), findsNothing);
+      expect(find.textContaining('Hidden'), findsNothing);
+      expect(find.text('Ihre Einladung für Hidden'), findsNothing);
+      expect(find.text('Einladungslink kopieren'), findsOneWidget);
+      expect(find.text('Einladungslink versenden'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'impersonal invite with one prize uses the singular label',
+    (tester) async {
+      const summary = ReferralSummaryDto(
+        eligible: true,
+        termsAccepted: true,
+        openCount: 1,
+        creditedCount: 0,
+        realuSum: 0,
+        chfSum: 0,
+      );
+      final invites = [
+        ReferralInviteDto(
+          id: 1,
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: 'Hidden',
+          status: 'Open',
+          created: DateTime.utc(2026, 8, 1),
+          kind: 'impersonal',
+          prizeCount: 1,
+        ),
+      ];
+      when(() => cubit.state).thenReturn(
+        ReferralOverviewLoaded(summary: summary, invites: invites),
+      );
+      whenListen(
+        cubit,
+        const Stream<ReferralState>.empty(),
+        initialState: ReferralOverviewLoaded(summary: summary, invites: invites),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: realUnitTheme,
+          locale: const Locale('de'),
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<ReferralCubit>.value(value: cubit),
+              BlocProvider<SettingsBloc>.value(value: settings),
+            ],
+            child: const ReferralOverviewPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('1 Prämie'), findsOneWidget);
+      expect(find.text('1 Prämien'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'impersonal invite with zero prizes hides the guest name',
+    (tester) async {
+      const summary = ReferralSummaryDto(
+        eligible: true,
+        termsAccepted: true,
+        openCount: 1,
+        creditedCount: 0,
+        realuSum: 0,
+        chfSum: 0,
+      );
+      final invites = [
+        ReferralInviteDto(
+          id: 1,
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: 'Hidden',
+          status: 'Open',
+          created: DateTime.utc(2026, 8, 1),
+          kind: 'Impersonal',
+          prizeCount: 0,
+        ),
+      ];
+      when(() => cubit.state).thenReturn(
+        ReferralOverviewLoaded(summary: summary, invites: invites),
+      );
+      whenListen(
+        cubit,
+        const Stream<ReferralState>.empty(),
+        initialState: ReferralOverviewLoaded(summary: summary, invites: invites),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: realUnitTheme,
+          locale: const Locale('de'),
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<ReferralCubit>.value(value: cubit),
+              BlocProvider<SettingsBloc>.value(value: settings),
+            ],
+            child: const ReferralOverviewPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Unpersönlicher Einladungslink'), findsOneWidget);
+      expect(find.text('0 Prämien'), findsOneWidget);
+      expect(find.text('Hidden'), findsNothing);
+      expect(find.textContaining('Hidden'), findsNothing);
+    },
+  );
 }

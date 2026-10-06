@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -13,6 +16,7 @@ import 'package:realunit_wallet/packages/utils/default_assets.dart';
 import 'package:realunit_wallet/screens/dashboard/widgets/transaction_row.dart';
 import 'package:realunit_wallet/screens/referral/cubit/referral_cubit.dart';
 import 'package:realunit_wallet/screens/referral/referral_create_page.dart';
+import 'package:realunit_wallet/screens/referral/referral_error_message.dart';
 import 'package:realunit_wallet/screens/referral/referral_page.dart';
 import 'package:realunit_wallet/screens/referral/referral_terms_page.dart';
 import 'package:realunit_wallet/screens/referral/widgets/referral_entry_card.dart';
@@ -263,6 +267,120 @@ void main() {
         settings: const SettingsState(language: Language.de, currency: Currency.eur),
         data: '246.50',
       ),
+    );
+  });
+
+  group('referral create impersonal', () {
+    goldenTest(
+      'create page impersonal',
+      fileName: 'referral_create_page_impersonal',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.tap(find.text('Unpersönlich'));
+        for (var i = 0; i < 5; i++) {
+          await tester.pump();
+          if (find.byType(CupertinoActivityIndicator).evaluate().isEmpty) {
+            break;
+          }
+        }
+        for (var i = 0; i < 5; i++) {
+          if (find.text('Unpersönlicher Einladungslink').evaluate().isNotEmpty) {
+            break;
+          }
+          await tester.pump();
+        }
+      },
+      builder: () {
+        final controller = StreamController<ReferralState>.broadcast();
+        whenListen(
+          cubit,
+          controller.stream,
+          initialState: const ReferralCreateReady(summary: _summary),
+        );
+        when(() => cubit.createImpersonalInvite()).thenAnswer((_) async {
+          controller.add(
+            const ReferralImpersonalReady(
+              summary: _summary,
+              invite: ReferralCreatedInviteDto(
+                code: 'IMP1',
+                url: 'https://realunit.app/invite/IMP1',
+                guestName: '',
+                kind: 'Impersonal',
+                copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+              ),
+            ),
+          );
+        });
+        return wrapForGolden(
+          BlocProvider<ReferralCubit>.value(
+            value: cubit,
+            child: const ReferralCreateView(),
+          ),
+        );
+      },
+    );
+
+    goldenTest(
+      'create page impersonal creating',
+      fileName: 'referral_create_page_impersonal_creating',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.tap(find.text('Unpersönlich'));
+        await tester.pump();
+        await tester.pump();
+      },
+      builder: () {
+        final controller = StreamController<ReferralState>.broadcast();
+        final pending = Completer<void>();
+        whenListen(
+          cubit,
+          controller.stream,
+          initialState: const ReferralCreateReady(summary: _summary),
+        );
+        when(() => cubit.createImpersonalInvite()).thenAnswer((_) {
+          controller.add(const ReferralImpersonalLoading(summary: _summary));
+          return pending.future;
+        });
+        return wrapForGolden(
+          BlocProvider<ReferralCubit>.value(
+            value: cubit,
+            child: const ReferralCreateView(),
+          ),
+        );
+      },
+    );
+
+    goldenTest(
+      'create page impersonal error',
+      fileName: 'referral_create_page_impersonal_error',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.tap(find.text('Unpersönlich'));
+        await tester.pump();
+        await tester.pump();
+      },
+      builder: () {
+        final controller = StreamController<ReferralState>.broadcast();
+        whenListen(
+          cubit,
+          controller.stream,
+          initialState: const ReferralCreateReady(summary: _summary),
+        );
+        when(() => cubit.createImpersonalInvite()).thenAnswer((_) async {
+          controller.add(
+            ReferralImpersonalFailure(
+              summary: _summary,
+              message: referralErrorMessage(TimeoutException('create')),
+            ),
+          );
+        });
+        return wrapForGolden(
+          BlocProvider<ReferralCubit>.value(
+            value: cubit,
+            child: const ReferralCreateView(),
+          ),
+        );
+      },
     );
   });
 }

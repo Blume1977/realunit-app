@@ -17,6 +17,9 @@ import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import 'package:realunit_wallet/widgets/form/labeled_text_field.dart';
 import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
+import 'package:realunit_wallet/widgets/tag_selection.dart';
+
+enum _CreateInviteMode { personal, impersonal }
 
 class ReferralCreatePage extends StatelessWidget {
   const ReferralCreatePage({super.key});
@@ -48,11 +51,37 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
   final _nameCtrl = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _submitting = false;
+  _CreateInviteMode _mode = _CreateInviteMode.personal;
+  // Stays true so a second back cannot pop the route underneath.
+  bool _popInFlight = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final current = context.read<ReferralCubit>().state;
+    if (current is ReferralImpersonalLoading ||
+        current is ReferralImpersonalReady ||
+        current is ReferralImpersonalFailure) {
+      _mode = _CreateInviteMode.impersonal;
+    }
+  }
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     super.dispose();
+  }
+
+  void _onModeSelected(_CreateInviteMode mode) {
+    if (_mode == mode) return;
+    final cubit = context.read<ReferralCubit>();
+    if (mode == _CreateInviteMode.personal) {
+      cubit.showPersonalCreate();
+      setState(() => _mode = mode);
+      return;
+    }
+    setState(() => _mode = mode);
+    cubit.createImpersonalInvite();
   }
 
   Future<void> _submit(BuildContext context) async {
@@ -105,10 +134,15 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
     final s = S.of(context);
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
+      onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
-        if (!context.mounted) return;
-        final created = context.read<ReferralCubit>().state is ReferralInviteCreated;
+        if (_popInFlight) return;
+        _popInFlight = true;
+        final cubit = context.read<ReferralCubit>();
+        final created =
+            cubit.state is ReferralInviteCreated ||
+            await cubit.impersonalInviteCreated();
+        if (!context.mounted || cubit.isClosed) return;
         Navigator.of(context).pop(created);
       },
       child: Scaffold(
@@ -257,6 +291,15 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
               }
 
               final creating = state is ReferralCreating || _submitting;
+              if (_mode == _CreateInviteMode.impersonal) {
+                return _impersonalBody(
+                  context,
+                  s,
+                  state,
+                  switchLocked: creating,
+                );
+              }
+
               final error = state is ReferralCreateReady
                   ? state.errorMessage
                   : state is ReferralCreating
@@ -278,6 +321,7 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         spacing: 16,
                         children: [
+                          _modeSwitcher(s, enabled: !creating),
                           Text(
                             s.referralCreateInviteDescription,
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -321,37 +365,9 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                             },
                           ),
                           if (creating && (error == null || error.isEmpty))
-                            Semantics(
-                              container: true,
-                              liveRegion: true,
-                              child: Row(
-                                spacing: 8,
-                                children: [
-                                  const ExcludeSemantics(
-                                    child: CupertinoActivityIndicator(),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      s.referralCreating,
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: RealUnitColors.neutral500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
+                            _creatingStatus(context, s)
                           else if (error != null && error.isNotEmpty)
-                            Semantics(
-                              container: true,
-                              liveRegion: true,
-                              child: Text(
-                                localizedReferralError(context, error),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: RealUnitColors.status.red600,
-                                ),
-                              ),
-                            ),
+                            _errorStatus(context, error),
                         ],
                       ),
                     ),
@@ -372,6 +388,130 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _modeSwitcher(S s, {required bool enabled}) {
+    return TagSelection<_CreateInviteMode>(
+      items: [
+        (_CreateInviteMode.personal, s.referralModePersonal, null),
+        (_CreateInviteMode.impersonal, s.referralModeImpersonal, null),
+      ],
+      selected: _mode,
+      onSelected: enabled ? _onModeSelected : null,
+    );
+  }
+
+  Widget _creatingStatus(BuildContext context, S s) {
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      child: Row(
+        spacing: 8,
+        children: [
+          const ExcludeSemantics(
+            child: CupertinoActivityIndicator(),
+          ),
+          Expanded(
+            child: Text(
+              s.referralCreating,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: RealUnitColors.neutral500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _errorStatus(BuildContext context, String error) {
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      child: Text(
+        localizedReferralError(context, error),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: RealUnitColors.status.red600,
+        ),
+      ),
+    );
+  }
+
+  Widget _impersonalBody(
+    BuildContext context,
+    S s,
+    ReferralState state, {
+    required bool switchLocked,
+  }) {
+    final invite = state is ReferralImpersonalReady ? state.invite : null;
+    final error = state is ReferralImpersonalFailure ? state.message : null;
+    final creating = state is ReferralImpersonalLoading;
+    final lang = Localizations.localeOf(context).languageCode;
+    final text = invite == null
+        ? null
+        : _shareText(
+            guestName: '',
+            code: invite.code,
+            url: invite.url,
+            copyText: invite.copyTextForLocale(lang),
+          );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: ScrollableActionsLayout(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 16,
+          children: [
+            _modeSwitcher(s, enabled: !switchLocked && !creating),
+            if (invite != null)
+              Text(
+                s.referralImpersonalTitle,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            Text(
+              s.referralImpersonalDescription,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: RealUnitColors.neutral500,
+              ),
+            ),
+            if (invite != null && text != null)
+              SelectableText(
+                text,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: RealUnitColors.realUnitBlue,
+                ),
+              )
+            else if (creating && (error == null || error.isEmpty))
+              _creatingStatus(context, s)
+            else if (error != null && error.isNotEmpty)
+              _errorStatus(context, error),
+          ],
+        ),
+        actions: [
+          if (invite != null && text != null) ...[
+            ReferralCopyInviteButton(text: text),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: ReferralShareInviteButton(text: text, autofocus: true),
+            ),
+          ] else if (error != null && error.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: AppFilledButton(
+                label: s.retry,
+                autofocus: !creating,
+                state: creating ? FilledButtonState.loading : FilledButtonState.idle,
+                onPressed: creating
+                    ? null
+                    : () => context.read<ReferralCubit>().createImpersonalInvite(
+                        retry: true,
+                      ),
+              ),
+            ),
+        ],
       ),
     );
   }

@@ -96,8 +96,8 @@ jobs:
           set -euo pipefail
           bash scripts/assemble-handbook-screenshots.sh /tmp/handbook-shots
           count=$(ls -1 /tmp/handbook-shots/*.png | wc -l | tr -d ' ')
-          if [ "$count" != "413" ]; then
-            echo "expected 413 screenshots, got $count" >&2
+          if [ "$count" != "418" ]; then
+            echo "expected 418 screenshots, got $count" >&2
             exit 1
           fi
 
@@ -177,7 +177,7 @@ jobs:
             exit 1
           fi
 
-          # Spot-check handbook screenshots assembled from Goldens (413 PNGs).
+          # Spot-check handbook screenshots assembled from Goldens (418 PNGs).
           # Mix of original 01-61 slots, later Golden batches, referral
           # baselines, and pay whole-share rounding so a regression in any range surfaces here.
           for name in 01-welcome 11-dashboard 26-terms 35-dashboard-with-balance 46-buy-kyc-required 52-sell-unknown-error 53-buy-payment-details 61-kyc-registration-tax-tin-error 62-welcome-page-android 219-settings-security-page-default 268-phone-number-field-default 269-dashboard-insider-unlocked 270-handbook-persona-dca 275-handbook-persona-exit-1j 276-referral-overview 282-referral-payout-row 283-referral-terms-readonly 287-kyc-registration-referral-recognized 288-transaction-history-referral-payout 289-dashboard-referral-entry-and-payout 290-kyc-registration-referral-promo 291-referral-bind-error-invalid 292-referral-bind-error-already-registered 303-referral-bind-invite-recognized 293-settings-insider-unlocked 295-settings-insider-page-enabled 296-receive-page-default-send 299-settings-referral-eligible-on 300-pay-info 301-pay-quote-ready 302-pay-quote-ready-merchant 304-buy-charged-amount 373-send-info-page 379-startup-failure-page-retry 387-referral-bind-promo 396-referral-bind-unavailable-retrying 389-update-required-page-ready; do

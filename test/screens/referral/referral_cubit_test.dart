@@ -1175,4 +1175,360 @@ void main() {
       ),
     ],
   );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'createImpersonalInvite emits loading then ready from create-ready',
+    build: () {
+      when(() => service.createImpersonalInvite()).thenAnswer(
+        (_) async => const ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      );
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralCreateReady(summary: _eligible),
+    act: (cubit) => cubit.createImpersonalInvite(),
+    expect: () => [
+      const ReferralImpersonalLoading(summary: _eligible),
+      const ReferralImpersonalReady(
+        summary: _eligible,
+        invite: ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      ),
+    ],
+    verify: (_) {
+      verify(() => service.createImpersonalInvite()).called(1);
+    },
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'createImpersonalInvite maps an API error to failure and showPersonalCreate '
+    'returns to the personal form',
+    build: () {
+      when(() => service.createImpersonalInvite()).thenThrow(
+        const ApiException(code: 'SERVER_ERROR', message: 'boom'),
+      );
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralCreateReady(summary: _eligible),
+    act: (cubit) async {
+      await cubit.createImpersonalInvite();
+      cubit.showPersonalCreate();
+    },
+    expect: () => const [
+      ReferralImpersonalLoading(summary: _eligible),
+      ReferralImpersonalFailure(
+        summary: _eligible,
+        message: referralUnavailableMessage,
+      ),
+      ReferralCreateReady(summary: _eligible),
+    ],
+    verify: (_) {
+      verify(() => service.createImpersonalInvite()).called(1);
+    },
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'createImpersonalInvite reuses the cached code after the overview reloads',
+    build: () {
+      when(() => service.createImpersonalInvite()).thenAnswer(
+        (_) async => const ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      );
+      when(() => service.getSummary()).thenAnswer((_) async => _eligible);
+      when(() => service.getInvites()).thenAnswer((_) async => []);
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralCreateReady(summary: _eligible),
+    act: (cubit) async {
+      await cubit.createImpersonalInvite();
+      await cubit.refreshOverview();
+      await cubit.createImpersonalInvite();
+    },
+    expect: () => const [
+      ReferralImpersonalLoading(summary: _eligible),
+      ReferralImpersonalReady(
+        summary: _eligible,
+        invite: ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      ),
+      ReferralOverviewLoaded(summary: _eligible, invites: []),
+      ReferralImpersonalReady(
+        summary: _eligible,
+        invite: ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      ),
+    ],
+    verify: (_) {
+      verify(() => service.createImpersonalInvite()).called(1);
+      verify(() => service.getSummary()).called(1);
+    },
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'createImpersonalInvite from ready does not hit the service again',
+    build: () {
+      when(() => service.createImpersonalInvite()).thenAnswer(
+        (_) async => const ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      );
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralImpersonalReady(
+      summary: _eligible,
+      invite: ReferralCreatedInviteDto(
+        code: 'IMP1',
+        url: 'https://realunit.app/invite/IMP1',
+        guestName: '',
+        kind: 'Impersonal',
+        copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+      ),
+    ),
+    act: (cubit) => cubit.createImpersonalInvite(),
+    expect: () => <ReferralState>[],
+    verify: (_) {
+      verifyNever(() => service.createImpersonalInvite());
+    },
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'showPersonalCreate from ready then createImpersonalInvite reuses the cached code',
+    build: () {
+      when(() => service.createImpersonalInvite()).thenAnswer(
+        (_) async => const ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      );
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralCreateReady(summary: _eligible),
+    act: (cubit) async {
+      await cubit.createImpersonalInvite();
+      cubit.showPersonalCreate();
+      await cubit.createImpersonalInvite();
+    },
+    expect: () => [
+      const ReferralImpersonalLoading(summary: _eligible),
+      const ReferralImpersonalReady(
+        summary: _eligible,
+        invite: ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      ),
+      const ReferralCreateReady(summary: _eligible),
+      const ReferralImpersonalReady(
+        summary: _eligible,
+        invite: ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      ),
+    ],
+    verify: (_) {
+      verify(() => service.createImpersonalInvite()).called(1);
+    },
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'createImpersonalInvite maps a timeout to failure and retries only with retry: true',
+    build: () {
+      when(
+        () => service.createImpersonalInvite(),
+      ).thenThrow(TimeoutException('create'));
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralCreateReady(summary: _eligible),
+    act: (cubit) async {
+      await cubit.createImpersonalInvite();
+      await cubit.createImpersonalInvite();
+      await cubit.createImpersonalInvite(retry: true);
+    },
+    expect: () => [
+      const ReferralImpersonalLoading(summary: _eligible),
+      ReferralImpersonalFailure(
+        summary: _eligible,
+        message: referralErrorMessage(TimeoutException('create')),
+      ),
+      const ReferralImpersonalLoading(summary: _eligible),
+      ReferralImpersonalFailure(
+        summary: _eligible,
+        message: referralErrorMessage(TimeoutException('create')),
+      ),
+    ],
+    verify: (_) {
+      verify(() => service.createImpersonalInvite()).called(2);
+    },
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'createImpersonalInvite from initial does not hit the service',
+    build: () => ReferralCubit(service),
+    act: (cubit) => cubit.createImpersonalInvite(),
+    expect: () => <ReferralState>[],
+    verify: (_) {
+      verifyNever(() => service.createImpersonalInvite());
+    },
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'createImpersonalInvite maps NOT_ELIGIBLE to the gate screen',
+    build: () {
+      when(() => service.createImpersonalInvite()).thenThrow(
+        const ApiException(
+          statusCode: 403,
+          code: 'NOT_ELIGIBLE',
+          message: 'holding below min',
+        ),
+      );
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralCreateReady(summary: _eligible),
+    act: (cubit) => cubit.createImpersonalInvite(),
+    expect: () => [
+      const ReferralImpersonalLoading(summary: _eligible),
+      const ReferralNotEligible(),
+    ],
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'createImpersonalInvite maps NEEDS_TERMS to the terms screen',
+    build: () {
+      when(() => service.createImpersonalInvite()).thenThrow(
+        const ApiException(
+          statusCode: 409,
+          code: 'NEEDS_TERMS',
+          message: 'terms not accepted',
+        ),
+      );
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralCreateReady(summary: _eligible),
+    act: (cubit) => cubit.createImpersonalInvite(),
+    expect: () => [
+      const ReferralImpersonalLoading(summary: _eligible),
+      const ReferralNeedsTerms(summary: _eligible),
+    ],
+  );
+
+  blocTest<ReferralCubit, ReferralState>(
+    'impersonalInviteCreated stays true after showPersonalCreate',
+    build: () {
+      when(() => service.createImpersonalInvite()).thenAnswer(
+        (_) async => const ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      );
+      return ReferralCubit(service);
+    },
+    seed: () => const ReferralCreateReady(summary: _eligible),
+    act: (cubit) async {
+      await cubit.createImpersonalInvite();
+      cubit.showPersonalCreate();
+      expect(await cubit.impersonalInviteCreated(), isTrue);
+      expect(cubit.state, const ReferralCreateReady(summary: _eligible));
+    },
+    expect: () => [
+      const ReferralImpersonalLoading(summary: _eligible),
+      const ReferralImpersonalReady(
+        summary: _eligible,
+        invite: ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        ),
+      ),
+      const ReferralCreateReady(summary: _eligible),
+    ],
+    verify: (_) {
+      verify(() => service.createImpersonalInvite()).called(1);
+    },
+  );
+
+  test('impersonalInviteCreated waits for an in-flight POST', () async {
+    final release = Completer<ReferralCreatedInviteDto>();
+    when(() => service.createImpersonalInvite()).thenAnswer((_) => release.future);
+    final cubit = ReferralCubit(service);
+    cubit.emit(const ReferralCreateReady(summary: _eligible));
+
+    final created = cubit.createImpersonalInvite();
+    final pending = cubit.impersonalInviteCreated();
+    var settled = false;
+    unawaited(pending.then((_) => settled = true));
+    await Future<void>.delayed(Duration.zero);
+    expect(settled, isFalse);
+
+    release.complete(
+      const ReferralCreatedInviteDto(
+        code: 'IMP1',
+        url: 'https://realunit.app/invite/IMP1',
+        guestName: '',
+        kind: 'Impersonal',
+        copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+      ),
+    );
+    expect(await pending, isTrue);
+    await created;
+    verify(() => service.createImpersonalInvite()).called(1);
+    await cubit.close();
+  });
+
+  test('impersonalInviteCreated is false after a failed POST and does not hang', () async {
+    when(
+      () => service.createImpersonalInvite(),
+    ).thenThrow(TimeoutException('create'));
+    final cubit = ReferralCubit(service);
+    cubit.emit(const ReferralCreateReady(summary: _eligible));
+
+    await cubit.createImpersonalInvite();
+    expect(await cubit.impersonalInviteCreated(), isFalse);
+    expect(await cubit.impersonalInviteCreated(), isFalse);
+    verify(() => service.createImpersonalInvite()).called(1);
+    await cubit.close();
+  });
 }

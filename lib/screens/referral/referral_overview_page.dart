@@ -334,7 +334,7 @@ class _OpenInviteTile extends StatelessWidget {
     final lang = Localizations.localeOf(context).languageCode;
     return referralShareText(
       fromApi: invite.copyTextForLocale(lang),
-      guestName: invite.guestName,
+      guestName: invite.isImpersonal ? '' : invite.guestName,
       code: invite.code,
       url: invite.url,
       fallback: (guestName, code, url) => S.of(context).referralShareText(guestName, code, url),
@@ -345,6 +345,7 @@ class _OpenInviteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final impersonal = invite.isImpersonal;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -356,17 +357,25 @@ class _OpenInviteTile extends StatelessWidget {
         spacing: 12,
         children: [
           Text(
-            invite.guestName.trim().isEmpty
+            impersonal
+                ? s.referralImpersonalTitle
+                : invite.guestName.trim().isEmpty
                 ? s.referralYourInvite
                 : s.referralYourInviteFor(invite.guestName.trim()),
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          Text(
-            s.referralInviteUrlLabel,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: RealUnitColors.neutral500,
+          if (impersonal)
+            Text(
+              '${invite.prizeCount} ${invite.prizeCount == 1 ? s.referralImpersonalPrize : s.referralImpersonalPrizes}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            )
+          else
+            Text(
+              s.referralInviteUrlLabel,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: RealUnitColors.neutral500,
+              ),
             ),
-          ),
           SelectableText(
             _shareText(context),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

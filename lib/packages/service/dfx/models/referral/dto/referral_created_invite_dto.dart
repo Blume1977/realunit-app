@@ -10,6 +10,11 @@ class ReferralCreatedInviteDto {
   final String? copyText;
   final String? copyTextEn;
   final String? inviterName;
+  /// `Personal` or `Impersonal`. Absent API `kind` is Personal.
+  final String kind;
+  /// Owner's own credited prizes for this invite, not registrations.
+  /// Absent API `prizeCount` is 0.
+  final int prizeCount;
 
   const ReferralCreatedInviteDto({
     required this.code,
@@ -18,7 +23,11 @@ class ReferralCreatedInviteDto {
     this.copyText,
     this.copyTextEn,
     this.inviterName,
+    this.kind = 'Personal',
+    this.prizeCount = 0,
   });
+
+  bool get isImpersonal => kind.toLowerCase() == 'impersonal';
 
   /// Locale-aware share wording. EN falls back to DE when the EN field is absent
   /// or empty.
@@ -43,6 +52,8 @@ class ReferralCreatedInviteDto {
       copyText: referralJsonString(json['copyText']),
       copyTextEn: referralJsonString(json['copyTextEn']),
       inviterName: referralPersonName(json['inviterName']),
+      kind: referralJsonString(json['kind']) ?? 'Personal',
+      prizeCount: referralJsonInt(json['prizeCount']),
     );
   }
 }

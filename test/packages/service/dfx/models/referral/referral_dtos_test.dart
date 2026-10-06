@@ -551,6 +551,48 @@ void main() {
       expect(blank.guestName, isEmpty);
     });
 
+    test('parses kind and prizeCount and does not throw when they are absent', () {
+      final omitted = ReferralInviteDto.fromJson({
+        'id': 1,
+        'code': 'AB12',
+        'url': 'https://realunit.app/invite/AB12',
+        'guestName': 'Alice',
+        'status': 'Open',
+        'created': '2026-08-24T10:00:00Z',
+      });
+      expect(omitted.kind, 'Personal');
+      expect(omitted.prizeCount, 0);
+      expect(omitted.isImpersonal, isFalse);
+
+      final impersonal = ReferralInviteDto.fromJson({
+        'id': 2,
+        'code': 'CD34',
+        'url': 'https://realunit.app/invite/CD34',
+        'guestName': 'Hidden',
+        'status': 'Open',
+        'created': '2026-08-24T10:00:00Z',
+        'kind': 'Impersonal',
+        'prizeCount': 2,
+      });
+      expect(impersonal.kind, 'Impersonal');
+      expect(impersonal.prizeCount, 2);
+      expect(impersonal.isImpersonal, isTrue);
+      expect(impersonal.guestName, 'Hidden');
+
+      expect(
+        ReferralInviteDto.fromJson({
+          'id': 3,
+          'code': 'EF56',
+          'url': 'https://realunit.app/invite/EF56',
+          'status': 'Open',
+          'created': '2026-08-24T10:00:00Z',
+          'kind': 'Impersonal',
+          'prizeCount': 0,
+        }).isImpersonal,
+        isTrue,
+      );
+    });
+
     test('keeps an open invite when created is missing', () {
       final dto = ReferralInviteDto.fromJson({
         'id': 1,
@@ -968,6 +1010,28 @@ void main() {
       });
       expect(dto.guestName, isEmpty);
       expect(dto.code, 'AB12');
+    });
+
+    test('parses kind and prizeCount and does not throw when they are absent', () {
+      final omitted = ReferralCreatedInviteDto.fromJson({
+        'code': 'AB12',
+        'url': 'https://realunit.app/invite/AB12',
+        'guestName': 'Alice',
+      });
+      expect(omitted.kind, 'Personal');
+      expect(omitted.prizeCount, 0);
+      expect(omitted.isImpersonal, isFalse);
+
+      final impersonal = ReferralCreatedInviteDto.fromJson({
+        'code': 'IMP1',
+        'url': 'https://realunit.app/invite/IMP1',
+        'kind': 'Impersonal',
+        'prizeCount': 3,
+      });
+      expect(impersonal.kind, 'Impersonal');
+      expect(impersonal.prizeCount, 3);
+      expect(impersonal.isImpersonal, isTrue);
+      expect(impersonal.guestName, isEmpty);
     });
 
     test('fills https://realunit.app/invite/{code} when url is relative or missing', () {

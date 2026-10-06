@@ -1198,14 +1198,14 @@
             <span>📱 <b>App:</b> RealUnit Wallet (Flutter)</span>
             <span>📂 <b>Code:</b>
               <a href="https://github.com/RealUnitCH/app">RealUnitCH/app</a></span>
-            <span>🧪 <b>Tests:</b> 413 Visual-Regression Goldens (413 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
+            <span>🧪 <b>Tests:</b> 418 Visual-Regression Goldens (418 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
           </div>
         </section>
 
         <section id="architecture" style="margin-top: 40px">
           <h3 style="margin-top: 0">Single Source of Truth</h3>
           <p>
-            Die 413 App-Screenshots dieser Seite sind Goldens aus
+            Die 418 App-Screenshots dieser Seite sind Goldens aus
             <code>test/goldens/{screens,widgets}/&lt;feature&gt;/goldens/macos/&lt;file&gt;.png</code>.
             Welcher Golden welcher Handbook-Slot ist, definiert die Mapping-Tabelle in
             <code>scripts/assemble-handbook-screenshots.sh</code>. Der Docker-Build
@@ -1245,7 +1245,7 @@
               <b>Pipeline:</b> Page-Edit → <code>flutter test --update-goldens test/goldens/</code>
               auf dem self-hosted Runner (Hardware-Determinismus) → neue Baseline committen →
               <code>handbook-deploy.yaml</code> baut das Docker-Image aus dem gepushten Branch
-              und assembliert die 413 Slots aus <code>test/goldens/</code> → Push auf
+              und assembliert die 418 Slots aus <code>test/goldens/</code> → Push auf
               <code>staging</code> deployt das Handbook-Image nach Produktion, via
               Cloudflare Tunnel.
             </p>
@@ -12570,9 +12570,7 @@
             gepollt.
           </p>
           <p>
-            Einladung erstellen: Name der eingeladenen Person (eine Zeile,
-            Zeilenumbrüche werden zu Leerzeichen, höchstens 80 Zeichen;
-            Absenden räumt den Feldtext auf; Autofokus), Checkbox
+            Einladung erstellen: oben die Wahl Persönlich oder Unpersönlich. Persönlich: Vorname der eingeladenen Person (eine Zeile, Zeilenumbrüche werden zu Leerzeichen, höchstens 80 Zeichen; Absenden räumt den Feldtext auf; Autofokus), einmal einlösbarer Code. Unpersönlich: kein Name, ein wiederverwendbarer Code; die Übersicht zeigt dafür nur die Anzahl der eigenen Prämien, keine Angaben zur eingeladenen Person. Checkbox
             <b>Ich habe die Teilnahmebedingungen gelesen und akzeptiert</b>
             (Checkbox erst nach geladenem TB-Text; Button erst danach aktiv;
             der TB-Text ist markierbar), persönlicher Link von der API.
@@ -13072,8 +13070,101 @@
               />
             </div>
             <div class="desc">
-              Einladung erstellen: Vorname der eingeladenen Person, Button
-              «Einladungslink erstellen».
+              Einladung erstellen: Wahl Persönlich oder Unpersönlich, Vorname der eingeladenen Person, Button «Einladungslink erstellen».
+            </div>
+          </div>
+          <div class="test" id="405-referral-create-impersonal">
+            <div class="head">
+              <a class="name permalink" href="#405-referral-create-impersonal">405-referral-create-impersonal</a>
+              <button class="copy-link" type="button" data-target="405-referral-create-impersonal" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_surfaces_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/405-referral-create-impersonal.png"
+                alt="Einladung erstellen, unpersönlich, nach dem Anlegen"
+              />
+            </div>
+            <div class="desc">
+              Einladung erstellen, Modus Unpersönlich, nach dem Anlegen. Titel
+              <b>Einladungslink erstellen</b>. Wahl <b>Persönlich</b> oder
+              <b>Unpersönlich</b>. Titel <b>Unpersönlicher Einladungslink</b>.
+              Text <b>Verwenden Sie den nachfolgenden Code für mehrfache, unpersönliche Weiterempfehlungen.</b>
+              Share-Text <b>Share IMP1: https://realunit.app/invite/IMP1</b>.
+              Kein Namensfeld.
+            </div>
+          </div>
+          <div class="test" id="406-referral-create-impersonal-creating">
+            <div class="head">
+              <a class="name permalink" href="#406-referral-create-impersonal-creating">406-referral-create-impersonal-creating</a>
+              <button class="copy-link" type="button" data-target="406-referral-create-impersonal-creating" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_surfaces_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/406-referral-create-impersonal-creating.png"
+                alt="Einladung erstellen, unpersönlich, wird angelegt"
+              />
+            </div>
+            <div class="desc">
+              Einladung erstellen, Modus Unpersönlich, während des Anlegens. Titel
+              <b>Einladungslink erstellen</b>. Text <b>Einladung wird erstellt…</b>
+              Aktivitätsanzeige sichtbar. Kein Namensfeld, kein Share-Text.
+            </div>
+          </div>
+          <div class="test" id="407-referral-create-impersonal-error">
+            <div class="head">
+              <a class="name permalink" href="#407-referral-create-impersonal-error">407-referral-create-impersonal-error</a>
+              <button class="copy-link" type="button" data-target="407-referral-create-impersonal-error" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_surfaces_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/407-referral-create-impersonal-error.png"
+                alt="Einladung erstellen, unpersönlich, Fehler"
+              />
+            </div>
+            <div class="desc">
+              Einladung erstellen, Modus Unpersönlich, Fehler. Titel
+              <b>Einladungslink erstellen</b>. Text
+              <b>Wir konnten den Code gerade nicht prüfen. Bitte versuchen Sie es später erneut.</b>
+              Button <b>Wiederholen</b>.
+            </div>
+          </div>
+          <div class="test" id="408-referral-overview-impersonal">
+            <div class="head">
+              <a class="name permalink" href="#408-referral-overview-impersonal">408-referral-overview-impersonal</a>
+              <button class="copy-link" type="button" data-target="408-referral-overview-impersonal" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_overview_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/408-referral-overview-impersonal.png"
+                alt="Übersicht mit offener unpersönlicher Einladung"
+              />
+            </div>
+            <div class="desc">
+              Übersicht mit offener unpersönlicher Einladung. Titel
+              <b>Unpersönlicher Einladungslink</b>. Text <b>0 Prämien</b>.
+              Der Name Hidden ist nicht sichtbar.
+            </div>
+          </div>
+          <div class="test" id="409-referral-overview-impersonal-one">
+            <div class="head">
+              <a class="name permalink" href="#409-referral-overview-impersonal-one">409-referral-overview-impersonal-one</a>
+              <button class="copy-link" type="button" data-target="409-referral-overview-impersonal-one" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+              <span class="src">referral_overview_golden_test.dart</span>
+            </div>
+            <div class="img">
+              <img
+                src="../screenshots/409-referral-overview-impersonal-one.png"
+                alt="Übersicht mit einer unpersönlichen Prämie"
+              />
+            </div>
+            <div class="desc">
+              Übersicht mit offener unpersönlicher Einladung und genau einer Prämie. Titel
+              <b>Unpersönlicher Einladungslink</b>. Text <b>1 Prämie</b>.
+              Der Name Hidden ist nicht sichtbar.
             </div>
           </div>
           <div class="test" id="343-referral-create-page-creating">

@@ -301,6 +301,52 @@ void main() {
     });
   });
 
+  group('$RealUnitReferralService.createImpersonalInvite', () {
+    test('POSTs kind impersonal and parses the invite', () async {
+      late http.Request capturedRequest;
+      final client = MockClient((request) async {
+        capturedRequest = request;
+        return http.Response(
+          jsonEncode({
+            'code': 'IMP1',
+            'url': 'https://realunit.app/invite/IMP1',
+            'guestName': '',
+            'kind': 'Impersonal',
+            'prizeCount': 0,
+            'copyText': 'Share IMP1: https://realunit.app/invite/IMP1',
+          }),
+          200,
+        );
+      });
+
+      final created = await build(client).createImpersonalInvite();
+
+      expect(capturedRequest.method, 'POST');
+      expect(capturedRequest.url.path, '/v1/realunit/referral/invites');
+      expect(jsonDecode(capturedRequest.body), {'kind': 'Impersonal'});
+      expect(capturedRequest.headers['Idempotency-Key'], isNull);
+      expect(created.code, 'IMP1');
+      expect(created.kind, 'Impersonal');
+      expect(created.prizeCount, 0);
+      expect(created.guestName, isEmpty);
+      expect(created.isImpersonal, isTrue);
+    });
+
+    test('throws ApiException on a non-200/201 response', () async {
+      final client = MockClient(
+        (_) async => http.Response(
+          jsonEncode({'statusCode': 400, 'code': 'LIMIT', 'message': 'max'}),
+          400,
+        ),
+      );
+
+      expect(
+        () => build(client).createImpersonalInvite(),
+        throwsA(isA<ApiException>()),
+      );
+    });
+  });
+
   group('$RealUnitReferralService.lookupCode', () {
     test('GETs the public code route without a Bearer token', () async {
       String? path;

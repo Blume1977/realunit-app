@@ -94,11 +94,19 @@ bundled terms version matching the files (`2026-08-26`).
 
 ### `POST /v1/realunit/referral/invites`
 
-Body: `{ "guestName": "Alice" }`. Empty, whitespace-only, or
+Personal body: `{ "guestName": "Alice" }`. Empty, whitespace-only, or
 format-character-only names are **400** (`guestName required`). The
 server applies the same folds as the app (ZWSP/bidi stripped, Unicode
 spaces collapsed); the app caps the name at 80 characters, the API
 accepts up to 256.
+
+Impersonal body: `{ "kind": "Impersonal" }` with no `guestName`. The
+server returns the account's one open impersonal code (get-or-create).
+
+Response fields include `kind` (`Personal` or `Impersonal`) and
+`prizeCount` (integer, the owner's own credited prizes for that invite,
+not registrations). Absent `kind` means Personal. Absent `prizeCount`
+means 0. Empty `guestName` is valid.
 
 Response:
 
@@ -107,6 +115,8 @@ Response:
   "code": "AB12CD",
   "url": "https://realunit.app/invite/AB12CD",
   "guestName": "Alice",
+  "kind": "Personal",
+  "prizeCount": 0,
   "copyText": "Hallo Alice\n\nKennst du die RealUnit App? … meinen Code AB12CD ein oder … diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt dient Werbezwecken. …",
   "copyTextEn": "Hi Alice\n\nDo you know the RealUnit app? … my code AB12CD … this link to download the app: https://realunit.app/invite/AB12CD\n\nThis is an advertisement. …",
   "inviterName": "Björn"
@@ -142,7 +152,12 @@ accepts given-name autofill.
 ### `GET /v1/realunit/referral/invites`
 
 List of the current user's invites (bare array or `{ "invites": [...] }`).
-Each row includes `copyText` / `copyTextEn` / `inviterName`. When the
+Each row includes `copyText` / `copyTextEn` / `inviterName`, `kind`
+(`Personal` or `Impersonal`) and `prizeCount` (integer, the owner's
+credited-prize count for that invite — not a list of people who
+registered). Absent `kind` means Personal. Absent `prizeCount` means 0.
+Empty `guestName` is valid. Personal and impersonal rows are listed
+together. When the
 server omits share text, overview copy/share uses the first-person
 fallback (guest name, code and invite URL), not a host-named sentence.
 The Empfehler list is **Open** or **Credited** only. Bound and Review

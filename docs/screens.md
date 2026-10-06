@@ -17,7 +17,7 @@ Column meaning:
   still have Visual-Regression Goldens). Each slot is a
   Visual-Regression Golden under `test/goldens/`, mapped to its handbook
   position by `scripts/assemble-handbook-screenshots.sh`. The handbook now
-  has a slot for every macOS golden, 413 of them — screens plus their
+  has a slot for every macOS golden, 418 of them — screens plus their
   state variants (Default / Loading / Error / Snackbar / Dropdown /
   Validation / Confirm / Success / Failure …), including Support (email
   capture, tickets, chat), Settings User-Data and its edit sub-pages,
@@ -96,8 +96,8 @@ Column meaning:
 | Settings | `SettingsWalletAddressPage` | `settingsWalletAddress` | `/settings/walletAddress` | `16`, `298` |
 | Settings | `SettingsInsiderPage` | `settingsInsider` | `/settings/insider` | `294`, `295` |
 | Settings | `ReferralPage` | `settingsReferral` | `/settings/referral` | `279`, `348`, `349`, `350` |
-| Settings | `ReferralCreatePage` | `settingsReferralCreate` | `/settings/referral/create` | `280`, `284`, `343`, `344`, `345`, `346`, `347` |
-| Settings | `ReferralOverviewPage` | — | — | `276`, `351`, `352`, `353`, `354`, `355` |
+| Settings | `ReferralCreatePage` | `settingsReferralCreate` | `/settings/referral/create` | `280`, `284`, `343`, `344`, `345`, `346`, `347`, `405`, `406`, `407` |
+| Settings | `ReferralOverviewPage` | — | — | `276`, `351`, `352`, `353`, `354`, `355`, `408`, `409` |
 | Settings | `ReferralTermsPage` | `referralTerms` | `/referralTerms` | `281`, `283`, `358` |
 | Settings | `SettingsUserDataPage` | `settingsUserData` | `/settings/userData` | `227`, `228`, `229`, `230`, `231`, `232`, `233`, `234`, `235` |
 | Settings | `SettingsEditNamePage` | `settingsEditName` | `/settings/userData/editName` | `236` |
@@ -168,7 +168,7 @@ row. OpenCryptoPay pay rounding cards `300`–`302` are documented in
   `243`–`245`. `SetupPinPage` also backs the `settingsChangePin` route
   (`/settings/security/changePin`) via a second constructor; that reuse has no
   separate Golden and is not given its own row.
-- **Handbook numbering.** Each of the 413 handbook slots is a Visual-Regression
+- **Handbook numbering.** Each of the 418 handbook slots is a Visual-Regression
   Golden under `test/goldens/`, mapped to its handbook position by
   `scripts/assemble-handbook-screenshots.sh`. A parallel Tier-3 Maestro flow
   (`.maestro/handbook/NN-*.yaml`) covers navigation/tap-routing smoke for the

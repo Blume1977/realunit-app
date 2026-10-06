@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
+import 'package:realunit_wallet/packages/service/dfx/models/referral/dto/referral_created_invite_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/referral/dto/referral_invite_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/referral/dto/referral_summary_dto.dart';
 import 'package:realunit_wallet/screens/kyc/steps/registration/cubits/registration_step/kyc_registration_step_cubit.dart';
@@ -108,6 +109,11 @@ void main() {
     cubit = _MockReferralCubit();
     when(() => cubit.acceptTerms(version: any(named: 'version'))).thenAnswer((_) async {});
     when(() => cubit.load()).thenAnswer((_) async {});
+    when(() => cubit.createImpersonalInvite()).thenAnswer((_) async {});
+    when(
+      () => cubit.createImpersonalInvite(retry: any(named: 'retry')),
+    ).thenAnswer((_) async {});
+    when(() => cubit.showPersonalCreate()).thenReturn(null);
     settings = _MockSettingsBloc();
     const settingsState = SettingsState(language: Language.de);
     when(() => settings.state).thenReturn(settingsState);
@@ -236,6 +242,113 @@ void main() {
             find.byType(AppFilledButton),
             within: find.byType(ReferralCreateView),
             reason: '${cell.label}: create CTA not tappable',
+          );
+        });
+      });
+    }
+  });
+
+  group('ReferralCreateView impersonal ready responsive matrix', () {
+    for (final cell in kFullResponsiveMatrix) {
+      testWidgets(cell.id, (tester) async {
+        const invite = ReferralCreatedInviteDto(
+          code: 'IMP1',
+          url: 'https://realunit.app/invite/IMP1',
+          guestName: '',
+          kind: 'Impersonal',
+          copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+        );
+        when(() => cubit.state).thenReturn(
+          const ReferralImpersonalReady(summary: _summary, invite: invite),
+        );
+        whenListen(
+          cubit,
+          const Stream<ReferralState>.empty(),
+          initialState: const ReferralImpersonalReady(
+            summary: _summary,
+            invite: invite,
+          ),
+        );
+        await withTargetPlatform(cell.device.platform, () async {
+          await expectNoLayoutOverflow(
+            tester,
+            () async {
+              await _pumpScreen(
+                tester,
+                BlocProvider<ReferralCubit>.value(
+                  value: cubit,
+                  child: const ReferralCreateView(),
+                ),
+                cell.mediaQuery,
+                settings: settings,
+              );
+            },
+            reason: 'overflow on ${cell.label}',
+          );
+
+          final copy = find.widgetWithText(AppFilledButton, 'Einladungslink kopieren');
+          await tester.ensureVisible(copy);
+          await tester.pump();
+          await expectFullyTappable(
+            tester,
+            copy,
+            within: find.byType(ReferralCreateView),
+            reason: '${cell.label}: impersonal copy CTA not tappable',
+          );
+
+          final share = find.widgetWithText(AppFilledButton, 'Einladungslink versenden');
+          await tester.ensureVisible(share);
+          await tester.pump();
+          await expectFullyTappable(
+            tester,
+            share,
+            within: find.byType(ReferralCreateView),
+            reason: '${cell.label}: impersonal share CTA not tappable',
+          );
+        });
+      });
+    }
+  });
+
+  group('ReferralCreateView impersonal failure responsive matrix', () {
+    for (final cell in kFullResponsiveMatrix) {
+      testWidgets(cell.id, (tester) async {
+        when(() => cubit.state).thenReturn(
+          const ReferralImpersonalFailure(
+            summary: _summary,
+            message: 'unavailable',
+          ),
+        );
+        whenListen(
+          cubit,
+          const Stream<ReferralState>.empty(),
+          initialState: const ReferralImpersonalFailure(
+            summary: _summary,
+            message: 'unavailable',
+          ),
+        );
+        await withTargetPlatform(cell.device.platform, () async {
+          await expectNoLayoutOverflow(
+            tester,
+            () async {
+              await _pumpScreen(
+                tester,
+                BlocProvider<ReferralCubit>.value(
+                  value: cubit,
+                  child: const ReferralCreateView(),
+                ),
+                cell.mediaQuery,
+                settings: settings,
+              );
+            },
+            reason: 'overflow on ${cell.label}',
+          );
+
+          await expectFullyTappable(
+            tester,
+            find.widgetWithText(AppFilledButton, 'Wiederholen'),
+            within: find.byType(ReferralCreateView),
+            reason: '${cell.label}: impersonal retry CTA not tappable',
           );
         });
       });
