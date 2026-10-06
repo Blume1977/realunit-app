@@ -103,6 +103,23 @@ void main() {
     timestamp: DateTime.utc(2026, 5, 19, 12),
   );
 
+  // A payment: 3 whole shares sold by the DFX pay relay for a bill. On-chain it is a sale to the
+  // Brokerbot; the API marks it as a payment and the combined receipt replaces the two sale receipts.
+  final payment = Transaction(
+    height: 0,
+    txId: 'tx-payment-detail',
+    chainId: realUnitAsset.chainId,
+    senderAddress: '0x1111111111111111111111111111111111111111',
+    receiverAddress: '0x3333333333333333333333333333333333333333',
+    amount: BigInt.from(3),
+    asset: realUnitAsset,
+    type: TransactionTypes.tokenTransfer,
+    category: TransferCategory.payment,
+    note: '',
+    data: null,
+    timestamp: DateTime.utc(2026, 5, 14, 11, 5),
+  );
+
   final sent = Transaction(
     height: 0,
     txId: 'tx-sent-detail',
@@ -322,6 +339,39 @@ void main() {
           child: TransactionDetailView(
             args: TransactionDetailArgs(
               transaction: sent,
+              walletAddress: '0x1111111111111111111111111111111111111111',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // This test does not commit a PNG; the regenerate workflow writes it.
+    goldenTest(
+      'payment detail page with the combined receipt button',
+      fileName: 'transaction_detail_payment',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.pumpAndSettle();
+        expect(find.text('Verkauf und Zahlung'), findsOneWidget);
+        expect(find.text('- 3 REALU'), findsOneWidget);
+        expect(find.text('Belege'), findsOneWidget);
+        expect(find.text('Beleg'), findsOneWidget);
+        expect(find.text('RealUnit-Verkauf'), findsNothing);
+        expect(find.text('Auszahlung (DFX AG)'), findsNothing);
+        expect(find.text('tx-payment-detail'), findsNothing);
+      },
+      builder: () => wrapForGolden(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<SettingsBloc>.value(value: settingsBloc),
+            BlocProvider<TransactionHistoryReceiptCubit>.value(
+              value: receiptCubit,
+            ),
+          ],
+          child: TransactionDetailView(
+            args: TransactionDetailArgs(
+              transaction: payment,
               walletAddress: '0x1111111111111111111111111111111111111111',
             ),
           ),

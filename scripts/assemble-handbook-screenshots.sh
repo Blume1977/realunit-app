@@ -473,6 +473,7 @@ MAPPING=(
   "419-transaction-detail-sent-no-receipt-back-to-main=screens/transaction_history/goldens/macos/transaction_detail_sent_no_receipt_back_to_main.png"
   "420-pay-result-sheet-failure=screens/pay/goldens/macos/pay_result_sheet_failure.png"
   "421-pending-transaction-detail-waiting-for-payment=screens/dashboard/goldens/macos/pending_transaction_detail_waiting_for_payment.png"
+  "422-transaction-detail-payment=screens/transaction_history/goldens/macos/transaction_detail_payment.png"
   "425-pay-info-pay-unavailable=screens/pay/goldens/macos/pay_info_page_pay_unavailable.png"
 )
 
