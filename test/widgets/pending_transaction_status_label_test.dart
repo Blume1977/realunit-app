@@ -38,7 +38,7 @@ void main() {
       testWidgets('a ${type.value} waits for the tokens', (tester) async {
         final transaction = TransactionDto(type: type, state: TransactionState.waitingForPayment);
 
-        expect(await labelOf(tester, transaction), 'Warte auf Eingang der REALU');
+        expect(await labelOf(tester, transaction), 'Warte auf REALU');
       });
     }
 
@@ -64,7 +64,7 @@ void main() {
 
       expect(
         await labelOf(tester, transaction, locale: const Locale('en')),
-        'Waiting for the REALU to arrive',
+        'Waiting for REALU',
       );
     });
   });

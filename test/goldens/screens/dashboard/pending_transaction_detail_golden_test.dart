@@ -77,7 +77,7 @@ void main() {
       await tester.pump();
       expect(find.text('Verkauf'), findsOneWidget);
       expect(find.text('30.00 REALU'), findsOneWidget);
-      expect(find.text('Warte auf Eingang der REALU'), findsOneWidget);
+      expect(find.text('Warte auf REALU'), findsOneWidget);
       expect(find.text('Warte auf Zahlung'), findsNothing);
       expect(find.text('Betrag in CHF'), findsOneWidget);
       expect(find.text('ca. 2970.00'), findsOneWidget);
@@ -107,7 +107,7 @@ void main() {
       expect(find.text('Kauf'), findsOneWidget);
       expect(find.text('5000.00 CHF'), findsOneWidget);
       expect(find.text('Warte auf Zahlung'), findsOneWidget);
-      expect(find.text('Warte auf Eingang der REALU'), findsNothing);
+      expect(find.text('Warte auf REALU'), findsNothing);
       expect(find.text('Betrag in REALU'), findsOneWidget);
       expect(find.text('ca. 50.00'), findsOneWidget);
     },
