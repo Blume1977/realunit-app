@@ -139,9 +139,11 @@ class PendingTransactionDetailPage extends StatelessWidget {
       if (otherAmount != null &&
           otherAsset != null &&
           otherAsset != primaryAsset) {
-        // The counter amount of a pending transaction is not final before it is executed
+        // The counter amount of a pending transaction is not final before it is executed.
+        // A sale pays out its counter amount, so it carries the same label as the finished sale.
+        final isPayout = transaction.type == .sell && primaryIsInput;
         addField(
-          '${s.amountIn} $otherAsset',
+          '${isPayout ? s.payoutIn : s.amountIn} $otherAsset',
           '${s.approximately} ${otherAmount.toStringAsFixed(2)}',
         );
       }
