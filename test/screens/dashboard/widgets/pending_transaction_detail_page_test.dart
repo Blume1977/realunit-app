@@ -97,7 +97,7 @@ void main() {
 
         expect(find.text('Warte auf REALU'), findsOneWidget);
         expect(find.text('Warte auf Zahlung'), findsNothing);
-        expect(find.text('Betrag in CHF'), findsOneWidget);
+        expect(find.text('Auszahlung in CHF'), findsOneWidget);
         expect(find.text('ca. 2970.00'), findsOneWidget);
       },
     );
