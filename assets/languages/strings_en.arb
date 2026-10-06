@@ -535,6 +535,7 @@
   "transactionReceipt": "Receipt",
   "transactionReceived": "Received",
   "transactions": "Transactions",
+  "transactionSaleAndPayment": "Sale and payment",
   "transactionSell": "Sell",
   "transactionSent": "Sent",
   "transactionSwap": "Swap",

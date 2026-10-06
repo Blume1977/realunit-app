@@ -243,6 +243,31 @@ void main() {
   );
 
   testWidgets(
+    'payment shows one receipt button for the combined «Verkauf und Zahlung» receipt',
+    (tester) async {
+      await pumpDetail(tester, _tx(category: TransferCategory.payment));
+
+      expect(find.text('Verkauf und Zahlung'), findsOneWidget);
+      expect(find.text('Beleg'), findsOneWidget);
+      // No DFX payout statement: the proceeds paid the bill, nothing was paid out
+      expect(find.text('RealUnit-Verkauf'), findsNothing);
+      expect(find.text('Auszahlung (DFX AG)'), findsNothing);
+
+      await tester.tap(find.text('Beleg'));
+      await tester.pump();
+
+      verify(
+        () => receiptCubit.generateReceipt(
+          'tx-42',
+          currency: Currency.chf,
+          language: Language.de,
+        ),
+      ).called(1);
+      verifyNever(() => receiptCubit.generateExchangeReceipt(any()));
+    },
+  );
+
+  testWidgets(
     'sale DfxTransaction names the sale proceeds and the payout, without sender or tx id',
     (tester) async {
       await pumpDetail(

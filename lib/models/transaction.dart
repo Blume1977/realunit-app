@@ -17,12 +17,14 @@ const kReferralPayoutSenderAddress =
     '0x0000000000000000000000000000000000000000';
 
 /// Business classification of a REALU transfer, resolved by the API (decision authority):
-/// the Brokerbot as counterparty marks a share purchase or sale, everything else is a plain
-/// token movement. Unknown or missing values stay null, so the UI falls back to the
-/// direction-based labels used before the category existed.
+/// the Brokerbot as counterparty marks a share purchase or sale, a sale the DFX pay relay
+/// made for an OpenCryptoPay bill is a payment, everything else is a plain token movement.
+/// Unknown or missing values stay null, so the UI falls back to the direction-based labels
+/// used before the category existed.
 enum TransferCategory {
   purchase('purchase'),
   sale('sale'),
+  payment('payment'),
   transferIn('transferIn'),
   transferOut('transferOut');
 

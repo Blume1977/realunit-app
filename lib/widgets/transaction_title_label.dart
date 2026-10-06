@@ -7,9 +7,10 @@ import 'package:realunit_wallet/models/transaction.dart';
 ///
 /// DFX-backed transactions (bank buys and sells) keep the direction-based Buy/Sell labels.
 /// For pure on-chain transfers the API-provided [TransferCategory] decides: Brokerbot
-/// counterparty means a share purchase or sale, everything else is a plain received/sent
-/// token movement. Without a category (legacy rows, older API) the previous direction-based
-/// labels remain, so nothing breaks while backend and app roll out independently.
+/// counterparty means a share purchase or sale, a sale relayed for a bill is «Verkauf und
+/// Zahlung», everything else is a plain received/sent token movement. Without a category
+/// (legacy rows, older API) the previous direction-based labels remain, so nothing breaks
+/// while backend and app roll out independently.
 String transactionTitleLabel(BuildContext context, Transaction transaction, {required bool isOutbound}) {
   final s = S.of(context);
 
@@ -19,6 +20,8 @@ String transactionTitleLabel(BuildContext context, Transaction transaction, {req
         return s.transactionBuy;
       case TransferCategory.sale:
         return s.transactionSell;
+      case TransferCategory.payment:
+        return s.transactionSaleAndPayment;
       case TransferCategory.transferIn:
         return s.transactionReceived;
       case TransferCategory.transferOut:

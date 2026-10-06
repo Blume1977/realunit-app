@@ -535,6 +535,7 @@
   "transactionReceipt": "Beleg",
   "transactionReceived": "Empfangen",
   "transactions": "Transaktionen",
+  "transactionSaleAndPayment": "Verkauf und Zahlung",
   "transactionSell": "Verkauf",
   "transactionSent": "Gesendet",
   "transactionSwap": "Tausch",
