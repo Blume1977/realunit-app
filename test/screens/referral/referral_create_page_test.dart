@@ -194,17 +194,14 @@ void main() {
     await tester.tap(find.text('Einladungslink kopieren'));
     await tester.pump();
 
-    expect(
-      copied,
-      'Hallo Alice\n\nKennst du die RealUnit App? Ich nutze RealUnit mit dem Ziel, mein Vermögen langfristig zu schützen. Mit dem Kauf von RealUnit-Aktientoken wirst du AktionärIn der RealUnit Schweiz AG, einer Schweizer Investmentgesellschaft, die u.a. in physisches Gold, Silber und Firmen investiert.\n\nGib bei der Registrierung meinen Code AB12CD ein oder benutze für den App-Download am einfachsten diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt dient Werbezwecken. Die genehmigten Prospekte und weitere Unterlagen zur RealUnit Schweiz AG sind abrufbar unter: realunit.ch/downloads (Schweiz) | realunit.de/downloads (Deutschland/EU).',
-    );
+    expect(copied, 'https://realunit.app/invite/AB12CD');
     expect(find.text('Kopiert'), findsOneWidget);
     expect(find.text('In die Zwischenablage kopiert'), findsNothing);
     await tester.pump(const Duration(seconds: 2));
     expect(find.text('Einladungslink kopieren'), findsOneWidget);
   });
 
-  testWidgets('copy fallback uses the first-person share sentence', (
+  testWidgets('copy writes only the invite URL when copy text is set', (
     tester,
   ) async {
     String? copied;
@@ -223,7 +220,7 @@ void main() {
       code: 'AB12CD',
       url: 'https://realunit.app/invite/AB12CD',
       guestName: 'Alice',
-      inviterName: 'Björn',
+      copyText: 'Hey Alice, extra words https://realunit.app/invite/AB12CD',
     );
     when(() => cubit.state).thenReturn(
       const ReferralInviteCreated(summary: _summary, invite: created),
@@ -236,12 +233,17 @@ void main() {
 
     await pumpCreateView(tester);
     await tester.pump();
+    expect(
+      find.text('Hey Alice, extra words https://realunit.app/invite/AB12CD'),
+      findsOneWidget,
+    );
     await tester.tap(find.text('Einladungslink kopieren'));
     await tester.pump();
 
+    expect(copied, 'https://realunit.app/invite/AB12CD');
     expect(
-      copied,
-      'Hallo Alice\n\nKennst du die RealUnit App? Ich nutze RealUnit mit dem Ziel, mein Vermögen langfristig zu schützen. Mit dem Kauf von RealUnit-Aktientoken wirst du AktionärIn der RealUnit Schweiz AG, einer Schweizer Investmentgesellschaft, die u.a. in physisches Gold, Silber und Firmen investiert.\n\nGib bei der Registrierung meinen Code AB12CD ein oder benutze für den App-Download am einfachsten diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt dient Werbezwecken. Die genehmigten Prospekte und weitere Unterlagen zur RealUnit Schweiz AG sind abrufbar unter: realunit.ch/downloads (Schweiz) | realunit.de/downloads (Deutschland/EU).',
+      find.text('Hey Alice, extra words https://realunit.app/invite/AB12CD'),
+      findsOneWidget,
     );
   });
 

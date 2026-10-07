@@ -275,7 +275,7 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
                       ],
                     ),
                     actions: [
-                      ReferralCopyInviteButton(text: text),
+                      ReferralCopyInviteButton(text: state.invite.url),
                       ReferralShareInviteButton(text: text, autofocus: true),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
@@ -492,7 +492,7 @@ class _ReferralCreateViewState extends State<ReferralCreateView> {
         ),
         actions: [
           if (invite != null && text != null) ...[
-            ReferralCopyInviteButton(text: text),
+            ReferralCopyInviteButton(text: invite.url),
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: ReferralShareInviteButton(text: text, autofocus: true),

@@ -382,7 +382,7 @@ class _OpenInviteTile extends StatelessWidget {
               color: RealUnitColors.realUnitBlue,
             ),
           ),
-          ReferralCopyInviteButton(text: _shareText(context)),
+          ReferralCopyInviteButton(text: invite.url),
           ReferralShareInviteButton(text: _shareText(context)),
         ],
       ),
