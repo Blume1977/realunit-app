@@ -1,0 +1,159 @@
+{
+  "schema": "a38/v1",
+  "standard": "A38",
+  "documentation": "docs/a38.md",
+  "mode": "enforce",
+  "jobs": [
+    {
+      "id": "analyze",
+      "name": "Analyze",
+      "timeout_s": 1800,
+      "workflow": ".github/workflows/pull-request.yaml",
+      "job": "analyze",
+      "executor": {
+        "adapter": "commands",
+        "config": {
+          "steps": [
+            ["flutter", "pub", "get"],
+            ["dart", "run", "tool/generate_localization.dart"],
+            ["dart", "run", "tool/generate_release_info.dart"],
+            ["flutter", "pub", "run", "build_runner", "build"],
+            ["flutter", "analyze"]
+          ]
+        }
+      }
+    }
+  ],
+  "exclusions": [
+    {
+      "workflow": ".github/workflows/pull-request.yaml",
+      "job": "build",
+      "reason": "GitHub-hosted macOS suite (unit and widget tests plus the coverage trace). This public repository does not measure that work locally."
+    },
+    {
+      "workflow": ".github/workflows/pull-request.yaml",
+      "job": "coverage-floor",
+      "reason": "Enforces the coverage floor from the GitHub-hosted tracefile artifact and is not measured locally as an A38 author report."
+    },
+    {
+      "workflow": ".github/workflows/pull-request.yaml",
+      "job": "golden-tests",
+      "reason": "Pixel baselines run on the repository's self-hosted macOS runner. This public repository does not measure that work locally."
+    },
+    {
+      "workflow": ".github/workflows/pull-request.yaml",
+      "job": "bitbox-audit",
+      "reason": "Informational firmware-quirk audit. It is not a required check and is not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/pr-base.yaml",
+      "job": "develop-base",
+      "reason": "GitHub-only check that the pull request base is allowed. It performs no author-measurable test."
+    },
+    {
+      "workflow": ".github/workflows/handbook-build-check.yaml",
+      "job": "build",
+      "reason": "Builds the handbook image and smokes the container on GitHub-hosted runners. This public repository does not measure that work locally."
+    },
+    {
+      "workflow": ".github/workflows/handbook-deploy.yaml",
+      "job": "deploy-prd",
+      "reason": "Deploys the handbook from the staging branch. It is a publication path, not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/handbook.yaml",
+      "job": "build-and-deploy",
+      "reason": "Reusable handbook build and deploy. It is a publication path, not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/tier3-handbook.yaml",
+      "job": "flows",
+      "reason": "Label-triggered device flows. They are not part of the author report."
+    },
+    {
+      "workflow": ".github/workflows/bitbox-simulator.yml",
+      "job": "simulator",
+      "reason": "Path-filtered firmware simulator. It is not measured locally as an A38 author report."
+    },
+    {
+      "workflow": ".github/workflows/bitbox-simulator-slash.yml",
+      "job": "guard",
+      "reason": "Authorizes a maintainer slash command. It performs no author-measurable test."
+    },
+    {
+      "workflow": ".github/workflows/bitbox-simulator-slash.yml",
+      "job": "simulator",
+      "reason": "Slash-command firmware simulator. It is not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/golden-regenerate.yaml",
+      "job": "regenerate",
+      "reason": "Manual job that rewrites screenshot baselines and commits them. It is not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/staging-ci-fallback.yaml",
+      "job": "route",
+      "reason": "Routes staging pushes onto an existing pull request run or a fail-safe dispatch. It performs no author-measurable test."
+    },
+    {
+      "workflow": ".github/workflows/auto-staging-pr.yaml",
+      "job": "create-staging-pr",
+      "reason": "Housekeeping bot that opens the staging to develop promotion pull request and performs no author-measurable testing."
+    },
+    {
+      "workflow": ".github/workflows/auto-release-pr.yaml",
+      "job": "create-release-pr",
+      "reason": "Housekeeping bot that opens the develop to main release pull request and performs no author-measurable testing."
+    },
+    {
+      "workflow": ".github/workflows/auto-tag.yaml",
+      "job": "create-tag",
+      "reason": "Creates the release tag after merge. It performs no author-measurable testing."
+    },
+    {
+      "workflow": ".github/workflows/release.yaml",
+      "job": "guard",
+      "reason": "Decides whether a tag is a store release. It is a publication path, not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/release.yaml",
+      "job": "store-metadata-preflight",
+      "reason": "Store-listing preflight on a release tag. It is a publication path, not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/release.yaml",
+      "job": "android-deploy",
+      "reason": "Publishes the Android release. It is not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/release.yaml",
+      "job": "ios-deploy",
+      "reason": "Publishes the iOS release. It is not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/release.yaml",
+      "job": "github-release",
+      "reason": "Publishes the GitHub release. It is not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/store-metadata.yaml",
+      "job": "preflight",
+      "reason": "Store-listing preflight on main. It is a publication path, not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/store-metadata.yaml",
+      "job": "ios",
+      "reason": "Uploads iOS store metadata. It is a publication path, not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/store-metadata.yaml",
+      "job": "android",
+      "reason": "Uploads Android store metadata. It is a publication path, not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/a38-guard.yml",
+      "job": "guard",
+      "reason": "This job is the A38 guard itself, which audits the author report rather than being part of it."
+    }
+  ]
+}

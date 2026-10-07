@@ -475,14 +475,15 @@ flutter analyze
 flutter test --coverage
 ```
 
-The workflow runs four CI jobs:
+The workflow runs five CI jobs:
 
+- **`Analyze`** — `flutter pub get`, localization generation, release-info generation, `build_runner`, then `flutter analyze`, on Ubuntu. This is the light job an A38 author report measures. It does not run tests. Draft pull requests run it, same as the other jobs in this workflow.
 - **`Analyze & Test`** — the block above, plus a `lcov --extract` step that narrows `coverage/lcov.info` to the activated surface (`lib/packages/**`, `lib/screens/**/cubit(s)/**`, `lib/screens/**/bloc/**`), followed by `lcov --remove '*.g.dart'` to strip generator output (Drift schema mirror) before summarising. The filtered tracefile (`coverage-lcov`) and a one-line summary (`coverage-summary`) are uploaded as artifacts.
 - **`Coverage Floor Gate`** — downloads `coverage-summary` and fails the build when scoped line/function coverage drops below the integers committed to `.coverage-floor-lines` and `.coverage-floor-functions`. Required status check on `develop` + `main` (ruleset `PRs` / id `11317379`) alongside `Analyze & Test` and `Visual Regression` — a coverage regression blocks the merge. Ratchet protocol is documented in `README.md`. The same job also runs `scripts/check-coverage-visibility.sh`, which fails the build when an in-scope file produced no coverage at all: a file that no test loads is absent from `lcov.info` and therefore invisible to the scoped %, so the floor number alone cannot catch it. Files with genuinely no coverable lines (interfaces/ports, barrels) are ratcheted in `.coverage-visibility-allowlist`.
 - **`Visual Regression`** — validates committed golden baselines on the deterministic self-hosted macOS runner and uploads render diffs on failure.
 - **`BitBox quirks audit`** — runs `bitbox-audit` against the diff and inlines its report into the workflow run summary; uploaded as `bitbox-audit-report`.
 
-Staging deduplication lives in the separate `Staging CI Router` workflow (`staging-ci-fallback.yaml`). On each staging push it verifies that an open, non-draft, same-repository `staging → develop` PR already points at the pushed SHA. That PR's `synchronize` run owns the canonical required checks. If the PR is missing, draft, stale, or cannot be queried, the router dispatches `RealUnit Build` on `staging` as a fail-safe. The router has its own concurrency group and never cancels a PR run, so cancelled checks cannot be attached to the current promotion-PR head.
+Staging deduplication lives in the separate `Staging CI Router` workflow (`staging-ci-fallback.yaml`). On each staging push it verifies that an open, same-repository `staging → develop` PR already points at the pushed SHA. Draft pull requests run CI, so a draft promotion PR owns the canonical required checks too. If the PR is missing, stale, or cannot be queried, the router dispatches `RealUnit Build` on `staging` as a fail-safe. The router has its own concurrency group and never cancels a PR run, so cancelled checks cannot be attached to the current promotion-PR head.
 
 Tier 3 runs separately under `tier3-handbook.yaml` (push to `develop`, manual, or any PR labelled `tier3:full` except PRs targeting `main`). Its only artifact is `handbook-captures`, the per-flow diagnostic recordings — coverage data is owned by `Analyze & Test` instead.
 

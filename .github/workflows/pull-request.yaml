@@ -11,24 +11,23 @@ name: RealUnit Build
 #    commit landed, and concurrency groups don't dedupe across
 #    push-vs-pull_request events, so allowing both would double
 #    macOS-runner load on the release lane for no signal.
-#  - `ready_for_review` makes the workflow fire the moment a draft PR
-#    is marked ready — drafts themselves skip via the `if:` guard
-#    below (saves macOS-runner minutes while work is still in progress).
+#  - Draft pull requests run these jobs. Marking a pull request ready
+#    does not start CI. `ready_for_review` is not a trigger, so leaving
+#    draft does not run these jobs a second time.
 #  - `labeled` / `unlabeled` are intentionally omitted: realunit-app has
 #    no label-gated heavy job here (Tier 3 has its own workflow).
 #  - `push: develop` keeps post-merge verification as an authoritative
 #    source of truth. Staging fallback routing lives in the separate
 #    `staging-ci-fallback.yaml` workflow: it dispatches this workflow
-#    only when no ready staging → develop PR owns CI for the pushed SHA.
-#  - `workflow_dispatch` is kept as a manual override and is NOT
-#    draft-gated (see the job `if:` guard below).
+#    only when no open staging → develop PR owns CI for the pushed SHA.
+#  - `workflow_dispatch` is kept as a manual override.
 on:
   workflow_dispatch:
   push:
     branches: [develop]
   pull_request:
     branches-ignore: [main]
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened]
 
 # Group PR runs by PR number, and push/dispatch runs by ref. A new SHA
 # cancels work for the outdated SHA in the same lane. Staging push
@@ -43,13 +42,25 @@ permissions:
   contents: read
 
 jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.6"
+          channel: "stable"
+          cache: true
+      - run: flutter pub get
+      - run: dart run tool/generate_localization.dart
+      - run: dart run tool/generate_release_info.dart
+      - run: flutter pub run build_runner build
+      - run: flutter analyze
+
   build:
     name: Analyze & Test
-    # Skip on draft PRs (matches our `gh pr create --draft` workflow).
-    # `push` (post-merge gate) and `workflow_dispatch` (manual override)
-    # always run — the condition is "anything that isn't a PR, or a PR
-    # that isn't a draft".
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: macos-latest
     # Pay OCP integration + coverage regularly hits ~26–30 min on
     # macos-latest; 30 cancelled the suite mid `flutter test --coverage`.
@@ -217,10 +228,6 @@ jobs:
   coverage-floor:
     name: Coverage Floor Gate
     needs: build
-    # Same draft guard as `build`: skip drafts, always run on push/dispatch.
-    # `build` already enforces this, but mirroring it here keeps the gate's
-    # behaviour locally readable instead of inferred from `needs:`.
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -307,7 +314,6 @@ jobs:
   # baselines in the same PR (see `docs/visual-regression-tests.md`).
   golden-tests:
     name: Visual Regression
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: [self-hosted, macOS, ARM64, m3-ultra, realunit-app]
     # 30 was sized for the era when `subosito/flutter-action@v2` still pulled
     # the SDK through the Actions cache and burned ~18 minutes on a stalled
@@ -352,8 +358,6 @@ jobs:
   # and not part of required_status_checks — purely informational.
   bitbox-audit:
     name: BitBox quirks audit
-    # Same guard pattern as `build`: skip drafts, always run on push/dispatch.
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

@@ -18,8 +18,9 @@ name: Tier 3 — Handbook flows
 #     `labeled` / `unlabeled`. `ready_for_review` is omitted on purpose:
 #     a labelled draft that is later marked ready must not start a
 #     second macOS run — the labelled run already covers that SHA.
-#     (Contrast `pull-request.yaml`, where draft-skip means becoming
-#     ready is the first real run and `ready_for_review` belongs there.)
+#     Product CI also omits `ready_for_review`. Leaving draft must
+#     not start a second run. A pull request opened before drafts
+#     ran CI needs a new push or a manual dispatch, not Ready.
 #   * `push: develop` always runs — post-merge verification is the
 #     authoritative source of truth for "did the handbook flows survive
 #     this merge", independent of any PR state. Same reasoning as

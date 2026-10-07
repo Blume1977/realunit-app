@@ -63,11 +63,6 @@ concurrency:
 jobs:
   simulator:
     name: BitBox02 simulator (real firmware)
-    # Skip on draft PRs (matches `pull-request.yaml` + `tier3-handbook.yaml`).
-    # `workflow_dispatch` falls through because there's no `pull_request`
-    # context — the condition is "anything that isn't a PR, or a PR
-    # that isn't a draft".
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

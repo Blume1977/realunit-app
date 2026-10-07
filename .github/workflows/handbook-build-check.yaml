@@ -43,9 +43,9 @@ name: Handbook Build Check
 
 on:
   pull_request:
-    # Include ready_for_review so PRs flipped from Draft to Ready also
-    # trigger this check (default trigger list misses that event).
-    types: [opened, synchronize, reopened, ready_for_review]
+    # Drafts run this check. `ready_for_review` is not a trigger, so
+    # leaving draft does not build the image again.
+    types: [opened, synchronize, reopened]
     paths:
       - "docs/handbook/**"
       - "scripts/assemble-handbook-screenshots.sh"
@@ -80,8 +80,6 @@ concurrency:
 jobs:
   build:
     name: Build handbook image + container smoke
-    # Skip on draft PRs (matches the rest of pull-request.yaml).
-    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

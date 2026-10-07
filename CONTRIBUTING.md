@@ -66,6 +66,32 @@ feature/* ──(PR)──> staging ──(auto-PR)──> develop ──(auto-P
 
 The auto-opened promotion PRs are idempotent — only one is open per branch pair at any time. Each one waits for the same review + CI gates as the underlying branch. Tagged releases (`v*`) trigger after the relevant branch receives the commit; see the Release Versioning workflow table in the README for details.
 
+## A38
+
+This repository requires A38 according to the canonical A38 standard in
+[DFXswiss/agent](https://github.com/DFXswiss/agent/blob/d165602daf7b4a0c73aaac3774da9c8a1ff7e852/docs/a38.md)
+at commit `d165602daf7b4a0c73aaac3774da9c8a1ff7e852`. Repo job selection:
+`.github/a38.json`. Target-branch applicability and fork workflow approval:
+`.github/pr-guard.json`. `dfx pr guard` is
+[wired in](https://github.com/DFXswiss/agent/blob/d165602daf7b4a0c73aaac3774da9c8a1ff7e852/docs/a38-guard.md#how-fork-github-actions-are-meant-to-work).
+
+This is a **public** repository. GitHub-hosted and self-hosted runners execute
+the heavy suite (unit and widget tests, the coverage floor, visual regression,
+the handbook image, and the BitBox simulator). A38 does not replace those
+GitHub checks. The author report only covers the light local job in
+`.github/a38.json` (`flutter analyze` on Flutter 3.41.6, after `flutter pub get`,
+localization generation, release-info generation, and `build_runner`). Do not
+run `flutter test` or the visual-regression suite locally for A38.
+
+Draft pull requests run the GitHub CI jobs. GitHub holds fork runs from
+external contributors as `action_required`. Ready does not start CI. After a
+fresh A38 enforce pass on the current head, `dfx pr guard` approves those
+waiting initial runs, then sets Ready when the required GitHub jobs are green
+and the PR is mergeable. The merger does not click Approve and run workflows.
+Do not ask a maintainer to approve workflow runs. Post the light A38 report
+on the current head. Every new head needs a new report. Authors with write
+access to `RealUnitCH/app` do not need a report.
+
 ## API Access — CRITICAL
 
 - The app is **only allowed to talk to the DFX API**: `api.dfx.swiss` (mainnet) and `dev.api.dfx.swiss` (testnet/Sepolia). No other hosts.

@@ -6,9 +6,8 @@ name: PR base
 # this check.
 #
 # This workflow is separate from RealUnit Build on purpose:
-# - It runs on drafts. The heavy jobs skip drafts, and a skipped check
-#   counts as success, so a draft aimed at develop would otherwise look
-#   green.
+# - It runs on drafts, same as RealUnit Build. A draft aimed at develop
+#   must still fail this check instead of looking green.
 # - It also runs on `edited`, so changing the base (the way a stacked
 #   PR lands on develop after its parent branch is deleted) re-evaluates
 #   without a new push. Pointing the base back at staging turns the
@@ -18,7 +17,9 @@ name: PR base
 #   repository has to be this one.
 on:
   pull_request:
-    types: [opened, edited, synchronize, reopened, ready_for_review]
+    # `edited` stays so a base change is rechecked. `ready_for_review`
+    # is not a trigger: leaving draft must not start this check again.
+    types: [opened, edited, synchronize, reopened]
 
 permissions:
   contents: read

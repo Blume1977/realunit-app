@@ -2,8 +2,9 @@ name: Staging CI Router
 
 # A staging push normally produces a `synchronize` event on the open
 # staging → develop promotion PR. That PR run owns the canonical required
-# checks. If the PR is missing, draft, stale, or cannot be queried, this
+# checks. If the PR is missing, stale, or cannot be queried, this
 # workflow dispatches the canonical RealUnit Build as a fail-safe.
+# A draft promotion PR owns those checks too: draft pull requests run CI.
 on:
   push:
     branches: [staging]
@@ -47,12 +48,12 @@ jobs:
               if jq -e \
                 --arg repo "${GITHUB_REPOSITORY}" \
                 --arg sha "${GITHUB_SHA}" \
-                'any(.[]; .draft == false and .head.repo.full_name == $repo and .head.sha == $sha)' \
+                'any(.[]; .head.repo.full_name == $repo and .head.sha == $sha)' \
                 <<<"${PULLS_JSON}" >/dev/null; then
                 SHOULD_DISPATCH=false
-                REASON="ready promotion PR at this SHA owns canonical CI"
+                REASON="promotion PR at this SHA owns canonical CI"
               else
-                REASON="no ready promotion PR at this SHA"
+                REASON="no promotion PR at this SHA"
               fi
             else
               echo "::warning::Could not query the staging promotion PR; dispatching fail-safe CI"

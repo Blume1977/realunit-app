@@ -1,0 +1,35 @@
+{
+  "schema": "pr-guard/v1",
+  "a38": {
+    "enforce": ["staging", "develop"],
+    "exclude": ["main"],
+    "default": "enforce"
+  },
+  "workflow_approval": {
+    "enabled": true,
+    "workflows": [
+      ".github/workflows/pull-request.yaml",
+      ".github/workflows/pr-base.yaml",
+      ".github/workflows/handbook-build-check.yaml",
+      ".github/workflows/bitbox-simulator.yml"
+    ]
+  },
+  "lifecycle": {
+    "enabled": true,
+    "auto_ready": true,
+    "required_workflows": [
+      ".github/workflows/pull-request.yaml",
+      ".github/workflows/pr-base.yaml"
+    ],
+    "ignored_workflows": [".github/workflows/a38-guard.yml"],
+    "required_checks": {
+      ".github/workflows/pull-request.yaml": [
+        "Analyze",
+        "Analyze & Test",
+        "Coverage Floor Gate",
+        "Visual Regression"
+      ],
+      ".github/workflows/pr-base.yaml": ["Develop base guard"]
+    }
+  }
+}
