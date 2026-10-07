@@ -43,6 +43,27 @@ const _summary = ReferralSummaryDto(
   chfSum: 0,
 );
 
+// Share text exactly as the API sends it (RealUnitReferralDtoMapper.inviteShareText in
+// the backend, wording approved by RealUnit legal on 28.09. and 30.09.2026), so the
+// handbook screenshots show the text a customer actually shares.
+const _shareTextBody =
+    'Kennst du die RealUnit App? Ich nutze RealUnit mit dem Ziel, mein Vermögen '
+    'langfristig zu schützen. Mit dem Kauf von RealUnit-Aktientoken wirst du AktionärIn '
+    'der RealUnit Schweiz AG, einer Schweizer Investmentgesellschaft, die u.a. in '
+    'physisches Gold, Silber und Firmen investiert.';
+const _shareTextNotice =
+    'Dieser Inhalt dient Werbezwecken. Die genehmigten Prospekte und weitere Unterlagen '
+    'zur RealUnit Schweiz AG sind abrufbar unter: realunit.ch/downloads (Schweiz) | '
+    'realunit.de/downloads (Deutschland/EU).';
+const _personalShareText =
+    'Hallo Alice\n\n$_shareTextBody\n\n'
+    'Gib bei der Registrierung meinen Code AB12CD ein oder benutze für den App-Download '
+    'am einfachsten diesen Link: https://realunit.app/invite/AB12CD\n\n$_shareTextNotice';
+const _impersonalShareText =
+    'Hallo\n\n$_shareTextBody\n\n'
+    'Gib bei der Registrierung meinen Code IMP1 ein oder benutze für den App-Download '
+    'am einfachsten diesen Link: https://realunit.app/invite/IMP1\n\n$_shareTextNotice';
+
 void main() {
   late _MockReferralCubit cubit;
 
@@ -108,8 +129,7 @@ void main() {
           code: 'AB12CD',
           url: 'https://realunit.app/invite/AB12CD',
           guestName: 'Alice',
-          copyText:
-              'Hey Alice, Björn lädt dich ein zu RealUnit: https://realunit.app/invite/AB12CD',
+          copyText: _personalShareText,
         );
         when(() => cubit.state).thenReturn(
           const ReferralInviteCreated(summary: _summary, invite: created),
@@ -306,7 +326,7 @@ void main() {
                 url: 'https://realunit.app/invite/IMP1',
                 guestName: '',
                 kind: 'Impersonal',
-                copyText: 'Share IMP1: https://realunit.app/invite/IMP1',
+                copyText: _impersonalShareText,
               ),
             ),
           );
