@@ -200,6 +200,14 @@ void main() {
       inputAsset: 'REALU',
       date: DateTime.utc(2026, 5, 20, 12),
     ),
+    TransactionDto(
+      id: 3,
+      type: TransactionType.buy,
+      state: TransactionState.waitingForPayment,
+      inputAmount: 1000,
+      inputAsset: 'CHF',
+      date: DateTime.utc(2026, 5, 19, 16),
+    ),
   ];
 
   setUpAll(() {
