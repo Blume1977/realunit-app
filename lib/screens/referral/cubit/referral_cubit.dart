@@ -305,6 +305,7 @@ class ReferralCubit extends Cubit<ReferralState> {
       if (generation != _invitesGeneration) return;
       final latest = state;
       if (latest is! ReferralOverviewLoaded) return;
+      _rememberOpenImpersonalInvite(invites);
       _emitIfOpen(ReferralOverviewLoaded(summary: latest.summary, invites: invites));
     } on ApiException catch (e) {
       if (generation != _invitesGeneration) return;
@@ -352,12 +353,34 @@ class ReferralCubit extends Cubit<ReferralState> {
     } catch (e) {
       invitesError = referralErrorMessage(e);
     }
+    _rememberOpenImpersonalInvite(invites);
     _emitIfOpen(
       ReferralOverviewLoaded(
         summary: summary,
         invites: invites,
         invitesError: invitesError,
       ),
+    );
+  }
+
+  void _rememberOpenImpersonalInvite(List<ReferralInviteDto> invites) {
+    ReferralInviteDto? invite;
+    for (final candidate in invites) {
+      if (!candidate.isImpersonal || !candidate.isOpen) continue;
+      if (invite == null || candidate.id < invite.id) {
+        invite = candidate;
+      }
+    }
+    if (invite == null) return;
+    _impersonalInvite = ReferralCreatedInviteDto(
+      code: invite.code,
+      url: invite.url,
+      guestName: invite.guestName,
+      kind: invite.kind,
+      copyText: invite.copyText,
+      copyTextEn: invite.copyTextEn,
+      inviterName: invite.inviterName,
+      prizeCount: invite.prizeCount,
     );
   }
 }
