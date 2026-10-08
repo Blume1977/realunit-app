@@ -407,7 +407,7 @@ void main() {
         expect(find.text('Beleg'), findsOneWidget);
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
         expect(find.text('RealUnit-Verkauf'), findsNothing);
-        expect(find.text('Tausch ZCHF in CHF/EUR'), findsNothing);
+        expect(find.text('Auszahlung (DFX AG)'), findsNothing);
         expect(find.text('Verkauf'), findsNothing);
       },
       builder: () => wrapForGolden(
@@ -441,7 +441,7 @@ void main() {
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
         expect(find.text('Belege'), findsNothing);
         expect(find.text('RealUnit-Verkauf'), findsNothing);
-        expect(find.text('Tausch ZCHF in CHF/EUR'), findsNothing);
+        expect(find.text('Auszahlung (DFX AG)'), findsNothing);
         expect(find.text('Beleg'), findsNothing);
       },
       builder: () => wrapForGolden(
