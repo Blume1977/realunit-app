@@ -55,7 +55,7 @@ Column meaning:
 | PIN & lock | `VerifyPinPage` | `verifyPin` | `/verifyPin` | `86`, `87`, `339` |
 | Dashboard & trading | `DashboardPage` | `dashboard` | `/dashboard` | `35`, `89`, `90`, `91`, `92`, `93`, `94`, `269`, `289`, `291`, `292`, `308`, `309`, `310`, `311`, `312`, `313`, `314`, `315`, `316`, `317`, `318`, `319`, `320`, `321`, `322`, `340`, `341`, `342`, `387`, `388`, `396` |
 | Dashboard & trading | `TransactionHistoryPage` | `transactionHistory` | `/dashboard/transactionHistory` | `36`, `95`, `96`, `97`, `98`, `99`, `100`, `288`, `384`, `385`, `386` |
-| Dashboard & trading | `PendingTransactionDetailPage` | `transactionDetail` | `/dashboard/transactionDetail` | `397`, `398`, `410` |
+| Dashboard & trading | `PendingTransactionDetailPage` | `transactionDetail` | `/dashboard/transactionDetail` | `397`, `398`, `416` |
 | Dashboard & trading | `TransactionDetailPage` | `transactionDetail` | `/dashboard/transactionDetail` | `399`, `400`, `401`, `402`, `403` |
 | Dashboard & trading | `BuyPage` | `buy` | `/buy` | `44`, `45`, `46`, `47`, `48`, `103`, `104`, `105`, `106`, `107`, `108`, `109`, `110`, `111`, `112`, `113`, `304`, `305`, `306`, `307` |
 | Dashboard & trading | `BuyPaymentDetailsPage` | `buyPaymentDetails` | `/buyPaymentDetails` | `53`, `114`, `115`, `116`, `117` |
