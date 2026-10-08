@@ -236,6 +236,38 @@ void main() {
         );
       });
     });
+
+    group('getPaymentReceipt', () {
+      test('POSTs the txHash and the language to the payment-receipt endpoint', () async {
+        Map<String, dynamic>? body;
+        String? path;
+        final client = MockClient((request) async {
+          body = jsonDecode(request.body) as Map<String, dynamic>;
+          path = request.url.path;
+          return http.Response(jsonEncode({'pdfData': 'PAYMENT'}), 201);
+        });
+
+        final pdf = await build(client).getPaymentReceipt('0xabc', language: Language.de);
+
+        expect(pdf.pdfData, 'PAYMENT');
+        expect(path, '/v1/realunit/transactions/receipt/payment');
+        expect(body!['txHash'], '0xabc');
+        expect(body!['language'], 'DE');
+        expect(body!.containsKey('currency'), isFalse);
+      });
+
+      test('throws ApiException on non-2xx', () async {
+        final client = MockClient((_) async => http.Response(
+              jsonEncode({'statusCode': 404, 'message': 'Payment receipt is only available for a payment'}),
+              404,
+            ));
+
+        expect(
+          () => build(client).getPaymentReceipt('0xsale', language: Language.en),
+          throwsA(isA<ApiException>()),
+        );
+      });
+    });
   });
 
   group('malformed JSON responses', () {

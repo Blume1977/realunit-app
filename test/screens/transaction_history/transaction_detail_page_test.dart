@@ -119,6 +119,9 @@ void main() {
     when(
       () => receiptCubit.generateExchangeReceipt(any()),
     ).thenAnswer((_) async {});
+    when(
+      () => receiptCubit.generatePaymentReceipt(any(), language: any(named: 'language')),
+    ).thenAnswer((_) async {});
 
     settings = _MockSettingsBloc();
     const settingsState = SettingsState(language: Language.de);
@@ -243,19 +246,19 @@ void main() {
   );
 
   testWidgets(
-    'payment shows one receipt button for the combined «Verkauf und Zahlung» receipt',
+    'payment shows the sale receipt and the payment receipt, and no DFX payout',
     (tester) async {
       await pumpDetail(tester, _tx(category: TransferCategory.payment));
 
       expect(find.text('Verkauf und Zahlung'), findsOneWidget);
-      expect(find.text('Beleg'), findsOneWidget);
+      expect(find.text('Verkaufsbeleg'), findsOneWidget);
+      expect(find.text('Zahlungsbeleg'), findsOneWidget);
       // No DFX payout statement: the proceeds paid the bill, nothing was paid out
-      expect(find.text('RealUnit-Verkauf'), findsNothing);
       expect(find.text('Auszahlung (DFX AG)'), findsNothing);
+      expect(find.text('Beleg'), findsNothing);
 
-      await tester.tap(find.text('Beleg'));
+      await tester.tap(find.text('Verkaufsbeleg'));
       await tester.pump();
-
       verify(
         () => receiptCubit.generateReceipt(
           'tx-42',
@@ -263,6 +266,10 @@ void main() {
           language: Language.de,
         ),
       ).called(1);
+
+      await tester.tap(find.text('Zahlungsbeleg'));
+      await tester.pump();
+      verify(() => receiptCubit.generatePaymentReceipt('tx-42', language: Language.de)).called(1);
       verifyNever(() => receiptCubit.generateExchangeReceipt(any()));
     },
   );

@@ -67,6 +67,26 @@ class TransactionHistoryReceiptCubit extends Cubit<TransactionHistoryReceiptStat
     }
   }
 
+  Future<void> generatePaymentReceipt(String txId, {required Language language}) async {
+    try {
+      emit(const TransactionHistoryReceiptLoading());
+
+      final response = await _pdfService.getPaymentReceipt(txId, language: language);
+      if (isClosed) return;
+      final file = await _createFileFromBytes(
+        response.pdfData,
+        txId,
+        filePrefix: 'receipt_payment',
+      );
+      if (isClosed) return;
+
+      emit(TransactionHistoryReceiptSuccess(file.path));
+    } catch (e) {
+      if (isClosed) return;
+      emit(TransactionHistoryReceiptFailure(ApiException.userFacingMessage(e)));
+    }
+  }
+
   Future<File> _createFileFromBytes(
     String data,
     String dfxId, {

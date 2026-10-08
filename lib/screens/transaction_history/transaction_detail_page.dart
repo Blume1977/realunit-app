@@ -59,7 +59,7 @@ class TransactionDetailPage extends StatelessWidget {
   }
 }
 
-enum _PendingReceipt { realunit, exchange }
+enum _PendingReceipt { realunit, exchange, payment }
 
 class TransactionDetailView extends StatefulWidget {
   const TransactionDetailView({super.key, required this.args});
@@ -291,6 +291,26 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
         ),
       ];
     }
+    // A payment is two acts with a receipt each: the sale of the shares (the regular sale
+    // receipt) and the payment of the merchant's bill. Nothing is paid out, so no DFX payout.
+    if (transaction.category == TransferCategory.payment) {
+      return [
+        AppFilledButton(
+          variant: .primary,
+          icon: Icons.file_download_outlined,
+          label: S.of(context).paymentReceiptSale,
+          state: isLoading && _pending == .realunit ? .loading : .idle,
+          onPressed: isLoading ? null : _onRealunitPressed,
+        ),
+        AppFilledButton(
+          variant: .secondary,
+          icon: Icons.file_download_outlined,
+          label: S.of(context).paymentReceiptPayment,
+          state: isLoading && _pending == .payment ? .loading : .idle,
+          onPressed: isLoading ? null : _onPaymentPressed,
+        ),
+      ];
+    }
     return [
       AppFilledButton(
         variant: .primary,
@@ -308,6 +328,15 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
     context.read<TransactionHistoryReceiptCubit>().generateReceipt(
       widget.args.transaction.txId,
       currency: settings.currency,
+      language: settings.language,
+    );
+  }
+
+  void _onPaymentPressed() {
+    final settings = context.read<SettingsBloc>().state;
+    setState(() => _pending = .payment);
+    context.read<TransactionHistoryReceiptCubit>().generatePaymentReceipt(
+      widget.args.transaction.txId,
       language: settings.language,
     );
   }
