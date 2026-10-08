@@ -7,20 +7,19 @@ const _wallet = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
 Transaction _tx({
   String sender = '0x0000000000000000000000000000000000000001',
   String receiver = '0x0000000000000000000000000000000000000002',
-}) =>
-    Transaction(
-      height: 1,
-      txId: '0xabc',
-      chainId: realUnitAsset.chainId,
-      senderAddress: sender,
-      receiverAddress: receiver,
-      amount: BigInt.one,
-      asset: realUnitAsset,
-      type: TransactionTypes.tokenTransfer,
-      note: '',
-      data: null,
-      timestamp: DateTime.utc(2026, 1, 1),
-    );
+}) => Transaction(
+  height: 1,
+  txId: '0xabc',
+  chainId: realUnitAsset.chainId,
+  senderAddress: sender,
+  receiverAddress: receiver,
+  amount: BigInt.one,
+  asset: realUnitAsset,
+  type: TransactionTypes.tokenTransfer,
+  note: '',
+  data: null,
+  timestamp: DateTime.utc(2026, 1, 1),
+);
 
 void main() {
   group('$Transaction', () {
@@ -96,6 +95,20 @@ void main() {
       expect(TransactionTypes.genericContractCall.index, 1);
       expect(TransactionTypes.tokenTransfer.index, 2);
       expect(TransactionTypes.referralPayout.index, 3);
+    });
+  });
+
+  group('$TransferCategory', () {
+    test('fromValue maps every API value, including payment', () {
+      for (final category in TransferCategory.values) {
+        expect(TransferCategory.fromValue(category.value), category);
+      }
+      expect(TransferCategory.fromValue('payment'), TransferCategory.payment);
+    });
+
+    test('fromValue leaves an unknown or missing value null', () {
+      expect(TransferCategory.fromValue('somethingNew'), isNull);
+      expect(TransferCategory.fromValue(null), isNull);
     });
   });
 }

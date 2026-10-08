@@ -318,12 +318,13 @@ void main() {
         amount: BigInt.from(2),
         asset: realUnitAsset,
         type: TransactionTypes.tokenTransfer,
-        category: TransferCategory.sale,
+        category: TransferCategory.payment,
         note: '',
         data: null,
         timestamp: DateTime.utc(2026, 10, 8),
       );
       Object? popped;
+      CompletedTransactionRequest? requested;
       whenListen(
         processCubit,
         Stream<PayProcessState>.fromIterable([
@@ -342,10 +343,13 @@ void main() {
                       builder: (_) => BlocProvider<PayProcessCubit>.value(
                         value: processCubit,
                         child: PayProcessView(
-                          resolveCompleted: (_) async => CompletedTransaction(
-                            transaction: tx,
-                            walletAddress: '0xwallet',
-                          ),
+                          resolveCompleted: (request) async {
+                            requested = request;
+                            return CompletedTransaction(
+                              transaction: tx,
+                              walletAddress: '0xwallet',
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -368,6 +372,8 @@ void main() {
       expect(popped, isA<PayProcessCompleted>());
       final completed = popped! as PayProcessCompleted;
       expect(completed.transaction, same(tx));
+      expect(requested?.txHash, '0xpay');
+      expect(requested?.category, TransferCategory.payment);
       expect(completed.walletAddress, '0xwallet');
     });
 
