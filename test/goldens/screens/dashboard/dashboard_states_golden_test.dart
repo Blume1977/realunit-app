@@ -384,6 +384,14 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
         await tester.pump(const Duration(milliseconds: 100));
+        // One row per status: a buy in progress, a sale waiting for the tokens,
+        // a buy waiting for the bank payment, each dated dd.MM.yyyy.
+        expect(find.text('In Bearbeitung'), findsOneWidget);
+        expect(find.text('Warte auf REALU'), findsOneWidget);
+        expect(find.text('Warte auf Zahlung'), findsOneWidget);
+        expect(find.text('21.05.2026'), findsOneWidget);
+        expect(find.text('20.05.2026'), findsOneWidget);
+        expect(find.text('19.05.2026'), findsOneWidget);
       },
       builder: () {
         when(() => pendingTxCubit.state).thenReturn(pendingTransactions);
