@@ -1198,14 +1198,14 @@
             <span>📱 <b>App:</b> RealUnit Wallet (Flutter)</span>
             <span>📂 <b>Code:</b>
               <a href="https://github.com/RealUnitCH/app">RealUnitCH/app</a></span>
-            <span>🧪 <b>Tests:</b> 418 Visual-Regression Goldens (418 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
+            <span>🧪 <b>Tests:</b> 424 Visual-Regression Goldens (424 davon im Handbook) · 26 Tier-3 Smoke-Flows</span>
           </div>
         </section>
 
         <section id="architecture" style="margin-top: 40px">
           <h3 style="margin-top: 0">Single Source of Truth</h3>
           <p>
-            Die 418 App-Screenshots dieser Seite sind Goldens aus
+            Die 424 App-Screenshots dieser Seite sind Goldens aus
             <code>test/goldens/{screens,widgets}/&lt;feature&gt;/goldens/macos/&lt;file&gt;.png</code>.
             Welcher Golden welcher Handbook-Slot ist, definiert die Mapping-Tabelle in
             <code>scripts/assemble-handbook-screenshots.sh</code>. Der Docker-Build
@@ -1245,7 +1245,7 @@
               <b>Pipeline:</b> Page-Edit → <code>flutter test --update-goldens test/goldens/</code>
               auf dem self-hosted Runner (Hardware-Determinismus) → neue Baseline committen →
               <code>handbook-deploy.yaml</code> baut das Docker-Image aus dem gepushten Branch
-              und assembliert die 418 Slots aus <code>test/goldens/</code> → Push auf
+              und assembliert die 424 Slots aus <code>test/goldens/</code> → Push auf
               <code>staging</code> deployt das Handbook-Image nach Produktion, via
               Cloudflare Tunnel.
             </p>
@@ -9309,7 +9309,7 @@
                 <div class="file">test/goldens/screens/pay/</div>
               </div>
               <div class="rhs">
-                <b>10 Screens</b>
+                <b>16 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/pay"
@@ -9347,7 +9347,7 @@
                 Deutschschweiz; für jede Zahlung wird REALU verkauft und aus dem
                 Erlös der Händler bezahlt; Aufrundung auf ganze REALU, der
                 Aufrundungsbetrag wird nicht gutgeschrieben.
-                Die Seite zeigt auch den Link «Standorte anzeigen» zur SPAR-Filialkarte.
+                Der Link «Standorte anzeigen» öffnet die In-App-Karte der Geschäfte, in denen OpenCryptoPay ZCHF auf Ethereum akzeptiert. Eine andere Chain oder ein anderes Asset ist nicht wählbar.
                 Golden-Quelle: <code>pay_info_page.png</code>.
               </div>
             </div>
@@ -9505,6 +9505,120 @@
               <div class="desc">
                 Scan-Seite im Scan-Zustand mit Platzhalter für die Kamera. Titel
                 <b>Zahlungscode scannen</b>.
+              </div>
+            </div>
+            <div class="test" id="410-pay-locations-loading">
+              <div class="head">
+                <a class="name permalink" href="#410-pay-locations-loading">410-pay-locations-loading</a>
+                <button class="copy-link" type="button" data-target="410-pay-locations-loading" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/pay/goldens/macos/pay_locations_page_loading.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/410-pay-locations-loading.png"
+                  alt="Standorte werden geladen"
+                />
+              </div>
+              <div class="desc">
+                Standortkarte während des Ladens. Titel <b>Standorte</b>.
+                Golden-Quelle: <code>pay_locations_page_loading.png</code>.
+              </div>
+            </div>
+            <div class="test" id="411-pay-locations-error">
+              <div class="head">
+                <a class="name permalink" href="#411-pay-locations-error">411-pay-locations-error</a>
+                <button class="copy-link" type="button" data-target="411-pay-locations-error" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/pay/goldens/macos/pay_locations_page_error.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/411-pay-locations-error.png"
+                  alt="Standortliste konnte nicht geladen werden"
+                />
+              </div>
+              <div class="desc">
+                Fehlerzustand der Standortkarte. Sichtbarer Text:
+                <b>Die Standortliste konnte nicht geladen werden.</b>
+                Golden-Quelle: <code>pay_locations_page_error.png</code>.
+              </div>
+            </div>
+            <div class="test" id="412-pay-locations-empty">
+              <div class="head">
+                <a class="name permalink" href="#412-pay-locations-empty">412-pay-locations-empty</a>
+                <button class="copy-link" type="button" data-target="412-pay-locations-empty" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/pay/goldens/macos/pay_locations_page_empty.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/412-pay-locations-empty.png"
+                  alt="Veröffentlichte SPAR-Standorte"
+                />
+              </div>
+              <div class="desc">
+                Standortkarte der veröffentlichten SPAR-Filialen auf dem
+                Umriss der Schweiz und Liechtensteins, mit Seen, Ortsnamen,
+                gruppierten Markern und der Adressliste. Keine Blockchain- oder
+                Asset-Auswahl und keine Kartenkacheln. Titel
+                <b>Standorte</b>.
+                Golden-Quelle: <code>pay_locations_page_empty.png</code>.
+              </div>
+            </div>
+            <div class="test" id="413-pay-locations-places">
+              <div class="head">
+                <a class="name permalink" href="#413-pay-locations-places">413-pay-locations-places</a>
+                <button class="copy-link" type="button" data-target="413-pay-locations-places" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/pay/goldens/macos/pay_locations_page_places.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/413-pay-locations-places.png"
+                  alt="Standorte mit einem Geschäft"
+                />
+              </div>
+              <div class="desc">
+                Standortkarte mit einem Geschäft für ZCHF auf Ethereum, auf dem
+                lokalen Landesumriss und mit der Geschäftsliste. Titel
+                <b>Standorte</b>.
+                Golden-Quelle: <code>pay_locations_page_places.png</code>.
+              </div>
+            </div>
+            <div class="test" id="414-pay-locations-no-match">
+              <div class="head">
+                <a class="name permalink" href="#414-pay-locations-no-match">414-pay-locations-no-match</a>
+                <button class="copy-link" type="button" data-target="414-pay-locations-no-match" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/pay/goldens/macos/pay_locations_page_no_match.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/414-pay-locations-no-match.png"
+                  alt="Kein Standort passt"
+                />
+              </div>
+              <div class="desc">
+                Standortsuche ohne Treffer. Sichtbarer Text:
+                <b>Kein Standort passt.</b>
+                Die Karte zeigt weiter den Landesumriss, ohne Marker.
+                Golden-Quelle: <code>pay_locations_page_no_match.png</code>.
+              </div>
+            </div>
+            <div class="test" id="415-pay-locations-unpublished">
+              <div class="head">
+                <a class="name permalink" href="#415-pay-locations-unpublished">415-pay-locations-unpublished</a>
+                <button class="copy-link" type="button" data-target="415-pay-locations-unpublished" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/pay/goldens/macos/pay_locations_page_unpublished.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/415-pay-locations-unpublished.png"
+                  alt="Noch keine Standorte veröffentlicht"
+                />
+              </div>
+              <div class="desc">
+                Keine veröffentlichten Standorte. Die Hinweis-Karte sitzt auf dem
+                lokalen Landesumriss, ohne Geschäfts-Marker. Sichtbarer Text:
+                <b>Noch keine Standorte veröffentlicht.</b>
+                Titel <b>Standorte</b>.
+                Golden-Quelle: <code>pay_locations_page_unpublished.png</code>.
               </div>
             </div>
           </div>

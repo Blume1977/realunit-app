@@ -17,6 +17,7 @@ import 'package:realunit_wallet/screens/legal/legal_disclaimer_page.dart';
 import 'package:realunit_wallet/screens/legal/subpages/legal_document_page.dart';
 import 'package:realunit_wallet/screens/onboarding/onboarding_completed_page.dart';
 import 'package:realunit_wallet/screens/pay/pay_info_page.dart';
+import 'package:realunit_wallet/screens/pay/pay_locations_page.dart';
 import 'package:realunit_wallet/screens/pin/setup_pin_page.dart';
 import 'package:realunit_wallet/screens/pin/verify_pin_page.dart';
 import 'package:realunit_wallet/screens/receive/receive_page.dart';
@@ -208,6 +209,12 @@ final GoRouter routerConfig = GoRouter(
       builder: (_, state) => PayInfoPage(
         initialPayload: state.extra is String ? state.extra as String : null,
       ),
+    ),
+
+    GoRoute(
+      name: AppRoutes.payLocations,
+      path: '/payLocations',
+      builder: (_, _) => const PayLocationsPage(),
     ),
 
     GoRoute(

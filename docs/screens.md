@@ -64,6 +64,7 @@ Column meaning:
 | Dashboard & trading | `SellBankAccountSelectionPage` | — | — | `121`, `122` |
 | Dashboard & trading | `ReceivePage` | `receive` | `/receive` | `101`, `102`, `296`, `297` |
 | Dashboard & trading | `PayInfoPage` | `pay` | `/pay` | `300` |
+| Dashboard & trading | `PayLocationsPage` | `payLocations` | `/payLocations` | `410`, `411`, `412`, `413`, `414`, `415` |
 | Dashboard & trading | `SendInfoPage` | `send` | `/send` | `373` |
 | Dashboard & trading | `SendRecipientPage` | — | — | `375` |
 | Dashboard & trading | `SendAmountPage` | — | — | `367`, `368`, `370`, `371`, `372` |

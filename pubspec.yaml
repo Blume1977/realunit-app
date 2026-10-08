@@ -57,6 +57,7 @@ dependencies:
     path: third_party/flutter_idensic_mobile_sdk_plugin
   image_picker: ^1.1.2
   flutter_inappwebview: ^6.1.5
+  flutter_map: ^8.3.2
   flutter_markdown_plus: ^1.0.7
   flutter_native_splash: ^2.4.7
   flutter_secure_storage: ^9.2.4
@@ -65,6 +66,7 @@ dependencies:
   go_router: ^14.8.0
   http: ^1.1.0
   intl: any
+  latlong2: ^0.9.1
   local_auth: ^3.0.0
   mobile_scanner: ^7.4.0
   no_screenshot: ^1.1.0

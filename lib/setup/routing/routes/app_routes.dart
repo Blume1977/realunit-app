@@ -8,6 +8,7 @@ abstract final class AppRoutes {
   static const sell = 'sell';
   static const sellBitbox = 'sellBitbox';
   static const pay = 'pay';
+  static const payLocations = 'payLocations';
   static const send = 'send';
   static const kyc = 'kyc';
   static const receive = 'receive';

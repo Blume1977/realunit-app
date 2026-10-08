@@ -1,6 +1,6 @@
 # Visual Regression Tests
 
-Pixel-exact baseline tests for every page in the app. 84 `lib/screens/**/*_page.dart`
+Pixel-exact baseline tests for every page in the app. 87 `lib/screens/**/*_page.dart`
 files mapped to one Golden PNG per handbook row under `test/goldens/` (`screens/` and `widgets/`) (page renderings
 plus state variants: Buy/Sell error banners, KYC loading/failure, Dashboard
 with-balance, RestoreWallet valid/invalid, Legal-Disclaimer steps, etc.),
