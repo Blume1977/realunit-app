@@ -372,7 +372,11 @@ void main() {
       pumpBeforeTest: (tester) async {
         await tester.pumpAndSettle();
         expect(find.text('Verkauf'), findsOneWidget);
+        expect(find.text('Verkaufserlös in ZCHF'), findsOneWidget);
+        expect(find.text('Auszahlung in CHF'), findsOneWidget);
         expect(find.text('Belege'), findsOneWidget);
+        expect(find.text('RealUnit-Verkauf'), findsOneWidget);
+        expect(find.text('Auszahlung (DFX AG)'), findsOneWidget);
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
       },
       builder: () => wrapForGolden(
@@ -438,6 +442,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Verkauf'), findsOneWidget);
         expect(find.text('- 20 REALU'), findsOneWidget);
+        expect(find.text('Auszahlung in CHF'), findsOneWidget);
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
         expect(find.text('Belege'), findsNothing);
         expect(find.text('RealUnit-Verkauf'), findsNothing);
