@@ -1,0 +1,298 @@
+name: Golden Regenerate (slash)
+
+# This workflow always runs from this file on the default branch. It
+# intentionally executes the golden tests of the pull request head, the
+# same suite as Visual Regression. The workflow file on the head is not
+# executed. That is why this workflow does not invoke
+# golden-regenerate.yaml on the pull request ref. The Flutter steps and
+# the commit must stay identical to golden-regenerate.yaml.
+# The test job has contents: read only. The write token exists only in
+# the publish job, which does not run Flutter.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  authorize:
+    if: >
+      github.event.issue.pull_request != null &&
+      startsWith(github.event.comment.body, '/golden-regenerate')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    outputs:
+      authorized: ${{ steps.authz.outputs.authorized }}
+      sha: ${{ steps.authz.outputs.sha }}
+      pr: ${{ steps.authz.outputs.pr }}
+      branch: ${{ steps.authz.outputs.branch }}
+    steps:
+      - id: authz
+        uses: actions/github-script@v7
+        env:
+          ACTOR: ${{ github.event.comment.user.login }}
+          ASSOC: ${{ github.event.comment.author_association }}
+        with:
+          script: |
+            const body = (context.payload.comment.body || '').trim();
+            if (body !== '/golden-regenerate') {
+              core.setOutput('authorized', 'false');
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: context.issue.number,
+                body: '`/golden-regenerate` takes no arguments. Comment that command alone.',
+              });
+              return;
+            }
+
+            const { data: pr } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: context.issue.number,
+            });
+
+            if (pr.state !== 'open') {
+              core.setOutput('authorized', 'false');
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: context.issue.number,
+                body: '`/golden-regenerate` only runs on an open pull request.',
+              });
+              return;
+            }
+
+            const actor = process.env.ACTOR;
+            const assoc = process.env.ASSOC;
+            const isAuthor = actor === pr.user.login;
+            const isOwnerOrMember = assoc === 'OWNER' || assoc === 'MEMBER';
+            if (!isAuthor && !isOwnerOrMember) {
+              core.setOutput('authorized', 'false');
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: context.issue.number,
+                body: `\`@${actor}\` cannot run \`/golden-regenerate\`. Only the pull request author, or an owner or member of the organization, can run it.`,
+              });
+              return;
+            }
+
+            const prNumber = String(context.issue.number);
+            if (!/^[0-9]+$/.test(prNumber)) {
+              core.setFailed(`refused pull request number: ${prNumber}`);
+              return;
+            }
+            core.setOutput('authorized', 'true');
+            core.setOutput('sha', pr.head.sha);
+            core.setOutput('pr', prNumber);
+            core.setOutput('branch', `golden/pr-${prNumber}`);
+
+            await github.rest.reactions.createForIssueComment({
+              ...context.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket',
+            });
+
+  regenerate:
+    needs: authorize
+    if: needs.authorize.outputs.authorized == 'true'
+    runs-on: [self-hosted, macOS, ARM64, m3-ultra, realunit-app]
+    timeout-minutes: 15
+    concurrency:
+      group: golden-regenerate-slash-${{ github.event.issue.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+    outputs:
+      empty: ${{ steps.patch.outputs.empty }}
+      head: ${{ steps.head.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ needs.authorize.outputs.pr }}/head
+          fetch-depth: 1
+          persist-credentials: false
+      - id: head
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.6"
+          channel: "stable"
+          cache: false
+      - run: flutter pub get
+      - run: dart run tool/generate_localization.dart
+      - run: dart run tool/generate_release_info.dart
+      - run: flutter pub run build_runner build
+      - name: Regenerate goldens
+        run: flutter test test/goldens --update-goldens
+      - id: patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --quiet
+          git add -- 'test/goldens/**/goldens/**'
+          if git diff --cached --quiet; then
+            echo "empty=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          mkdir -p golden-patch
+          git diff --cached --binary > golden-patch/goldens.patch
+          echo "empty=false" >> "$GITHUB_OUTPUT"
+      - if: steps.patch.outputs.empty == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-slash-${{ github.run_id }}
+          path: golden-patch/goldens.patch
+          if-no-files-found: error
+
+  publish:
+    needs: [authorize, regenerate]
+    if: needs.authorize.outputs.authorized == 'true' && needs.regenerate.result == 'success' && needs.regenerate.outputs.empty != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: golden-regenerate-slash-${{ github.event.issue.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+    outputs:
+      commit: ${{ steps.commit.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ needs.authorize.outputs.pr }}/head
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+          persist-credentials: true
+      - env:
+          EXPECTED_HEAD: ${{ needs.regenerate.outputs.head }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          if [ "$actual" != "$EXPECTED_HEAD" ]; then
+            echo "refused head: ${actual} != ${EXPECTED_HEAD}" >&2
+            exit 1
+          fi
+      - uses: actions/download-artifact@v4
+        with:
+          name: golden-slash-${{ github.run_id }}
+          path: golden-patch
+      - id: commit
+        env:
+          BRANCH: ${{ needs.authorize.outputs.branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "$BRANCH" | grep -Eq '^golden/pr-[0-9]+$'; then
+            echo "refused branch: $BRANCH" >&2
+            exit 1
+          fi
+          git apply --index --whitespace=nowarn golden-patch/goldens.patch
+          while IFS= read -r path; do
+            [ -n "$path" ] || continue
+            case "$path" in
+              test/goldens/*/goldens/*|test/goldens/*/*/goldens/*|test/goldens/*/*/*/goldens/*) ;;
+              *) echo "refused path: $path" >&2; exit 1 ;;
+            esac
+          done < <(git diff --cached --name-only)
+          while IFS= read -r line; do
+            mode=$(printf '%s' "$line" | awk '{print $2}')
+            if [ "$mode" != "100644" ]; then
+              echo "refused mode: $line" >&2
+              exit 1
+            fi
+          done < <(git diff --cached --raw)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test(goldens): regenerate baselines on the self-hosted runner"
+          git push --force origin "HEAD:refs/heads/${BRANCH}"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [authorize, regenerate, publish]
+    if: always() && needs.authorize.outputs.authorized == 'true' && needs.regenerate.result != 'skipped'
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          RESULT: ${{ needs.regenerate.result }}
+          EMPTY: ${{ needs.regenerate.outputs.empty }}
+          PUBLISH: ${{ needs.publish.result }}
+          COMMIT: ${{ needs.publish.outputs.commit }}
+          SHA: ${{ needs.regenerate.outputs.head }}
+          PR: ${{ needs.authorize.outputs.pr }}
+          BRANCH: ${{ needs.authorize.outputs.branch }}
+        with:
+          script: |
+            const result = process.env.RESULT;
+            const empty = process.env.EMPTY;
+            const publish = process.env.PUBLISH;
+            const commit = process.env.COMMIT;
+            const sha = process.env.SHA;
+            const pr = process.env.PR;
+            const branch = process.env.BRANCH;
+
+            let body;
+            if (result === 'success' && empty === 'true') {
+              body = [
+                'No golden files changed on this head. Nothing was pushed.',
+                '',
+                'Auf diesem Head haben sich keine Golden-Dateien geändert. Es wurde nichts gepusht.',
+              ].join('\n');
+            } else if (publish === 'success') {
+              const commands = [
+                '```bash',
+                `git fetch https://github.com/RealUnitCH/app.git golden/pr-${pr}`,
+                'git merge --ff-only FETCH_HEAD',
+                'git push',
+                '```',
+              ].join('\n');
+              body = [
+                'Golden baselines were regenerated on the self-hosted runner.',
+                '',
+                `Branch: \`${branch}\``,
+                `Commit: \`${commit}\``,
+                `Parent: \`${sha}\``,
+                '',
+                'Fast-forward your fork branch onto this commit and push. Do not copy the PNGs by hand.',
+                '',
+                commands,
+                '',
+                'If the fast-forward fails, comment `/golden-regenerate` again on the current head.',
+                '',
+                'Die Golden-Baselines wurden auf dem self-hosted Runner regeneriert.',
+                '',
+                `Branch: \`${branch}\``,
+                `Commit: \`${commit}\``,
+                `Parent: \`${sha}\``,
+                '',
+                'Fast-forward deinen Fork-Branch auf diesen Commit und pushe. Kopiere die PNGs nicht von Hand.',
+                '',
+                commands,
+                '',
+                'Scheitert der Fast-forward, kommentiere `/golden-regenerate` erneut auf dem aktuellen Head.',
+              ].join('\n');
+            } else if (result === 'failure' || publish === 'failure') {
+              body = [
+                'Golden baseline regeneration failed. The logs of this run contain the error. After you push a corrected head, comment `/golden-regenerate` again.',
+                '',
+                'Die Regeneration der Golden-Baselines ist fehlgeschlagen. Die Logs dieses Laufs enthalten den Fehler. Nach einem korrigierten Head kannst du `/golden-regenerate` erneut kommentieren.',
+              ].join('\n');
+            } else {
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body,
+            });

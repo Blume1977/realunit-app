@@ -91,6 +91,26 @@
       "reason": "Manual job that rewrites screenshot baselines and commits them. It is not an author-measured test."
     },
     {
+      "workflow": ".github/workflows/golden-regenerate-slash.yml",
+      "job": "authorize",
+      "reason": "Authorizes a comment command that regenerates screenshot baselines. It performs no author-measurable test."
+    },
+    {
+      "workflow": ".github/workflows/golden-regenerate-slash.yml",
+      "job": "regenerate",
+      "reason": "Rewrites screenshot baselines from a comment command and commits them to a bot branch. It is not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/golden-regenerate-slash.yml",
+      "job": "publish",
+      "reason": "Writes only the baseline commit onto the bot branch. It is not an author-measured test."
+    },
+    {
+      "workflow": ".github/workflows/golden-regenerate-slash.yml",
+      "job": "report",
+      "reason": "Posts the outcome of a baseline regeneration command on the pull request. It is not an author-measured test."
+    },
+    {
       "workflow": ".github/workflows/staging-ci-fallback.yaml",
       "job": "route",
       "reason": "Routes staging pushes onto an existing pull request run or a fail-safe dispatch. It performs no author-measurable test."

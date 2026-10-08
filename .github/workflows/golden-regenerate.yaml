@@ -19,6 +19,9 @@ name: Golden Regenerate
 # Keep them in sync — a divergence here would mean the regenerated
 # baselines render under a different toolchain than the one that validates
 # them on PRs, defeating the whole hardware-determinism story.
+# The slash workflow file repeats Flutter version, the four
+# preparation commands, `flutter test test/goldens --update-goldens`
+# and the commit message; both files must stay the same.
 on:
   workflow_dispatch:
 
