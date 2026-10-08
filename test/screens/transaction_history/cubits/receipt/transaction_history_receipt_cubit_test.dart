@@ -219,5 +219,69 @@ void main() {
 
       expect(cubit.state, isA<TransactionHistoryReceiptFailure>());
     });
+
+    test('generatePaymentReceipt writes the PDF and emits Success with the file path', () async {
+      final pdfBytes = utf8.encode('%PDF-1.4 fake-payment');
+      when(
+        () => service.getPaymentReceipt(any(), language: any(named: 'language')),
+      ).thenAnswer((_) async => PdfDto(pdfData: base64Encode(pdfBytes)));
+
+      final cubit = buildCubit();
+      final emissions = expectLater(
+        cubit.stream,
+        emitsInOrder(<Matcher>[
+          isA<TransactionHistoryReceiptLoading>(),
+          isA<TransactionHistoryReceiptSuccess>(),
+        ]),
+      );
+
+      await cubit.generatePaymentReceipt('tx-42', language: Language.de);
+      await emissions;
+
+      final success = cubit.state as TransactionHistoryReceiptSuccess;
+      expect(success.receiptPath, contains('receipt_payment_tx-42.pdf'));
+      verify(() => service.getPaymentReceipt('tx-42', language: Language.de)).called(1);
+    });
+
+    test('generatePaymentReceipt emits Failure on service error', () async {
+      when(
+        () => service.getPaymentReceipt(any(), language: any(named: 'language')),
+      ).thenAnswer((_) async => throw Exception('network'));
+
+      final cubit = buildCubit();
+      await cubit.generatePaymentReceipt('tx-42', language: Language.en);
+
+      expect(cubit.state, isA<TransactionHistoryReceiptFailure>());
+    });
+
+    test('generatePaymentReceipt does not emit after close', () async {
+      final gate = Completer<PdfDto>();
+      when(
+        () => service.getPaymentReceipt(any(), language: any(named: 'language')),
+      ).thenAnswer((_) => gate.future);
+
+      final cubit = buildCubit();
+      final future = cubit.generatePaymentReceipt('tx-42', language: Language.en);
+      await cubit.close();
+      gate.complete(PdfDto(pdfData: base64Encode(utf8.encode('%PDF'))));
+      await future;
+
+      expect(cubit.state, isA<TransactionHistoryReceiptLoading>());
+    });
+
+    test('generatePaymentReceipt does not emit Failure after close', () async {
+      final gate = Completer<PdfDto>();
+      when(
+        () => service.getPaymentReceipt(any(), language: any(named: 'language')),
+      ).thenAnswer((_) => gate.future);
+
+      final cubit = buildCubit();
+      final future = cubit.generatePaymentReceipt('tx-42', language: Language.en);
+      await cubit.close();
+      gate.completeError(Exception('late'));
+      await future;
+
+      expect(cubit.state, isA<TransactionHistoryReceiptLoading>());
+    });
   });
 }

@@ -15,6 +15,7 @@ class RealUnitPdfService extends DFXAuthService {
   static const _transactionsReceiptMultiPath = 'v1/realunit/transactions/receipt/multi';
   static const _transactionsReceiptSinglePath = '/v1/realunit/transactions/receipt/single';
   static const _transactionsReceiptExchangePath = '/v1/realunit/transactions/receipt/exchange';
+  static const _transactionsReceiptPaymentPath = '/v1/realunit/transactions/receipt/payment';
 
   RealUnitPdfService(super.appStore, super.walletService);
 
@@ -99,6 +100,26 @@ class RealUnitPdfService extends DFXAuthService {
         'Content-Type': 'application/json',
       },
       body: jsonEncode({'txHash': txId}),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      final errorJson = jsonDecode(response.body) as Map<String, dynamic>;
+      throw ApiException.fromJson(errorJson, httpStatusCode: response.statusCode);
+    }
+
+    return PdfDto.fromJson(jsonDecode(response.body));
+  }
+
+  /// Payment receipt of a RealUnit payment (history category `payment`): the payment to the
+  /// merchant that the sale proceeds covered. The sale itself has the regular single receipt.
+  Future<PdfDto> getPaymentReceipt(String txId, {required Language language}) async {
+    final uri = buildUri(host, _transactionsReceiptPaymentPath);
+    final response = await authenticatedPost(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'txHash': txId, 'language': language.code.toUpperCase()}),
     );
 
     if (response.statusCode != 200 && response.statusCode != 201) {

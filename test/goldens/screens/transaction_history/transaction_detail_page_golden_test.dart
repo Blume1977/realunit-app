@@ -104,7 +104,7 @@ void main() {
   );
 
   // A payment: 3 whole shares sold by the DFX pay relay for a bill. On-chain it is a sale to the
-  // Brokerbot; the API marks it as a payment and the combined receipt replaces the two sale receipts.
+  // Brokerbot; the API marks it as a payment, which has a sale receipt and a payment receipt.
   final payment = Transaction(
     height: 0,
     txId: 'tx-payment-detail',
@@ -348,7 +348,7 @@ void main() {
 
     // This test does not commit a PNG; the regenerate workflow writes it.
     goldenTest(
-      'payment detail page with the combined receipt button',
+      'payment detail page with the sale receipt and the payment receipt',
       fileName: 'transaction_detail_payment',
       constraints: phoneConstraints,
       pumpBeforeTest: (tester) async {
@@ -356,8 +356,9 @@ void main() {
         expect(find.text('Verkauf und Zahlung'), findsOneWidget);
         expect(find.text('- 3 REALU'), findsOneWidget);
         expect(find.text('Belege'), findsOneWidget);
-        expect(find.text('Beleg'), findsOneWidget);
-        expect(find.text('RealUnit-Verkauf'), findsNothing);
+        expect(find.text('Verkaufsbeleg'), findsOneWidget);
+        expect(find.text('Zahlungsbeleg'), findsOneWidget);
+        expect(find.text('Beleg'), findsNothing);
         expect(find.text('Auszahlung (DFX AG)'), findsNothing);
         expect(find.text('tx-payment-detail'), findsNothing);
       },
