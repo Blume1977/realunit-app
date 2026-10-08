@@ -160,6 +160,10 @@ void main() {
       'API category labels purchase, received, sent, sale, payment',
       fileName: 'transaction_history_transfer_labels',
       constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.pumpAndSettle();
+        expect(find.text('Verkauf und Zahlung'), findsOneWidget);
+      },
       builder: () {
         when(() => filterCubit.state).thenReturn(
           TransactionHistoryFilterState(

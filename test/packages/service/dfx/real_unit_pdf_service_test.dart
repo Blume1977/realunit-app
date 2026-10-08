@@ -258,7 +258,10 @@ void main() {
 
       test('throws ApiException on non-2xx', () async {
         final client = MockClient((_) async => http.Response(
-              jsonEncode({'statusCode': 404, 'message': 'Payment receipt is only available for a payment'}),
+              jsonEncode({
+                'statusCode': 404,
+                'message': 'Payment receipt is only available for a payment',
+              }),
               404,
             ));
 
