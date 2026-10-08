@@ -27,7 +27,8 @@ import 'package:realunit_wallet/widgets/frozen_chf_label.dart';
 class _MockReceiptCubit extends MockCubit<TransactionHistoryReceiptState>
     implements TransactionHistoryReceiptCubit {}
 
-class _MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState> implements SettingsBloc {}
+class _MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState>
+    implements SettingsBloc {}
 
 Transaction _tx({
   TransferCategory? category,
