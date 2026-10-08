@@ -1,8 +1,8 @@
 {
   "schema": "pr-guard/v1",
   "a38": {
-    "enforce": ["staging", "develop"],
-    "exclude": ["main"],
+    "enforce": ["staging"],
+    "exclude": ["develop", "main"],
     "default": "enforce"
   },
   "workflow_approval": {

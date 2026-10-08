@@ -64,7 +64,7 @@ Three branches participate in the release lane:
 feature/* ──(PR)──> staging ──(auto-PR)──> develop ──(auto-PR)──> main
 ```
 
-The auto-opened promotion PRs are idempotent — only one is open per branch pair at any time. Each one waits for the same review + CI gates as the underlying branch. Tagged releases (`v*`) trigger after the relevant branch receives the commit; see the Release Versioning workflow table in the README for details.
+The auto-opened promotion PRs are idempotent — only one is open per branch pair at any time. Each one waits for the same review + CI gates as the underlying branch. They are not A38 pull requests. A38 applies to pull requests into `staging`. The guard does not comment on a promotion into `develop` or `main`. Tagged releases (`v*`) trigger after the relevant branch receives the commit; see the Release Versioning workflow table in the README for details.
 
 ## A38
 
