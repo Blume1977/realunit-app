@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
+import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/config/api_config.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_blockchain_api_service.dart';
@@ -17,6 +18,7 @@ import 'package:realunit_wallet/packages/utils/default_assets.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/screens/pay/cubits/pay_process/pay_process_cubit.dart';
 import 'package:realunit_wallet/screens/pay/pay_process_page.dart';
+import 'package:realunit_wallet/screens/transaction_history/completed_transaction.dart';
 
 import '../../helper/helper.dart';
 
@@ -198,7 +200,11 @@ void main() {
     });
 
     testWidgets('success label', (tester) async {
-      await expectLabel(tester, const PayProcessSuccess(), S.current.paySuccess);
+      await expectLabel(
+        tester,
+        const PayProcessSuccess(txHash: '0xpay', shareAmount: 2),
+        S.current.paySuccess,
+      );
     });
 
     testWidgets('pay-retry label', (tester) async {
@@ -297,19 +303,72 @@ void main() {
   }
 
   group('$PayProcessView result sheet', () {
-    testWidgets('success emits a success sheet with title + description', (tester) async {
-      await pumpWithState(tester, const PayProcessSuccess());
+    testWidgets('success pops PayProcessCompleted from the resolver', (tester) async {
+      tester.view.physicalSize = const Size(1200, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-      expect(find.text(S.current.paySuccessDescription), findsOne);
-      expect(find.byIcon(Icons.check_circle_rounded), findsOne);
-      expect(find.text(S.current.close), findsOne);
+      final tx = Transaction(
+        height: 0,
+        txId: '0xpay',
+        chainId: realUnitAsset.chainId,
+        senderAddress: '0xwallet',
+        receiverAddress: kReferralPayoutSenderAddress,
+        amount: BigInt.from(2),
+        asset: realUnitAsset,
+        type: TransactionTypes.tokenTransfer,
+        category: TransferCategory.sale,
+        note: '',
+        data: null,
+        timestamp: DateTime.utc(2026, 10, 8),
+      );
+      Object? popped;
+      whenListen(
+        processCubit,
+        Stream<PayProcessState>.fromIterable([
+          const PayProcessSuccess(txHash: '0xpay', shareAmount: 2),
+        ]),
+        initialState: const PayProcessSwapping(),
+      );
+      await tester.pumpApp(
+        Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: TextButton(
+                onPressed: () async {
+                  popped = await Navigator.of(context).push<Object>(
+                    MaterialPageRoute<Object>(
+                      builder: (_) => BlocProvider<PayProcessCubit>.value(
+                        value: processCubit,
+                        child: PayProcessView(
+                          resolveCompleted: (_) async => CompletedTransaction(
+                            transaction: tx,
+                            walletAddress: '0xwallet',
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('go'),
+              ),
+            ),
+          ),
+        ),
+      );
 
-      // Tapping close pops the sheet and then pops the page.
-      await tester.tap(find.text(S.current.close));
+      await tester.tap(find.text('go'));
       await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.pump(const Duration(milliseconds: 400));
 
       expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
+      expect(popped, isA<PayProcessCompleted>());
+      final completed = popped! as PayProcessCompleted;
+      expect(completed.transaction, same(tx));
+      expect(completed.walletAddress, '0xwallet');
     });
 
     testWidgets('insufficient-eth failure message', (tester) async {

@@ -36,6 +36,9 @@ class SendProcessCubit extends Cubit<SendProcessState> {
   final String _recipient;
   final int _amount;
 
+  int get amount => _amount;
+  String get recipient => _recipient;
+
   /// Successfully prepared transfer intent (carries the server-assigned `id`).
   /// Stored for the lifetime of the cubit so [retryConfirm] can re-confirm the
   /// same intent without a second prepare.

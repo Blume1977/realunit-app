@@ -8,6 +8,7 @@ import 'package:realunit_wallet/models/dfx_transaction.dart';
 import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_pdf_service.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
+import 'package:realunit_wallet/screens/transaction_history/completed_transaction.dart';
 import 'package:realunit_wallet/screens/transaction_history/cubits/receipt/transaction_history_receipt_cubit.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
@@ -15,14 +16,17 @@ import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
 import 'package:realunit_wallet/widgets/frozen_chf_label.dart';
 import 'package:realunit_wallet/widgets/hide_amount_text.dart';
+import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
 import 'package:realunit_wallet/widgets/transaction_title_label.dart';
 
 class TransactionDetailArgs {
   final Transaction transaction;
   final String walletAddress;
+  final bool returnToDashboard;
   const TransactionDetailArgs({
     required this.transaction,
     required this.walletAddress,
+    this.returnToDashboard = false,
   });
 }
 
@@ -90,72 +94,95 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
       builder: (context, state) {
         final transaction = widget.args.transaction;
         final fieldRows = _fieldRows(context);
-        return Scaffold(
-          appBar: AppBar(title: Text(_title(context))),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 0.0),
-                child: Column(
-                  crossAxisAlignment: .start,
-                  spacing: 16.0,
-                  children: [
-                    Column(
-                      crossAxisAlignment: .start,
-                      children: [
-                        HideAmountText(
-                          leadingSymbol: _leadingSymbol(),
-                          amount: transaction.amount,
-                          decimals: transaction.asset.decimals,
-                          fractionalDigits: _fractionalDigits(),
-                          trimZeros: false,
-                          trailingSymbol: transaction.asset.symbol,
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          _formattedDate(),
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: RealUnitColors.neutral500,
-                          ),
-                        ),
-                      ],
+        final content = Padding(
+          padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 0.0),
+          child: Column(
+            crossAxisAlignment: .start,
+            spacing: 16.0,
+            children: [
+              Column(
+                crossAxisAlignment: .start,
+                children: [
+                  HideAmountText(
+                    leadingSymbol: _leadingSymbol(),
+                    amount: transaction.amount,
+                    decimals: transaction.asset.decimals,
+                    fractionalDigits: _fractionalDigits(),
+                    trimZeros: false,
+                    trailingSymbol: transaction.asset.symbol,
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
-                    if (fieldRows.isNotEmpty)
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: RealUnitColors.basic.white,
-                          border: Border.all(
-                            width: 1,
-                            color: RealUnitColors.neutral200,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: .start,
-                          children: fieldRows,
-                        ),
-                      ),
-                    if (transaction.type !=
-                        TransactionTypes.referralPayout) ...[
-                      Text(
-                        S.of(context).saleReceiptSheetTitle,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Column(
-                        spacing: 12,
-                        children: _receiptButtons(context, state),
-                      ),
-                    ],
-                  ],
+                  ),
+                  Text(
+                    _formattedDate(),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: RealUnitColors.neutral500,
+                    ),
+                  ),
+                ],
+              ),
+              if (fieldRows.isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: RealUnitColors.basic.white,
+                    border: Border.all(
+                      width: 1,
+                      color: RealUnitColors.neutral200,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    children: fieldRows,
+                  ),
                 ),
+              if (transaction.type != TransactionTypes.referralPayout &&
+                  usableTxHash(transaction.txId) != null) ...[
+                Text(
+                  S.of(context).saleReceiptSheetTitle,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Column(
+                  spacing: 12,
+                  children: _receiptButtons(context, state),
+                ),
+              ],
+            ],
+          ),
+        );
+        if (widget.args.returnToDashboard) {
+          return Scaffold(
+            appBar: AppBar(title: Text(_title(context))),
+            body: SafeArea(
+              child: ScrollableActionsLayout(
+                body: content,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                    child: AppFilledButton(
+                      label: S.of(context).transactionDetailBackToMain,
+                      onPressed: () =>
+                          context.goNamed(AppRoutes.dashboard),
+                    ),
+                  ),
+                ],
               ),
             ),
+          );
+        }
+
+        final scrollView = SafeArea(
+          child: SingleChildScrollView(
+            child: content,
           ),
+        );
+        return Scaffold(
+          appBar: AppBar(title: Text(_title(context))),
+          body: scrollView,
         );
       },
     );

@@ -4,13 +4,16 @@ import 'package:clock/clock.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_pay_service.dart';
 import 'package:realunit_wallet/packages/utils/default_assets.dart';
 import 'package:realunit_wallet/screens/pay/cubits/pay_quote/pay_quote_cubit.dart';
 import 'package:realunit_wallet/screens/pay/pay_process_page.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
+import 'package:realunit_wallet/screens/transaction_history/transaction_detail_page.dart';
 import 'package:realunit_wallet/setup/di.dart';
+import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/widgets/buttons/app_filled_button.dart';
@@ -237,10 +240,10 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
                   if (_navigating) return;
                   setState(() => _navigating = true);
                   final navigator = Navigator.of(context);
-                  bool? swapCompleted = false;
+                  Object? swapCompleted = false;
                   try {
-                    swapCompleted = await navigator.push<bool>(
-                      MaterialPageRoute<bool>(
+                    swapCompleted = await navigator.push<Object>(
+                      MaterialPageRoute<Object>(
                         builder: (_) => PayProcessPage(
                           paymentLinkId: state.paymentLinkId,
                           quoteId: state.quoteId,
@@ -256,7 +259,17 @@ class _PayQuoteReadyViewState extends State<_PayQuoteReadyView> {
                       setState(() => _navigating = false);
                     }
                   }
-                  if (mounted && swapCompleted != false) {
+                  if (!context.mounted) return;
+                  if (swapCompleted is PayProcessCompleted) {
+                    context.goNamed(
+                      AppRoutes.transactionDetail,
+                      extra: TransactionDetailArgs(
+                        transaction: swapCompleted.transaction,
+                        walletAddress: swapCompleted.walletAddress,
+                        returnToDashboard: true,
+                      ),
+                    );
+                  } else if (swapCompleted != false) {
                     navigator.pop();
                   }
                 },

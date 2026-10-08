@@ -133,6 +133,7 @@ void main() {
     WidgetTester tester,
     Transaction tx, {
     String walletAddress = '0x1111111111111111111111111111111111111111',
+    bool returnToDashboard = false,
   }) {
     return tester.pumpWidget(
       MaterialApp(
@@ -156,6 +157,7 @@ void main() {
             args: TransactionDetailArgs(
               transaction: tx,
               walletAddress: walletAddress,
+              returnToDashboard: returnToDashboard,
             ),
           ),
         ),
@@ -464,6 +466,113 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('tx-dash-transfer'), findsOneWidget);
+  });
+
+  testWidgets(
+    'hides the back-to-main button when returnToDashboard is false',
+    (tester) async {
+      await pumpDetail(tester, _tx());
+
+      expect(find.text(S.current.transactionDetailBackToMain), findsNothing);
+    },
+  );
+
+  testWidgets('shows the back-to-main button when returnToDashboard is true', (
+    tester,
+  ) async {
+    await pumpDetail(tester, _tx(), returnToDashboard: true);
+
+    expect(find.text(S.current.transactionDetailBackToMain), findsOneWidget);
+  });
+
+  testWidgets('back-to-main button lands on the dashboard route', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/dashboard',
+      routes: [
+        GoRoute(
+          name: AppRoutes.dashboard,
+          path: '/dashboard',
+          builder: (_, _) => const Scaffold(body: Text('dashboard-home')),
+          routes: [
+            GoRoute(
+              name: AppRoutes.transactionDetail,
+              path: 'transactionDetail',
+              builder: (_, state) {
+                final args = state.extra! as TransactionDetailArgs;
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider<TransactionHistoryReceiptCubit>.value(
+                      value: receiptCubit,
+                    ),
+                    BlocProvider<SettingsBloc>.value(value: settings),
+                  ],
+                  child: TransactionDetailView(args: args),
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      MaterialApp.router(
+        theme: realUnitTheme,
+        locale: const Locale('de'),
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        routerConfig: router,
+      ),
+    );
+    router.goNamed(
+      AppRoutes.transactionDetail,
+      extra: TransactionDetailArgs(
+        transaction: _tx(),
+        walletAddress: '0x1111111111111111111111111111111111111111',
+        returnToDashboard: true,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(S.current.transactionDetailBackToMain), findsOneWidget);
+
+    await tester.tap(find.text(S.current.transactionDetailBackToMain));
+    await tester.pumpAndSettle();
+
+    expect(find.text('dashboard-home'), findsOneWidget);
+  });
+
+  testWidgets(
+    'token transfer with an empty txId does not show a receipt',
+    (tester) async {
+      await pumpDetail(tester, _tx(txId: ''));
+
+      expect(find.text(S.current.transactionReceipt), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'token transfer with a confirmed sentinel txId does not show a receipt',
+    (tester) async {
+      await pumpDetail(tester, _tx(txId: 'confirmed'));
+
+      expect(find.text(S.current.transactionReceipt), findsNothing);
+    },
+  );
+
+  testWidgets('token transfer with a normal txId still shows a receipt', (
+    tester,
+  ) async {
+    await pumpDetail(tester, _tx());
+
+    expect(find.text(S.current.transactionReceipt), findsOneWidget);
   });
 
   testWidgets('tapping a referral payout row opens the detail route', (

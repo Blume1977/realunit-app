@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
+import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/swap_payment_info.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_pay_service.dart';
 import 'package:realunit_wallet/screens/pay/cubits/pay_process/pay_process_cubit.dart';
+import 'package:realunit_wallet/screens/transaction_history/completed_transaction.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/route_animation_gate.dart';
@@ -40,8 +42,22 @@ class PayProcessPage extends StatelessWidget {
   }
 }
 
+class PayProcessCompleted {
+  final Transaction transaction;
+  final String walletAddress;
+  const PayProcessCompleted({
+    required this.transaction,
+    required this.walletAddress,
+  });
+}
+
 class PayProcessView extends StatelessWidget {
-  const PayProcessView({super.key});
+  const PayProcessView({
+    super.key,
+    this.resolveCompleted = resolveCompletedTransaction,
+  });
+
+  final CompletedTransactionResolver resolveCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +68,22 @@ class PayProcessView extends StatelessWidget {
           current is PayProcessPayRetry,
       listener: (context, state) async {
         if (state is PayProcessSuccess) {
-          await _showResultSheet(
-            context,
-            icon: Icons.check_circle_rounded,
-            title: S.of(context).paySuccess,
-            description: S.of(context).paySuccessDescription,
-            swapCompleted: true,
+          final completed = await resolveCompleted(
+            CompletedTransactionRequest(
+              txHash: state.txHash,
+              amount: BigInt.from(state.shareAmount),
+              receiverAddress: kReferralPayoutSenderAddress,
+              category: TransferCategory.sale,
+            ),
           );
+          if (context.mounted) {
+            Navigator.of(context).pop(
+              PayProcessCompleted(
+                transaction: completed.transaction,
+                walletAddress: completed.walletAddress,
+              ),
+            );
+          }
         } else if (state is PayProcessPayRetry) {
           // The confirm may already have been sent. This payment leaves no CHF.
           // Retry sends the same delegation again.
@@ -74,21 +99,24 @@ class PayProcessView extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(title: Text(S.of(context).pay)),
-          body: SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 24,
-                children: [
-                  const CupertinoActivityIndicator(radius: 16),
-                  Text(
-                    _progressLabel(context, state),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ],
+        return PopScope(
+          canPop: state is! PayProcessSuccess,
+          child: Scaffold(
+            appBar: AppBar(title: Text(S.of(context).pay)),
+            body: SafeArea(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 24,
+                  children: [
+                    const CupertinoActivityIndicator(radius: 16),
+                    Text(
+                      _progressLabel(context, state),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

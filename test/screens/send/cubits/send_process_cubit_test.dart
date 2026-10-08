@@ -115,6 +115,13 @@ void main() {
     stubConfirm();
   }
 
+  test('exposes the confirmed amount and recipient', () async {
+    final cubit = build();
+    expect(cubit.amount, 5);
+    expect(cubit.recipient, '0xRecipient');
+    await cubit.close();
+  });
+
   test('debug wallet → signatureUnsupported before any network call', () async {
     when(() => wallet.walletType).thenReturn(WalletType.debug);
 

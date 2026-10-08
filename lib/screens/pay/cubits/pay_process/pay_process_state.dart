@@ -70,7 +70,12 @@ class PayProcessAwaitingSettlement extends PayProcessState {
 }
 
 class PayProcessSuccess extends PayProcessState {
-  const PayProcessSuccess();
+  final String? txHash;
+  final int shareAmount;
+  const PayProcessSuccess({required this.txHash, required this.shareAmount});
+
+  @override
+  List<Object?> get props => [txHash, shareAmount];
 }
 
 /// A pay confirm did not finish. This payment leaves no CHF in the wallet.

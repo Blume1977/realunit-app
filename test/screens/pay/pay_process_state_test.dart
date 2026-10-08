@@ -21,10 +21,28 @@ void main() {
       expect(const PayProcessSwapping().props, isEmpty);
       expect(const PayProcessRefreshingQuote().props, isEmpty);
       expect(const PayProcessPaying().props, isEmpty);
-      expect(const PayProcessSuccess().props, isEmpty);
       expect(
         const PayProcessPreparingSwap(),
         isNot(equals(const PayProcessWaitingForEth())),
+      );
+    });
+
+    test('PayProcessSuccess is keyed on txHash and shareAmount', () {
+      expect(
+        const PayProcessSuccess(txHash: '0xpay', shareAmount: 2).props,
+        ['0xpay', 2],
+      );
+      expect(
+        const PayProcessSuccess(txHash: '0xpay', shareAmount: 2),
+        const PayProcessSuccess(txHash: '0xpay', shareAmount: 2),
+      );
+      expect(
+        const PayProcessSuccess(txHash: '0xpay', shareAmount: 2),
+        isNot(equals(const PayProcessSuccess(txHash: '0xother', shareAmount: 2))),
+      );
+      expect(
+        const PayProcessSuccess(txHash: '0xpay', shareAmount: 2),
+        isNot(equals(const PayProcessSuccess(txHash: '0xpay', shareAmount: 3))),
       );
     });
 

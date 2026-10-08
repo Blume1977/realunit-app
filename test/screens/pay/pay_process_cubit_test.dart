@@ -204,7 +204,10 @@ void main() {
 
         async.elapse(const Duration(seconds: 3));
         async.flushMicrotasks();
-        expect(cubit.state, isA<PayProcessSuccess>());
+        expect(
+          cubit.state,
+          const PayProcessSuccess(txHash: '0xpay', shareAmount: 2),
+        );
 
         cubit.close();
         async.flushTimers();

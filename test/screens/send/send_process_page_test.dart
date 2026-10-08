@@ -2,10 +2,13 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
+import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/config/api_config.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_transfer_service.dart';
@@ -13,8 +16,17 @@ import 'package:realunit_wallet/packages/utils/default_assets.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/screens/send/cubits/send_process/send_process_cubit.dart';
 import 'package:realunit_wallet/screens/send/send_process_page.dart';
+import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
+import 'package:realunit_wallet/screens/transaction_history/completed_transaction.dart';
+import 'package:realunit_wallet/screens/transaction_history/cubits/receipt/transaction_history_receipt_cubit.dart';
+import 'package:realunit_wallet/screens/transaction_history/transaction_detail_page.dart';
+import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
+import 'package:realunit_wallet/styles/themes.dart';
 
 import '../../helper/helper.dart';
+
+class _MockReceiptCubit extends MockCubit<TransactionHistoryReceiptState>
+    implements TransactionHistoryReceiptCubit {}
 
 class _MockSendProcessCubit extends MockCubit<SendProcessState> implements SendProcessCubit {}
 
@@ -163,12 +175,12 @@ void main() {
       expect(popScope.canPop, isFalse);
     });
 
-    testWidgets('allows back navigation on success (terminal)', (tester) async {
+    testWidgets('blocks back navigation on success', (tester) async {
       when(() => processCubit.state).thenReturn(const SendProcessSuccess('0xtx'));
       await tester.pumpApp(buildSubject());
 
       final popScope = tester.widget<PopScope>(find.byType(PopScope));
-      expect(popScope.canPop, isTrue);
+      expect(popScope.canPop, isFalse);
     });
 
     testWidgets('blocks back navigation on failure (closes the retry stale-window)', (
@@ -212,21 +224,119 @@ void main() {
   }
 
   group('$SendProcessView result sheet', () {
-    testWidgets('success emits a success sheet with title + description', (tester) async {
-      await pumpWithState(tester, const SendProcessSuccess('0xtx'));
+    testWidgets(
+      'success navigates to transaction detail with returnToDashboard',
+      (tester) async {
+        when(() => processCubit.amount).thenReturn(5);
+        when(() => processCubit.recipient).thenReturn('0xRecipient');
 
-      expect(find.text(S.current.sendSuccessDescription), findsOne);
-      expect(find.byIcon(Icons.check_circle_rounded), findsOne);
-      expect(find.text(S.current.close), findsOne);
-      // Non-retryable terminal states never offer Retry.
-      expect(find.text(S.current.retry), findsNothing);
+        final tx = Transaction(
+          height: 0,
+          txId: '0xabc',
+          chainId: realUnitAsset.chainId,
+          senderAddress: '0x1111111111111111111111111111111111111111',
+          receiverAddress: '0x2222222222222222222222222222222222222222',
+          amount: BigInt.from(5),
+          asset: realUnitAsset,
+          type: TransactionTypes.tokenTransfer,
+          category: TransferCategory.transferOut,
+          note: '',
+          data: null,
+          timestamp: DateTime.utc(2026, 10, 8),
+        );
+        final receiptCubit = _MockReceiptCubit();
+        when(
+          () => receiptCubit.state,
+        ).thenReturn(const TransactionHistoryReceiptInitial());
+        whenListen(
+          receiptCubit,
+          const Stream<TransactionHistoryReceiptState>.empty(),
+          initialState: const TransactionHistoryReceiptInitial(),
+        );
+        final settings = MockSettingsBloc();
+        when(() => settings.state).thenReturn(const SettingsState());
+        whenListen(
+          settings,
+          const Stream<SettingsState>.empty(),
+          initialState: const SettingsState(),
+        );
 
-      await tester.tap(find.text(S.current.close));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+        whenListen(
+          processCubit,
+          Stream<SendProcessState>.fromIterable([
+            const SendProcessSuccess('0xabc'),
+          ]),
+          initialState: const SendProcessSigning(),
+        );
 
-      expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
-    });
+        final router = GoRouter(
+          initialLocation: '/send-process',
+          routes: [
+            GoRoute(
+              path: '/send-process',
+              builder: (_, _) => BlocProvider<SendProcessCubit>.value(
+                value: processCubit,
+                child: SendProcessView(
+                  resolveCompleted: (_) async => CompletedTransaction(
+                    transaction: tx,
+                    walletAddress: '0x1111111111111111111111111111111111111111',
+                  ),
+                ),
+              ),
+            ),
+            GoRoute(
+              name: AppRoutes.dashboard,
+              path: '/dashboard',
+              builder: (_, _) => const Scaffold(body: Text('dashboard-home')),
+              routes: [
+                GoRoute(
+                  name: AppRoutes.transactionDetail,
+                  path: 'transactionDetail',
+                  builder: (_, state) {
+                    final args = state.extra! as TransactionDetailArgs;
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider<TransactionHistoryReceiptCubit>.value(
+                          value: receiptCubit,
+                        ),
+                        BlocProvider<SettingsBloc>.value(value: settings),
+                      ],
+                      child: TransactionDetailView(args: args),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: realUnitTheme,
+            localizationsDelegates: const [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            routerConfig: router,
+          ),
+        );
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
+        await tester.pump(const Duration(milliseconds: 400));
+
+        expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
+        expect(find.byType(TransactionDetailView), findsOneWidget);
+        expect(
+          find.text(S.current.transactionDetailBackToMain),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('signature-unsupported failure message', (tester) async {
       await pumpWithState(

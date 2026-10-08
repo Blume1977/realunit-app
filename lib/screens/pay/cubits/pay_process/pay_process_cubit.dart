@@ -9,6 +9,7 @@ import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/sell_exc
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/swap_payment_info.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_pay_service.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
+import 'package:realunit_wallet/screens/transaction_history/completed_transaction.dart';
 
 part 'pay_process_state.dart';
 
@@ -157,7 +158,16 @@ class PayProcessCubit extends Cubit<PayProcessState> {
         }
         _statusPollingTimer?.cancel();
         if (status.status.isCompleted) {
-          emit(const PayProcessSuccess());
+          final awaiting = state;
+          final rawTxId = awaiting is PayProcessAwaitingSettlement
+              ? awaiting.txId
+              : null;
+          emit(
+            PayProcessSuccess(
+              txHash: usableTxHash(rawTxId),
+              shareAmount: _swap.amount.round(),
+            ),
+          );
         } else {
           emit(const PayProcessPayRetry(PayRetryReason.transient));
         }

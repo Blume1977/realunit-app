@@ -339,4 +339,12 @@ const kResponsiveSurfaceCatalog = <ResponsiveSurface>[
     matrixTestPath: 'test/screens/startup_failure/startup_failure_responsive_matrix_test.dart',
     productionPath: 'lib/screens/startup_failure/widgets/startup_failure_reset_sheet.dart',
   ),
+  ResponsiveSurface(
+    id: 'transaction_detail_return_to_dashboard',
+    description:
+        'transaction detail after pay or transfer, with the button back to the dashboard',
+    matrixTestPath:
+        'test/screens/transaction_history/transaction_detail_responsive_matrix_test.dart',
+    productionPath: 'lib/screens/transaction_history/transaction_detail_page.dart',
+  ),
 ];

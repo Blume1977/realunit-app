@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
+import 'package:realunit_wallet/models/transaction.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_transfer_service.dart';
 import 'package:realunit_wallet/screens/send/cubits/send_process/send_process_cubit.dart';
+import 'package:realunit_wallet/screens/transaction_history/completed_transaction.dart';
+import 'package:realunit_wallet/screens/transaction_history/transaction_detail_page.dart';
 import 'package:realunit_wallet/setup/di.dart';
+import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/route_animation_gate.dart';
 import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
@@ -42,7 +47,12 @@ class SendProcessPage extends StatelessWidget {
 }
 
 class SendProcessView extends StatelessWidget {
-  const SendProcessView({super.key});
+  const SendProcessView({
+    super.key,
+    this.resolveCompleted = resolveCompletedTransaction,
+  });
+
+  final CompletedTransactionResolver resolveCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +61,25 @@ class SendProcessView extends StatelessWidget {
           current is SendProcessSuccess || current is SendProcessFailure,
       listener: (context, state) async {
         if (state is SendProcessSuccess) {
-          await _showResultSheet(
-            context,
-            icon: Icons.check_circle_rounded,
-            title: S.of(context).sendSuccess,
-            description: S.of(context).sendSuccessDescription,
+          final cubit = context.read<SendProcessCubit>();
+          final completed = await resolveCompleted(
+            CompletedTransactionRequest(
+              txHash: state.txHash,
+              amount: BigInt.from(cubit.amount),
+              receiverAddress: cubit.recipient,
+              category: TransferCategory.transferOut,
+            ),
           );
+          if (context.mounted) {
+            GoRouter.of(context).goNamed(
+              AppRoutes.transactionDetail,
+              extra: TransactionDetailArgs(
+                transaction: completed.transaction,
+                walletAddress: completed.walletAddress,
+                returnToDashboard: true,
+              ),
+            );
+          }
         } else if (state is SendProcessFailure) {
           await _showResultSheet(
             context,
@@ -68,9 +91,8 @@ class SendProcessView extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        final canPop = state is SendProcessSuccess;
         return PopScope(
-          canPop: canPop,
+          canPop: false,
           child: Scaffold(
             appBar: AppBar(title: Text(S.of(context).sendProcessTitle)),
             body: SafeArea(
@@ -143,10 +165,10 @@ class SendProcessView extends StatelessWidget {
     return localized;
   }
 
-  /// Shows the terminal result sheet. Returns after the sheet is dismissed.
+  /// Shows the terminal failure sheet. Returns after the sheet is dismissed.
   ///
-  /// For success and non-retryable failures, Close pops the sheet then this
-  /// method pops the [SendProcessPage] route (today's behaviour).
+  /// For non-retryable failures, Close pops the sheet then this method pops
+  /// the [SendProcessPage] route.
   ///
   /// For retryable failures, Retry dismisses only the sheet and re-invokes
   /// [SendProcessCubit.retryConfirm] without popping the page — the stored
