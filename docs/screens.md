@@ -17,7 +17,7 @@ Column meaning:
   still have Visual-Regression Goldens). Each slot is a
   Visual-Regression Golden under `test/goldens/`, mapped to its handbook
   position by `scripts/assemble-handbook-screenshots.sh`. The handbook now
-  has a slot for every macOS golden, 418 of them — screens plus their
+  has a slot for every macOS golden — screens plus their
   state variants (Default / Loading / Error / Snackbar / Dropdown /
   Validation / Confirm / Success / Failure …), including Support (email
   capture, tickets, chat), Settings User-Data and its edit sub-pages,
@@ -168,7 +168,7 @@ row. OpenCryptoPay pay rounding cards `300`–`302` are documented in
   `243`–`245`. `SetupPinPage` also backs the `settingsChangePin` route
   (`/settings/security/changePin`) via a second constructor; that reuse has no
   separate Golden and is not given its own row.
-- **Handbook numbering.** Each of the 418 handbook slots is a Visual-Regression
+- **Handbook numbering.** Each handbook slot is a Visual-Regression
   Golden under `test/goldens/`, mapped to its handbook position by
   `scripts/assemble-handbook-screenshots.sh`. A parallel Tier-3 Maestro flow
   (`.maestro/handbook/NN-*.yaml`) covers navigation/tap-routing smoke for the

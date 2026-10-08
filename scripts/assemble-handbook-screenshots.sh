@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Assemble the 418 handbook screenshots from the visual-regression Golden
+# Assemble one handbook screenshot per mapping row from the visual-regression Golden
 # baselines. The flat `NN-name.png` output layout matches what
 # docs/handbook/de/index.html links to (`<img src="../screenshots/NN-name.png">`
 # — the relative path resolves to `docs/handbook/screenshots/NN-name.png`).
@@ -20,6 +20,8 @@
 # extended to cover every Golden baseline. When a new
 # handbook page is added, append a row here AND add the corresponding
 # Golden test — never source a screenshot from anywhere else.
+# Do not edit a workflow file to record the new total; this script fails
+# unless the PNG count equals the number of mapping rows.
 
 set -euo pipefail
 
@@ -484,4 +486,9 @@ if [ "${#missing[@]}" -gt 0 ]; then
 fi
 
 count=$(ls -1 "$OUT"/*.png | wc -l | tr -d ' ')
+expected=${#MAPPING[@]}
+if [ "$count" != "$expected" ]; then
+  echo "expected ${expected} screenshots, one per mapping row, got ${count}" >&2
+  exit 1
+fi
 echo "assembled $count handbook screenshots into $OUT"

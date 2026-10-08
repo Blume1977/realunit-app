@@ -3,7 +3,7 @@ name: Handbook Build Check
 # PR-only build verification for the handbook CONTENT. Gates four things
 # before a staging merge, all pure content checks with no live deploy:
 #   - screenshot-assembly: scripts/assemble-handbook-screenshots.sh runs and
-#                           produces the expected PNG count
+#                           produces one PNG per mapping row
 #   - store-listing sync:  scripts/assemble-handbook-store-listing.py output
 #                           matches the committed handbook (+ its HTML
 #                           sanitizer strips injection payloads)
@@ -15,7 +15,8 @@ name: Handbook Build Check
 #                           auth wall. The HTTP probes do not establish
 #                           per-file existence (the auth gate answers 401
 #                           before nginx ever looks a file up): screenshots
-#                           are proven by their explicit count guard above,
+#                           are proven by the assemble script, which fails
+#                           unless the PNG count equals the mapping length,
 #                           legal downloads by build-legal-downloads.sh's
 #                           fail-fast per-base existence check during the
 #                           image build
@@ -93,11 +94,6 @@ jobs:
         run: |
           set -euo pipefail
           bash scripts/assemble-handbook-screenshots.sh /tmp/handbook-shots
-          count=$(ls -1 /tmp/handbook-shots/*.png | wc -l | tr -d ' ')
-          if [ "$count" != "418" ]; then
-            echo "expected 418 screenshots, got $count" >&2
-            exit 1
-          fi
 
       - name: Verify store-listing HTML sanitizer drops disallowed markup
         # full_description.txt is rendered unescaped in the handbook (Google
@@ -175,7 +171,7 @@ jobs:
             exit 1
           fi
 
-          # Spot-check handbook screenshots assembled from Goldens (418 PNGs).
+          # Spot-check a fixed sample of handbook screenshots assembled from Goldens.
           # Mix of original 01-61 slots, later Golden batches, referral
           # baselines, and pay whole-share rounding so a regression in any range surfaces here.
           for name in 01-welcome 11-dashboard 26-terms 35-dashboard-with-balance 46-buy-kyc-required 52-sell-unknown-error 53-buy-payment-details 61-kyc-registration-tax-tin-error 62-welcome-page-android 219-settings-security-page-default 268-phone-number-field-default 269-dashboard-insider-unlocked 270-handbook-persona-dca 275-handbook-persona-exit-1j 276-referral-overview 282-referral-payout-row 283-referral-terms-readonly 287-kyc-registration-referral-recognized 288-transaction-history-referral-payout 289-dashboard-referral-entry-and-payout 290-kyc-registration-referral-promo 291-referral-bind-error-invalid 292-referral-bind-error-already-registered 303-referral-bind-invite-recognized 293-settings-insider-unlocked 295-settings-insider-page-enabled 296-receive-page-default-send 299-settings-referral-eligible-on 300-pay-info 301-pay-quote-ready 302-pay-quote-ready-merchant 304-buy-charged-amount 373-send-info-page 379-startup-failure-page-retry 387-referral-bind-promo 396-referral-bind-unavailable-retrying 389-update-required-page-ready; do

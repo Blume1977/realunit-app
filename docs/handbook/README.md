@@ -21,7 +21,7 @@ deployten Image (`handbook.realunit.app`).
 
 ## Screenshots regenerieren
 
-Es gibt keinen separaten Regeneration-Schritt: Die 418 Handbook-Screenshots
+Es gibt keinen separaten Regeneration-Schritt: Die Handbook-Screenshots
 sind direkt die Golden-Baselines unter `test/goldens/` (gemappt in
 `scripts/assemble-handbook-screenshots.sh`). Eine UI-Änderung an einer der
 gemappten Pages produziert beim `flutter test test/goldens` einen Diff —
@@ -85,11 +85,12 @@ auf `https://api.dfx.swiss/v1/country`; eine lokale HTML-Vorschau fällt auf die
    Zeile in der `MAPPING`-Tabelle ergänzen — `"NN-<name>=screens/<feature>/goldens/macos/<file>.png"`
    oder `"NN-<name>=widgets/<widget>/goldens/macos/<file>.png"`.
    Die Nummer NN ist der Sortierschlüssel im Handbook (keine direkte Bindung mehr
-   an einen Maestro-Flow). Damit ändert sich die Screenshot-Anzahl: den
-   Count-Guard in `.github/workflows/handbook-build-check.yaml` (der
-   `if [ "$count" != "N" ]`-Check plus die `NN-…`-Kommentare/-Samples im
-   Smoke-Step) im selben Zug anpassen — analog zur `EXPECTED_PDF_COUNT`-Mechanik
-   weiter unten.
+   an einen Maestro-Flow). Eine neue Mapping-Zeile reicht für den Count, weil das
+   Skript prüft, dass die assemblierte PNG-Anzahl der Zahl der Mapping-Zeilen
+   entspricht. `.github/workflows/handbook-build-check.yaml` nicht editieren, um
+   die neue Gesamtzahl festzuhalten; die Namensliste im Smoke-Step ist eine
+   feste Stichprobe, kein Inventar, und ein neuer Slot kommt dort nicht hinzu,
+   nur weil sich die Gesamtzahl geändert hat.
 3. **HTML**: in `docs/handbook/de/index.html` einen neuen `<div class="test">`-Block
    in die thematisch passende `<details id="spec-NN" class="spec">`-Sektion
    einfügen (Muster siehe spec-01). Die Screenshots sind in wenige thematische
