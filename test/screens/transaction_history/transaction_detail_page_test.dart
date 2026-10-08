@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,8 +27,7 @@ import 'package:realunit_wallet/widgets/frozen_chf_label.dart';
 class _MockReceiptCubit extends MockCubit<TransactionHistoryReceiptState>
     implements TransactionHistoryReceiptCubit {}
 
-class _MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState>
-    implements SettingsBloc {}
+class _MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState> implements SettingsBloc {}
 
 Transaction _tx({
   TransferCategory? category,
@@ -477,6 +478,35 @@ void main() {
         find.byType(AppFilledButton),
       )) {
         expect(button.state, FilledButtonState.idle);
+        expect(button.onPressed, isNull);
+      }
+    },
+  );
+
+  testWidgets(
+    'tapping the payment receipt loads only that button and keeps the sale receipt idle',
+    (tester) async {
+      final states = StreamController<TransactionHistoryReceiptState>();
+      addTearDown(states.close);
+      whenListen(
+        receiptCubit,
+        states.stream,
+        initialState: const TransactionHistoryReceiptInitial(),
+      );
+
+      await pumpDetail(tester, _tx(category: TransferCategory.payment));
+      await tester.tap(find.text('Zahlungsbeleg'));
+      when(
+        () => receiptCubit.state,
+      ).thenReturn(const TransactionHistoryReceiptLoading());
+      states.add(const TransactionHistoryReceiptLoading());
+      await tester.pump();
+
+      final buttons = tester.widgetList<AppFilledButton>(find.byType(AppFilledButton)).toList();
+      expect(buttons, hasLength(2));
+      expect(buttons[0].state, FilledButtonState.idle);
+      expect(buttons[1].state, FilledButtonState.loading);
+      for (final button in buttons) {
         expect(button.onPressed, isNull);
       }
     },
