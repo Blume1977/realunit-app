@@ -223,8 +223,8 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
 
     if (transaction is DfxTransaction) {
       final hideAmounts = context.watch<SettingsBloc>().state.hideAmounts;
-      // A sale has two different amounts: the proceeds of the share sale and what DFX pays out after
-      // its fee. Naming them keeps them apart from each other and from the two receipts.
+      // A sale has two different amounts: the proceeds of the share sale and what DFX pays out
+      // after its fee. Naming them keeps them apart from each other and from the two receipts.
       final isSale = transaction.category == TransferCategory.sale;
       final inputLabel = isSale ? s.saleProceedsIn : s.amountIn;
       final outputLabel = isSale ? s.payoutIn : s.amountIn;
