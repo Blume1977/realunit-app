@@ -351,7 +351,7 @@ void main() {
         expect(find.text('Verkauf und Zahlung'), findsOneWidget);
         expect(find.text('- 3 REALU'), findsOneWidget);
         expect(find.text('Belege'), findsOneWidget);
-        expect(find.text('Verkaufsbeleg'), findsOneWidget);
+        expect(find.text('RealUnit-Verkauf'), findsOneWidget);
         expect(find.text('Zahlungsbeleg'), findsOneWidget);
         expect(find.text('Beleg'), findsNothing);
         expect(find.text('Auszahlung (DFX AG)'), findsNothing);
@@ -420,7 +420,7 @@ void main() {
         expect(find.text('Verkauf und Zahlung'), findsOneWidget);
         expect(find.text('- 3 REALU'), findsOneWidget);
         expect(find.text('Belege'), findsOneWidget);
-        expect(find.text('Verkaufsbeleg'), findsOneWidget);
+        expect(find.text('RealUnit-Verkauf'), findsOneWidget);
         expect(find.text('Zahlungsbeleg'), findsOneWidget);
         expect(find.text('Auszahlung (DFX AG)'), findsNothing);
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
@@ -488,7 +488,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Verkauf und Zahlung'), findsOneWidget);
         expect(find.text('- 3 REALU'), findsOneWidget);
-        expect(find.text('Verkaufsbeleg'), findsNothing);
+        expect(find.text('RealUnit-Verkauf'), findsNothing);
         expect(find.text('Zahlungsbeleg'), findsNothing);
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
         expect(find.text('Belege'), findsNothing);
