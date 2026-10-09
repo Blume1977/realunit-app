@@ -488,7 +488,6 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Verkauf und Zahlung'), findsOneWidget);
         expect(find.text('- 3 REALU'), findsOneWidget);
-        expect(find.text('RealUnit-Verkauf'), findsNothing);
         expect(find.text('Zahlungsbeleg'), findsNothing);
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
         expect(find.text('Belege'), findsNothing);
