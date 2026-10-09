@@ -298,7 +298,7 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
         AppFilledButton(
           variant: .primary,
           icon: Icons.file_download_outlined,
-          label: S.of(context).paymentReceiptSale,
+          label: S.of(context).saleReceiptRealunit,
           state: isLoading && _pending == .realunit ? .loading : .idle,
           onPressed: isLoading ? null : _onRealunitPressed,
         ),

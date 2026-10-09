@@ -206,7 +206,6 @@
   "paymentInformationFailed": "Beim Abrufen der Zahlungsinformationen ist ein Fehler aufgetreten.",
   "paymentInformationFailedDescription": "Bitte versuchen Sie es später erneut. Wenn der Fehler weiterhin besteht, wenden Sie sich an unseren Support.",
   "paymentReceiptPayment": "Zahlungsbeleg",
-  "paymentReceiptSale": "Verkaufsbeleg",
   "payoutAccountAdd": "Auszahlungskonto hinzufügen",
   "payoutAccountSelect": "Auszahlungskonto auswählen",
   "payoutIn": "Auszahlung in",

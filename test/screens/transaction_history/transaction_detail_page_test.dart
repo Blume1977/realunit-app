@@ -253,13 +253,13 @@ void main() {
       await pumpDetail(tester, _tx(category: TransferCategory.payment));
 
       expect(find.text('Verkauf und Zahlung'), findsOneWidget);
-      expect(find.text('Verkaufsbeleg'), findsOneWidget);
+      expect(find.text('RealUnit-Verkauf'), findsOneWidget);
       expect(find.text('Zahlungsbeleg'), findsOneWidget);
       // No DFX payout statement: the proceeds paid the bill, nothing was paid out
       expect(find.text('Auszahlung (DFX AG)'), findsNothing);
       expect(find.text('Beleg'), findsNothing);
 
-      await tester.tap(find.text('Verkaufsbeleg'));
+      await tester.tap(find.text('RealUnit-Verkauf'));
       await tester.pump();
       verify(
         () => receiptCubit.generateReceipt(

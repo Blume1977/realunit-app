@@ -206,7 +206,6 @@
   "paymentInformationFailed": "An error occurred while getting the payment information.",
   "paymentInformationFailedDescription": "Please try again later. If the error persists, contact our support team.",
   "paymentReceiptPayment": "Payment receipt",
-  "paymentReceiptSale": "Sale receipt",
   "payoutAccountAdd": "Add payout account",
   "payoutAccountSelect": "Select payout account",
   "payoutIn": "Payout in",
