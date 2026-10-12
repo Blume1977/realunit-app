@@ -86,7 +86,7 @@ void main() {
     expect(find.text('Unpersönlich'), findsNothing);
     expect(
       find.text(
-        'Hallo Alice\n\nKennst du die RealUnit App? Ich nutze RealUnit mit dem Ziel, mein Vermögen langfristig zu schützen. Mit dem Kauf von RealUnit-Aktientoken wirst du AktionärIn der RealUnit Schweiz AG, einer Schweizer Investmentgesellschaft, die u.a. in physisches Gold, Silber und Firmen investiert.\n\nGib bei der Registrierung meinen Code AB12CD ein oder benutze für den App-Download am einfachsten diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt dient Werbezwecken. Die genehmigten Prospekte und weitere Unterlagen zur RealUnit Schweiz AG sind abrufbar unter: realunit.ch/downloads (Schweiz) | realunit.de/downloads (Deutschland/EU).',
+        'Hallo Alice\n\nKennst du die RealUnit App? Ich nutze RealUnit mit dem Ziel, mein Vermögen langfristig zu schützen. Mit dem Kauf von RealUnit-Aktientoken wirst du AktionärIn der RealUnit Schweiz AG, einer Schweizer Investmentgesellschaft, die u.a. in physisches Gold, Silber und Firmen investiert.\n\nGib bei der Registrierung meinen Code AB12CD ein oder benutze für den App-Download am einfachsten diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt ist Werbung. Die genehmigten Prospekte zur RealUnit Schweiz AG sind abrufbar unter: https://realunit.ch/downloads/ (Schweiz) | https://realunit.de/downloads/ (Deutschland/EU). Ihre Genehmigung ist keine Befürwortung der Wertpapiere. Anlegern wird empfohlen, vor einer Anlageentscheidung den Prospekt zu lesen, um Risiken und Chancen zu verstehen.',
       ),
       findsOneWidget,
     );
@@ -127,7 +127,7 @@ void main() {
     expect(find.text('Hey ,'), findsNothing);
     expect(
       find.text(
-        'Hallo\n\nKennst du die RealUnit App? Ich nutze RealUnit mit dem Ziel, mein Vermögen langfristig zu schützen. Mit dem Kauf von RealUnit-Aktientoken wirst du AktionärIn der RealUnit Schweiz AG, einer Schweizer Investmentgesellschaft, die u.a. in physisches Gold, Silber und Firmen investiert.\n\nGib bei der Registrierung meinen Code AB12CD ein oder benutze für den App-Download am einfachsten diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt dient Werbezwecken. Die genehmigten Prospekte und weitere Unterlagen zur RealUnit Schweiz AG sind abrufbar unter: realunit.ch/downloads (Schweiz) | realunit.de/downloads (Deutschland/EU).',
+        'Hallo\n\nKennst du die RealUnit App? Ich nutze RealUnit mit dem Ziel, mein Vermögen langfristig zu schützen. Mit dem Kauf von RealUnit-Aktientoken wirst du AktionärIn der RealUnit Schweiz AG, einer Schweizer Investmentgesellschaft, die u.a. in physisches Gold, Silber und Firmen investiert.\n\nGib bei der Registrierung meinen Code AB12CD ein oder benutze für den App-Download am einfachsten diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt ist Werbung. Die genehmigten Prospekte zur RealUnit Schweiz AG sind abrufbar unter: https://realunit.ch/downloads/ (Schweiz) | https://realunit.de/downloads/ (Deutschland/EU). Ihre Genehmigung ist keine Befürwortung der Wertpapiere. Anlegern wird empfohlen, vor einer Anlageentscheidung den Prospekt zu lesen, um Risiken und Chancen zu verstehen.',
       ),
       findsOneWidget,
     );
@@ -156,7 +156,7 @@ void main() {
     expect(find.text('Your invitation for Alice'), findsOneWidget);
     expect(
       find.text(
-        'Hi Alice\n\nDo you know the RealUnit app? I use RealUnit with the aim of protecting my wealth over the long term. By buying RealUnit share tokens, you become a shareholder of RealUnit Schweiz AG, a Swiss investment company that invests in physical gold, silver and companies, among other things.\n\nEnter my code AB12CD when you register, or simply use this link to download the app: https://realunit.app/invite/AB12CD\n\nThis is an advertisement. The approved prospectuses and further documents relating to RealUnit Schweiz AG are available at: realunit.ch/downloads (Switzerland) | realunit.de/downloads (Germany/EU).',
+        'Hi Alice\n\nDo you know the RealUnit app? I use RealUnit with the aim of protecting my wealth over the long term. By buying RealUnit share tokens, you become a shareholder of RealUnit Schweiz AG, a Swiss investment company that invests in physical gold, silver and companies, among other things.\n\nEnter my code AB12CD when you register, or simply use this link to download the app: https://realunit.app/invite/AB12CD\n\nThis is an advertisement. The approved prospectuses of RealUnit Schweiz AG are available at: https://realunit.ch/downloads/ (Switzerland) | https://realunit.de/downloads/ (Germany/EU). Their approval is not an endorsement of the securities. Investors are recommended to read the prospectus before making an investment decision in order to understand the risks and rewards.',
       ),
       findsOneWidget,
     );
