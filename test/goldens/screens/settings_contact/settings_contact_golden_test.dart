@@ -16,6 +16,11 @@ void main() {
       'default state (initial — no capability info yet)',
       fileName: 'settings_contact_page_default',
       constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.pump();
+        expect(find.text('Kontakt / Support'), findsOneWidget);
+        expect(find.text('Kontakt'), findsNothing);
+      },
       builder: () {
         // Inject a mocked cubit so the page does not hit DI for
         // DfxKycService during the golden render. The page builds the
