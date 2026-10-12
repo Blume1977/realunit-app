@@ -1,3 +1,4 @@
+import 'package:alchemist/alchemist.dart' as alchemist;
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,7 +18,8 @@ void main() {
       fileName: 'settings_contact_page_default',
       constraints: phoneConstraints,
       pumpBeforeTest: (tester) async {
-        await tester.pump();
+        await alchemist.precacheImages(tester);
+        await tester.pumpAndSettle();
         expect(find.text('Kontakt / Support'), findsOneWidget);
         expect(find.text('Kontakt'), findsNothing);
       },
