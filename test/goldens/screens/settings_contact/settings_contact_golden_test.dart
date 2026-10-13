@@ -1,3 +1,4 @@
+import 'package:alchemist/alchemist.dart' as alchemist;
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +17,12 @@ void main() {
       'default state (initial — no capability info yet)',
       fileName: 'settings_contact_page_default',
       constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await alchemist.precacheImages(tester);
+        await tester.pumpAndSettle();
+        expect(find.text('Kontakt / Support'), findsOneWidget);
+        expect(find.text('Kontakt'), findsNothing);
+      },
       builder: () {
         // Inject a mocked cubit so the page does not hit DI for
         // DfxKycService during the golden render. The page builds the

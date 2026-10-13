@@ -60,6 +60,12 @@ void main() {
       'default state, software wallet open',
       fileName: 'settings_page_default',
       constraints: const BoxConstraints.tightFor(width: 390, height: 844),
+      pumpBeforeTest: (tester) async {
+        await alchemist.precacheImages(tester);
+        await tester.pumpAndSettle();
+        expect(find.text('Kontakt / Support'), findsOneWidget);
+        expect(find.text('Kontakt'), findsNothing);
+      },
       builder: buildSubject,
     );
 

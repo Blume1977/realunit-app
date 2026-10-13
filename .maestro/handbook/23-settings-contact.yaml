@@ -4,9 +4,9 @@
 # Continues from 22-settings-dfx-documents (no clearState). The DFX-documents
 # sub-page is pushed on top of SettingsLegalDocumentsPage, which in turn sits
 # on the Settings menu. We tap back twice to return to the Settings menu, then
-# open "Kontakt" -> SettingsContactPage.
+# open "Kontakt / Support" -> SettingsContactPage.
 #
-# Settle target: the AppBar title "Kontakt" is visible WHILE
+# Settle target: the AppBar title "Kontakt / Support" is visible WHILE
 # "Wallet-Adresse" (a settings-menu-only tile, not present on the contact
 # page) has disappeared. This combination uniquely identifies the contact
 # page without depending on `/v1/company-info/RealUnit`.
@@ -62,7 +62,7 @@ appId: swiss.realunit.app
                 point: 8%,8%
                 optional: true
 - waitForAnimationToEnd
-# Gate the "Kontakt" tap on "Wallet-Adresse" still being visible — i.e. we
+# Gate the "Kontakt / Support" tap on "Wallet-Adresse" still being visible — i.e. we
 # are still on the settings menu and the tap has not yet taken effect. Once
 # we land on SettingsContactPage, "Wallet-Adresse" disappears from the tree
 # and the loop stops re-tapping immediately.
@@ -75,7 +75,7 @@ appId: swiss.realunit.app
               text: '.*Wallet-Adresse.*'
           commands:
             - tapOn:
-                text: 'Kontakt'
+                text: 'Kontakt / Support'
                 optional: true
 - waitForAnimationToEnd
 - extendedWaitUntil:
@@ -83,5 +83,5 @@ appId: swiss.realunit.app
       text: '.*Wallet-Adresse.*'
     timeout: 30000
 - extendedWaitUntil:
-    visible: 'Kontakt'
+    visible: 'Kontakt / Support'
     timeout: 30000
