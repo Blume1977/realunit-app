@@ -117,7 +117,7 @@ Response:
   "guestName": "Alice",
   "kind": "Personal",
   "prizeCount": 0,
-  "copyText": "Hallo Alice\n\nKennst du die RealUnit App? … meinen Code AB12CD ein oder … diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt dient Werbezwecken. …",
+  "copyText": "Hallo Alice\n\nKennst du die RealUnit App? … meinen Code AB12CD ein oder … diesen Link: https://realunit.app/invite/AB12CD\n\nDieser Inhalt ist Werbung. …",
   "copyTextEn": "Hi Alice\n\nDo you know the RealUnit app? … my code AB12CD … this link to download the app: https://realunit.app/invite/AB12CD\n\nThis is an advertisement. …",
   "inviterName": "Björn"
 }

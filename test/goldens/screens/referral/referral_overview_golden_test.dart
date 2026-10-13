@@ -12,6 +12,7 @@ import 'package:realunit_wallet/styles/currency.dart';
 import 'package:realunit_wallet/styles/language.dart';
 
 import '../../../helper/helper.dart';
+import '../../../helper/referral_share_text_fixture.dart';
 
 class _MockReferralCubit extends MockCubit<ReferralState> implements ReferralCubit {}
 
@@ -81,8 +82,7 @@ void main() {
             guestName: 'Alice',
             status: 'Open',
             created: DateTime.utc(2026, 8, 1),
-            copyText:
-                'Hey Alice, Björn lädt dich ein zu RealUnit: https://realunit.app/invite/AB12CD',
+            copyText: personalShareTextAlice,
           ),
         ];
         return buildOverview(

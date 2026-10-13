@@ -50,17 +50,18 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
 
       // Pin the actual disclaimer, not just a Text count: it carries the
-      // downloads URL, which is identical across locales. It must appear on
-      // step 0 and be absent on step 1.
+      // realunit.ch prospectus link, which both locales share (the path after
+      // the host differs per locale). It must appear on step 0 and be absent
+      // on step 1.
       await tester.pumpApp(const LegalDisclaimerStep(step: 0));
       expect(
-        find.textContaining('realunit.ch/ueber-uns/downloads/'),
+        find.textContaining('https://realunit.ch/'),
         findsOneWidget,
       );
 
       await tester.pumpApp(const LegalDisclaimerStep(step: 1));
       expect(
-        find.textContaining('realunit.ch/ueber-uns/downloads/'),
+        find.textContaining('https://realunit.ch/'),
         findsNothing,
       );
     });
