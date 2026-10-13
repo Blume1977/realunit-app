@@ -33,8 +33,8 @@ import '../../../helper/helper.dart';
 // multi-receipt spinner, the receipt-failure SnackBar and the date picker.
 //
 // Determinism note — dates: `TransactionHistoryRow` formats via
-// `DateFormat('MMM dd, yyyy | H:mm').format(transaction.timestamp.toLocal())`
-// (`transaction_history_row.dart:112`). The fixed UTC instants are rendered in
+// `transactionDateLabel` (`dd.MM.yyyy | H:mm` of `timestamp.toLocal()`, in
+// `lib/widgets/transaction_date_label.dart`). The fixed UTC instants are rendered in
 // the runner's local time, so these baselines are timezone-dependent — they are
 // generated and validated on the same Europe/Zurich self-hosted runner (like
 // the chat-bubble goldens). `TransactionHistoryView` itself reads `clock.now()`

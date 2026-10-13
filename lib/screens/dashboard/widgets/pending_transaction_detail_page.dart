@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/transactions/dto/transactions_dto.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/styles/colors.dart';
+import 'package:realunit_wallet/widgets/pending_transaction_status_label.dart';
+import 'package:realunit_wallet/widgets/transaction_date_label.dart';
 
 class PendingTransactionDetailArgs {
   final TransactionDto transaction;
@@ -52,17 +53,13 @@ class PendingTransactionDetailPage extends StatelessWidget {
                       ),
                     if (transaction.date != null)
                       Text(
-                        DateFormat(
-                          'MMM dd, yyyy | H:mm',
-                        ).format(transaction.date!.toLocal()),
+                        transactionDateLabel(transaction.date!),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: RealUnitColors.neutral500,
                         ),
                       ),
                     Text(
-                      transaction.state == .waitingForPayment
-                          ? S.of(context).transactionWaitingForPayment
-                          : S.of(context).transactionPending,
+                      pendingTransactionStatusLabel(context, transaction),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: RealUnitColors.neutral500,
                       ),
@@ -142,9 +139,12 @@ class PendingTransactionDetailPage extends StatelessWidget {
       if (otherAmount != null &&
           otherAsset != null &&
           otherAsset != primaryAsset) {
+        // The counter amount of a pending transaction is not final before it is executed.
+        // A sale pays out its counter amount, so it carries the same label as the finished sale.
+        final isPayout = transaction.type == .sell && primaryIsInput;
         addField(
-          '${s.amountIn} $otherAsset',
-          otherAmount.toStringAsFixed(2),
+          '${isPayout ? s.payoutIn : s.amountIn} $otherAsset',
+          '${s.approximately} ${otherAmount.toStringAsFixed(2)}',
         );
       }
     }
