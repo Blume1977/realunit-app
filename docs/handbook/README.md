@@ -247,7 +247,7 @@ eigenen `EXPECTED_PDF_COUNT`-Guard des balance-Steps — dann die Zahl in
 
 Die Sektion **W — Web / realunit.app** (`#spec-web`) zeigt die
 Visual-Regression-Baselines der öffentlichen Website `realunit.app`
-(Landingpage + Aktionariat-Adressbestätigungs-Flow + Adresse-hinzufügen-Flow unter `/account-merge/`). Sie sind das Web-Pendant
+(Landingpage + Zahlungsorte unter `/pay/` + Aktionariat-Adressbestätigungs-Flow + Adresse-hinzufügen-Flow unter `/account-merge/`). Sie sind das Web-Pendant
 zu den Golden-Screenshots der App: Jedes Bild ist eine **Playwright-Baseline**,
 die im `RealUnitCH/web`-Repo unter `tests/__screenshots__/` committet und von
 dessen Visual-Regression-CI abgesichert ist — driftet das Seitenrendering, wird
@@ -261,10 +261,11 @@ Handbook-Build eingezogen: der Step "Stage web e2e baselines from web repo" in
 Ref bleibt — wie der api-Checkout — auf `develop` gepinnt (Integrations-Branch =
 aktuell akzeptierte Baselines), unabhängig vom Deploy-Branch `staging`.
 
-Kommt im web-Repo eine View hinzu oder weg, failt der Build am
-`EXPECTED_WEB_BASELINE_COUNT`-Guard des Steps — dann die Zahl in `handbook.yaml`
-**und** die Bild-Karten in `#spec-web` (`docs/handbook/de/index.html`) im selben
-Zug anpassen. Eine reine Website-Änderung im web-Repo löst hier **keinen**
+Kommt im web-Repo eine View hinzu oder weg, failt der Build: die Bild-Karten
+in `#spec-web` (`docs/handbook/de/index.html`) müssen dieselben Pfade sein wie
+die PNGs unter `tests/__screenshots__/`. Die Karte wird im selben Zug ergänzt
+oder entfernt. Die Anzahl steht nicht in `handbook.yaml`. Eine reine
+Website-Änderung im web-Repo löst hier **keinen**
 automatischen Rebuild aus — sie fliesst erst mit dem nächsten Handbook-Deploy
 rein (Push auf `staging` → PRD, oder manueller `workflow_dispatch --ref staging`
 auf `handbook-deploy.yaml`).

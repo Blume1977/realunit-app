@@ -332,13 +332,6 @@ jobs:
       - name: Stage web e2e baselines from web repo
         env:
           WEB_DIR: _web-checkout
-          # RealUnitCH/web commits 146 Playwright visual baselines under
-          # tests/__screenshots__/{desktop-chromium,tablet-chromium,mobile-safari}/.
-          # `-ne` below fails the build on ANY drift (add OR remove) so a change
-          # to the committed set upstream requires an explicit bump here AND a
-          # matching card edit in docs/handbook/de/index.html (#spec-web) in the
-          # SAME change — same guard rationale as the api steps above.
-          EXPECTED_WEB_BASELINE_COUNT: 146
         run: |
           set -euo pipefail
 
@@ -347,17 +340,10 @@ jobs:
           # needed here — we only copy them into the build context. SEPARATE dest
           # dir (docs/handbook/web/, not the api dirs) so the other staging steps'
           # `rm -rf` cannot wipe these, and vice versa.
+          # The handbook cards name every expected PNG. A new or removed baseline
+          # is a card edit in docs/handbook/de/index.html, not a change here.
           SRC_DIR="${WEB_DIR}/tests/__screenshots__"
-          if [ ! -d "${SRC_DIR}" ]; then
-            echo "::error::${SRC_DIR} not found in the web checkout — the committed Playwright baselines are missing upstream (RealUnitCH/web tests/__screenshots__/)."
-            exit 1
-          fi
-
-          PNG_COUNT=$(find "${SRC_DIR}" -type f -name '*.png' | wc -l | tr -d ' ')
-          if [ "${PNG_COUNT}" -ne "${EXPECTED_WEB_BASELINE_COUNT}" ]; then
-            echo "::error::Expected exactly ${EXPECTED_WEB_BASELINE_COUNT} web baseline PNGs in ${SRC_DIR}, got ${PNG_COUNT}. If this drift is intentional (view added/removed in RealUnitCH/web), update EXPECTED_WEB_BASELINE_COUNT in this workflow AND the cards in docs/handbook/de/index.html (#spec-web) in the same PR."
-            exit 1
-          fi
+          scripts/check-web-baselines.sh "${SRC_DIR}" docs/handbook/de/index.html
 
           # Fresh staging dir (defensive, mirrors the api steps) so a stale PNG
           # from a previous local run cannot survive into the build context.

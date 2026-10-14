@@ -10283,7 +10283,8 @@
           <p class="spec-intro">
             Die öffentliche Website <a href="https://realunit.app">realunit.app</a>
             (Landingpage plus Empfehlung unter <code>/invite/</code>, Kampagne unter
-            <code>/promo/</code>, der Aktionariat-Adressbestätigungs-Flow unter
+            <code>/promo/</code>, Zahlungsorte unter <code>/pay/</code>, der
+            Aktionariat-Adressbestätigungs-Flow unter
             <code>/confirm-aktionariat/</code> und der Adresse-hinzufügen-Flow unter
             <code>/account-merge/</code>) hat ihre eigene Visual-Regression-Suite.
             Jedes Bild hier ist eine <b>Playwright-Baseline</b> aus dem
@@ -12709,6 +12710,143 @@
             </div>
           </div>
 
+          <h3>Zahlungsorte <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
+          <div class="tests cols-2">
+            <div class="test" id="web-pay-places-desktop">
+              <div class="head">
+                <a class="name permalink" href="#web-pay-places-desktop">web-pay-places-desktop</a>
+                <button class="copy-link" type="button" data-target="web-pay-places-desktop" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">desktop-chromium/pay-places.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../web/desktop-chromium/pay-places.png"
+                  alt="Zahlungsorte mit Karte — Desktop"
+                />
+              </div>
+              <div class="desc">
+                <code>/pay/</code>, Desktop. Die Karte zeigt die veröffentlichten Geschäfte.
+                Titel: «Mit der RealUnit Wallet bezahlen». Kein Punkt ist ausgewählt.
+              </div>
+            </div>
+            <div class="test" id="web-pay-places-tablet">
+              <div class="head">
+                <a class="name permalink" href="#web-pay-places-tablet">web-pay-places-tablet</a>
+                <button class="copy-link" type="button" data-target="web-pay-places-tablet" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">tablet-chromium/pay-places.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../web/tablet-chromium/pay-places.png"
+                  alt="Zahlungsorte mit Karte — Tablet"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Karte im Tablet-Layout.
+              </div>
+            </div>
+            <div class="test" id="web-pay-places-mobile">
+              <div class="head">
+                <a class="name permalink" href="#web-pay-places-mobile">web-pay-places-mobile</a>
+                <button class="copy-link" type="button" data-target="web-pay-places-mobile" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">mobile-safari/pay-places.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../web/mobile-safari/pay-places.png"
+                  alt="Zahlungsorte mit Karte — Mobile"
+                />
+              </div>
+              <div class="desc">
+                Dieselbe Karte in der Mobile-Ansicht.
+              </div>
+            </div>
+            <div class="test" id="web-pay-places-desktop-en">
+              <div class="head">
+                <a class="name permalink" href="#web-pay-places-desktop-en">web-pay-places-desktop-en</a>
+                <button class="copy-link" type="button" data-target="web-pay-places-desktop-en" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">desktop-chromium/pay-places-en.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../web/desktop-chromium/pay-places-en.png"
+                  alt="Pay locations map — Desktop, English"
+                />
+              </div>
+              <div class="desc">
+                <code>/pay/en/</code>, nur Desktop. Titel: «Pay with the RealUnit Wallet».
+              </div>
+            </div>
+            <div class="test" id="web-pay-place-desktop">
+              <div class="head">
+                <a class="name permalink" href="#web-pay-place-desktop">web-pay-place-desktop</a>
+                <button class="copy-link" type="button" data-target="web-pay-place-desktop" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">desktop-chromium/pay-place.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../web/desktop-chromium/pay-place.png"
+                  alt="Ausgewählter Zahlungsort — Desktop"
+                />
+              </div>
+              <div class="desc">
+                Desktop. Der erste veröffentlichte Punkt ist ausgewählt. Name und
+                Kategorie stehen im Popup, nicht als Liste auf der Karte.
+              </div>
+            </div>
+            <div class="test" id="web-pay-empty-desktop">
+              <div class="head">
+                <a class="name permalink" href="#web-pay-empty-desktop">web-pay-empty-desktop</a>
+                <button class="copy-link" type="button" data-target="web-pay-empty-desktop" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">desktop-chromium/pay-empty.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../web/desktop-chromium/pay-empty.png"
+                  alt="Keine Zahlungsorte — Desktop"
+                />
+              </div>
+              <div class="desc">
+                Desktop. Titel: «Noch keine Zahlungsorte veröffentlicht». Die Karte
+                und der Hinweis zur Zahlungsart fehlen.
+              </div>
+            </div>
+            <div class="test" id="web-pay-empty-mobile">
+              <div class="head">
+                <a class="name permalink" href="#web-pay-empty-mobile">web-pay-empty-mobile</a>
+                <button class="copy-link" type="button" data-target="web-pay-empty-mobile" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">mobile-safari/pay-empty.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../web/mobile-safari/pay-empty.png"
+                  alt="Keine Zahlungsorte — Mobile"
+                />
+              </div>
+              <div class="desc">
+                Derselbe leere Zustand in der Mobile-Ansicht. Ein Tablet-Bild gibt
+                es für diesen Zustand nicht.
+              </div>
+            </div>
+            <div class="test" id="web-pay-error-desktop">
+              <div class="head">
+                <a class="name permalink" href="#web-pay-error-desktop">web-pay-error-desktop</a>
+                <button class="copy-link" type="button" data-target="web-pay-error-desktop" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">desktop-chromium/pay-error.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../web/desktop-chromium/pay-error.png"
+                  alt="Zahlungsorte nicht erreichbar — Desktop"
+                />
+              </div>
+              <div class="desc">
+                Nur Desktop. Titel: «Zahlungsorte gerade nicht erreichbar», mit
+                «Erneut versuchen».
+              </div>
+            </div>
+          </div>
+
           <h3>404 — Seite nicht gefunden <a class="src" href="https://github.com/RealUnitCH/web/tree/develop/tests/__screenshots__" title="Quelle: tests/__screenshots__/">↗</a></h3>
           <div class="tests cols-2">
             <div class="test" id="web-notfound-desktop">
@@ -12768,9 +12906,9 @@
             mit dem nächsten Handbook-Deploy (Push auf <code>staging</code> → PRD,
             oder manueller <code>workflow_dispatch --ref staging</code> auf
             <code>handbook-deploy.yaml</code> im realunit-app-Repo) reingezogen.
-            Kommt im web-Repo eine View hinzu oder weg, failt der Handbook-Build am
-            <code>EXPECTED_WEB_BASELINE_COUNT</code>-Guard, bis Zahl und Karten hier
-            im selben Zug nachgezogen sind.
+            Kommt im web-Repo eine View hinzu oder weg, failt der Handbook-Build,
+            bis die Karte hier denselben Pfad trägt. Die Anzahl steht nicht im
+            Deploy-Workflow.
           </p>
         </details>
 
