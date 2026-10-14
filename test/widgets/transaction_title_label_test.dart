@@ -75,6 +75,16 @@ void main() {
       expect(sale, sSale.transactionSell);
     });
 
+    testWidgets('labels a sale the pay relay made for a bill as «Verkauf und Zahlung»', (tester) async {
+      final (s, payment) = await label(
+        tester,
+        _tx(category: TransferCategory.payment, sender: _wallet, receiver: _other),
+        isOutbound: true,
+      );
+      expect(payment, s.transactionSaleAndPayment);
+      expect(payment, isNot(s.transactionSell));
+    });
+
     testWidgets('labels plain transfers as received/sent, not as buy/sell', (tester) async {
       final (s, received) = await label(tester, _tx(category: TransferCategory.transferIn), isOutbound: false);
       final (_, sent) = await label(

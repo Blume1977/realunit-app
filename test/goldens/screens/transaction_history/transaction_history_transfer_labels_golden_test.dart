@@ -107,6 +107,12 @@ void main() {
       DateTime.utc(2026, 5, 15, 9, 15),
       category: TransferCategory.sale,
     ),
+    outbound(
+      '0xtx5',
+      3,
+      DateTime.utc(2026, 5, 14, 11, 5),
+      category: TransferCategory.payment,
+    ),
   ];
 
   final pinnedClock = Clock.fixed(DateTime.utc(2026, 5, 23));
@@ -151,9 +157,13 @@ void main() {
         );
 
     goldenTest(
-      'API category labels purchase, received, sent, sale',
+      'API category labels purchase, received, sent, sale, payment',
       fileName: 'transaction_history_transfer_labels',
       constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.pumpAndSettle();
+        expect(find.text('Verkauf und Zahlung'), findsOneWidget);
+      },
       builder: () {
         when(() => filterCubit.state).thenReturn(
           TransactionHistoryFilterState(

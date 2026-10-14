@@ -80,7 +80,9 @@ class PayProcessView extends StatelessWidget {
               txHash: state.txHash,
               amount: BigInt.from(state.shareAmount),
               receiverAddress: kReferralPayoutSenderAddress,
-              category: TransferCategory.sale,
+              // The shares were sold to pay a bill: the detail page offers the sale receipt
+              // and the payment receipt.
+              category: TransferCategory.payment,
             ),
           );
           if (context.mounted) {

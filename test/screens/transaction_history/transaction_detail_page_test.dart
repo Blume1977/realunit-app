@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -119,6 +121,9 @@ void main() {
     when(
       () => receiptCubit.generateExchangeReceipt(any()),
     ).thenAnswer((_) async {});
+    when(
+      () => receiptCubit.generatePaymentReceipt(any(), language: any(named: 'language')),
+    ).thenAnswer((_) async {});
 
     settings = _MockSettingsBloc();
     const settingsState = SettingsState(language: Language.de);
@@ -239,6 +244,35 @@ void main() {
       verify(() => receiptCubit.generateExchangeReceipt('tx-42')).called(1);
       expect(find.text('RealUnit-Verkauf'), findsOneWidget);
       expect(find.text('Auszahlung (DFX AG)'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'payment shows the sale receipt and the payment receipt, and no DFX payout',
+    (tester) async {
+      await pumpDetail(tester, _tx(category: TransferCategory.payment));
+
+      expect(find.text('Verkauf und Zahlung'), findsOneWidget);
+      expect(find.text('RealUnit-Verkauf'), findsOneWidget);
+      expect(find.text('Zahlungsbeleg'), findsOneWidget);
+      // No DFX payout statement: the proceeds paid the bill, nothing was paid out
+      expect(find.text('Auszahlung (DFX AG)'), findsNothing);
+      expect(find.text('Beleg'), findsNothing);
+
+      await tester.tap(find.text('RealUnit-Verkauf'));
+      await tester.pump();
+      verify(
+        () => receiptCubit.generateReceipt(
+          'tx-42',
+          currency: Currency.chf,
+          language: Language.de,
+        ),
+      ).called(1);
+
+      await tester.tap(find.text('Zahlungsbeleg'));
+      await tester.pump();
+      verify(() => receiptCubit.generatePaymentReceipt('tx-42', language: Language.de)).called(1);
+      verifyNever(() => receiptCubit.generateExchangeReceipt(any()));
     },
   );
 
@@ -445,6 +479,35 @@ void main() {
         find.byType(AppFilledButton),
       )) {
         expect(button.state, FilledButtonState.idle);
+        expect(button.onPressed, isNull);
+      }
+    },
+  );
+
+  testWidgets(
+    'tapping the payment receipt loads only that button and keeps the sale receipt idle',
+    (tester) async {
+      final states = StreamController<TransactionHistoryReceiptState>();
+      addTearDown(states.close);
+      whenListen(
+        receiptCubit,
+        states.stream,
+        initialState: const TransactionHistoryReceiptInitial(),
+      );
+
+      await pumpDetail(tester, _tx(category: TransferCategory.payment));
+      await tester.tap(find.text('Zahlungsbeleg'));
+      when(
+        () => receiptCubit.state,
+      ).thenReturn(const TransactionHistoryReceiptLoading());
+      states.add(const TransactionHistoryReceiptLoading());
+      await tester.pump();
+
+      final buttons = tester.widgetList<AppFilledButton>(find.byType(AppFilledButton)).toList();
+      expect(buttons, hasLength(2));
+      expect(buttons[0].state, FilledButtonState.idle);
+      expect(buttons[1].state, FilledButtonState.loading);
+      for (final button in buttons) {
         expect(button.onPressed, isNull);
       }
     },

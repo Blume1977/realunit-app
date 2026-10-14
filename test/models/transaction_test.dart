@@ -98,4 +98,18 @@ void main() {
       expect(TransactionTypes.referralPayout.index, 3);
     });
   });
+
+  group('$TransferCategory', () {
+    test('fromValue maps every API value, including payment', () {
+      for (final category in TransferCategory.values) {
+        expect(TransferCategory.fromValue(category.value), category);
+      }
+      expect(TransferCategory.fromValue('payment'), TransferCategory.payment);
+    });
+
+    test('fromValue leaves an unknown or missing value null', () {
+      expect(TransferCategory.fromValue('somethingNew'), isNull);
+      expect(TransferCategory.fromValue(null), isNull);
+    });
+  });
 }

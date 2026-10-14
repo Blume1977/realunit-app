@@ -4446,11 +4446,11 @@
               <div class="img">
                 <img
                   src="../screenshots/386-transaction-history-transfer-labels.png"
-                  alt="Verlauf mit Kauf, Empfangen, Gesendet, Verkauf"
+                  alt="Verlauf mit Kauf, Empfangen, Gesendet, Verkauf, Verkauf und Zahlung"
                 />
               </div>
               <div class="desc">
-                Verlauf mit den sichtbaren Labels <b>Kauf</b>, <b>Empfangen</b>, <b>Gesendet</b> und <b>Verkauf</b>.
+                Verlauf mit den sichtbaren Labels <b>Kauf</b>, <b>Empfangen</b>, <b>Gesendet</b>, <b>Verkauf</b> und <b>Verkauf und Zahlung</b>. Die Kategorie kommt von der API: ein Verkauf, den DFX für eine Zahlung mit der Bezahlfunktion ausgeführt hat, heisst <b>Verkauf und Zahlung</b>.
               </div>
             </div>
           </div>
@@ -4466,7 +4466,7 @@
                 <div class="file">test/goldens/screens/transaction_history/</div>
               </div>
               <div class="rhs">
-                <b>8 Screens</b>
+                <b>13 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/transaction_history"
@@ -4477,7 +4477,7 @@
             </div>
           </summary>
           <p class="spec-intro">
-            Ein Tippen auf eine Buchung öffnet ihre Detailseite. Die Seite zeigt Betrag, Datum und eine Notiz nur, wenn eine vorhanden ist. Hat die Buchung einen Betrag in CHF, EUR oder ZCHF, zeigt sie diesen; bei einem Verkauf heissen die Felder Verkaufserlös und Auszahlung. Sie zeigt keine Wallet-Adresse und keine Transaktions-ID. Ausser bei einer Empfehlungsprämie liegen dort die Beleg-Buttons. Ein Verkauf hat zwei Buttons: RealUnit-Verkauf und Auszahlung (DFX AG). Jede andere Buchung ausser der Empfehlungsprämie hat einen Button Beleg. Der Sammelbeleg über den grossen PDF-Button bleibt unverändert. Die folgenden Zustände zeigen die Beleg-Erzeugung und den Fehlerfall auf der Detailseite.
+            Ein Tippen auf eine Buchung öffnet ihre Detailseite. Die Seite zeigt Betrag, Datum und eine Notiz nur, wenn eine vorhanden ist. Hat die Buchung einen Betrag in CHF, EUR oder ZCHF, zeigt sie diesen; bei einem Verkauf heissen die Felder Verkaufserlös und Auszahlung. Sie zeigt keine Wallet-Adresse und keine Transaktions-ID. Ausser bei einer Empfehlungsprämie liegen dort die Beleg-Buttons. Ein Verkauf hat zwei Buttons: RealUnit-Verkauf und Auszahlung (DFX AG). Eine Buchung Verkauf und Zahlung (Bezahlfunktion) hat zwei Buttons: RealUnit-Verkauf (derselbe Beleg wie beim Verkauf) und Zahlungsbeleg; es gibt keine Auszahlung von DFX. Jede andere Buchung ausser der Empfehlungsprämie hat einen Button Beleg. Der Sammelbeleg über den grossen PDF-Button bleibt unverändert. Die folgenden Zustände zeigen die Beleg-Erzeugung und den Fehlerfall auf der Detailseite.
           </p>
 
           <div class="tests cols-2">
@@ -4545,6 +4545,22 @@
                 Die Detailseite einer gesendeten Buchung zeigt den Titel <b>Gesendet</b>, den Betrag <b>- 10 REALU</b>, den Abschnitt <b>Belege</b> und den Button <b>Beleg</b>. Sie zeigt kein Feld <b>Betrag in CHF</b>.
               </div>
             </div>
+            <div class="test" id="422-transaction-detail-payment">
+              <div class="head">
+                <a class="name permalink" href="#422-transaction-detail-payment">422-transaction-detail-payment</a>
+                <button class="copy-link" type="button" data-target="422-transaction-detail-payment" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/transaction_history/goldens/macos/transaction_detail_payment.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/422-transaction-detail-payment.png"
+                  alt="Verkauf und Zahlung mit RealUnit-Verkauf und Zahlungsbeleg"
+                />
+              </div>
+              <div class="desc">
+                Die Detailseite einer Zahlung mit der Bezahlfunktion zeigt den Titel <b>Verkauf und Zahlung</b>, den Betrag <b>- 3 REALU</b>, den Abschnitt <b>Belege</b> und zwei Buttons. <b>RealUnit-Verkauf</b> öffnet die RealUnit-Transaktionsbestätigung des Verkaufs, denselben Beleg wie bei einem Verkauf. <b>Zahlungsbeleg</b> öffnet die Zahlungsbestätigung: Zahlung an den Händler, Netzwerkgebühr und Aufrundung auf ganze Aktien, Zahlungsempfänger und Rechnungsbetrag sowie der Vermerk, dass die Kontoinhaberin bzw. der Kontoinhaber die Token eigenverantwortlich aus einer selbst verwahrten Wallet übertragen hat. Es gibt keinen Button <b>Auszahlung (DFX AG)</b>, weil DFX dem Kunden nichts auszahlt: der Erlös hat die Rechnung bezahlt.
+              </div>
+            </div>
             <div class="test" id="403-transaction-detail-referral">
               <div class="head">
                 <a class="name permalink" href="#403-transaction-detail-referral">403-transaction-detail-referral</a>
@@ -4570,11 +4586,11 @@
               <div class="img">
                 <img
                   src="../screenshots/416-transaction-detail-back-to-main.png"
-                  alt="Verkauf mit Button Zurück zum Hauptscreen"
+                  alt="Verkauf und Zahlung mit Button Zurück zum Hauptscreen"
                 />
               </div>
               <div class="desc">
-                Die Detailseite nach dem Bezahlen mit Transaktions-Hash zeigt den Titel <b>Verkauf</b>, die Felder <b>Verkaufserlös in ZCHF</b> und <b>Auszahlung in CHF</b>, den Abschnitt <b>Belege</b>, die Buttons <b>RealUnit-Verkauf</b> und <b>Auszahlung (DFX AG)</b> und den Button <b>Zurück zum Hauptscreen</b>.
+                Die Detailseite nach dem Bezahlen mit Transaktions-Hash zeigt den Titel <b>Verkauf und Zahlung</b>, den Betrag <b>- 3 REALU</b>, den Abschnitt <b>Belege</b>, die Buttons <b>RealUnit-Verkauf</b> und <b>Zahlungsbeleg</b> und den Button <b>Zurück zum Hauptscreen</b>. Sie zeigt keinen Button <b>Auszahlung (DFX AG)</b>.
               </div>
             </div>
             <div class="test" id="417-transaction-detail-sent-back-to-main">
@@ -4602,11 +4618,11 @@
               <div class="img">
                 <img
                   src="../screenshots/418-transaction-detail-sale-no-receipt-back-to-main.png"
-                  alt="Verkauf ohne Beleg mit Button Zurück zum Hauptscreen"
+                  alt="Verkauf und Zahlung ohne Beleg mit Button Zurück zum Hauptscreen"
                 />
               </div>
               <div class="desc">
-                Die Detailseite nach dem Bezahlen ohne Transaktions-Hash zeigt den Titel <b>Verkauf</b>, den Betrag <b>- 20 REALU</b>, das Feld <b>Auszahlung in CHF</b> und den Button <b>Zurück zum Hauptscreen</b>. Sie zeigt keinen Abschnitt <b>Belege</b>.
+                Die Detailseite nach dem Bezahlen ohne Transaktions-Hash zeigt den Titel <b>Verkauf und Zahlung</b>, den Betrag <b>- 3 REALU</b> und den Button <b>Zurück zum Hauptscreen</b>. Sie zeigt keinen Abschnitt <b>Belege</b>.
               </div>
             </div>
             <div class="test" id="419-transaction-detail-sent-no-receipt-back-to-main">

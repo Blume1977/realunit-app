@@ -48,26 +48,6 @@ void main() {
     timestamp: DateTime.utc(2026, 8, 24, 10),
   );
 
-  final saleWithoutHash = DfxTransaction(
-    dfxId: 1,
-    inputAmount: 20,
-    inputAsset: 'REALU',
-    outputAmount: 1980,
-    outputAsset: 'CHF',
-    height: 0,
-    txId: '',
-    chainId: realUnitAsset.chainId,
-    senderAddress: '0x1111111111111111111111111111111111111111',
-    receiverAddress: '0x2222222222222222222222222222222222222222',
-    amount: BigInt.from(20),
-    asset: realUnitAsset,
-    type: TransactionTypes.tokenTransfer,
-    category: TransferCategory.sale,
-    note: '',
-    data: null,
-    timestamp: DateTime.utc(2026, 8, 24, 10),
-  );
-
   final purchase = DfxTransaction(
     dfxId: 2,
     inputAmount: 5000,
@@ -101,6 +81,38 @@ void main() {
     note: null,
     data: null,
     timestamp: DateTime.utc(2026, 5, 19, 12),
+  );
+
+  // A payment: 3 whole shares sold by the DFX pay relay for a bill. On-chain it is a sale to the
+  // Brokerbot; the API marks it as a payment, which has a sale receipt and a payment receipt.
+  final payment = Transaction(
+    height: 0,
+    txId: 'tx-payment-detail',
+    chainId: realUnitAsset.chainId,
+    senderAddress: '0x1111111111111111111111111111111111111111',
+    receiverAddress: '0x3333333333333333333333333333333333333333',
+    amount: BigInt.from(3),
+    asset: realUnitAsset,
+    type: TransactionTypes.tokenTransfer,
+    category: TransferCategory.payment,
+    note: '',
+    data: null,
+    timestamp: DateTime.utc(2026, 5, 14, 11, 5),
+  );
+
+  final paymentWithoutHash = Transaction(
+    height: 0,
+    txId: '',
+    chainId: realUnitAsset.chainId,
+    senderAddress: '0x1111111111111111111111111111111111111111',
+    receiverAddress: '0x3333333333333333333333333333333333333333',
+    amount: BigInt.from(3),
+    asset: realUnitAsset,
+    type: TransactionTypes.tokenTransfer,
+    category: TransferCategory.payment,
+    note: '',
+    data: null,
+    timestamp: DateTime.utc(2026, 5, 14, 11, 5),
   );
 
   final sent = Transaction(
@@ -331,6 +343,40 @@ void main() {
 
     // This test does not commit a PNG; the regenerate workflow writes it.
     goldenTest(
+      'payment detail page with the sale receipt and the payment receipt',
+      fileName: 'transaction_detail_payment',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.pumpAndSettle();
+        expect(find.text('Verkauf und Zahlung'), findsOneWidget);
+        expect(find.text('- 3 REALU'), findsOneWidget);
+        expect(find.text('Belege'), findsOneWidget);
+        expect(find.text('RealUnit-Verkauf'), findsOneWidget);
+        expect(find.text('Zahlungsbeleg'), findsOneWidget);
+        expect(find.text('Beleg'), findsNothing);
+        expect(find.text('Auszahlung (DFX AG)'), findsNothing);
+        expect(find.text('tx-payment-detail'), findsNothing);
+      },
+      builder: () => wrapForGolden(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<SettingsBloc>.value(value: settingsBloc),
+            BlocProvider<TransactionHistoryReceiptCubit>.value(
+              value: receiptCubit,
+            ),
+          ],
+          child: TransactionDetailView(
+            args: TransactionDetailArgs(
+              transaction: payment,
+              walletAddress: '0x1111111111111111111111111111111111111111',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // This test does not commit a PNG; the regenerate workflow writes it.
+    goldenTest(
       'referral payout detail page',
       fileName: 'transaction_detail_referral',
       constraints: phoneConstraints,
@@ -364,19 +410,19 @@ void main() {
       ),
     );
 
-    // This test does not commit a PNG; the regenerate workflow writes it.
+    // After paying, the app opens the payment it just made: a payment, not a plain sale.
     goldenTest(
-      'sale detail page with back-to-main button',
+      'payment detail page with back-to-main button',
       fileName: 'transaction_detail_back_to_main',
       constraints: phoneConstraints,
       pumpBeforeTest: (tester) async {
         await tester.pumpAndSettle();
-        expect(find.text('Verkauf'), findsOneWidget);
-        expect(find.text('Verkaufserlös in ZCHF'), findsOneWidget);
-        expect(find.text('Auszahlung in CHF'), findsOneWidget);
+        expect(find.text('Verkauf und Zahlung'), findsOneWidget);
+        expect(find.text('- 3 REALU'), findsOneWidget);
         expect(find.text('Belege'), findsOneWidget);
         expect(find.text('RealUnit-Verkauf'), findsOneWidget);
-        expect(find.text('Auszahlung (DFX AG)'), findsOneWidget);
+        expect(find.text('Zahlungsbeleg'), findsOneWidget);
+        expect(find.text('Auszahlung (DFX AG)'), findsNothing);
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
       },
       builder: () => wrapForGolden(
@@ -389,7 +435,7 @@ void main() {
           ],
           child: TransactionDetailView(
             args: TransactionDetailArgs(
-              transaction: sale,
+              transaction: payment,
               walletAddress: '0x1111111111111111111111111111111111111111',
               returnToDashboard: true,
             ),
@@ -433,16 +479,16 @@ void main() {
       ),
     );
 
-    // This test does not commit a PNG; the regenerate workflow writes it.
+    // After paying, before the history has the transaction hash: the payment without receipts.
     goldenTest(
-      'sale detail without a receipt and with the back-to-main button',
+      'payment detail without a receipt and with the back-to-main button',
       fileName: 'transaction_detail_sale_no_receipt_back_to_main',
       constraints: phoneConstraints,
       pumpBeforeTest: (tester) async {
         await tester.pumpAndSettle();
-        expect(find.text('Verkauf'), findsOneWidget);
-        expect(find.text('- 20 REALU'), findsOneWidget);
-        expect(find.text('Auszahlung in CHF'), findsOneWidget);
+        expect(find.text('Verkauf und Zahlung'), findsOneWidget);
+        expect(find.text('- 3 REALU'), findsOneWidget);
+        expect(find.text('Zahlungsbeleg'), findsNothing);
         expect(find.text('Zurück zum Hauptscreen'), findsOneWidget);
         expect(find.text('Belege'), findsNothing);
         expect(find.text('RealUnit-Verkauf'), findsNothing);
@@ -459,7 +505,7 @@ void main() {
           ],
           child: TransactionDetailView(
             args: TransactionDetailArgs(
-              transaction: saleWithoutHash,
+              transaction: paymentWithoutHash,
               walletAddress: '0x1111111111111111111111111111111111111111',
               returnToDashboard: true,
             ),
