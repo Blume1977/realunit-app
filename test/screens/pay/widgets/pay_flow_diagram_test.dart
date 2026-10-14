@@ -25,6 +25,15 @@ void main() {
       expect(find.byIcon(Icons.storefront_outlined), findsOneWidget);
     });
 
+    testWidgets('reads the step numbers only once, in the legend', (tester) async {
+      final semantics = tester.ensureSemantics();
+      await tester.pumpApp(const Scaffold(body: SingleChildScrollView(child: PayFlowDiagram())));
+
+      expect(find.bySemanticsLabel('1'), findsOneWidget);
+      expect(find.bySemanticsLabel('2'), findsOneWidget);
+      semantics.dispose();
+    });
+
     testWidgets('lays the stations out in a row at the default text scale', (tester) async {
       await tester.pumpApp(const Scaffold(body: SingleChildScrollView(child: PayFlowDiagram())));
 

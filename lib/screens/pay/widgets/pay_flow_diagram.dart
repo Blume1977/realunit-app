@@ -6,7 +6,8 @@ import 'package:realunit_wallet/styles/colors.dart';
 /// shareholder sells REALU for ZCHF (1), the merchant receives the countervalue
 /// for the goods (2). Three stations with the two numbered steps explained
 /// below. At text scales above 1.3 the stations stand one below the other so
-/// the labels never collide on narrow phones.
+/// the labels never collide on narrow phones. The arrows are decorative for
+/// screen readers; the legend carries the numbered steps.
 class PayFlowDiagram extends StatelessWidget {
   const PayFlowDiagram({super.key});
 
@@ -126,19 +127,21 @@ class _ArrowRight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56,
-      child: Stack(
-        alignment: .center,
-        children: [
-          Row(
-            children: [
-              Expanded(child: Container(height: 2, color: RealUnitColors.realUnitBlue)),
-              const Icon(Icons.arrow_forward_ios, size: 10, color: RealUnitColors.realUnitBlue),
-            ],
-          ),
-          _StepBadge(step: step),
-        ],
+    return ExcludeSemantics(
+      child: SizedBox(
+        height: 56,
+        child: Stack(
+          alignment: .center,
+          children: [
+            Row(
+              children: [
+                Expanded(child: Container(height: 2, color: RealUnitColors.realUnitBlue)),
+                const Icon(Icons.arrow_forward_ios, size: 10, color: RealUnitColors.realUnitBlue),
+              ],
+            ),
+            _StepBadge(step: step),
+          ],
+        ),
       ),
     );
   }
@@ -151,19 +154,21 @@ class _ArrowDown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56,
-      child: Stack(
-        alignment: .center,
-        children: [
-          Column(
-            children: [
-              Expanded(child: Container(width: 2, color: RealUnitColors.realUnitBlue)),
-              const Icon(Icons.keyboard_arrow_down, size: 16, color: RealUnitColors.realUnitBlue),
-            ],
-          ),
-          _StepBadge(step: step),
-        ],
+    return ExcludeSemantics(
+      child: SizedBox(
+        height: 56,
+        child: Stack(
+          alignment: .center,
+          children: [
+            Column(
+              children: [
+                Expanded(child: Container(width: 2, color: RealUnitColors.realUnitBlue)),
+                const Icon(Icons.keyboard_arrow_down, size: 16, color: RealUnitColors.realUnitBlue),
+              ],
+            ),
+            _StepBadge(step: step),
+          ],
+        ),
       ),
     );
   }
