@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/models/price_point.dart';
 import 'package:realunit_wallet/packages/utils/format_fixed.dart';
+import 'package:realunit_wallet/packages/utils/group_swiss_digits.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/price_chart/price_chart_cubit.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/price_chart/price_chart_state.dart';
 import 'package:realunit_wallet/screens/dashboard/models/time_period.dart';
@@ -84,7 +85,9 @@ class DashboardPriceWidgetView extends StatelessWidget {
                     ),
                     Flexible(
                       child: Text(
-                        price == BigInt.zero ? '--.--' : formatFixed(price, 2, trimZeros: false),
+                        price == BigInt.zero
+                            ? '--.--'
+                            : groupSwissDigits(formatFixed(price, 2, trimZeros: false)),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: .w600),
                         maxLines: 1,
                         overflow: .ellipsis,

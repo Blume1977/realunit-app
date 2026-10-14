@@ -3,6 +3,7 @@ import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/models/asset.dart';
 import 'package:realunit_wallet/packages/utils/asset_logo.dart';
 import 'package:realunit_wallet/packages/utils/format_fixed.dart';
+import 'package:realunit_wallet/packages/utils/group_swiss_digits.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/hide_amount_text.dart';
 
@@ -23,10 +24,10 @@ class CashHoldingBox extends StatelessWidget {
   });
 
   String _formatBalanceCalculation() {
-    final balanceStr = balance == BigInt.zero ? '--' : '$balance';
+    final balanceStr = balance == BigInt.zero ? '--' : groupSwissDigits('$balance');
     final priceStr = price == null || price == BigInt.zero
         ? '--.--'
-        : formatFixed(price!, 2, fractionalDigits: 2, trimZeros: false);
+        : groupSwissDigits(formatFixed(price!, 2, fractionalDigits: 2, trimZeros: false));
     return '$balanceStr × $priceStr $trailingSymbol';
   }
 

@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/packages/utils/format_fixed.dart';
+import 'package:realunit_wallet/packages/utils/group_swiss_digits.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/price_chart/price_chart_cubit.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/price_chart/price_chart_state.dart';
 import 'package:realunit_wallet/styles/colors.dart';
@@ -65,9 +66,11 @@ class PriceChart extends StatelessWidget {
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
                 ),
-                labelResolver: (line) => formatFixed(
-                  BigInt.from((line.y * 100).round()),
-                  2,
+                labelResolver: (line) => groupSwissDigits(
+                  formatFixed(
+                    BigInt.from((line.y * 100).round()),
+                    2,
+                  ),
                 ),
               )
             : null,
@@ -110,7 +113,7 @@ class PriceChart extends StatelessWidget {
           final price = touchedSpot.y;
           return LineTooltipItem(
             '${date.day}.${date.month}.${date.year}\n'
-            '${formatFixed(BigInt.from((price * 100).round()), 2)}',
+            '${groupSwissDigits(formatFixed(BigInt.from((price * 100).round()), 2))}',
             const TextStyle(
               color: RealUnitColors.neutral500,
               fontSize: 12,

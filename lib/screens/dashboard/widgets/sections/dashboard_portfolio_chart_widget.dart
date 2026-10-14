@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/models/portfolio_value_point.dart';
 import 'package:realunit_wallet/packages/utils/format_fixed.dart';
+import 'package:realunit_wallet/packages/utils/group_swiss_digits.dart';
 import 'package:realunit_wallet/screens/dashboard/bloc/portfolio_chart/portfolio_chart_cubit.dart';
 import 'package:realunit_wallet/screens/dashboard/models/time_period.dart';
 import 'package:realunit_wallet/screens/dashboard/widgets/portfolio_chart.dart';
@@ -79,7 +80,9 @@ class DashboardPortfolioChartView extends StatelessWidget {
                                 Text(
                                   currentValue == BigInt.zero
                                       ? '--.--'
-                                      : formatFixed(currentValue, 2, trimZeros: false),
+                                      : groupSwissDigits(
+                                          formatFixed(currentValue, 2, trimZeros: false),
+                                        ),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.bodyLarge?.copyWith(fontWeight: .w600),
@@ -103,6 +106,8 @@ class DashboardPortfolioChartView extends StatelessWidget {
                               ? (difference / firstValue) * 100
                               : 0.0;
                           final sign = difference >= 0 ? '+' : '';
+                          final money = groupSwissDigits(difference.toStringAsFixed(2));
+                          final percent = percentChange.toStringAsFixed(2);
 
                           return Column(
                             crossAxisAlignment: .start,
@@ -118,7 +123,8 @@ class DashboardPortfolioChartView extends StatelessWidget {
                                     ),
                               ),
                               Text(
-                                '$sign${difference.toStringAsFixed(2)} ${settingsState.currency.code.toUpperCase()} | $sign${percentChange.toStringAsFixed(2)}%',
+                                '$sign$money ${settingsState.currency.code.toUpperCase()} | '
+                                '$sign$percent%',
                                 style:
                                     Theme.of(
                                       context,

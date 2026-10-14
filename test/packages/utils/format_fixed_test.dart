@@ -92,5 +92,13 @@ void main() {
         ),
       );
     });
+
+    test(
+      'does not insert Swiss thousands marks',
+      () => expect(
+        formatFixed(BigInt.from(33232312), 2, trimZeros: false),
+        '332323.12',
+      ),
+    );
   });
 }
