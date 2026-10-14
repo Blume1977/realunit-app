@@ -11,6 +11,7 @@ import 'package:realunit_wallet/screens/home/bloc/home_bloc.dart';
 import 'package:realunit_wallet/screens/pay/pay_info_page.dart';
 import 'package:realunit_wallet/screens/pay/pay_locations_page.dart';
 import 'package:realunit_wallet/screens/pay/pay_scan_page.dart';
+import 'package:realunit_wallet/screens/pay/widgets/pay_flow_diagram.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 
 import '../../helper/helper.dart';
@@ -78,6 +79,7 @@ void main() {
       );
 
       expect(find.text(S.current.payInfoTitle), findsOneWidget);
+      expect(find.byType(PayFlowDiagram), findsOneWidget);
       expect(find.text(S.current.payInfoBody), findsOneWidget);
       expect(find.text(S.current.payInfoLocationsLink), findsOneWidget);
       await tester.tap(find.text(S.current.payInfoLocationsLink));
@@ -128,6 +130,7 @@ void main() {
       await tester.pumpApp(hosted(const PayInfoPage(), wallet: _BitboxWallet()));
 
       expect(find.text(S.current.payFailurePayUnavailable), findsOneWidget);
+      expect(find.byType(PayFlowDiagram), findsNothing);
       expect(find.text(S.current.payInfoLocationsLink), findsNothing);
       expect(find.text(S.current.next), findsNothing);
       expect(find.byType(PayScanPage), findsNothing);
