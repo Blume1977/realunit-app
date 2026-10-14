@@ -5,8 +5,8 @@ import 'package:realunit_wallet/styles/colors.dart';
 /// The payment flow in one picture, as RealUnit asked for on 06.10.2026: the
 /// shareholder sells REALU for ZCHF (1), the merchant receives the countervalue
 /// for the goods (2). Three stations with the two numbered steps explained
-/// below. At text scales above 1.3 the stations stand one below the other so
-/// the labels never collide on narrow phones. The arrows are decorative for
+/// below. Above the default text size the stations stand one below the other
+/// so the full names fit on a narrow phone. The arrows are decorative for
 /// screen readers; the legend carries the numbered steps.
 class PayFlowDiagram extends StatelessWidget {
   const PayFlowDiagram({super.key});
@@ -14,7 +14,7 @@ class PayFlowDiagram extends StatelessWidget {
   static const horizontalKey = Key('pay-flow-diagram-horizontal');
   static const verticalKey = Key('pay-flow-diagram-vertical');
 
-  static const _maxHorizontalTextScale = 1.3;
+  static const _maxHorizontalTextScale = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +33,9 @@ class PayFlowDiagram extends StatelessWidget {
             crossAxisAlignment: .start,
             children: [
               Expanded(child: shareholder),
-              const Expanded(child: _ArrowRight(step: 1)),
+              const _ArrowRight(step: 1),
               Expanded(child: zchf),
-              const Expanded(child: _ArrowRight(step: 2)),
+              const _ArrowRight(step: 2),
               Expanded(child: merchant),
             ],
           )
@@ -129,6 +129,7 @@ class _ArrowRight extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExcludeSemantics(
       child: SizedBox(
+        width: 48,
         height: 56,
         child: Stack(
           alignment: .center,
