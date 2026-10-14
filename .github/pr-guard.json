@@ -11,7 +11,8 @@
       ".github/workflows/pull-request.yaml",
       ".github/workflows/pr-base.yaml",
       ".github/workflows/handbook-build-check.yaml",
-      ".github/workflows/bitbox-simulator.yml"
+      ".github/workflows/bitbox-simulator.yml",
+      ".github/workflows/tier3-handbook.yaml"
     ]
   },
   "lifecycle": {

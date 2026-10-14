@@ -69,11 +69,11 @@ The auto-opened promotion PRs are idempotent — only one is open per branch pai
 ## A38
 
 This repository requires A38 according to the canonical A38 standard in
-[DFXswiss/agent](https://github.com/DFXswiss/agent/blob/d165602daf7b4a0c73aaac3774da9c8a1ff7e852/docs/a38.md)
-at commit `d165602daf7b4a0c73aaac3774da9c8a1ff7e852`. Repo job selection:
+[DFXswiss/agent](https://github.com/DFXswiss/agent/blob/2598c981db2ac1ab8ab80937496c60703ff73a4a/docs/a38.md)
+at commit `2598c981db2ac1ab8ab80937496c60703ff73a4a`. Repo job selection:
 `.github/a38.json`. Target-branch applicability and fork workflow approval:
 `.github/pr-guard.json`. `dfx pr guard` is
-[wired in](https://github.com/DFXswiss/agent/blob/d165602daf7b4a0c73aaac3774da9c8a1ff7e852/docs/a38-guard.md#how-fork-github-actions-are-meant-to-work).
+[wired in](https://github.com/DFXswiss/agent/blob/2598c981db2ac1ab8ab80937496c60703ff73a4a/docs/a38-guard.md#how-fork-github-actions-are-meant-to-work).
 
 This is a **public** repository. GitHub-hosted and self-hosted runners execute
 the heavy suite (unit and widget tests, the coverage floor, visual regression,
