@@ -48,9 +48,14 @@ class PayInfoPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               spacing: 12,
               children: [
+                Text(
+                  S.of(context).payInfoBodyIntro,
+                  textAlign: .center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
                 const PayFlowDiagram(),
                 Text(
-                  S.of(context).payInfoBody,
+                  S.of(context).payInfoBodyDetails(S.of(context).transactionSaleAndPayment),
                   textAlign: .center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),

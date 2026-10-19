@@ -13,6 +13,8 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/screens/pay/cubits/pay_scan/pay_scan_cubit.dart';
 import 'package:realunit_wallet/screens/pay/pay_quote_page.dart';
+import 'package:realunit_wallet/screens/pay/widgets/pay_flow_diagram.dart';
+import 'package:realunit_wallet/screens/pay/widgets/pay_flow_sheet.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/scanner/push_then_rearm.dart';
@@ -125,6 +127,39 @@ class _PayScanViewState extends State<PayScanView> {
           appBar: AppBar(title: Text(S.of(context).payScanTitle)),
           body: Column(
             children: [
+              // The payment flow stays in view on every payment, small here and
+              // full size with its explanation after a tap (RealUnit, 19.10.2026).
+              Semantics(
+                button: true,
+                label: S.of(context).payFlowShow,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => PayFlowSheet.show(context),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                    child: ExcludeSemantics(
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: RealUnitColors.neutral200),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Row(
+                          spacing: 8,
+                          children: [
+                            Expanded(child: PayFlowDiagram(compact: true)),
+                            Icon(
+                              Icons.open_in_full,
+                              size: 18,
+                              color: RealUnitColors.realUnitBlue,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {

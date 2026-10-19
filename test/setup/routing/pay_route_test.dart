@@ -216,7 +216,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(S.current.payFailurePayUnavailable), findsOneWidget);
-    expect(find.text(S.current.payInfoBody), findsNothing);
+    expect(find.text(S.current.payInfoBodyIntro), findsNothing);
     expect(getIt<SettingsRepository>().payIntroSeen, isFalse);
 
     final loaded = HomeState(hasWallet: true, openWallet: _softwareWallet);
@@ -225,14 +225,14 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(find.text(S.current.payInfoBody), findsOneWidget);
+    expect(find.text(S.current.payInfoBodyIntro), findsOneWidget);
     expect(find.byType(PayScanPage), findsNothing);
     expect(getIt<SettingsRepository>().payIntroSeen, isTrue);
 
     states.add(loaded);
     await tester.pump();
 
-    expect(find.text(S.current.payInfoBody), findsOneWidget);
+    expect(find.text(S.current.payInfoBodyIntro), findsOneWidget);
     expect(find.byType(PayScanPage), findsNothing);
 
     addTearDown(() => routerConfig.goNamed(AppRoutes.home));

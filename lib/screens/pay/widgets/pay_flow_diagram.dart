@@ -2,26 +2,58 @@ import 'package:flutter/material.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 
-/// The payment flow in one picture, as RealUnit asked for on 06.10.2026: the
-/// shareholder sells REALU for ZCHF (1), the merchant receives the countervalue
-/// for the goods (2). Three stations with one word under each icon, and the
-/// two numbered steps explained below. Above the default text size the
-/// stations stand one below the other so that word is not squeezed. The arrows
-/// are decorative for screen readers; the legend carries the numbered steps.
+/// The payment flow in one picture, as RealUnit sent it on 06.10.2026 and
+/// corrected it on 19.10.2026: the shareholder sells REALU for ZCHF (1), the
+/// merchant is paid with the ZCHF (2). Three stations with one word under each
+/// icon, and the two numbered steps explained below. The middle station is a
+/// coin, not a swap symbol, so the picture reads as a sale and not as an
+/// exchange. Above the default text size the stations stand one below the
+/// other so that word is not squeezed. The arrows are decorative for screen
+/// readers; the legend carries the numbered steps.
+///
+/// [compact] is the small picture on the scanner: the three stations in one
+/// row with plain arrows, no step numbers and no legend. The host makes it a
+/// button that opens the full picture again.
 class PayFlowDiagram extends StatelessWidget {
-  const PayFlowDiagram({super.key});
+  final bool compact;
+
+  const PayFlowDiagram({super.key, this.compact = false});
 
   static const horizontalKey = Key('pay-flow-diagram-horizontal');
   static const verticalKey = Key('pay-flow-diagram-vertical');
+  static const compactKey = Key('pay-flow-diagram-compact');
 
   static const _maxHorizontalTextScale = 1.0;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    if (compact) {
+      return Row(
+        key: compactKey,
+        crossAxisAlignment: .start,
+        children: [
+          Expanded(
+            child: _Station(icon: Icons.person_outline, label: s.payFlowShareholder, compact: true),
+          ),
+          const _ArrowRight(compact: true),
+          Expanded(
+            child: _Station(icon: Icons.toll, label: s.payFlowZchf, compact: true),
+          ),
+          const _ArrowRight(compact: true),
+          Expanded(
+            child: _Station(
+              icon: Icons.storefront_outlined,
+              label: s.payFlowMerchant,
+              compact: true,
+            ),
+          ),
+        ],
+      );
+    }
     final horizontal = MediaQuery.textScalerOf(context).scale(1) <= _maxHorizontalTextScale;
     final shareholder = _Station(icon: Icons.person_outline, label: s.payFlowShareholder);
-    final zchf = _Station(icon: Icons.swap_horiz, label: s.payFlowZchf);
+    final zchf = _Station(icon: Icons.toll, label: s.payFlowZchf);
     final merchant = _Station(icon: Icons.storefront_outlined, label: s.payFlowMerchant);
     return Column(
       spacing: 16,
@@ -61,22 +93,24 @@ class PayFlowDiagram extends StatelessWidget {
 class _Station extends StatelessWidget {
   final IconData icon;
   final String label;
+  final bool compact;
 
-  const _Station({required this.icon, required this.label});
+  const _Station({required this.icon, required this.label, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
+    final size = compact ? 36.0 : 56.0;
     return Column(
-      spacing: 8,
+      spacing: compact ? 4 : 8,
       children: [
         Container(
-          width: 56,
-          height: 56,
+          width: size,
+          height: size,
           decoration: const BoxDecoration(
             color: RealUnitColors.brand700,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, size: 28, color: RealUnitColors.realUnitBlue),
+          child: Icon(icon, size: compact ? 18 : 28, color: RealUnitColors.realUnitBlue),
         ),
         Text(
           label,
@@ -124,16 +158,18 @@ class _StepBadge extends StatelessWidget {
 }
 
 class _ArrowRight extends StatelessWidget {
-  final int step;
+  /// Null on the compact picture, which carries no legend to number.
+  final int? step;
+  final bool compact;
 
-  const _ArrowRight({required this.step});
+  const _ArrowRight({this.step, this.compact = false}) : assert(compact == (step == null));
 
   @override
   Widget build(BuildContext context) {
     return ExcludeSemantics(
       child: SizedBox(
-        width: 48,
-        height: 56,
+        width: compact ? 24 : 48,
+        height: compact ? 36 : 56,
         child: Stack(
           alignment: .center,
           children: [
@@ -143,7 +179,7 @@ class _ArrowRight extends StatelessWidget {
                 const Icon(Icons.arrow_forward_ios, size: 10, color: RealUnitColors.realUnitBlue),
               ],
             ),
-            _StepBadge(step: step),
+            if (step case final step?) _StepBadge(step: step),
           ],
         ),
       ),

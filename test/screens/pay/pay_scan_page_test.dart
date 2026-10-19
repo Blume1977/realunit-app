@@ -15,6 +15,8 @@ import 'package:realunit_wallet/packages/service/dfx/real_unit_pay_service.dart'
 import 'package:realunit_wallet/screens/pay/cubits/pay_scan/pay_scan_cubit.dart';
 import 'package:realunit_wallet/screens/pay/pay_quote_page.dart';
 import 'package:realunit_wallet/screens/pay/pay_scan_page.dart';
+import 'package:realunit_wallet/screens/pay/widgets/pay_flow_diagram.dart';
+import 'package:realunit_wallet/screens/pay/widgets/pay_flow_sheet.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 
 import '../../helper/helper.dart';
@@ -71,6 +73,36 @@ void main() {
       expect(find.text(S.current.payScanTitle), findsOne);
       expect(find.text(S.current.payInfoLocationsLink), findsOne);
       expect(find.byType(MobileScanner), findsOne);
+    });
+
+    testWidgets('shows the payment flow small and opens the full explanation on tap', (
+      tester,
+    ) async {
+      await tester.pumpApp(buildSubject());
+
+      final compact = find.byKey(PayFlowDiagram.compactKey);
+      expect(compact, findsOne);
+      expect(find.text(S.current.payFlowStep1), findsNothing);
+      expect(find.bySemanticsLabel(S.current.payFlowShow), findsOne);
+
+      await tester.tap(compact);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PayFlowSheet), findsOne);
+      expect(find.text(S.current.payInfoTitle), findsOne);
+      expect(find.text(S.current.payInfoBodyIntro), findsOne);
+      expect(find.text(S.current.payFlowStep1), findsOne);
+      expect(find.text(S.current.payFlowStep2), findsOne);
+      expect(
+        find.text(S.current.payInfoBodyDetails(S.current.transactionSaleAndPayment)),
+        findsOne,
+      );
+
+      await tester.tap(find.text(S.current.close));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PayFlowSheet), findsNothing);
+      expect(compact, findsOne);
     });
 
     testWidgets('the locations link opens the shop map', (tester) async {

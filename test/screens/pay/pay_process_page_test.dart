@@ -171,7 +171,7 @@ void main() {
 
       expect(find.byType(PayProcessView), findsOne);
       expect(
-        find.text(S.current.payPreparingSwap, skipOffstage: false),
+        find.text(S.current.payPreparingSale, skipOffstage: false),
         findsOne,
       );
       expect(
@@ -203,11 +203,11 @@ void main() {
     }
 
     testWidgets('initial shows preparing-swap', (tester) async {
-      await expectLabel(tester, const PayProcessInitial(), S.current.payPreparingSwap);
+      await expectLabel(tester, const PayProcessInitial(), S.current.payPreparingSale);
     });
 
     testWidgets('preparing-swap label', (tester) async {
-      await expectLabel(tester, const PayProcessPreparingSwap(), S.current.payPreparingSwap);
+      await expectLabel(tester, const PayProcessPreparingSwap(), S.current.payPreparingSale);
     });
 
     testWidgets('waiting-for-eth label', (tester) async {
@@ -253,7 +253,7 @@ void main() {
     });
 
     testWidgets('a wallet without pay does not use the failure title', (tester) async {
-      await expectLabel(tester, const PayProcessNotOffered(), S.current.payPreparingSwap);
+      await expectLabel(tester, const PayProcessNotOffered(), S.current.payPreparingSale);
       expect(find.text(S.current.payFailureTitle), findsNothing);
       expect(find.text(S.current.payFailurePayUnavailable), findsNothing);
     });

@@ -137,7 +137,7 @@ class PayProcessView extends StatelessWidget {
   String _progressLabel(BuildContext context, PayProcessState state) => switch (state) {
     PayProcessInitial() ||
     PayProcessPreparingSwap() ||
-    PayProcessNotOffered() => S.of(context).payPreparingSwap,
+    PayProcessNotOffered() => S.of(context).payPreparingSale,
     PayProcessWaitingForEth() => S.of(context).payWaitingForEth,
     PayProcessSwapping() => S.of(context).paySwapping,
     PayProcessRefreshingQuote() => S.of(context).payRefreshingQuote,
