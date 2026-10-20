@@ -114,8 +114,9 @@ void main() {
     ) async {
       await tester.pumpApp(buildSubject());
 
-      // Two taps in the same frame: the modal barrier is not mounted yet, so
-      // both reach the compact picture's tap handler.
+      // The handler is called directly: a second touch is absorbed by the
+      // navigator until the next frame, but a second activation through
+      // accessibility reaches the handler before the sheet is on screen.
       final tile = tester.widget<GestureDetector>(
         find
             .ancestor(
@@ -125,6 +126,17 @@ void main() {
             .first,
       );
       tile.onTap!();
+      tile.onTap!();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PayFlowSheet), findsOne);
+
+      await tester.tap(find.text(S.current.close));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PayFlowSheet), findsNothing);
+
+      // Closing releases the guard: the next activation opens the sheet again.
       tile.onTap!();
       await tester.pumpAndSettle();
 
