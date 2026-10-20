@@ -109,6 +109,33 @@ void main() {
       verifyNever(() => scanCubit.reset());
     });
 
+    testWidgets('a second tap while the sheet opens does not open a second sheet', (
+      tester,
+    ) async {
+      await tester.pumpApp(buildSubject());
+
+      // Two taps in the same frame: the modal barrier is not mounted yet, so
+      // both reach the compact picture's tap handler.
+      final tile = tester.widget<GestureDetector>(
+        find
+            .ancestor(
+              of: find.byKey(PayFlowDiagram.compactKey),
+              matching: find.byType(GestureDetector),
+            )
+            .first,
+      );
+      tile.onTap!();
+      tile.onTap!();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PayFlowSheet), findsOne);
+
+      await tester.tap(find.text(S.current.close));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PayFlowSheet), findsNothing);
+    });
+
     testWidgets('camera frames are ignored while the explanation sheet is open', (
       tester,
     ) async {
