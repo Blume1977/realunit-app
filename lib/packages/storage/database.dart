@@ -77,29 +77,59 @@ class AppDatabase extends _$AppDatabase {
     onCreate: (Migrator m) async {
       await m.createAll();
     },
-    onUpgrade: (Migrator m, int from, int to) async {
+    // Drift neither wraps onUpgrade in a transaction nor writes the new
+    // user_version before onUpgrade returns. One transaction that sets the
+    // version as its last statement means an interrupted upgrade leaves either
+    // the old schema and data or the new ones. The steps stay safe to re-run,
+    // so a database an earlier upgrade left half-migrated still reaches `to`.
+    onUpgrade: (Migrator m, int from, int to) => transaction(() async {
       if (from < 2) {
         await m.createTable(dfxTransactionDetails);
       }
       if (from < 3) {
-        await m.addColumn(transactions, transactions.category);
+        await _addColumnIfMissing(m, transactions, transactions.category);
       }
       if (from < 4 && to >= 4) {
+        // A referral payout is always stored with the zero sender, a savings
+        // row never is. Sparing type 3 rows with that sender keeps a re-run
+        // from deleting payouts an earlier run already rewrote from 5 to 3.
         await m.database.customStatement(
-          'DELETE FROM transactions WHERE type IN (3, 4)',
+          'DELETE FROM transactions WHERE type = 4 OR (type = 3 AND sender_address != ?)',
+          [_referralPayoutSenderAddress],
         );
         await m.database.customStatement(
           'UPDATE transactions SET type = 3 WHERE type = 5',
         );
       }
-      if (from >= 2 && from < 5 && to >= 5) {
-        await m.addColumn(dfxTransactionDetails, dfxTransactionDetails.inputAmount);
-        await m.addColumn(dfxTransactionDetails, dfxTransactionDetails.inputAsset);
-        await m.addColumn(dfxTransactionDetails, dfxTransactionDetails.outputAmount);
-        await m.addColumn(dfxTransactionDetails, dfxTransactionDetails.outputAsset);
+      if (from < 5 && to >= 5) {
+        for (final column in [
+          dfxTransactionDetails.inputAmount,
+          dfxTransactionDetails.inputAsset,
+          dfxTransactionDetails.outputAmount,
+          dfxTransactionDetails.outputAsset,
+        ]) {
+          await _addColumnIfMissing(m, dfxTransactionDetails, column);
+        }
       }
-    },
+      await m.database.customStatement('PRAGMA user_version = $to');
+    }),
   );
+
+  /// Sender stored on every referral payout row; pinned here so the upgrade
+  /// keeps matching the rows that were written with it.
+  static const _referralPayoutSenderAddress = '0x0000000000000000000000000000000000000000';
+
+  static Future<void> _addColumnIfMissing(
+    Migrator m,
+    TableInfo<Table, dynamic> table,
+    GeneratedColumn<Object> column,
+  ) async {
+    final existing = await m.database
+        .customSelect("PRAGMA table_info('${table.actualTableName}')")
+        .get();
+    if (existing.any((row) => row.read<String>('name') == column.name)) return;
+    await m.addColumn(table, column);
+  }
 
   /// Resolves the on-disk path of the SQLCipher database file.
   ///

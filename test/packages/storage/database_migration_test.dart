@@ -1,10 +1,14 @@
-import 'package:drift/drift.dart' hide isNotNull;
+import 'dart:io';
+
+import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 import 'package:realunit_wallet/packages/storage/database.dart';
 import 'package:realunit_wallet/packages/storage/dfx_transaction_storage.dart';
 import 'package:realunit_wallet/packages/storage/transaction_storage.dart';
 import 'package:realunit_wallet/packages/storage/wallet_storage.dart';
+import 'package:sqlite3/sqlite3.dart' as raw;
 
 void main() {
   late AppDatabase db;
@@ -267,4 +271,248 @@ void main() {
       );
     });
   });
+
+  // These tests write an older schema by hand and let drift run the real
+  // upgrade when the database opens, as it does on a device after an app
+  // update. They also cover databases that an earlier upgrade, interrupted
+  // after some of its statements had committed, left half-migrated at the
+  // old user_version.
+  group('AppDatabase upgrade on open', () {
+    late Directory tempDir;
+
+    setUp(() {
+      tempDir = Directory.systemTemp.createTempSync('database_upgrade_test_');
+    });
+
+    tearDown(() {
+      tempDir.deleteSync(recursive: true);
+    });
+
+    test(
+      'v3 → v5 deletes savings rows, keeps referral payouts and adds the amount columns',
+      () async {
+        final upgraded = _openSchema(3, [
+          _txRow('tx-token', type: 2),
+          _txRow('tx-savings-add', type: 3),
+          _txRow('tx-savings-remove', type: 4),
+          _txRow('tx-referral', type: 5, sender: _zeroSender),
+          _walletRow,
+          _detailsRow('tx-token'),
+        ]);
+        addTearDown(upgraded.close);
+
+        expect(await _userVersion(upgraded), 5);
+        expect(await _types(upgraded), {'tx-token': 2, 'tx-referral': 3});
+        expect(await _columns(upgraded, 'dfx_transaction_details'), containsAll(_amountColumns));
+        final details = await upgraded.getDfxTransactionDetailsByDfxId(7);
+        expect(details!.txId, 'tx-token');
+        expect(details.rate, '1.5');
+        expect(details.inputAmount, isNull);
+        expect((await upgraded.getWalletById(1))!.seed, 'encrypted-seed');
+      },
+    );
+
+    test(
+      'v3 with input_amount already present reaches v5 and keeps rewritten referral payouts',
+      () async {
+        // State after an upgrade that rewrote the types and added input_amount,
+        // but was interrupted before the version was written.
+        final upgraded = _openSchema(3, [
+          'ALTER TABLE dfx_transaction_details ADD COLUMN input_amount TEXT NULL',
+          _txRow('tx-token', type: 2),
+          _txRow('tx-referral', type: 3, sender: _zeroSender),
+          _detailsRow('tx-token', inputAmount: '100'),
+        ]);
+        addTearDown(upgraded.close);
+
+        expect(await _userVersion(upgraded), 5);
+        expect(await _types(upgraded), {'tx-token': 2, 'tx-referral': 3});
+        expect(await _columns(upgraded, 'dfx_transaction_details'), containsAll(_amountColumns));
+        expect((await upgraded.getDfxTransactionDetailsByDfxId(7))!.inputAmount, '100');
+      },
+    );
+
+    test(
+      'v3 with all four amount columns already present reaches v5 and keeps referral payouts',
+      () async {
+        final upgraded = _openSchema(3, [
+          for (final column in _amountColumns)
+            'ALTER TABLE dfx_transaction_details ADD COLUMN $column TEXT NULL',
+          _txRow('tx-token', type: 2),
+          _txRow('tx-referral', type: 3, sender: _zeroSender),
+          _detailsRow('tx-token', inputAmount: '100'),
+        ]);
+        addTearDown(upgraded.close);
+
+        expect(await _userVersion(upgraded), 5);
+        expect(await _types(upgraded), {'tx-token': 2, 'tx-referral': 3});
+        expect((await upgraded.getDfxTransactionDetailsByDfxId(7))!.inputAmount, '100');
+      },
+    );
+
+    test(
+      'v3 whose type rewrite already ran but no column was added keeps referral payouts',
+      () async {
+        final upgraded = _openSchema(3, [
+          _txRow('tx-token', type: 2),
+          _txRow('tx-referral', type: 3, sender: _zeroSender),
+        ]);
+        addTearDown(upgraded.close);
+
+        expect(await _userVersion(upgraded), 5);
+        expect(await _types(upgraded), {'tx-token': 2, 'tx-referral': 3});
+      },
+    );
+
+    test(
+      'v1 whose earlier upgrade already created the old details table reaches v5 with the amount columns',
+      () async {
+        // An upgrade from v1 under the v2–v4 code created dfx_transaction_details
+        // without the amount columns and was interrupted before the version was
+        // written.
+        final upgraded = _openSchema(1, [_txRow('tx-token', type: 2, withCategory: false)]);
+        addTearDown(upgraded.close);
+
+        expect(await _userVersion(upgraded), 5);
+        expect(await _types(upgraded), {'tx-token': 2});
+        expect(await _columns(upgraded, 'transactions'), contains('category'));
+        expect(await _columns(upgraded, 'dfx_transaction_details'), containsAll(_amountColumns));
+      },
+    );
+
+    test('v2 → v5 adds the category column with its default and the amount columns', () async {
+      final upgraded = _openSchema(2, [
+        _txRow('tx-token', type: 2, withCategory: false),
+        _txRow('tx-referral', type: 5, sender: _zeroSender, withCategory: false),
+      ]);
+      addTearDown(upgraded.close);
+
+      expect(await _userVersion(upgraded), 5);
+      expect(await _types(upgraded), {'tx-token': 2, 'tx-referral': 3});
+      final rows = await upgraded.select(upgraded.transactions).get();
+      expect(rows.map((r) => r.category), everyElement(''));
+      expect(await _columns(upgraded, 'dfx_transaction_details'), containsAll(_amountColumns));
+    });
+
+    test('v4 → v5 adds the amount columns and leaves every type unchanged', () async {
+      final upgraded = _openSchema(4, [
+        _txRow('tx-token', type: 2),
+        _txRow('tx-referral', type: 3, sender: _zeroSender),
+        _txRow('tx-other', type: 3),
+      ]);
+      addTearDown(upgraded.close);
+
+      expect(await _userVersion(upgraded), 5);
+      expect(await _types(upgraded), {'tx-token': 2, 'tx-referral': 3, 'tx-other': 3});
+      expect(await _columns(upgraded, 'dfx_transaction_details'), containsAll(_amountColumns));
+    });
+
+    test('a failing upgrade rolls back every step and keeps the old version', () async {
+      final path = p.join(tempDir.path, 'wallet.db');
+      final file = raw.sqlite3.open(path);
+      _writeSchema(file, 2, [
+        _txRow('tx-savings-add', type: 3, withCategory: false),
+        _txRow('tx-referral', type: 5, sender: _zeroSender, withCategory: false),
+        // Fails the type rewrite, after the category column was added and the
+        // savings row deleted.
+        "CREATE TRIGGER fail_rewrite BEFORE UPDATE ON transactions BEGIN SELECT RAISE(ABORT, 'interrupted'); END",
+      ]);
+      file.close();
+
+      final failing = AppDatabase.forTesting(NativeDatabase(File(path)));
+      await expectLater(_userVersion(failing), throwsA(isA<SqliteException>()));
+      await failing.close();
+
+      final after = raw.sqlite3.open(path);
+      addTearDown(after.close);
+      expect(after.select('PRAGMA user_version').single.values.single, 2);
+      final columns = after.select("PRAGMA table_info('transactions')").map((r) => r['name']);
+      expect(columns, isNot(contains('category')));
+      final types = after.select('SELECT tx_id, type FROM transactions ORDER BY tx_id');
+      expect(types.map((r) => '${r['tx_id']}:${r['type']}'), ['tx-referral:5', 'tx-savings-add:3']);
+    });
+
+    test('upgrades a half-migrated v3 file through a background isolate', () async {
+      final path = p.join(tempDir.path, 'wallet.db');
+      final file = raw.sqlite3.open(path);
+      _writeSchema(file, 3, [
+        'ALTER TABLE dfx_transaction_details ADD COLUMN input_amount TEXT NULL',
+        _txRow('tx-referral', type: 3, sender: _zeroSender),
+      ]);
+      file.close();
+
+      final upgraded = AppDatabase.forTesting(NativeDatabase.createInBackground(File(path)));
+      addTearDown(upgraded.close);
+
+      expect(await _userVersion(upgraded), 5);
+      expect(await _types(upgraded), {'tx-referral': 3});
+      expect(await _columns(upgraded, 'dfx_transaction_details'), containsAll(_amountColumns));
+    });
+  });
+}
+
+const _zeroSender = '0x0000000000000000000000000000000000000000';
+
+const _amountColumns = ['input_amount', 'input_asset', 'output_amount', 'output_asset'];
+
+const _walletRow =
+    "INSERT INTO wallet_infos (id, name, seed, address, type) VALUES (1, 'Main', 'encrypted-seed', '0xWallet', 0)";
+
+/// Tables of schema v2: `transactions` has no `category` and
+/// `dfx_transaction_details` none of the amount columns. v3 adds `category`;
+/// v4 changes data only, so it shares the v3 tables. Version 1 gets the v2
+/// tables too, as an interrupted v1 upgrade under the v2–v4 code left them.
+List<String> _schema(int version) => [
+  'CREATE TABLE "assets" ("id" INTEGER NOT NULL UNIQUE, "chain_id" INTEGER NOT NULL, "address" TEXT NOT NULL, '
+      '"symbol" TEXT NOT NULL, "name" TEXT NOT NULL, "decimals" INTEGER NOT NULL, "icon_url" TEXT NULL, '
+      '"editable" INTEGER NOT NULL CHECK ("editable" IN (0, 1)))',
+  'CREATE TABLE "balances" ("id" INTEGER NOT NULL UNIQUE, "chain_id" INTEGER NOT NULL, '
+      '"contract_address" TEXT NOT NULL, "wallet_address" TEXT NOT NULL, "balance" TEXT NOT NULL)',
+  'CREATE TABLE "key_value_cache" ("id" TEXT NOT NULL UNIQUE, "value" TEXT NOT NULL)',
+  'CREATE TABLE "nodes" ("chain_id" INTEGER NOT NULL UNIQUE, "name" TEXT NOT NULL, "https_url" TEXT NOT NULL, '
+      '"wss_url" TEXT NULL)',
+  'CREATE TABLE "transactions" ("height" INTEGER NOT NULL, "tx_id" TEXT NOT NULL UNIQUE, '
+      '"chain_id" INTEGER NOT NULL, "sender_address" TEXT NOT NULL, "receiver_address" TEXT NOT NULL, '
+      '"amount" TEXT NOT NULL, "asset" INTEGER NOT NULL, "type" INTEGER NOT NULL, '
+      '${version >= 3 ? '"category" TEXT NOT NULL DEFAULT \'\', ' : ''}'
+      '"note" TEXT NOT NULL, "data" TEXT NOT NULL, "time_stamp" INTEGER NOT NULL)',
+  'CREATE TABLE "dfx_transaction_details" ("tx_id" TEXT NOT NULL UNIQUE REFERENCES transactions (tx_id), '
+      '"dfx_id" INTEGER NOT NULL UNIQUE, "rate" TEXT NULL, "input_tx_id" TEXT NULL, "output_tx_id" TEXT NULL)',
+  'CREATE TABLE "wallet_infos" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "name" TEXT NOT NULL, '
+      '"seed" TEXT NOT NULL, "address" TEXT NOT NULL, "type" INTEGER NOT NULL)',
+  'CREATE TABLE "wallet_account_infos" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "name" TEXT NOT NULL, '
+      '"account_index" INTEGER NOT NULL, "wallet" INTEGER NOT NULL REFERENCES wallet_infos (id))',
+];
+
+void _writeSchema(raw.Database db, int version, List<String> statements) {
+  for (final statement in [..._schema(version), ...statements]) {
+    db.execute(statement);
+  }
+  db.execute('PRAGMA user_version = $version');
+}
+
+AppDatabase _openSchema(int version, List<String> statements) => AppDatabase.forTesting(
+  NativeDatabase.memory(setup: (db) => _writeSchema(db, version, statements)),
+);
+
+String _txRow(String txId, {required int type, String sender = '0xA', bool withCategory = true}) =>
+    'INSERT INTO transactions (height, tx_id, chain_id, sender_address, receiver_address, amount, asset, type, '
+    "${withCategory ? 'category, ' : ''}note, data, time_stamp) "
+    "VALUES (1, '$txId', 1, '$sender', '0xB', '100', 1, $type, ${withCategory ? "'', " : ''}'', '', 0)";
+
+String _detailsRow(String txId, {String? inputAmount}) => inputAmount == null
+    ? "INSERT INTO dfx_transaction_details (tx_id, dfx_id, rate) VALUES ('$txId', 7, '1.5')"
+    : "INSERT INTO dfx_transaction_details (tx_id, dfx_id, rate, input_amount) VALUES ('$txId', 7, '1.5', '$inputAmount')";
+
+Future<int> _userVersion(AppDatabase db) async =>
+    (await db.customSelect('PRAGMA user_version').getSingle()).read<int>('user_version');
+
+Future<Map<String, int>> _types(AppDatabase db) async {
+  final rows = await db.select(db.transactions).get();
+  return {for (final row in rows) row.txId: row.type};
+}
+
+Future<List<String>> _columns(AppDatabase db, String table) async {
+  final rows = await db.customSelect("PRAGMA table_info('$table')").get();
+  return rows.map((r) => r.read<String>('name')).toList();
 }
