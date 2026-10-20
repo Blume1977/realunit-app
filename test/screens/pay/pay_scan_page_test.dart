@@ -109,7 +109,7 @@ void main() {
       verifyNever(() => scanCubit.reset());
     });
 
-    testWidgets('a second tap while the sheet opens does not open a second sheet', (
+    testWidgets('a second activation while the sheet opens does not open a second sheet', (
       tester,
     ) async {
       await tester.pumpApp(buildSubject());
@@ -136,8 +136,8 @@ void main() {
 
       expect(find.byType(PayFlowSheet), findsNothing);
 
-      // Closing releases the guard: the next activation opens the sheet again.
-      tile.onTap!();
+      // Closing releases the guard: the next tap opens the sheet again.
+      await tester.tap(find.byKey(PayFlowDiagram.compactKey));
       await tester.pumpAndSettle();
 
       expect(find.byType(PayFlowSheet), findsOne);
