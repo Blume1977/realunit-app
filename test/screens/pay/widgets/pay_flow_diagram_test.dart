@@ -21,7 +21,8 @@ void main() {
       expect(find.text('1'), findsNWidgets(2));
       expect(find.text('2'), findsNWidgets(2));
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
-      expect(find.byIcon(Icons.toll), findsOneWidget);
+      // The ZCHF coin is a ring with two small arrows, as in RealUnit's picture.
+      expect(find.byIcon(Icons.sync_alt), findsOneWidget);
       expect(find.byIcon(Icons.swap_horiz), findsNothing);
       expect(find.byIcon(Icons.storefront_outlined), findsOneWidget);
     });
@@ -55,7 +56,7 @@ void main() {
       expect(find.text(S.current.payFlowShareholder), findsOneWidget);
       expect(find.text(S.current.payFlowZchf), findsOneWidget);
       expect(find.text(S.current.payFlowMerchant), findsOneWidget);
-      expect(find.byIcon(Icons.toll), findsOneWidget);
+      expect(find.byIcon(Icons.sync_alt), findsOneWidget);
       expect(find.text(S.current.payFlowStep1), findsNothing);
       expect(find.text(S.current.payFlowStep2), findsNothing);
       expect(find.text('1'), findsNothing);

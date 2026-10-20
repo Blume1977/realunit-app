@@ -5,9 +5,9 @@ import 'package:realunit_wallet/styles/colors.dart';
 /// The payment flow in one picture, as RealUnit sent it on 06.10.2026 and
 /// corrected it on 19.10.2026: the shareholder sells REALU for ZCHF (1), the
 /// merchant is paid with the ZCHF (2). Three stations with one word under each
-/// icon, and the two numbered steps explained below. The middle station is a
-/// coin, not a swap symbol, so the picture reads as a sale and not as an
-/// exchange. Above the default text size the stations stand one below the
+/// icon, and the two numbered steps explained below. The middle station is the
+/// coin from RealUnit's picture: a ring with two small arrows inside. Above the
+/// default text size the stations stand one below the
 /// other so that word is not squeezed. The arrows are decorative for screen
 /// readers; the legend carries the numbered steps.
 ///
@@ -34,16 +34,28 @@ class PayFlowDiagram extends StatelessWidget {
         crossAxisAlignment: .start,
         children: [
           Expanded(
-            child: _Station(icon: Icons.person_outline, label: s.payFlowShareholder, compact: true),
-          ),
-          const _ArrowRight(compact: true),
-          Expanded(
-            child: _Station(icon: Icons.toll, label: s.payFlowZchf, compact: true),
+            child: _Station(
+              glyph: const Icon(Icons.person_outline, size: 18, color: RealUnitColors.realUnitBlue),
+              label: s.payFlowShareholder,
+              compact: true,
+            ),
           ),
           const _ArrowRight(compact: true),
           Expanded(
             child: _Station(
-              icon: Icons.storefront_outlined,
+              glyph: const _ZchfCoin(compact: true),
+              label: s.payFlowZchf,
+              compact: true,
+            ),
+          ),
+          const _ArrowRight(compact: true),
+          Expanded(
+            child: _Station(
+              glyph: const Icon(
+                Icons.storefront_outlined,
+                size: 18,
+                color: RealUnitColors.realUnitBlue,
+              ),
               label: s.payFlowMerchant,
               compact: true,
             ),
@@ -52,9 +64,15 @@ class PayFlowDiagram extends StatelessWidget {
       );
     }
     final horizontal = MediaQuery.textScalerOf(context).scale(1) <= _maxHorizontalTextScale;
-    final shareholder = _Station(icon: Icons.person_outline, label: s.payFlowShareholder);
-    final zchf = _Station(icon: Icons.toll, label: s.payFlowZchf);
-    final merchant = _Station(icon: Icons.storefront_outlined, label: s.payFlowMerchant);
+    final shareholder = _Station(
+      glyph: const Icon(Icons.person_outline, size: 28, color: RealUnitColors.realUnitBlue),
+      label: s.payFlowShareholder,
+    );
+    final zchf = _Station(glyph: const _ZchfCoin(), label: s.payFlowZchf);
+    final merchant = _Station(
+      glyph: const Icon(Icons.storefront_outlined, size: 28, color: RealUnitColors.realUnitBlue),
+      label: s.payFlowMerchant,
+    );
     return Column(
       spacing: 16,
       crossAxisAlignment: .stretch,
@@ -90,12 +108,36 @@ class PayFlowDiagram extends StatelessWidget {
   }
 }
 
+/// The ZCHF coin as RealUnit drew it: a ring with two small opposite arrows.
+class _ZchfCoin extends StatelessWidget {
+  final bool compact;
+
+  const _ZchfCoin({this.compact = false});
+
+  static const arrowsKey = Key('pay-flow-zchf-coin');
+
+  @override
+  Widget build(BuildContext context) {
+    final size = compact ? 18.0 : 28.0;
+    return Container(
+      key: arrowsKey,
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: RealUnitColors.realUnitBlue, width: compact ? 1.6 : 2.5),
+      ),
+      child: Icon(Icons.sync_alt, size: compact ? 10 : 16, color: RealUnitColors.realUnitBlue),
+    );
+  }
+}
+
 class _Station extends StatelessWidget {
-  final IconData icon;
+  final Widget glyph;
   final String label;
   final bool compact;
 
-  const _Station({required this.icon, required this.label, this.compact = false});
+  const _Station({required this.glyph, required this.label, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +152,7 @@ class _Station extends StatelessWidget {
             color: RealUnitColors.brand700,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, size: compact ? 18 : 28, color: RealUnitColors.realUnitBlue),
+          child: Center(child: glyph),
         ),
         Text(
           label,
