@@ -194,7 +194,7 @@
   "payFlowStep1": "You sell REALU for ZCHF",
   "payFlowStep2": "The merchant is paid with the ZCHF",
   "payFlowZchf": "ZCHF",
-  "payInfoBodyDetails": "You do not pay with your shares. For each payment you sell REALU. You receive the proceeds minus the fee in ZCHF, a Swiss-franc stablecoin, and that ZCHF is what pays. Because only whole shares are sold, the sale is rounded up to whole REALU. The round-up amount is not credited to you and weighs more heavily on small amounts. Before you confirm, you see the number of shares, the price and the fee. Each payment appears in the history as «${entry}».",
+  "payInfoBodyDetails": "You do not pay with your shares. For each payment you sell REALU. You receive the proceeds minus the fee in ZCHF, a Swiss-franc stablecoin, and that ZCHF is what pays. Because only whole shares are sold, the sale is rounded up to whole REALU. The round-up amount is not credited to you and weighs more heavily on small amounts. Before you confirm, you see the number of shares, the price and the fee. Each payment appears in the history as “${entry}”.",
   "payInfoBodyIntro": "With the pay function you pay in shops that accept OpenCryptoPay, currently especially at selected SPAR stores in German-speaking Switzerland.",
   "payInfoLocationsLink": "Show locations",
   "payInfoTitle": "Before you pay",

@@ -6,10 +6,10 @@ import 'package:realunit_wallet/styles/colors.dart';
 /// corrected it on 19.10.2026: the shareholder sells REALU for ZCHF (1), the
 /// merchant is paid with the ZCHF (2). Three stations with one word under each
 /// icon, and the two numbered steps explained below. The middle station is the
-/// coin from RealUnit's picture: a ring with two small arrows inside. Above the
-/// default text size the stations stand one below the
-/// other so that word is not squeezed. The arrows are decorative for screen
-/// readers; the legend carries the numbered steps.
+/// coin from RealUnit's picture: a ring with its exchange glyph inside. Above
+/// the default text size the stations stand one below the other so that word
+/// is not squeezed. The arrows are decorative for screen readers; the legend
+/// carries the numbered steps.
 ///
 /// [compact] is the small picture on the scanner: the three stations in one
 /// row with plain arrows, no step numbers and no legend. The host makes it a
@@ -205,8 +205,10 @@ class _Station extends StatelessWidget {
         Text(
           label,
           textAlign: .center,
-          maxLines: 1,
-          softWrap: false,
+          // The small picture has narrow columns: a long name may take a
+          // second line there before it is cut.
+          maxLines: compact ? 2 : 1,
+          softWrap: compact,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: RealUnitColors.neutral900,

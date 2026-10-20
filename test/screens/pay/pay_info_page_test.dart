@@ -122,7 +122,7 @@ void main() {
       expect(details, isNot(contains('bleibt als ZCHF')));
       expect(details, isNot(contains('stays as ZCHF')));
       // The history names a payment «Verkauf und Zahlung»; the text says the same.
-      expect(details, contains('«${S.current.transactionSaleAndPayment}»'));
+      expect(details, contains(S.current.transactionSaleAndPayment));
     });
 
     testWidgets('continues to the scanner with the initial payload', (tester) async {

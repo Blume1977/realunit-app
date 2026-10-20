@@ -52,6 +52,26 @@ class _PayScanViewState extends State<PayScanView> {
   /// immutable [PayScanView.initialPayload] widget field).
   bool _awaitingInitialDecode = false;
 
+  /// True while the payment flow explanation sheet covers the scanner. The
+  /// camera keeps running underneath, so its frames are ignored until the
+  /// sheet is closed; otherwise a code in view would push the quote page on
+  /// top of the sheet.
+  bool _explaining = false;
+
+  Future<void> _showExplanation(BuildContext context) async {
+    setState(() => _explaining = true);
+    try {
+      await PayFlowSheet.show(context);
+    } finally {
+      if (mounted) setState(() => _explaining = false);
+    }
+  }
+
+  void _onCodeDetected(BuildContext context, String raw) {
+    if (_explaining) return;
+    context.read<PayScanCubit>().onCodeDetected(raw);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -104,7 +124,7 @@ class _PayScanViewState extends State<PayScanView> {
         final preview = _awaitingInitialDecode
             ? const Center(child: CupertinoActivityIndicator())
             : QrScannerView(
-                onDetect: (raw) => context.read<PayScanCubit>().onCodeDetected(raw),
+                onDetect: (raw) => _onCodeDetected(context, raw),
                 errorBuilder: (context, error) {
                   final message = error.errorCode == MobileScannerErrorCode.permissionDenied
                       ? S.of(context).payScanCameraPermissionDenied
@@ -128,13 +148,13 @@ class _PayScanViewState extends State<PayScanView> {
           body: Column(
             children: [
               // The payment flow stays in view on every payment, small here and
-              // full size with its explanation after a tap (RealUnit, 19.10.2026).
+              // full size with its explanation after a tap.
               Semantics(
                 button: true,
                 label: S.of(context).payFlowShow,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => PayFlowSheet.show(context),
+                  onTap: () => _showExplanation(context),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                     child: ExcludeSemantics(

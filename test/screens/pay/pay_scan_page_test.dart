@@ -103,6 +103,27 @@ void main() {
 
       expect(find.byType(PayFlowSheet), findsNothing);
       expect(compact, findsOne);
+      // The scanner underneath was neither reset nor replaced.
+      expect(find.byType(MobileScanner), findsOne);
+      verifyNever(() => scanCubit.reset());
+    });
+
+    testWidgets('camera frames are ignored while the explanation sheet is open', (
+      tester,
+    ) async {
+      when(() => scanCubit.onCodeDetected(any())).thenReturn(null);
+      await tester.pumpApp(buildSubject());
+      final scanner = tester.widget<MobileScanner>(find.byType(MobileScanner));
+
+      await tester.tap(find.byKey(PayFlowDiagram.compactKey));
+      await tester.pumpAndSettle();
+      scanner.onDetect!(const BarcodeCapture(barcodes: [Barcode(rawValue: 'lnurl_while_open')]));
+      verifyNever(() => scanCubit.onCodeDetected(any()));
+
+      await tester.tap(find.text(S.current.close));
+      await tester.pumpAndSettle();
+      scanner.onDetect!(const BarcodeCapture(barcodes: [Barcode(rawValue: 'lnurl_after_close')]));
+      verify(() => scanCubit.onCodeDetected('lnurl_after_close')).called(1);
     });
 
     testWidgets('the locations link opens the shop map', (tester) async {
