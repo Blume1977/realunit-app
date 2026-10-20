@@ -146,6 +146,13 @@ class _ZchfCoinPainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round;
     canvas.drawCircle(Offset(w / 2, w / 2), (w - stroke) / 2, paint);
 
+    // The bars inside are thinner than the ring.
+    final glyph = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke * 0.65
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
     final left = w * 0.3;
     final right = w * 0.7;
     final head = w * 0.13;
@@ -157,7 +164,7 @@ class _ZchfCoinPainter extends CustomPainter {
         ..moveTo(left, upper)
         ..lineTo(right, upper)
         ..lineTo(right - head, upper - head),
-      paint,
+      glyph,
     );
     // Lower bar to the left, half head below the tip.
     canvas.drawPath(
@@ -165,7 +172,7 @@ class _ZchfCoinPainter extends CustomPainter {
         ..moveTo(right, lower)
         ..lineTo(left, lower)
         ..lineTo(left + head, lower + head),
-      paint,
+      glyph,
     );
   }
 
