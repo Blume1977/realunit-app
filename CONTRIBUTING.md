@@ -69,11 +69,11 @@ The auto-opened promotion PRs are idempotent — only one is open per branch pai
 ## A38
 
 This repository requires A38 according to the canonical A38 standard in
-[DFXswiss/agent](https://github.com/DFXswiss/agent/blob/2598c981db2ac1ab8ab80937496c60703ff73a4a/docs/a38.md)
-at commit `2598c981db2ac1ab8ab80937496c60703ff73a4a`. Repo job selection:
+[DFXswiss/agent](https://github.com/DFXswiss/agent/blob/1b153cdf7a1ac3687ba98cad7d323743050fb54b/docs/a38.md)
+at commit `1b153cdf7a1ac3687ba98cad7d323743050fb54b`. Repo job selection:
 `.github/a38.json`. Target-branch applicability and fork workflow approval:
 `.github/pr-guard.json`. `dfx pr guard` is
-[wired in](https://github.com/DFXswiss/agent/blob/2598c981db2ac1ab8ab80937496c60703ff73a4a/docs/a38-guard.md#how-fork-github-actions-are-meant-to-work).
+[wired in](https://github.com/DFXswiss/agent/blob/1b153cdf7a1ac3687ba98cad7d323743050fb54b/docs/a38-guard.md#how-fork-github-actions-are-meant-to-work).
 
 This is a **public** repository. GitHub-hosted and self-hosted runners execute
 the heavy suite (unit and widget tests, the coverage floor, visual regression,
@@ -87,7 +87,11 @@ Draft pull requests run the GitHub CI jobs. GitHub holds fork runs from
 external contributors as `action_required`. Ready does not start CI. After a
 fresh A38 enforce pass on the current head, `dfx pr guard` approves those
 waiting initial runs, then sets Ready when the required GitHub jobs are green
-and the PR is mergeable. The merger does not click Approve and run workflows.
+and the PR is mergeable. The newest well-formed second review comment that
+covers the current head returns a Ready pull request to draft when its
+`blocks_merge` is true and it counts at least one defect; a newer well-formed
+second review with `blocks_merge` false clears that. The merger does not click
+Approve and run workflows.
 Do not ask a maintainer to approve workflow runs. Post the light A38 report
 on the current head. Every new head needs a new report. Authors with write
 access to `RealUnitCH/app` do not need a report.
