@@ -108,28 +108,69 @@ class PayFlowDiagram extends StatelessWidget {
   }
 }
 
-/// The ZCHF coin as RealUnit drew it: a ring with two small opposite arrows.
+/// The ZCHF coin as RealUnit drew it: a ring, and inside it two bars with a
+/// half head each, the upper one to the right, the lower one to the left.
+/// Not two arrows, so it is painted by hand instead of using an arrow icon.
 class _ZchfCoin extends StatelessWidget {
   final bool compact;
 
   const _ZchfCoin({this.compact = false});
 
-  static const arrowsKey = Key('pay-flow-zchf-coin');
+  static const coinKey = Key('pay-flow-zchf-coin');
 
   @override
   Widget build(BuildContext context) {
     final size = compact ? 18.0 : 28.0;
-    return Container(
-      key: arrowsKey,
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: RealUnitColors.realUnitBlue, width: compact ? 1.6 : 2.5),
-      ),
-      child: Icon(Icons.sync_alt, size: compact ? 10 : 16, color: RealUnitColors.realUnitBlue),
+    return CustomPaint(
+      key: coinKey,
+      size: Size.square(size),
+      painter: const _ZchfCoinPainter(RealUnitColors.realUnitBlue),
     );
   }
+}
+
+class _ZchfCoinPainter extends CustomPainter {
+  final Color color;
+
+  const _ZchfCoinPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final stroke = w / 11;
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawCircle(Offset(w / 2, w / 2), (w - stroke) / 2, paint);
+
+    final left = w * 0.3;
+    final right = w * 0.7;
+    final head = w * 0.13;
+    final upper = w * 0.43;
+    final lower = w * 0.57;
+    // Upper bar to the right, half head above the tip.
+    canvas.drawPath(
+      Path()
+        ..moveTo(left, upper)
+        ..lineTo(right, upper)
+        ..lineTo(right - head, upper - head),
+      paint,
+    );
+    // Lower bar to the left, half head below the tip.
+    canvas.drawPath(
+      Path()
+        ..moveTo(right, lower)
+        ..lineTo(left, lower)
+        ..lineTo(left + head, lower + head),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ZchfCoinPainter oldDelegate) => oldDelegate.color != color;
 }
 
 class _Station extends StatelessWidget {
