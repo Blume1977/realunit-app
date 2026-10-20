@@ -84,6 +84,7 @@ void main() {
       expect(compact, findsOne);
       expect(find.text(S.current.payFlowStep1), findsNothing);
       expect(find.bySemanticsLabel(S.current.payFlowShow), findsOne);
+      final scannerElement = tester.element(find.byType(MobileScanner));
 
       await tester.tap(compact);
       await tester.pumpAndSettle();
@@ -103,8 +104,8 @@ void main() {
 
       expect(find.byType(PayFlowSheet), findsNothing);
       expect(compact, findsOne);
-      // The scanner underneath was neither reset nor replaced.
-      expect(find.byType(MobileScanner), findsOne);
+      // The scanner underneath is the same element as before and was not reset.
+      expect(tester.element(find.byType(MobileScanner)), same(scannerElement));
       verifyNever(() => scanCubit.reset());
     });
 

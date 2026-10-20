@@ -55,15 +55,16 @@ class _PayScanViewState extends State<PayScanView> {
   /// True while the payment flow explanation sheet covers the scanner. The
   /// camera keeps running underneath, so its frames are ignored until the
   /// sheet is closed; otherwise a code in view would push the quote page on
-  /// top of the sheet.
+  /// top of the sheet. Not part of the build, so no rebuild is needed.
   bool _explaining = false;
 
   Future<void> _showExplanation(BuildContext context) async {
-    setState(() => _explaining = true);
+    if (_explaining) return;
+    _explaining = true;
     try {
       await PayFlowSheet.show(context);
     } finally {
-      if (mounted) setState(() => _explaining = false);
+      _explaining = false;
     }
   }
 
