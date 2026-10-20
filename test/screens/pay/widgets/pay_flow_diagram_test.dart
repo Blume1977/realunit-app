@@ -21,7 +21,10 @@ void main() {
       expect(find.text('1'), findsNWidgets(2));
       expect(find.text('2'), findsNWidgets(2));
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
-      expect(find.byIcon(Icons.swap_horiz), findsOneWidget);
+      // The ZCHF coin is painted as in RealUnit's picture, not an arrow icon.
+      expect(find.byKey(const Key('pay-flow-zchf-coin')), findsOneWidget);
+      expect(find.byIcon(Icons.swap_horiz), findsNothing);
+      expect(find.byIcon(Icons.sync_alt), findsNothing);
       expect(find.byIcon(Icons.storefront_outlined), findsOneWidget);
     });
 
@@ -39,6 +42,37 @@ void main() {
 
       expect(find.byKey(PayFlowDiagram.horizontalKey), findsOneWidget);
       expect(find.byKey(PayFlowDiagram.verticalKey), findsNothing);
+    });
+
+    testWidgets('the compact picture keeps the stations and drops the numbered legend', (
+      tester,
+    ) async {
+      await tester.pumpApp(
+        const Scaffold(body: SizedBox(width: 300, child: PayFlowDiagram(compact: true))),
+      );
+
+      expect(find.byKey(PayFlowDiagram.compactKey), findsOneWidget);
+      expect(find.byKey(PayFlowDiagram.horizontalKey), findsNothing);
+      expect(find.byKey(PayFlowDiagram.verticalKey), findsNothing);
+      expect(find.text(S.current.payFlowShareholder), findsOneWidget);
+      expect(find.text(S.current.payFlowZchf), findsOneWidget);
+      expect(find.text(S.current.payFlowMerchant), findsOneWidget);
+      expect(find.byKey(const Key('pay-flow-zchf-coin')), findsOneWidget);
+      expect(find.text(S.current.payFlowStep1), findsNothing);
+      expect(find.text(S.current.payFlowStep2), findsNothing);
+      expect(find.text('1'), findsNothing);
+      expect(find.text('2'), findsNothing);
+    });
+
+    testWidgets('the compact picture stays in one row at a large text scale', (tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpApp(
+        const Scaffold(body: SizedBox(width: 300, child: PayFlowDiagram(compact: true))),
+      );
+
+      expect(find.byKey(PayFlowDiagram.compactKey), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('stacks the stations at a large text scale', (tester) async {

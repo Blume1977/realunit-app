@@ -13,6 +13,8 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/screens/pay/cubits/pay_scan/pay_scan_cubit.dart';
 import 'package:realunit_wallet/screens/pay/pay_quote_page.dart';
+import 'package:realunit_wallet/screens/pay/widgets/pay_flow_diagram.dart';
+import 'package:realunit_wallet/screens/pay/widgets/pay_flow_sheet.dart';
 import 'package:realunit_wallet/setup/routing/routes/app_routes.dart';
 import 'package:realunit_wallet/styles/colors.dart';
 import 'package:realunit_wallet/widgets/scanner/push_then_rearm.dart';
@@ -49,6 +51,27 @@ class _PayScanViewState extends State<PayScanView> {
   /// spinner so it can be dismissed after invalid/decoded (unlike the
   /// immutable [PayScanView.initialPayload] widget field).
   bool _awaitingInitialDecode = false;
+
+  /// True while the payment flow explanation sheet covers the scanner. The
+  /// camera keeps running underneath, so its frames are ignored until the
+  /// sheet is closed; otherwise a code in view would push the quote page on
+  /// top of the sheet. Not part of the build, so no rebuild is needed.
+  bool _explaining = false;
+
+  Future<void> _showExplanation(BuildContext context) async {
+    if (_explaining) return;
+    _explaining = true;
+    try {
+      await PayFlowSheet.show(context);
+    } finally {
+      _explaining = false;
+    }
+  }
+
+  void _onCodeDetected(BuildContext context, String raw) {
+    if (_explaining) return;
+    context.read<PayScanCubit>().onCodeDetected(raw);
+  }
 
   @override
   void initState() {
@@ -102,7 +125,7 @@ class _PayScanViewState extends State<PayScanView> {
         final preview = _awaitingInitialDecode
             ? const Center(child: CupertinoActivityIndicator())
             : QrScannerView(
-                onDetect: (raw) => context.read<PayScanCubit>().onCodeDetected(raw),
+                onDetect: (raw) => _onCodeDetected(context, raw),
                 errorBuilder: (context, error) {
                   final message = error.errorCode == MobileScannerErrorCode.permissionDenied
                       ? S.of(context).payScanCameraPermissionDenied
@@ -125,6 +148,39 @@ class _PayScanViewState extends State<PayScanView> {
           appBar: AppBar(title: Text(S.of(context).payScanTitle)),
           body: Column(
             children: [
+              // The payment flow stays in view on every payment, small here and
+              // full size with its explanation after a tap.
+              Semantics(
+                button: true,
+                label: S.of(context).payFlowShow,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => _showExplanation(context),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                    child: ExcludeSemantics(
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: RealUnitColors.neutral200),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Row(
+                          spacing: 8,
+                          children: [
+                            Expanded(child: PayFlowDiagram(compact: true)),
+                            Icon(
+                              Icons.open_in_full,
+                              size: 18,
+                              color: RealUnitColors.realUnitBlue,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {

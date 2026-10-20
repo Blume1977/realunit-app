@@ -78,10 +78,19 @@ void main() {
         ),
       );
 
+      final details = S.current.payInfoBodyDetails(S.current.transactionSaleAndPayment);
       expect(find.text(S.current.payInfoTitle), findsOneWidget);
       expect(find.byType(PayFlowDiagram), findsOneWidget);
-      expect(find.text(S.current.payInfoBody), findsOneWidget);
+      expect(find.text(S.current.payInfoBodyIntro), findsOneWidget);
+      expect(find.text(details), findsOneWidget);
       expect(find.text(S.current.payInfoLocationsLink), findsOneWidget);
+      // The picture sits between the two paragraphs, as RealUnit placed it.
+      final introBottom = tester.getBottomLeft(find.text(S.current.payInfoBodyIntro)).dy;
+      final diagramTop = tester.getTopLeft(find.byType(PayFlowDiagram)).dy;
+      final diagramBottom = tester.getBottomLeft(find.byType(PayFlowDiagram)).dy;
+      final detailsTop = tester.getTopLeft(find.text(details)).dy;
+      expect(introBottom, lessThanOrEqualTo(diagramTop));
+      expect(diagramBottom, lessThanOrEqualTo(detailsTop));
       await tester.tap(find.text(S.current.payInfoLocationsLink));
       await tester.pump();
       await tester.pump();
@@ -91,27 +100,29 @@ void main() {
       // received as ZCHF, and only whole shares are sold. The round-up is not
       // credited to the wallet.
       expect(
-        S.current.payInfoBody,
+        details,
         anyOf(
           contains('nicht mit Ihren Aktien'),
           contains('do not pay with your shares'),
         ),
       );
-      expect(S.current.payInfoBody, contains('ZCHF'));
+      expect(details, contains('ZCHF'));
       expect(
-        S.current.payInfoBody,
+        details,
         anyOf(contains('verkaufen Sie REALU'), contains('you sell REALU')),
       );
       expect(
-        S.current.payInfoBody,
+        details,
         anyOf(contains('ganze Aktien'), contains('whole shares')),
       );
       expect(
-        S.current.payInfoBody,
+        details,
         anyOf(contains('nicht gutgeschrieben'), contains('not credited to you')),
       );
-      expect(S.current.payInfoBody, isNot(contains('bleibt als ZCHF')));
-      expect(S.current.payInfoBody, isNot(contains('stays as ZCHF')));
+      expect(details, isNot(contains('bleibt als ZCHF')));
+      expect(details, isNot(contains('stays as ZCHF')));
+      // The history names a payment «Verkauf und Zahlung»; the text says the same.
+      expect(details, contains(S.current.transactionSaleAndPayment));
     });
 
     testWidgets('continues to the scanner with the initial payload', (tester) async {

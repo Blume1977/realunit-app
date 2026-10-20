@@ -37,6 +37,12 @@ class ResponsiveSurface {
 /// Living catalog — extend when adding sticky-CTA sheets/pages.
 const kResponsiveSurfaceCatalog = <ResponsiveSurface>[
   ResponsiveSurface(
+    id: 'pay_flow_sheet',
+    description: 'Payment flow explanation sheet opened from the scanner (close-only)',
+    matrixTestPath: 'test/screens/pay/pay_flow_sheet_responsive_matrix_test.dart',
+    productionPath: 'lib/screens/pay/widgets/pay_flow_sheet.dart',
+  ),
+  ResponsiveSurface(
     id: 'bitbox_connect_sheet',
     description: 'BitBox pairing bottom sheet (all button-bearing states)',
     matrixTestPath:

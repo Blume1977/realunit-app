@@ -9405,7 +9405,7 @@
                 <div class="file">test/goldens/screens/pay/</div>
               </div>
               <div class="rhs">
-                <b>17 Screens</b>
+                <b>18 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/pay"
@@ -9437,14 +9437,15 @@
                 />
               </div>
               <div class="desc">
-                Intro-Seite <b>Bevor Sie bezahlen</b>: Über dem Text steht die
-                Grafik zum Zahlungsablauf mit den drei Stationen <b>Verkauf</b>,
-                <b>ZCHF</b> und <b>Geschäft</b> und den zwei nummerierten Schritten
-                <b>Eine Aktionärin oder ein Aktionär verkauft REALU in ZCHF</b> und <b>Eine Händlerin oder ein Händler erhält
-                den Gegenwert der ZCHF für die Zahlung der Ware</b>; bei grosser Schrift
-                stehen die drei Stationen untereinander. Darunter: Bezahlen in Geschäften mit
+                Intro-Seite <b>Bevor Sie bezahlen</b>. Erster Absatz: Bezahlen in Geschäften mit
                 OpenCryptoPay, derzeit insbesondere ausgewählte SPAR-Filialen der
-                Deutschschweiz. Bezahlt wird nicht mit den Aktien. Für jede
+                Deutschschweiz. Dazwischen die Grafik zum Zahlungsablauf, wie RealUnit sie
+                vorgegeben hat: die drei Stationen <b>AktionärIn</b>, <b>ZCHF</b> (Münze wie in der
+                Vorlage: Kreis mit dem Tauschsymbol aus zwei Strichen mit halber
+                Spitze) und <b>Händler</b> mit den zwei nummerierten Schritten
+                <b>Sie verkaufen REALU gegen ZCHF</b> und <b>Mit den ZCHF wird der Händler
+                bezahlt</b>; bei grosser Schrift stehen die drei Stationen untereinander.
+                Zweiter Absatz: Bezahlt wird nicht mit den Aktien. Für jede
                 Zahlung wird REALU verkauft; den Erlös abzüglich der Gebühr
                 erhält man in ZCHF, einem Stablecoin in Schweizer Franken, und
                 mit diesem ZCHF wird bezahlt. Weil nur ganze Aktien verkauft
@@ -9452,9 +9453,9 @@
                 Aufrundungsbetrag wird nicht gutgeschrieben und fällt bei
                 kleinen Beträgen stärker ins Gewicht. Vor der
                 Bestätigung sieht man Anzahl, Preis und Gebühr. Jede Zahlung
-                erscheint in der Historie als Verkauf.
+                erscheint in der Historie als «Verkauf und Zahlung».
                 Der Link «Standorte anzeigen» öffnet die In-App-Karte der Geschäfte, in denen OpenCryptoPay ZCHF auf Ethereum akzeptiert. Eine andere Chain oder ein anderes Asset ist nicht wählbar.
-                Bei einer Software-Wallet erscheint diese Seite nur einmal; danach öffnet Bezahlen direkt den Scanner. Dort bleibt derselbe Link.
+                Bei einer Software-Wallet erscheint diese Seite nur einmal; danach öffnet Bezahlen direkt den Scanner. Dort bleibt derselbe Link, und die Grafik bleibt klein sichtbar (338, 426).
                 Golden-Quelle: <code>pay_info_page.png</code>.
               </div>
             </div>
@@ -9633,8 +9634,33 @@
               </div>
               <div class="desc">
                 Scan-Seite im Scan-Zustand mit Platzhalter für die Kamera. Titel
-                <b>Zahlungscode scannen</b>. Der Link <b>Standorte anzeigen</b>
-                öffnet dieselbe Karte wie auf der Intro-Seite.
+                <b>Zahlungscode scannen</b>. Oben die Grafik zum Zahlungsablauf
+                klein (drei Stationen ohne Legende) in einem Rahmen mit
+                Vergrössern-Symbol; Antippen öffnet die vollständige Erklärung
+                (426). Darunter der Link <b>Standorte anzeigen</b>, der dieselbe
+                Karte wie auf der Intro-Seite öffnet.
+              </div>
+            </div>
+            <div class="test" id="426-pay-flow-sheet">
+              <div class="head">
+                <a class="name permalink" href="#426-pay-flow-sheet">426-pay-flow-sheet</a>
+                <button class="copy-link" type="button" data-target="426-pay-flow-sheet" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">pay_flow_sheet_golden_test.dart</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/426-pay-flow-sheet.png"
+                  alt="Bevor Sie bezahlen als Sheet, mit der Grafik zum Zahlungsablauf"
+                />
+              </div>
+              <div class="desc">
+                Sheet, das die kleine Grafik auf der Scan-Seite beim Antippen
+                öffnet. Gleicher Inhalt und gleiche Reihenfolge wie die
+                Intro-Seite <b>Bevor Sie bezahlen</b>: erster Absatz, Grafik mit
+                den nummerierten Schritten, zweiter Absatz. Einzige Aktion ist
+                <b>Schließen</b>; der Scanner bleibt darunter offen und
+                ignoriert Codes, solange das Sheet offen ist.
+                Golden-Quelle: <code>pay_flow_sheet.png</code>.
               </div>
             </div>
             <div class="test" id="410-pay-locations-loading">
