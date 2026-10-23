@@ -47,9 +47,8 @@ class _RecordingFakeBitbox extends FakeBitboxCredentials {
 
 // MetaMask Delegation Framework v1.3.0, CREATE2 — identical on all EVM chains.
 // These are the only delegator/manager addresses the production service
-// accepts, but `Eip712Signer.signDelegation` itself does NOT validate them;
-// the test fixture nonetheless mirrors them so the EIP-712 envelope is
-// realistic.
+// accepts. `Eip712Signer.signDelegation` signs the canonical schema itself,
+// so this fixture matches the hash the chain verifies.
 const _metaMaskDelegator = '0x63c0c19a282a1b52b07dd5a65b58948a07dae32b';
 const _delegationManager = '0xdb9b1e94b5b69df7e401ddbede43491141047db3';
 

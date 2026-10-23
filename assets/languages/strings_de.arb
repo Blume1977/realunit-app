@@ -404,6 +404,7 @@
   "sellBitboxSwapTo": "Sie erhalten",
   "sellBitboxWaitingForEth": "Gasgebühren werden angefordert",
   "sellBitboxWaitingForEthDescription": "Ein kleiner ETH-Betrag wird an Ihr Wallet gesendet, um die Transaktionsgebühren zu decken. Dies kann einige Minuten dauern.",
+  "sellConfirmAuthorizationRejected": "Der Verkauf wurde nicht gesendet. Die Freigabe passt nicht zum bestätigten Betrag oder läuft nicht innerhalb von 30 Minuten ab.",
   "sellMinAmount": "Mindestbetrag: ${amount} ${currency}",
   "sellRealu": "REALU verkaufen",
   "sellReviewAndConfirm": "Verkauf prüfen & bestätigen",

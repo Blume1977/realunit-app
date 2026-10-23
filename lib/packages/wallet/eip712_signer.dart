@@ -81,6 +81,22 @@ class Eip712Signer {
     return _signTypedData(credentials, chainId, jsonEncode(typedDataMap));
   }
 
+  /// The Delegation Framework verifies this schema. A server-supplied type
+  /// list can omit `caveats`, which would leave the checked values out of
+  /// the hash.
+  static const List<Map<String, String>> _delegationType = [
+    {'name': 'delegate', 'type': 'address'},
+    {'name': 'delegator', 'type': 'address'},
+    {'name': 'authority', 'type': 'bytes32'},
+    {'name': 'caveats', 'type': 'Caveat[]'},
+    {'name': 'salt', 'type': 'uint256'},
+  ];
+
+  static const List<Map<String, String>> _caveatType = [
+    {'name': 'enforcer', 'type': 'address'},
+    {'name': 'terms', 'type': 'bytes'},
+  ];
+
   static Future<String> signDelegation({
     required CredentialsWithKnownAddress credentials,
     required Eip7702Data eip7702Data,
@@ -93,12 +109,8 @@ class Eip712Signer {
           {'name': 'chainId', 'type': 'uint256'},
           {'name': 'verifyingContract', 'type': 'address'},
         ],
-        'Delegation': eip7702Data.types.delegation
-            .map((field) => {'name': field.name, 'type': field.type})
-            .toList(),
-        'Caveat': eip7702Data.types.caveat
-            .map((field) => {'name': field.name, 'type': field.type})
-            .toList(),
+        'Delegation': _delegationType,
+        'Caveat': _caveatType,
       },
       'primaryType': 'Delegation',
       'domain': {

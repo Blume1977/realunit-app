@@ -24,6 +24,8 @@
 // live under `test/integration/` and run as part of `flutter test`.
 
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -95,6 +97,84 @@ Map<String, dynamic> _delegationJson() => {
   'amountWei': '1',
   'depositAddress': '',
 };
+
+Map<String, dynamic> _delegationJsonForOneShare() {
+  final json = _delegationJson();
+  final message = Map<String, dynamic>.from(json['message'] as Map);
+  message['caveats'] = <dynamic>[
+    <String, dynamic>{
+      'enforcer': '0xE1302607a3251AF54c3a6e69318d6aa07F5eB46c',
+      'terms': _oneShareSellWrapper(),
+    },
+    <String, dynamic>{
+      'enforcer': '0x1046bb45C8d673d4ea75321280DB34899413c069',
+      'terms': _timestampTerms(DateTime.now().toUtc()),
+    },
+  ];
+  json['message'] = message;
+  return json;
+}
+
+String _oneShareSellWrapper() {
+  final decoded =
+      jsonDecode(
+            File(
+              'test/packages/service/dfx/delegation_caveat_vectors.json',
+            ).readAsStringSync(),
+          )
+          as Map<String, dynamic>;
+  final amountTwo = _hexBytes(decoded['sellWrapperAmount2'] as String);
+  final amountHundred = _hexBytes(decoded['sellWrapperAmount100'] as String);
+  if (amountTwo.length != amountHundred.length) {
+    throw StateError('sell wrapper vectors differ in length');
+  }
+  var amountIndex = -1;
+  for (var i = 0; i < amountTwo.length; i++) {
+    if (amountTwo[i] == amountHundred[i]) {
+      continue;
+    }
+    if (amountIndex != -1) {
+      throw StateError('sell wrapper amount is not a single byte');
+    }
+    amountIndex = i;
+  }
+  if (amountIndex < 0 || amountTwo[amountIndex] != 2 || amountHundred[amountIndex] != 100) {
+    throw StateError('sell wrapper amount byte is not 2 versus 100');
+  }
+  amountTwo[amountIndex] = 1;
+  return _hex(amountTwo);
+}
+
+String _timestampTerms(DateTime now) {
+  final validUntil = now.millisecondsSinceEpoch ~/ 1000 + 1800;
+  final bytes = Uint8List(32);
+  var value = validUntil;
+  for (var i = 31; i >= 16; i--) {
+    bytes[i] = value & 0xff;
+    value >>= 8;
+  }
+  return _hex(bytes);
+}
+
+Uint8List _hexBytes(String hex) {
+  final body = hex.startsWith('0x') ? hex.substring(2) : hex;
+  if (body.length.isOdd) {
+    throw StateError('hex length is odd');
+  }
+  final bytes = Uint8List(body.length ~/ 2);
+  for (var i = 0; i < bytes.length; i++) {
+    bytes[i] = int.parse(body.substring(i * 2, i * 2 + 2), radix: 16);
+  }
+  return bytes;
+}
+
+String _hex(Uint8List bytes) {
+  final buffer = StringBuffer('0x');
+  for (final byte in bytes) {
+    buffer.write(byte.toRadixString(16).padLeft(2, '0'));
+  }
+  return buffer.toString();
+}
 
 Map<String, dynamic> _lnurlpJson() => {
   'requestedAmount': {'asset': 'EUR', 'amount': 1},
@@ -325,7 +405,7 @@ void main() {
                 ethBalance: 0,
                 requiredGasEth: 0.01,
                 isValid: true,
-                eip7702: Eip7702Data.fromJson(_delegationJson()),
+                eip7702: Eip7702Data.fromJson(_delegationJsonForOneShare()),
               ),
             );
             cubit.start();

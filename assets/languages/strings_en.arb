@@ -404,6 +404,7 @@
   "sellBitboxSwapTo": "You receive",
   "sellBitboxWaitingForEth": "Requesting gas funds",
   "sellBitboxWaitingForEthDescription": "A small amount of ETH is being sent to your wallet to cover transaction fees. This may take a few minutes.",
+  "sellConfirmAuthorizationRejected": "The sale was not sent. The authorization does not match the confirmed amount or does not expire within 30 minutes.",
   "sellMinAmount": "Minimum amount: ${amount} ${currency}",
   "sellRealu": "Sell REALU",
   "sellReviewAndConfirm": "Review & confirm sale",

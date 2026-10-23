@@ -17,6 +17,17 @@ import 'package:realunit_wallet/widgets/scrollable_actions_layout.dart';
 
 String _money(double amount) => amount.toStringAsFixed(2);
 
+/// Caveat rejections stay diagnostic in the service. The sheet states that
+/// the sale was not sent and why the authorization was refused. Other
+/// confirm failures keep the existing snackbar text.
+String visibleSellConfirmError({
+  required String error,
+  required String caveatFallback,
+}) {
+  if (error.contains('EIP-7702 caveats')) return caveatFallback;
+  return error;
+}
+
 class SellConfirmSheet extends StatelessWidget {
   final SellPaymentInfo paymentInfo;
 
@@ -41,10 +52,18 @@ class SellConfirmSheetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<SellConfirmCubit, SellConfirmState>(
       listener: (context, state) async {
-        if (state is SellConfirmFailure) {
+        if (state is SellConfirmFailure &&
+            !state.error.contains('EIP-7702 caveats')) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.error),
+              content: Text(
+                visibleSellConfirmError(
+                  error: state.error,
+                  caveatFallback: S
+                      .of(context)
+                      .sellConfirmAuthorizationRejected,
+                ),
+              ),
               backgroundColor: RealUnitColors.status.red600,
             ),
           );
@@ -141,12 +160,34 @@ class SellConfirmSheetView extends StatelessWidget {
                         child: BlocBuilder<SellConfirmCubit, SellConfirmState>(
                           builder: (context, state) {
                             final isLoading = state is SellConfirmLoading;
-                            return AppFilledButton(
-                              label: S.of(context).confirm,
-                              onPressed: () => context
-                                  .read<SellConfirmCubit>()
-                                  .confirmPayment(paymentInfo),
-                              state: isLoading ? .loading : .idle,
+                            final failure = state is SellConfirmFailure
+                                ? state
+                                : null;
+                            final caveatNotice =
+                                failure != null &&
+                                    failure.error.contains('EIP-7702 caveats')
+                                ? visibleSellConfirmError(
+                                    error: failure.error,
+                                    caveatFallback: S
+                                        .of(context)
+                                        .sellConfirmAuthorizationRejected,
+                                  )
+                                : null;
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (caveatNotice != null) ...[
+                                  _confirmFailureNotice(context, caveatNotice),
+                                  const SizedBox(height: 12),
+                                ],
+                                AppFilledButton(
+                                  label: S.of(context).confirm,
+                                  onPressed: () => context
+                                      .read<SellConfirmCubit>()
+                                      .confirmPayment(paymentInfo),
+                                  state: isLoading ? .loading : .idle,
+                                ),
+                              ],
                             );
                           },
                         ),
@@ -158,6 +199,36 @@ class SellConfirmSheetView extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Notice above the confirm button. The first sentence is the outcome.
+  Widget _confirmFailureNotice(BuildContext context, String message) {
+    final breakAt = message.indexOf('. ');
+    final title = breakAt == -1 ? message : message.substring(0, breakAt + 1);
+    final detail = breakAt == -1 ? null : message.substring(breakAt + 2);
+    final color = RealUnitColors.status.red600;
+    final body = Theme.of(context).textTheme.bodyMedium;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: RealUnitColors.status.red100,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: body?.copyWith(color: color, fontWeight: FontWeight.w600),
+          ),
+          if (detail != null && detail.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(detail, style: body?.copyWith(color: color)),
+          ],
+        ],
       ),
     );
   }

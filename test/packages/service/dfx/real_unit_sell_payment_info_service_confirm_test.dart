@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -43,9 +44,42 @@ final _walletAddress = _privKey.address.hexEip55.toLowerCase();
 
 const _metaMaskDelegator = '0x63c0c19a282a1b52b07dd5a65b58948a07dae32b';
 const _delegationManager = '0xdb9b1e94b5b69df7e401ddbede43491141047db3';
+const _relayerAddress = '0x1111111111111111111111111111111111111111';
+const _authority = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+
+final Map<String, dynamic> _caveatVectors = _loadCaveatVectors();
+
+Map<String, dynamic> _loadCaveatVectors() {
+  final decoded = jsonDecode(
+    File('test/packages/service/dfx/delegation_caveat_vectors.json').readAsStringSync(),
+  );
+  if (decoded is! Map<String, dynamic>) {
+    throw StateError('caveat vectors are not a JSON object');
+  }
+  return decoded;
+}
+
+String _caveatVector(String key) {
+  final value = _caveatVectors[key];
+  if (value is! String) {
+    throw StateError('caveat vector $key is missing');
+  }
+  return value;
+}
+
+List<Map<String, dynamic>> _sellCaveats(String wrapperKey) => <Map<String, dynamic>>[
+  <String, dynamic>{
+    'enforcer': '0xE1302607a3251AF54c3a6e69318d6aa07F5eB46c',
+    'terms': _caveatVector(wrapperKey),
+  },
+  <String, dynamic>{
+    'enforcer': '0x1046bb45C8d673d4ea75321280DB34899413c069',
+    'terms': _caveatVector('timestamp'),
+  },
+];
 
 Map<String, dynamic> _validEip7702Json() => {
-  'relayerAddress': '0xrelay',
+  'relayerAddress': _relayerAddress,
   'delegationManagerAddress': _delegationManager,
   'delegatorAddress': _metaMaskDelegator,
   'userNonce': 7,
@@ -60,10 +94,10 @@ Map<String, dynamic> _validEip7702Json() => {
     'Caveat': <Map<String, dynamic>>[],
   },
   'message': {
-    'delegate': '0xrelay',
+    'delegate': _relayerAddress,
     'delegator': _walletAddress,
-    'authority': '0xauth',
-    'caveats': <Map<String, dynamic>>[],
+    'authority': _authority,
+    'caveats': _sellCaveats('sellWrapperAmount100'),
     'salt': 0,
   },
   'tokenAddress': '0x553C7f9C780316FC1D34b8e14ac2465Ab22a090B',
@@ -71,21 +105,29 @@ Map<String, dynamic> _validEip7702Json() => {
   'depositAddress': '0xdeposit',
 };
 
-SellPaymentInfo _info({int amount = 100}) => SellPaymentInfo(
-  id: 42,
-  eip7702: Eip7702Data.fromJson(_validEip7702Json()),
-  amount: amount,
-  exchangeRate: 1.0,
-  rate: 1.0,
-  beneficiary: const BeneficiaryDto(iban: 'CH...'),
-  estimatedAmount: 100.0,
-  currency: Currency.chf,
-  depositAddress: '0xdeposit',
-  tokenAddress: '0xtoken',
-  chainId: 1,
-  ethBalance: 0.1,
-  requiredGasEth: 0.001,
-);
+SellPaymentInfo _info({int amount = 100, Map<String, dynamic>? eip7702Json}) {
+  final Map<String, dynamic> json;
+  if (eip7702Json == null) {
+    json = _validEip7702Json();
+  } else {
+    json = eip7702Json;
+  }
+  return SellPaymentInfo(
+    id: 42,
+    eip7702: Eip7702Data.fromJson(json),
+    amount: amount,
+    exchangeRate: 1.0,
+    rate: 1.0,
+    beneficiary: const BeneficiaryDto(iban: 'CH...'),
+    estimatedAmount: 100.0,
+    currency: Currency.chf,
+    depositAddress: '0xdeposit',
+    tokenAddress: '0xtoken',
+    chainId: 1,
+    ethBalance: 0.1,
+    requiredGasEth: 0.001,
+  );
+}
 
 void main() {
   late _MockAppStore appStore;
@@ -143,9 +185,9 @@ void main() {
       final authorization = envelope['authorization'] as Map<String, dynamic>;
 
       // Delegation block mirrors the eip7702 data + carries a real signature.
-      expect(delegation['delegate'], '0xrelay');
+      expect(delegation['delegate'], _relayerAddress);
       expect(delegation['delegator'], _walletAddress);
-      expect(delegation['authority'], '0xauth');
+      expect(delegation['authority'], _authority);
       expect(delegation['salt'], '0');
       expect((delegation['signature'] as String).startsWith('0x'), isTrue);
       // 65-byte EIP-712 signature → 0x + 130 hex chars.
@@ -158,6 +200,21 @@ void main() {
       expect((authorization['r'] as String).startsWith('0x'), isTrue);
       expect((authorization['s'] as String).startsWith('0x'), isTrue);
       expect(authorization['yParity'], anyOf(0, 1));
+    });
+
+    test('empty caveats are rejected', () async {
+      final json = _validEip7702Json();
+      (json['message'] as Map<String, dynamic>)['caveats'] = <Map<String, dynamic>>[];
+      final client = MockClient((_) async => fail('network'));
+
+      await expectLater(
+        build(client).confirmPayment(_info(eip7702Json: json)),
+        throwsA(
+          predicate(
+            (error) => error is Exception && error.toString().contains('EIP-7702 caveats'),
+          ),
+        ),
+      );
     });
 
     test('4xx response → ApiException', () async {

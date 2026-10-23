@@ -476,6 +476,7 @@ MAPPING=(
   "422-transaction-detail-payment=screens/transaction_history/goldens/macos/transaction_detail_payment.png"
   "425-pay-info-pay-unavailable=screens/pay/goldens/macos/pay_info_page_pay_unavailable.png"
   "426-pay-flow-sheet=screens/pay/goldens/macos/pay_flow_sheet.png"
+  "427-sell-confirm-caveat-snackbar=screens/sell/goldens/macos/sell_confirm_caveat_snackbar.png"
 )
 
 missing=()

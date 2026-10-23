@@ -163,10 +163,8 @@ void main() {
     });
 
     group('signDelegation', () {
-      // Minimal but realistic Eip7702Data: empty type lists and an empty
-      // caveats list are valid inputs the backend already returns for a
-      // bare delegation. Anything heavier would only re-test the JSON
-      // serialiser of eip7702_data_dto.
+      // Empty server type lists must not reach the signature. The signer
+      // replaces them with the canonical Delegation and Caveat schema.
       const delegationData = Eip7702Data(
         relayerAddress: '0x0000000000000000000000000000000000000010',
         delegationManagerAddress: '0x0000000000000000000000000000000000000011',
@@ -242,10 +240,18 @@ void main() {
 
         expect(signature, '0xdeadbeef');
         // The chainId argument must come from eip7702Data.domain.chainId, not
-        // a hardcoded value — verifies the parameter wiring.
-        verify(
-          () => credentials.signTypedDataV4(delegationData.domain.chainId, any()),
-        ).called(1);
+        // a hardcoded value — verifies the parameter wiring. The typed data
+        // uses the canonical schema even though the payload types are empty.
+        final captured =
+            verify(
+              () => credentials.signTypedDataV4(
+                delegationData.domain.chainId,
+                captureAny(),
+              ),
+            ).captured.single
+                as String;
+        expect(captured, contains('"name":"caveats","type":"Caveat[]"'));
+        expect(captured, contains('"name":"terms","type":"bytes"'));
       });
 
       test('throws SigningCancelledException when BitBox returns an empty signature', () async {

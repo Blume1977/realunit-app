@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -41,8 +42,10 @@ final _walletAddress = _privKey.address.hexEip55;
 
 const _metaMaskDelegator = '0x63c0c19a282a1b52b07dd5a65b58948a07dae32b';
 const _delegationManager = '0xdb9b1e94b5b69df7e401ddbede43491141047db3';
+const _relayerAddress = '0x1111111111111111111111111111111111111111';
+const _authority = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
-const _confirmedRecipient = '0xRecipient';
+const _confirmedRecipient = '0x2222222222222222222222222222222222222222';
 const _confirmedAmount = 5;
 
 /// Debug-wallet style credential: it is neither BitboxCredentials nor
@@ -53,11 +56,46 @@ class _UnsupportedCreds extends Fake implements CredentialsWithKnownAddress {
   EthereumAddress get address => _privKey.address;
 }
 
+final Map<String, dynamic> _caveatVectors = _loadCaveatVectors();
+
+Map<String, dynamic> _loadCaveatVectors() {
+  final decoded = jsonDecode(
+    File('test/packages/service/dfx/delegation_caveat_vectors.json').readAsStringSync(),
+  );
+  if (decoded is! Map<String, dynamic>) {
+    throw StateError('caveat vectors are not a JSON object');
+  }
+  return decoded;
+}
+
+String _caveatVector(String key) {
+  final value = _caveatVectors[key];
+  if (value is! String) {
+    throw StateError('caveat vector $key is missing');
+  }
+  return value;
+}
+
+List<Map<String, dynamic>> _transferCaveats() => <Map<String, dynamic>>[
+  <String, dynamic>{
+    'enforcer': '0x146713078D39eCC1F5338309c28405ccf85Abfbb',
+    'terms': _caveatVector('transferAmount5Recipient2222'),
+  },
+  <String, dynamic>{
+    'enforcer': '0x04658B29F6b82ed55274221a06Fc97D318E25416',
+    'terms': _caveatVector('limited'),
+  },
+  <String, dynamic>{
+    'enforcer': '0x1046bb45C8d673d4ea75321280DB34899413c069',
+    'terms': _caveatVector('timestamp'),
+  },
+];
+
 Map<String, dynamic> _eip7702Json({
   int chainId = 1,
   String recipient = _confirmedRecipient,
 }) => {
-  'relayerAddress': '0xrelay',
+  'relayerAddress': _relayerAddress,
   'delegationManagerAddress': _delegationManager,
   'delegatorAddress': _metaMaskDelegator,
   'userNonce': 7,
@@ -72,10 +110,10 @@ Map<String, dynamic> _eip7702Json({
     'Caveat': <Map<String, dynamic>>[],
   },
   'message': {
-    'delegate': '0xrelay',
+    'delegate': _relayerAddress,
     'delegator': _walletAddress,
-    'authority': '0xauth',
-    'caveats': <Map<String, dynamic>>[],
+    'authority': _authority,
+    'caveats': _transferCaveats(),
     'salt': 0,
   },
   // The asset address the mainnet RealUnit token resolves to in this fixture.
@@ -159,7 +197,7 @@ void main() {
             jsonEncode({
               'id': 42,
               'uid': 'RTabc',
-              'toAddress': '0xRecipient',
+              'toAddress': '0x2222222222222222222222222222222222222222',
               'amount': 5,
               'networkFeeRealu': 1,
               'tokenAddress': '0xRealu',
@@ -171,13 +209,16 @@ void main() {
         });
 
         final info = await build(client).prepareTransfer(
-          const RealUnitTransferDto(toAddress: '0xRecipient', amount: 5),
+          const RealUnitTransferDto(
+            toAddress: '0x2222222222222222222222222222222222222222',
+            amount: 5,
+          ),
         );
 
         expect(sentUri!.path, '/v1/realunit/transfer');
-        expect(body, {'toAddress': '0xRecipient', 'amount': 5});
+        expect(body, {'toAddress': '0x2222222222222222222222222222222222222222', 'amount': 5});
         expect(info.id, 42);
-        expect(info.eip7702.recipient, '0xRecipient');
+        expect(info.eip7702.recipient, '0x2222222222222222222222222222222222222222');
       },
     );
 
@@ -191,7 +232,10 @@ void main() {
 
         expect(
           () => build(client).prepareTransfer(
-            const RealUnitTransferDto(toAddress: '0xRecipient', amount: 5),
+            const RealUnitTransferDto(
+              toAddress: '0x2222222222222222222222222222222222222222',
+              amount: 5,
+            ),
           ),
           throwsA(
             isA<TransferGasFundingUnavailableException>().having(
@@ -217,7 +261,10 @@ void main() {
 
       expect(
         () => build(client).prepareTransfer(
-          const RealUnitTransferDto(toAddress: '0xRecipient', amount: 5),
+          const RealUnitTransferDto(
+            toAddress: '0x2222222222222222222222222222222222222222',
+            amount: 5,
+          ),
         ),
         throwsA(isA<TransferGasFundingUnavailableException>()),
       );
@@ -269,9 +316,9 @@ void main() {
         expect(envelope.containsKey('authorization'), isTrue);
 
         final delegation = envelope['delegation'] as Map<String, dynamic>;
-        expect(delegation['delegate'], '0xrelay');
+        expect(delegation['delegate'], _relayerAddress);
         expect(delegation['delegator'], _walletAddress);
-        expect(delegation['authority'], '0xauth');
+        expect(delegation['authority'], _authority);
         expect(delegation['salt'], '0');
         expect((delegation['signature'] as String).length, 132);
 
@@ -455,6 +502,30 @@ void main() {
           infoWith(() => _eip7702Json()..['amountWei'] = 'not-a-number'),
         );
       });
+
+      test('empty caveats are rejected', () async {
+        final json = _eip7702Json();
+        (json['message'] as Map<String, dynamic>)['caveats'] = <Map<String, dynamic>>[];
+        final info = RealUnitTransferPaymentInfoDto.fromJson({
+          'id': 42,
+          'uid': 'RTabc',
+          'toAddress': _confirmedRecipient,
+          'amount': _confirmedAmount,
+          'networkFeeRealu': 1,
+          'tokenAddress': '0xRealu',
+          'chainId': 1,
+          'eip7702': json,
+        });
+        final client = MockClient((_) async => fail('network'));
+        await expectLater(
+          () => _confirm(build(client), info),
+          throwsA(
+            predicate(
+              (error) => error is Exception && error.toString().contains('EIP-7702 caveats'),
+            ),
+          ),
+        );
+      });
     });
 
     // User-confirmed recipient/amount must match the prepare response before
@@ -507,8 +578,11 @@ void main() {
         );
         final txHash = await _confirm(
           build(client),
-          _info(toAddress: '0xrecipient', eip7702Recipient: '0xRECIPIENT'),
-          confirmedRecipient: '0xReCiPiEnT',
+          _info(
+            toAddress: '0x2222222222222222222222222222222222222222',
+            eip7702Recipient: '0X2222222222222222222222222222222222222222',
+          ),
+          confirmedRecipient: '0x2222222222222222222222222222222222222222',
         );
         expect(txHash, '0xok');
       });

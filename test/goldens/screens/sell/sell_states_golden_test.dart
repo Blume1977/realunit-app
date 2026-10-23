@@ -341,6 +341,17 @@ void main() {
         settings: const SettingsState(language: Language.de, currency: Currency.eur),
       ),
     );
+
+    // Same sheet slot as the idle confirm golden. The refusal sits in the
+    // sheet, above Bestätigen, instead of a bar across the button.
+    goldenTest(
+      'caveat rejection shows the existing failure sentence',
+      fileName: 'sell_confirm_caveat_snackbar',
+      constraints: phoneConstraints,
+      builder: () => sheetFor(
+        SellConfirmFailure('Exception: EIP-7702 caveats: rejected'),
+      ),
+    );
   });
 
   // ---- SellExecutedSheet (success sheet after a confirmed sell) ----

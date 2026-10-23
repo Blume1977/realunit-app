@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -34,6 +35,37 @@ class _MockWalletService extends Mock implements WalletService {}
 const _testPrivateKeyHex = 'fb1ace12f9801e85f3db1b3935dd47d9f064f98152466f47c701b5e12680e612';
 final _privKey = EthPrivateKey.fromHex(_testPrivateKeyHex);
 
+final Map<String, dynamic> _caveatVectors = _loadCaveatVectors();
+
+Map<String, dynamic> _loadCaveatVectors() {
+  final decoded = jsonDecode(
+    File('test/packages/service/dfx/delegation_caveat_vectors.json').readAsStringSync(),
+  );
+  if (decoded is! Map<String, dynamic>) {
+    throw StateError('caveat vectors are not a JSON object');
+  }
+  return decoded;
+}
+
+String _caveatVector(String key) {
+  final value = _caveatVectors[key];
+  if (value is! String) {
+    throw StateError('caveat vector $key is missing');
+  }
+  return value;
+}
+
+List<dynamic> _sellCaveats(String wrapperKey) => <dynamic>[
+  <String, dynamic>{
+    'enforcer': '0xE1302607a3251AF54c3a6e69318d6aa07F5eB46c',
+    'terms': _caveatVector(wrapperKey),
+  },
+  <String, dynamic>{
+    'enforcer': '0x1046bb45C8d673d4ea75321280DB34899413c069',
+    'terms': _caveatVector('timestamp'),
+  },
+];
+
 Map<String, dynamic> _delegationJson({
   String? delegator,
   int chainId = 1,
@@ -57,7 +89,7 @@ Map<String, dynamic> _delegationJson({
     'delegate': '0x1111111111111111111111111111111111111111',
     'delegator': delegator ?? _privKey.address.hexEip55.toLowerCase(),
     'authority': '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-    'caveats': <dynamic>[],
+    'caveats': _sellCaveats('sellWrapperAmount2'),
     'salt': 1,
   },
   'tokenAddress': '0x553C7f9C780316FC1D34b8e14ac2465Ab22a090B',
@@ -219,6 +251,27 @@ void main() {
         quoteId: 'quote_xyz',
       ),
       throwsA(isA<PayConfirmNotSubmittedException>()),
+    );
+  });
+
+  test('empty caveats are rejected', () async {
+    final client = MockClient((_) async => fail('network'));
+    final json = _delegationJson();
+    (json['message'] as Map<String, dynamic>)['caveats'] = <dynamic>[];
+
+    await expectLater(
+      build(client).confirmOcpPay(
+        swap: _swap(eip7702: Eip7702Data.fromJson(json)),
+        paymentLinkId: 'pl_abc',
+        quoteId: 'quote_xyz',
+      ),
+      throwsA(
+        isA<PayConfirmNotSubmittedException>().having(
+          (e) => e.message,
+          'message',
+          contains('EIP-7702 caveats'),
+        ),
+      ),
     );
   });
 
