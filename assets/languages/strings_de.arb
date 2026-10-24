@@ -408,6 +408,7 @@
   "sellMinAmount": "Mindestbetrag: ${amount} ${currency}",
   "sellRealu": "REALU verkaufen",
   "sellReviewAndConfirm": "Verkauf prüfen & bestätigen",
+  "sellShareCountMismatch": "Der Verkauf wurde nicht geöffnet. Die Anteilszahl entspricht nicht den eingegebenen Anteilen.",
   "sellSuccess": "Verkauf erfolgreich",
   "sellSuccessDescription": "Der Betrag wird Ihnen auf das angegebene Bankkonto ausgezahlt.",
   "send": "Senden",

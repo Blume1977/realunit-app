@@ -15,6 +15,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/eip
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/real_unit_sell_payment_info_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_sell_payment_info_service.dart';
+import 'package:realunit_wallet/packages/service/dfx/sell_quote_amount.dart';
 import 'package:realunit_wallet/packages/service/session_cache.dart';
 import 'package:realunit_wallet/packages/service/wallet_service.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
@@ -93,7 +94,8 @@ Map<String, dynamic> _eip7702Json() => {
         'salt': 0,
       },
       'tokenAddress': '0xtoken',
-      'amountWei': '12345',
+      // REALU has 0 decimals, so these base units are the 100 shares above.
+      'amountWei': '100',
       'depositAddress': '0xdeposit',
     };
 
@@ -151,6 +153,18 @@ void main() {
       expect(info.currency, Currency.chf); // response.currency wins
       expect(info.beneficiary.iban, 'CH...');
       expect(info.depositAddress, '0xdeposit');
+    });
+
+    test('200 whose share count differs from the request is refused', () async {
+      final json = _sellPaymentInfoJson();
+      json['amount'] = 12;
+      (json['eip7702'] as Map<String, dynamic>)['amountWei'] = '12';
+      final client = MockClient((_) async => http.Response(jsonEncode(json), 200));
+
+      expect(
+        () => build(client).getPaymentInfo(100, 'CH...'),
+        throwsA(isA<SellShareCountMismatchException>()),
+      );
     });
 
     test('403 → ApiException', () async {

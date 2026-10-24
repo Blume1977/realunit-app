@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/bank_account/bank_account.dart';
+import 'package:realunit_wallet/packages/service/dfx/models/payment/payment_info_error.dart';
 import 'package:realunit_wallet/screens/hardware_connect_bitbox/show_bitbox_reconnect_sheet.dart';
 import 'package:realunit_wallet/screens/sell/cubits/sell_converter/sell_converter_cubit.dart';
 import 'package:realunit_wallet/screens/sell/cubits/sell_payment_info/sell_payment_info_cubit.dart';
@@ -115,6 +116,35 @@ class SellButton extends StatelessWidget {
                 ),
                 AppFilledButton(
                   onPressed: null,
+                  label: '$amount ${S.of(context).sellRealu}',
+                ),
+              ],
+            ),
+          );
+        }
+        if (state is SellPaymentInfoFailure &&
+            state.error == PaymentInfoError.shareCountMismatch) {
+          final canRetry = bankAccount != null && amount.isNotEmpty;
+          return Padding(
+            padding: const .symmetric(vertical: 20),
+            child: Column(
+              spacing: 8.0,
+              children: [
+                Text(
+                  S.of(context).sellShareCountMismatch,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: RealUnitColors.status.red600,
+                  ),
+                ),
+                AppFilledButton(
+                  onPressed: canRetry
+                      ? () => context.read<SellPaymentInfoCubit>().getPaymentInfo(
+                          amount: amount,
+                          iban: bankAccount!.iban,
+                          currency: converterState.currency,
+                        )
+                      : null,
                   label: '$amount ${S.of(context).sellRealu}',
                 ),
               ],

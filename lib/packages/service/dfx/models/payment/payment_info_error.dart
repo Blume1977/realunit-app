@@ -7,5 +7,6 @@ enum PaymentInfoError {
   maxAmountExceeded,
   bitboxDisconnected,
   priceSourceUnavailable,
+  shareCountMismatch,
   unknown,
 }

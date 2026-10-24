@@ -9,6 +9,7 @@ import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/buy_exce
 import 'package:realunit_wallet/packages/service/dfx/models/payment/payment_info_error.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_sell_payment_info_service.dart';
+import 'package:realunit_wallet/packages/service/dfx/sell_quote_amount.dart';
 import 'package:realunit_wallet/packages/utils/fiat_amount.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/styles/currency.dart';
@@ -94,6 +95,9 @@ class SellPaymentInfoCubit extends Cubit<SellPaymentInfoState> {
           message: e.toString(),
         ),
       );
+    } on SellShareCountMismatchException {
+      if (isClosed) return;
+      emit(const SellPaymentInfoFailure(PaymentInfoError.shareCountMismatch));
     } on ApiException catch (e) {
       // 503 / PRICE_SOURCE_UNAVAILABLE = external price provider (Aktionariat)
       // down → no quote possible. Must stay below the KYC/Registration clauses

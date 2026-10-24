@@ -15,6 +15,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/rea
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/real_unit_sell_payment_info_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/real_unit_unsigned_transactions_request_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
+import 'package:realunit_wallet/packages/service/dfx/sell_quote_amount.dart';
 import 'package:realunit_wallet/packages/wallet/eip712_signer.dart';
 import 'package:realunit_wallet/packages/wallet/eip7702_signer.dart';
 import 'package:realunit_wallet/styles/currency.dart';
@@ -55,6 +56,12 @@ class RealUnitSellPaymentInfoService extends DFXAuthService {
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
       final responseDto = RealUnitSellPaymentInfoDto.fromJson(json);
+      requireSellQuoteMatchesRequestedShares(
+        requestedShares: amount,
+        returnedAmount: responseDto.amount,
+        amountWei: responseDto.eip7702.amountWei,
+        decimals: appStore.apiConfig.asset.decimals,
+      );
 
       return SellPaymentInfo(
         id: responseDto.id,

@@ -11,6 +11,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/eip
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/real_unit_sell_payment_info_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_sell_payment_info_service.dart';
+import 'package:realunit_wallet/packages/service/dfx/sell_quote_amount.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/packages/wallet/wallet_account.dart';
 import 'package:realunit_wallet/screens/sell/cubits/sell_payment_info/sell_payment_info_cubit.dart';
@@ -165,6 +166,19 @@ void main() {
 
       final f = cubit.state as SellPaymentInfoFailure;
       expect(f.error, PaymentInfoError.unknown);
+      expect(f.message, isEmpty);
+    });
+
+    test('a quote that changes the share count stays on the sell page', () async {
+      when(() => service.getPaymentInfo(any(), any(), currency: any(named: 'currency'))).thenAnswer(
+        (_) async => throw const SellShareCountMismatchException(),
+      );
+
+      final cubit = build();
+      await cubit.getPaymentInfo(amount: '10', iban: 'CH56');
+
+      final f = cubit.state as SellPaymentInfoFailure;
+      expect(f.error, PaymentInfoError.shareCountMismatch);
       expect(f.message, isEmpty);
     });
 

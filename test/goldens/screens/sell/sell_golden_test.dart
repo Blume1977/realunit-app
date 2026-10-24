@@ -13,6 +13,7 @@ import 'package:realunit_wallet/packages/service/dfx/dfx_bank_account_service.da
 import 'package:realunit_wallet/packages/service/dfx/dfx_brokerbot_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_price_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/bank_account/bank_account.dart';
+import 'package:realunit_wallet/packages/service/dfx/models/bank_account/dto/bank_account_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_sell_payment_info_service.dart';
 import 'package:realunit_wallet/packages/utils/default_assets.dart';
 import 'package:realunit_wallet/screens/sell/cubits/sell_balance/sell_balance_cubit.dart';
@@ -113,6 +114,11 @@ void main() {
     when(() => paymentInfoCubit.state).thenReturn(const SellPaymentInfoInitial());
     when(() => selectedBankAccountCubit.state).thenReturn(null);
     when(() => balanceCubit.state).thenReturn(zeroBalance());
+  });
+
+  tearDown(() {
+    final service = GetIt.instance<DfxBankAccountService>();
+    if (service is Mock) reset(service);
   });
 
   tearDownAll(() async => GetIt.instance.reset());
@@ -284,6 +290,54 @@ void main() {
         );
         when(() => paymentInfoCubit.state).thenReturn(
           const SellPaymentInfoFailure(PaymentInfoError.unknown),
+        );
+        return wrapForGolden(buildSubject());
+      },
+    );
+
+    goldenTest(
+      'share count in the quote does not match the request',
+      fileName: 'sell_share_count_mismatch',
+      constraints: const BoxConstraints.tightFor(width: 390, height: 844),
+      builder: () {
+        whenListen(
+          converterCubit,
+          Stream<SellConverterState>.value(
+            const SellConverterState(sharesText: '100', fiatText: '100'),
+          ),
+          initialState: const SellConverterState(loading: true),
+        );
+        when(() => selectedBankAccountCubit.state).thenReturn(
+          const BankAccount(
+            id: 1,
+            iban: 'CH9300762011623852957',
+            name: 'Raiffeisen',
+            isActive: true,
+            isDefault: true,
+          ),
+        );
+        when(() => GetIt.instance<DfxBankAccountService>().getBankAccounts()).thenAnswer(
+          (_) async => const [
+            BankAccountDto(
+              id: 1,
+              iban: 'CH9300762011623852957',
+              label: 'Raiffeisen',
+              isActive: true,
+              isDefault: true,
+            ),
+          ],
+        );
+        when(() => balanceCubit.state).thenReturn(
+          Balance(
+            chainId: 1,
+            contractAddress: '0x0',
+            walletAddress: '0x0',
+            balance: BigInt.from(1000000000000000000),
+            asset: realUnitAsset,
+          ),
+        );
+        when(() => paymentInfoCubit.state).thenReturn(
+          const SellPaymentInfoFailure(PaymentInfoError.shareCountMismatch),
         );
         return wrapForGolden(buildSubject());
       },

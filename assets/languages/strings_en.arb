@@ -408,6 +408,7 @@
   "sellMinAmount": "Minimum amount: ${amount} ${currency}",
   "sellRealu": "Sell REALU",
   "sellReviewAndConfirm": "Review & confirm sale",
+  "sellShareCountMismatch": "The sale was not opened. The share count does not match the shares you entered.",
   "sellSuccess": "Sell successful",
   "sellSuccessDescription": "The amount will be paid into the bank account you have specified.",
   "send": "Send",
