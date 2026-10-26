@@ -313,6 +313,32 @@ void main() {
           )).called(1);
     });
 
+    test('submit() forwards "Onboarding Process" for kycIssue type', () async {
+      when(() => service.createTicket(
+            type: any(named: 'type'),
+            reason: any(named: 'reason'),
+            name: any(named: 'name'),
+            message: any(named: 'message'),
+            file: any(named: 'file'),
+            fileName: any(named: 'fileName'),
+          )).thenAnswer((_) async => _ticket());
+      final cubit = SupportCreateTicketCubit(service);
+      cubit.selectType(SupportIssueType.kycIssue);
+      cubit.selectReason(SupportIssueReason.other);
+      cubit.updateMessage('hi');
+
+      await cubit.submit();
+
+      verify(() => service.createTicket(
+            type: SupportIssueType.kycIssue,
+            reason: SupportIssueReason.other,
+            name: 'Onboarding Process',
+            message: 'hi',
+            file: null,
+            fileName: null,
+          )).called(1);
+    });
+
     test('submit() captures the error message on failure', () async {
       when(() => service.createTicket(
             type: any(named: 'type'),

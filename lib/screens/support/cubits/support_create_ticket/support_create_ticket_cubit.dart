@@ -79,7 +79,7 @@ class SupportCreateTicketCubit extends Cubit<SupportCreateTicketState> {
     return switch (type) {
       SupportIssueType.genericIssue => 'General Issue',
       SupportIssueType.transactionIssue => 'Transaction Issue',
-      SupportIssueType.kycIssue => 'Account Opening Process',
+      SupportIssueType.kycIssue => 'Onboarding Process',
       SupportIssueType.limitRequest => 'Limit Request',
       SupportIssueType.bugReport => 'Bug Report',
       _ => 'Support Request',

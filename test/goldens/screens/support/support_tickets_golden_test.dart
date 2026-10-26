@@ -94,7 +94,7 @@ void main() {
               created: DateTime.utc(2024, 3, 4),
             ),
             _ticket(
-              name: 'Account Opening Process',
+              name: 'Onboarding Process',
               state: SupportIssueState.completed,
               created: DateTime.utc(2024, 2, 18),
             ),
