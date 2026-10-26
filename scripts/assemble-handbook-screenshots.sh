@@ -493,6 +493,7 @@ MAPPING=(
   "441-pay-locations-detail-none=screens/pay/goldens/macos/pay_locations_detail_none.png"
   "442-pay-locations-detail-others=screens/pay/goldens/macos/pay_locations_detail_others.png"
   "443-pay-locations-detail-photo=screens/pay/goldens/macos/pay_locations_detail_photo.png"
+  "444-pay-quote-page-country-not-allowed=screens/pay/goldens/macos/pay_quote_page_country_not_allowed.png"
 )
 
 missing=()

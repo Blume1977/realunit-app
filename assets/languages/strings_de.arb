@@ -186,6 +186,7 @@
   "pay": "Bezahlen",
   "payAwaitingSettlement": "Zahlung wird abgeschlossen",
   "payConfirmButton": "Bezahlen",
+  "payFailureCountryNotAllowed": "Bezahlen ist für Ihr Wohnsitzland nicht verfügbar.",
   "payFailureGeneric": "Bei der Zahlung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
   "payFailurePayUnavailable": "Bezahlen gibt es nur mit der Software-Wallet.",
   "payFailureQuoteExpired": "Das Zahlungsangebot ist abgelaufen. Bitte scannen Sie den Code erneut.",

@@ -128,7 +128,7 @@ void main() {
     group('unlocked', () {
       setUp(() {
         when(() => settingsBloc.state).thenReturn(
-          const SettingsState(walletFeaturePay: true),
+          const SettingsState(walletFeaturePay: true, payAccess: AccountPayAccess.allowed),
         );
       });
 
@@ -175,7 +175,7 @@ void main() {
     group('BitBox', () {
       setUp(() {
         when(() => settingsBloc.state).thenReturn(
-          const SettingsState(walletFeaturePay: true),
+          const SettingsState(walletFeaturePay: true, payAccess: AccountPayAccess.allowed),
         );
         when(() => homeBloc.state).thenReturn(homeWith(_BitboxWallet()));
       });
@@ -193,7 +193,7 @@ void main() {
     group('debug wallet', () {
       setUp(() {
         when(() => settingsBloc.state).thenReturn(
-          const SettingsState(walletFeaturePay: true),
+          const SettingsState(walletFeaturePay: true, payAccess: AccountPayAccess.allowed),
         );
         when(() => homeBloc.state).thenReturn(homeWith(_DebugWallet()));
       });
@@ -204,19 +204,74 @@ void main() {
       });
     });
 
+    group('account pay access', () {
+      testWidgets('hides pay while the account access is still unknown', (tester) async {
+        when(() => settingsBloc.state).thenReturn(
+          const SettingsState(walletFeaturePay: true),
+        );
+        await pumpActions(tester);
+
+        expect(actionButtonByLabel(S.current.buy), findsOneWidget);
+        expect(actionButtonByLabel(S.current.sell), findsOneWidget);
+        expect(actionButtonByLabel(S.current.pay), findsNothing);
+        expect(find.byType(Expanded), findsNWidgets(2));
+      });
+
+      testWidgets('hides pay when the API does not allow it for the account', (tester) async {
+        when(() => settingsBloc.state).thenReturn(
+          const SettingsState(walletFeaturePay: true, payAccess: AccountPayAccess.notAllowed),
+        );
+        await pumpActions(tester);
+
+        expect(actionButtonByLabel(S.current.pay), findsNothing);
+        expect(find.byType(Expanded), findsNWidgets(2));
+      });
+    });
+
     group('showPayAction', () {
-      test('software wallet with the switch on', () {
+      test('software wallet with the switch on and an allowed account', () {
         expect(
-          showPayAction(walletFeaturePay: true, walletType: WalletType.software),
+          showPayAction(
+            walletFeaturePay: true,
+            walletType: WalletType.software,
+            payAccess: AccountPayAccess.allowed,
+          ),
           isTrue,
         );
       });
 
       test('bitbox, debug, and a missing wallet stay off', () {
-        expect(showPayAction(walletFeaturePay: true, walletType: WalletType.bitbox), isFalse);
-        expect(showPayAction(walletFeaturePay: true, walletType: WalletType.debug), isFalse);
-        expect(showPayAction(walletFeaturePay: true, walletType: null), isFalse);
-        expect(showPayAction(walletFeaturePay: false, walletType: WalletType.software), isFalse);
+        for (final walletType in [WalletType.bitbox, WalletType.debug, null]) {
+          expect(
+            showPayAction(
+              walletFeaturePay: true,
+              walletType: walletType,
+              payAccess: AccountPayAccess.allowed,
+            ),
+            isFalse,
+          );
+        }
+        expect(
+          showPayAction(
+            walletFeaturePay: false,
+            walletType: WalletType.software,
+            payAccess: AccountPayAccess.allowed,
+          ),
+          isFalse,
+        );
+      });
+
+      test('an unknown or refused account access stays off', () {
+        for (final payAccess in [AccountPayAccess.unknown, AccountPayAccess.notAllowed]) {
+          expect(
+            showPayAction(
+              walletFeaturePay: true,
+              walletType: WalletType.software,
+              payAccess: payAccess,
+            ),
+            isFalse,
+          );
+        }
       });
     });
 
@@ -239,7 +294,7 @@ void main() {
           expect(actionButtonByLabel(S.current.send), findsNothing);
 
           controller.add(
-            const SettingsState(walletFeaturePay: true),
+            const SettingsState(walletFeaturePay: true, payAccess: AccountPayAccess.allowed),
           );
           // Two pumps: the first delivers the stream event (async broadcast
           // delivery updates the mock's state and marks the element dirty),

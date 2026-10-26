@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/buy_exceptions.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/pay_exceptions.dart';
 
 void main() {
   group('$ApiException', () {
@@ -107,6 +108,19 @@ void main() {
         expect(exception, isA<RegistrationRequiredException>());
         final reg = exception as RegistrationRequiredException;
         expect(reg.context, 'RealunitSell');
+      });
+
+      test('creates PayCountryNotAllowedException with httpStatusCode', () {
+        final exception = ApiException.fromJson(
+          {'code': 'PAY_COUNTRY_NOT_ALLOWED', 'message': 'RealUnit pay is not available for the residence country'},
+          httpStatusCode: 403,
+        );
+
+        expect(exception, isA<PayCountryNotAllowedException>());
+        expect(exception.statusCode, 403);
+        expect(exception.code, 'PAY_COUNTRY_NOT_ALLOWED');
+        expect(exception.message, 'RealUnit pay is not available for the residence country');
+        expect(exception.toString(), contains('PayCountryNotAllowedException'));
       });
 
       test('HTTP 426 is UpgradeRequired even when JSON code is KYC', () {

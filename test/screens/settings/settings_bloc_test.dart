@@ -159,6 +159,34 @@ void main() {
     );
 
     blocTest<SettingsBloc, SettingsState>(
+      'ApplyAccountPayAccessEvent(true) marks the account as allowed to pay',
+      build: build,
+      act: (bloc) => bloc.add(const ApplyAccountPayAccessEvent(true)),
+      expect: () => [
+        isA<SettingsState>().having((s) => s.payAccess, 'payAccess', AccountPayAccess.allowed),
+      ],
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
+      'ApplyAccountPayAccessEvent(false) marks the account as not allowed to pay',
+      build: build,
+      act: (bloc) => bloc.add(const ApplyAccountPayAccessEvent(false)),
+      expect: () => [
+        isA<SettingsState>().having((s) => s.payAccess, 'payAccess', AccountPayAccess.notAllowed),
+      ],
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
+      'ClearAccountPayAccessEvent forgets the pay access',
+      build: build,
+      seed: () => const SettingsState(payAccess: AccountPayAccess.allowed),
+      act: (bloc) => bloc.add(const ClearAccountPayAccessEvent()),
+      expect: () => [
+        isA<SettingsState>().having((s) => s.payAccess, 'payAccess', AccountPayAccess.unknown),
+      ],
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
       'ClearAccountCurrencyEvent restores the unset default when nothing is stored',
       build: build,
       seed: () => const SettingsState(currency: Currency.chf),

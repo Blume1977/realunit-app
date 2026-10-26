@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/buy_exceptions.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/pay_exceptions.dart';
 
 class ApiException implements Exception {
   final int? statusCode;
@@ -27,6 +28,8 @@ class ApiException implements Exception {
         return KycLevelRequiredException.fromJson(json, httpStatusCode: httpStatusCode);
       case 'REGISTRATION_REQUIRED':
         return RegistrationRequiredException.fromJson(json, httpStatusCode: httpStatusCode);
+      case 'PAY_COUNTRY_NOT_ALLOWED':
+        return PayCountryNotAllowedException.fromJson(json, httpStatusCode: httpStatusCode);
       default:
         final message = json['message'];
         return ApiException(

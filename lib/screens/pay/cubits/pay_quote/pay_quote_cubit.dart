@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/pay_exceptions.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/dto/lnurlp_payment_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/dto/real_unit_swap_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/swap_payment_info.dart';
@@ -91,6 +92,9 @@ class PayQuoteCubit extends Cubit<PayQuoteState> {
           totalEur: totalEur,
         ),
       );
+    } on PayCountryNotAllowedException {
+      if (isClosed) return;
+      emit(const PayQuoteNotAllowed());
     } catch (e) {
       if (isClosed) return;
       emit(PayQuoteError(ApiException.userFacingMessage(e)));

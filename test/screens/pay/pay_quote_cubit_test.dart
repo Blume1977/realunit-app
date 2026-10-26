@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/pay_exceptions.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/dto/lnurlp_payment_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/dto/real_unit_swap_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/pay/swap_payment_info.dart';
@@ -242,6 +243,28 @@ void main() {
     verify: (cubit) {
       expect(cubit.state, isNot(isA<PayQuoteReady>()));
     },
+  );
+
+  blocTest<PayQuoteCubit, PayQuoteState>(
+    'PAY_COUNTRY_NOT_ALLOWED on the swap quote emits PayQuoteNotAllowed, not an error',
+    build: build,
+    setUp: () {
+      when(
+        () => payService.getPaymentDetails('pl_realunit_ocp_sepolia'),
+      ).thenAnswer((_) async => _details(expiration: DateTime.now().add(const Duration(minutes: 5))));
+      when(() => payService.getSwapPaymentInfo(any())).thenThrow(
+        const PayCountryNotAllowedException(
+          statusCode: 403,
+          code: 'PAY_COUNTRY_NOT_ALLOWED',
+          message: 'RealUnit pay is not available for the residence country',
+        ),
+      );
+    },
+    act: (cubit) => cubit.load(),
+    expect: () => [
+      isA<PayQuoteLoading>(),
+      const PayQuoteNotAllowed(),
+    ],
   );
 
   blocTest<PayQuoteCubit, PayQuoteState>(

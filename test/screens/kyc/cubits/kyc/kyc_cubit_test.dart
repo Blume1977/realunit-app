@@ -27,7 +27,7 @@ import 'package:realunit_wallet/packages/service/dfx/real_unit_registration_serv
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/screens/kyc/cubits/kyc/kyc_cubit.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
-import 'package:realunit_wallet/setup/account_currency_sync.dart';
+import 'package:realunit_wallet/setup/account_sync.dart';
 import 'package:realunit_wallet/styles/currency.dart';
 
 class _MockDfxKycService extends Mock implements DfxKycService {}
@@ -223,7 +223,7 @@ void main() {
         final settings = _MockSettingsBloc();
         GetIt.instance.registerSingleton<SettingsBloc>(settings);
         GetIt.instance.registerSingleton(
-          AccountCurrencySync(
+          AccountSync(
             settings: settings,
             kyc: kycService,
             currentWallet: () => wallet,
@@ -245,6 +245,10 @@ void main() {
       verify: (_) {
         verify(
           () => GetIt.instance<SettingsBloc>().add(const ApplyAccountCurrencyEvent(Currency.chf)),
+        ).called(1);
+        // No capability in the fixture: a legacy backend keeps pay available.
+        verify(
+          () => GetIt.instance<SettingsBloc>().add(const ApplyAccountPayAccessEvent(true)),
         ).called(1);
       },
       tearDown: () async => GetIt.instance.reset(),
@@ -277,7 +281,7 @@ void main() {
         final settings = _MockSettingsBloc();
         GetIt.instance.registerSingleton<SettingsBloc>(settings);
         GetIt.instance.registerSingleton(
-          AccountCurrencySync(
+          AccountSync(
             settings: settings,
             kyc: kycService,
             currentWallet: () => null,
@@ -307,7 +311,7 @@ void main() {
       GetIt.instance.registerSingleton<SettingsBloc>(settings);
       AWallet? current = wallet;
       GetIt.instance.registerSingleton(
-        AccountCurrencySync(
+        AccountSync(
           settings: settings,
           kyc: kycService,
           currentWallet: () => current,
@@ -332,7 +336,7 @@ void main() {
     });
 
     blocTest<KycCubit, KycState>(
-      'does not dispatch ApplyAccountCurrencyEvent when AccountCurrencySync is unregistered',
+      'does not dispatch ApplyAccountCurrencyEvent when AccountSync is unregistered',
       setUp: () {
         GetIt.instance.registerSingleton<SettingsBloc>(_MockSettingsBloc());
         when(() => kycService.getKycStatus()).thenAnswer(

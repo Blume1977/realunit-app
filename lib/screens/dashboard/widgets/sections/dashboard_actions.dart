@@ -11,20 +11,31 @@ import 'package:realunit_wallet/widgets/action_button.dart';
 
 /// Pay exists only for the software wallet. BitBox sell is a separate
 /// user-signed path; Pay is financed like software-wallet sell and is not offered.
-bool showPayAction({required bool walletFeaturePay, required WalletType? walletType}) =>
-    walletFeaturePay && walletType == WalletType.software;
+/// The account must also be allowed to pay (GET /v2/user capability); while that
+/// is unknown the action stays hidden rather than appearing and vanishing.
+bool showPayAction({
+  required bool walletFeaturePay,
+  required WalletType? walletType,
+  required AccountPayAccess payAccess,
+}) =>
+    walletFeaturePay && walletType == WalletType.software && payAccess == AccountPayAccess.allowed;
 
 class DashboardActions extends StatelessWidget {
   const DashboardActions({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final walletFeaturePay = context.watch<SettingsBloc>().state.walletFeaturePay;
+    final settings = context.watch<SettingsBloc>().state;
+    final walletFeaturePay = settings.walletFeaturePay;
     // A locked dashboard has no Pay button, so it does not subscribe to the wallet.
     final walletType = walletFeaturePay
         ? context.watch<HomeBloc>().state.openWallet?.walletType
         : null;
-    final showPay = showPayAction(walletFeaturePay: walletFeaturePay, walletType: walletType);
+    final showPay = showPayAction(
+      walletFeaturePay: walletFeaturePay,
+      walletType: walletType,
+      payAccess: settings.payAccess,
+    );
 
     return Row(
       spacing: 10,

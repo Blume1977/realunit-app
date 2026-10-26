@@ -50,6 +50,7 @@ void main() {
       const PayConfirmNotSubmittedException('test'),
       const PaySignatureUnsupportedException(),
       const PayUnsignedTxMismatchException('test'),
+      const PayCountryNotAllowedException(code: 'TEST', message: 'test'),
       const InvalidRecipientAddressException('test'),
       const TransferSignatureUnsupportedException(),
       const TransferGasFundingUnavailableException(),

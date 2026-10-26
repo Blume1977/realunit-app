@@ -1,5 +1,10 @@
 part of 'settings_bloc.dart';
 
+/// Whether the open account may pay with REALU, as reported by GET /v2/user
+/// (`capabilities.canPayWithRealUnit`). [unknown] until the account is loaded
+/// and after the wallet closes; the pay action is offered only for [allowed].
+enum AccountPayAccess { unknown, allowed, notAllowed }
+
 final class SettingsState {
   const SettingsState({
     this.language = Language.en,
@@ -16,6 +21,7 @@ final class SettingsState {
     this.walletFeatureSendCentral = false,
     this.walletFeaturePromoCodeCentral = false,
     this.walletFeatureReferralCentral = false,
+    this.payAccess = AccountPayAccess.unknown,
     bool insiderPayEnabled = false,
     bool insiderSendEnabled = false,
     bool insiderReferralEnabled = false,
@@ -39,6 +45,7 @@ final class SettingsState {
   final bool walletFeatureSendCentral;
   final bool walletFeaturePromoCodeCentral;
   final bool walletFeatureReferralCentral;
+  final AccountPayAccess payAccess;
 
   bool get insiderPayEnabled => walletFeaturePay;
   bool get insiderSendEnabled => walletFeatureSend;
@@ -60,6 +67,7 @@ final class SettingsState {
     bool? walletFeatureSendCentral,
     bool? walletFeaturePromoCodeCentral,
     bool? walletFeatureReferralCentral,
+    AccountPayAccess? payAccess,
   }) => SettingsState(
     language: language ?? this.language,
     currency: currency ?? this.currency,
@@ -76,5 +84,6 @@ final class SettingsState {
     walletFeaturePromoCodeCentral:
         walletFeaturePromoCodeCentral ?? this.walletFeaturePromoCodeCentral,
     walletFeatureReferralCentral: walletFeatureReferralCentral ?? this.walletFeatureReferralCentral,
+    payAccess: payAccess ?? this.payAccess,
   );
 }

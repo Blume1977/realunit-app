@@ -67,12 +67,19 @@ class UserCapabilitiesDto {
   // user is ineligible.
   final CreateSupportTicketCapabilityDto? createSupportTicket;
 
+  // Whether the account may pay with REALU (RealUnit pay). The API decides
+  // from the residence country; the app only hides the pay action when
+  // false. `null` when the API does not (yet) ship the field — the app then
+  // offers pay as before the capability existed.
+  final bool? canPayWithRealUnit;
+
   const UserCapabilitiesDto({
     this.canEditName = false,
     this.canEditMail = false,
     this.canEditPhone = false,
     this.canEditAddress = false,
     this.createSupportTicket,
+    this.canPayWithRealUnit,
   });
 
   factory UserCapabilitiesDto.fromJson(Map<String, dynamic> json) {
@@ -86,6 +93,7 @@ class UserCapabilitiesDto {
               json['createSupportTicket'] as Map<String, dynamic>,
             )
           : null,
+      canPayWithRealUnit: json['canPayWithRealUnit'] as bool?,
     );
   }
 }

@@ -59,6 +59,9 @@ class PayQuoteView extends StatelessWidget {
               PayQuoteUnavailable() => _PayQuoteMessage(
                 message: S.of(context).payQuoteUnavailable,
               ),
+              PayQuoteNotAllowed() => _PayQuoteMessage(
+                message: S.of(context).payFailureCountryNotAllowed,
+              ),
               PayQuoteError(:final message) => _PayQuoteMessage(
                 message: message.isNotEmpty
                     ? message

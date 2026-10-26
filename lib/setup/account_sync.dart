@@ -5,13 +5,14 @@ import 'package:realunit_wallet/packages/service/dfx/models/user/dto/user_dto.da
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 
-/// Applies GET /v2/user.currency when a wallet opens or is replaced, and
-/// clears a non-persisted account default when it closes.
+/// Applies the account defaults from GET /v2/user (display currency and the
+/// pay access capability) when a wallet opens or is replaced, and clears the
+/// non-persisted defaults when it closes.
 ///
 /// Extracted from [WalletApp] so open / close / A→B can be tested without
 /// pumping the full app (same seam idea as boot_navigation).
-class AccountCurrencySync {
-  AccountCurrencySync({
+class AccountSync {
+  AccountSync({
     required SettingsBloc settings,
     required DfxKycService kyc,
     required AWallet? Function() currentWallet,
@@ -26,15 +27,13 @@ class AccountCurrencySync {
 
   AWallet? get currentWallet => _currentWallet();
 
-  /// Applies an already-fetched GET /v2/user currency (KYC path) only if
+  /// Applies an already-fetched GET /v2/user response (KYC path) only if
   /// [captured] is still the open wallet.
   void applyFromUser(UserDto user, {required AWallet? captured}) {
-    final currency = user.currency;
-    if (currency == null) return;
     final open = _currentWallet();
     if (open == null || !identical(open, captured)) return;
     _generation++;
-    _settings.add(ApplyAccountCurrencyEvent(currency));
+    _dispatch(user);
   }
 
   void onOpened(AWallet? wallet) {
@@ -45,10 +44,12 @@ class AccountCurrencySync {
   void onClosed() {
     _generation++;
     _settings.add(const ClearAccountCurrencyEvent());
+    _settings.add(const ClearAccountPayAccessEvent());
   }
 
   void onSwitched(AWallet? wallet) {
     _settings.add(const ClearAccountCurrencyEvent());
+    _settings.add(const ClearAccountPayAccessEvent());
     onOpened(wallet);
   }
 
@@ -57,12 +58,20 @@ class AccountCurrencySync {
       final user = await _kyc.getUser();
       if (generation != _generation) return;
       if (!identical(_currentWallet(), captured)) return;
-      final currency = user.currency;
-      if (currency == null) return;
-      _settings.add(ApplyAccountCurrencyEvent(currency));
+      _dispatch(user);
     } catch (_) {
-      // Account currency is a display default; boot must not fail if /v2/user
-      // is unavailable.
+      // Account defaults are display state; boot must not fail if /v2/user is
+      // unavailable. Pay access then stays unknown and the pay action hidden.
     }
+  }
+
+  void _dispatch(UserDto user) {
+    final currency = user.currency;
+    if (currency != null) _settings.add(ApplyAccountCurrencyEvent(currency));
+    // A backend without the capability (null) does not gate pay: the action
+    // behaves as before the capability existed.
+    _settings.add(
+      ApplyAccountPayAccessEvent(user.capabilities.canPayWithRealUnit ?? true),
+    );
   }
 }

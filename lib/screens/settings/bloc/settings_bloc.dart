@@ -35,6 +35,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SetCurrencyEvent>(_onSetCurrencyEvent);
     on<ApplyAccountCurrencyEvent>(_onApplyAccountCurrencyEvent);
     on<ClearAccountCurrencyEvent>(_onClearAccountCurrencyEvent);
+    on<ApplyAccountPayAccessEvent>(_onApplyAccountPayAccessEvent);
+    on<ClearAccountPayAccessEvent>(_onClearAccountPayAccessEvent);
     on<SetLanguageEvent>(_onSetLanguageEvent);
     on<SetNetworkModeEvent>(_onSetNetworkModeEvent);
     on<ToggleHideAmountEvent>(_onToggleHideAmountEvent);
@@ -80,6 +82,24 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) {
     if (_settingsRepository.hasStoredCurrency) return;
     emit(state.copyWith(currency: Currency.fromCode(_settingsRepository.currency)));
+  }
+
+  void _onApplyAccountPayAccessEvent(
+    ApplyAccountPayAccessEvent event,
+    Emitter<SettingsState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        payAccess: event.allowed ? AccountPayAccess.allowed : AccountPayAccess.notAllowed,
+      ),
+    );
+  }
+
+  void _onClearAccountPayAccessEvent(
+    ClearAccountPayAccessEvent event,
+    Emitter<SettingsState> emit,
+  ) {
+    emit(state.copyWith(payAccess: AccountPayAccess.unknown));
   }
 
   Future<void> _onSetNetworkModeEvent(

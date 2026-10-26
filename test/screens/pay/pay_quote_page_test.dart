@@ -350,6 +350,14 @@ void main() {
       expect(find.text(S.current.payQuoteUnavailable), findsOne);
     });
 
+    testWidgets('not-allowed state shows the residence message without retry', (tester) async {
+      when(() => quoteCubit.state).thenReturn(const PayQuoteNotAllowed());
+      await tester.pumpApp(buildSubject());
+
+      expect(find.text(S.current.payFailureCountryNotAllowed), findsOne);
+      expect(find.byKey(const ValueKey('payQuoteRetryButton')), findsNothing);
+    });
+
     testWidgets('error state shows the API message 1:1', (tester) async {
       when(() => quoteCubit.state).thenReturn(const PayQuoteError('boom'));
       await tester.pumpApp(buildSubject());

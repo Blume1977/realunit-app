@@ -16,7 +16,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/wallet/real_unit_reg
 import 'package:realunit_wallet/packages/service/dfx/real_unit_legal_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_registration_service.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
-import 'package:realunit_wallet/setup/account_currency_sync.dart';
+import 'package:realunit_wallet/setup/account_sync.dart';
 import 'package:realunit_wallet/setup/di.dart';
 import 'package:realunit_wallet/setup/error_handling/crash_reporting.dart';
 
@@ -77,8 +77,8 @@ class KycCubit extends Cubit<KycState> {
 
   Future<void> checkKyc({String? context}) async {
     _kycContext = (context == null || context.isEmpty) ? _kycContext : context;
-    _walletAtCheckStart = getIt.isRegistered<AccountCurrencySync>()
-        ? getIt<AccountCurrencySync>().currentWallet
+    _walletAtCheckStart = getIt.isRegistered<AccountSync>()
+        ? getIt<AccountSync>().currentWallet
         : null;
     final generation = ++_runGeneration;
     try {
@@ -93,8 +93,8 @@ class KycCubit extends Cubit<KycState> {
   }
 
   void _applyAccountCurrency(UserDto user) {
-    if (!getIt.isRegistered<AccountCurrencySync>()) return;
-    getIt<AccountCurrencySync>().applyFromUser(user, captured: _walletAtCheckStart);
+    if (!getIt.isRegistered<AccountSync>()) return;
+    getIt<AccountSync>().applyFromUser(user, captured: _walletAtCheckStart);
   }
 
   Future<void> _runCheckKyc(int generation) async {

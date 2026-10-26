@@ -73,6 +73,12 @@ class PayQuoteUnavailable extends PayQuoteState {
   const PayQuoteUnavailable();
 }
 
+/// The API refused the pay quote for this account (`PAY_COUNTRY_NOT_ALLOWED`):
+/// the residence country is not enabled for RealUnit pay. Not retryable.
+class PayQuoteNotAllowed extends PayQuoteState {
+  const PayQuoteNotAllowed();
+}
+
 class PayQuoteError extends PayQuoteState {
   final String message;
 

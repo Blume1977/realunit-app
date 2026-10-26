@@ -41,6 +41,23 @@ final class ClearAccountCurrencyEvent extends SettingsEvent {
   const ClearAccountCurrencyEvent();
 }
 
+/// Pay access of the open account from GET /v2/user
+/// (`capabilities.canPayWithRealUnit`). Not written to prefs.
+final class ApplyAccountPayAccessEvent extends SettingsEvent {
+  final bool allowed;
+
+  const ApplyAccountPayAccessEvent(this.allowed);
+
+  @override
+  List<Object> get props => [allowed];
+}
+
+/// Forgets the pay access (wallet closed or switched): it is unknown until the
+/// next account is loaded.
+final class ClearAccountPayAccessEvent extends SettingsEvent {
+  const ClearAccountPayAccessEvent();
+}
+
 final class SetNetworkModeEvent extends SettingsEvent {
   final NetworkMode networkMode;
 

@@ -186,6 +186,7 @@
   "pay": "Pay",
   "payAwaitingSettlement": "Completing payment",
   "payConfirmButton": "Pay",
+  "payFailureCountryNotAllowed": "Pay is not available for your country of residence.",
   "payFailureGeneric": "Something went wrong with the payment. Please try again.",
   "payFailurePayUnavailable": "Pay is available with the software wallet only.",
   "payFailureQuoteExpired": "The payment quote expired. Please scan the code again.",

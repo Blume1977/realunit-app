@@ -3,6 +3,8 @@
 // cleanly in logs, Sentry, and user-facing error states instead of the Dart
 // default `Instance of '...'`.
 
+import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
+
 /// The scanned QR / pasted code is not a DFX Open CryptoPay payment link.
 class InvalidPaymentLinkException implements Exception {
   final String reason;
@@ -49,4 +51,27 @@ class PayUnsignedTxMismatchException implements Exception {
 
   @override
   String toString() => 'PayUnsignedTxMismatchException: $reason';
+}
+
+/// The DFX API refused the pay quote or confirmation because the account's
+/// residence country is not enabled for RealUnit pay (`PAY_COUNTRY_NOT_ALLOWED`).
+/// The app renders its own copy for it; which countries qualify is decided by
+/// the API alone and mirrored by `UserCapabilitiesDto.canPayWithRealUnit`.
+class PayCountryNotAllowedException extends ApiException {
+  const PayCountryNotAllowedException({
+    super.statusCode,
+    required super.code,
+    required super.message,
+  });
+
+  factory PayCountryNotAllowedException.fromJson(Map<String, dynamic> json, {int? httpStatusCode}) {
+    return PayCountryNotAllowedException(
+      statusCode: json['statusCode'] as int? ?? httpStatusCode,
+      code: json['code'] as String,
+      message: json['message'] as String,
+    );
+  }
+
+  @override
+  String toString() => 'PayCountryNotAllowedException: $message';
 }

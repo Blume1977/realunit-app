@@ -108,6 +108,15 @@ void main() {
       expect(dto.canEditAddress, isFalse);
     });
 
+    test('canPayWithRealUnit is read as sent and null when the API omits it', () {
+      expect(UserCapabilitiesDto.fromJson({'canPayWithRealUnit': true}).canPayWithRealUnit, isTrue);
+      expect(UserCapabilitiesDto.fromJson({'canPayWithRealUnit': false}).canPayWithRealUnit, isFalse);
+      // Pre-rollout backend: the app must not gate pay on a missing field.
+      expect(UserCapabilitiesDto.fromJson({}).canPayWithRealUnit, isNull);
+      expect(UserCapabilitiesDto.fromJson({'canPayWithRealUnit': null}).canPayWithRealUnit, isNull);
+      expect(const UserCapabilitiesDto().canPayWithRealUnit, isNull);
+    });
+
     test('const default constructor yields all-false capabilities', () {
       // The default instance is the fallback used when the API does not
       // return a `capabilities` block at all — it must be conservative.

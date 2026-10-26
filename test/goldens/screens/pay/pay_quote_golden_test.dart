@@ -195,5 +195,22 @@ void main() {
         );
       },
     );
+
+    // The API refused the quote for this account (PAY_COUNTRY_NOT_ALLOWED):
+    // the residence country is not enabled for pay. No retry button.
+    goldenTest(
+      'residence country not enabled for pay message',
+      fileName: 'pay_quote_page_country_not_allowed',
+      constraints: phoneConstraints,
+      builder: () {
+        when(() => quoteCubit.state).thenReturn(const PayQuoteNotAllowed());
+        return wrapForGolden(
+          BlocProvider<PayQuoteCubit>.value(
+            value: quoteCubit,
+            child: const PayQuoteView(),
+          ),
+        );
+      },
+    );
   });
 }
