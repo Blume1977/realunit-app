@@ -19,3 +19,9 @@ class SellConfirmFailure extends SellConfirmState {
   @override
   List<Object?> get props => [error];
 }
+
+/// The delegation is outside the expected EIP-712 domain or not a root
+/// delegation; nothing was signed.
+class SellConfirmEnvelopeRejected extends SellConfirmFailure {
+  SellConfirmEnvelopeRejected(super.error);
+}

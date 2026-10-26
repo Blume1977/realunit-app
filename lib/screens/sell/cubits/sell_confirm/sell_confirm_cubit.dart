@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:realunit_wallet/packages/service/dfx/delegation_caveat_check.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/sell_exceptions.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
@@ -24,6 +25,9 @@ class SellConfirmCubit extends Cubit<SellConfirmState> {
       // The sell already completed server-side; only the response was lost.
       if (isClosed) return;
       emit(SellConfirmSuccess());
+    } on DelegationEnvelopeMismatchException catch (e) {
+      if (isClosed) return;
+      emit(SellConfirmEnvelopeRejected(e.toString()));
     } catch (e) {
       if (isClosed) return;
       emit(SellConfirmFailure(ApiException.userFacingMessage(e)));

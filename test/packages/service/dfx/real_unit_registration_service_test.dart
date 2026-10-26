@@ -12,6 +12,7 @@ import 'package:realunit_wallet/packages/service/dfx/api_client.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/bitbox_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/buy_exceptions.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_date_unavailable_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_rejected_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/registration/registration_email_status.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/registration/registration_user_type.dart';
@@ -376,6 +377,77 @@ void main() {
         () => build(client).registerWallet(buildUserData()),
         throwsA(isA<BitboxNotConnectedException>()),
       );
+    });
+
+    group('registration date', () {
+      late FakeBitboxCredentials creds;
+      late List<String> paths;
+      late List<String> walletBodies;
+
+      http.Client clientReturningDate(String date) => MockClient((request) async {
+        paths.add(request.url.path);
+        if (request.url.path == '/v1/realunit/register/wallet') {
+          walletBodies.add(request.body);
+        }
+        if (request.url.path == '/v1/realunit/register/date') {
+          return http.Response(jsonEncode({'date': date}), 200);
+        }
+        return http.Response(jsonEncode({'status': 'completed'}), 201);
+      });
+
+      setUp(() {
+        creds = FakeBitboxCredentials(signDelay: Duration.zero);
+        paths = [];
+        walletBodies = [];
+        when(() => account.primaryAddress).thenReturn(creds);
+      });
+
+      test('signs and submits a well-formed YYYY-MM-DD date', () async {
+        await build(clientReturningDate('2026-07-13')).registerWallet(buildUserData());
+
+        expect(creds.signCallCount, 1);
+        expect(paths, contains('/v1/realunit/register/date'));
+        expect(walletBodies, hasLength(1));
+        expect(jsonDecode(walletBodies.single)['registrationDate'], '2026-07-13');
+      });
+
+      for (final date in const [
+        '2026/07/13',
+        '13.07.2026',
+        '2026-7-13',
+        '2026-07-13T00:00:00Z',
+        '2026-02-30',
+      ]) {
+        test('refuses to sign the registration date "$date"', () async {
+          Object? error;
+          try {
+            await build(clientReturningDate(date)).registerWallet(buildUserData());
+          } catch (e) {
+            error = e;
+          }
+
+          expect(creds.signCallCount, 0, reason: 'expected 0 sign calls');
+          expect(paths, isNot(contains('/v1/realunit/register/wallet')));
+          expect(error, isA<RegistrationDateUnavailableException>());
+        });
+      }
+
+      test('refuses to sign when the response carries no date', () async {
+        final client = MockClient((request) async {
+          paths.add(request.url.path);
+          if (request.url.path == '/v1/realunit/register/date') {
+            return http.Response('{}', 200);
+          }
+          return http.Response(jsonEncode({'status': 'completed'}), 201);
+        });
+
+        await expectLater(
+          build(client).registerWallet(buildUserData()),
+          throwsA(isA<RegistrationDateUnavailableException>()),
+        );
+        expect(creds.signCallCount, 0, reason: 'expected 0 sign calls');
+        expect(paths, isNot(contains('/v1/realunit/register/wallet')));
+      });
     });
   });
 

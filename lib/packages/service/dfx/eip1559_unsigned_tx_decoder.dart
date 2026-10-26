@@ -18,6 +18,9 @@ import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/pay_exce
 class DecodedEip1559Transaction {
   final BigInt chainId;
 
+  /// Sender nonce, from RLP field index 1.
+  final BigInt nonce;
+
   /// EIP-1559 max priority fee per gas (wei), from RLP field index 2.
   final BigInt maxPriorityFeePerGas;
 
@@ -38,6 +41,7 @@ class DecodedEip1559Transaction {
 
   const DecodedEip1559Transaction({
     required this.chainId,
+    required this.nonce,
     required this.maxPriorityFeePerGas,
     required this.maxFeePerGas,
     required this.gasLimit,
@@ -111,9 +115,8 @@ abstract final class Eip1559UnsignedTxDecoder {
       );
     }
 
-    // Canonical RLP for the six quantity fields (including nonce, which is part of the
-    // signed payload even though its decoded value is not exposed). Leading-zero-byte
-    // integers are non-canonical and rejected before any BigInt conversion.
+    // Canonical RLP for the six quantity fields. Leading-zero-byte integers are
+    // non-canonical and rejected before any BigInt conversion.
     _requireCanonicalInteger(root[_chainIdFieldIndex], 'chainId');
     _requireCanonicalInteger(root[_nonceFieldIndex], 'nonce');
     _requireCanonicalInteger(root[_maxPriorityFeePerGasFieldIndex], 'maxPriorityFeePerGas');
@@ -123,6 +126,7 @@ abstract final class Eip1559UnsignedTxDecoder {
 
     return DecodedEip1559Transaction(
       chainId: _asBigInt(root[_chainIdFieldIndex]),
+      nonce: _asBigInt(root[_nonceFieldIndex]),
       maxPriorityFeePerGas: _asBigInt(root[_maxPriorityFeePerGasFieldIndex]),
       maxFeePerGas: _asBigInt(root[_maxFeePerGasFieldIndex]),
       gasLimit: _asBigInt(root[_gasLimitFieldIndex]),
@@ -299,4 +303,94 @@ abstract final class Erc20TransferCalldataDecoder {
 
     return DecodedErc20Transfer(recipient: recipient, amountWei: amountWei);
   }
+}
+
+/// A decoded ERC-677 `transferAndCall(address,uint256,bytes)` call.
+class DecodedErc677TransferAndCall {
+  /// Normalized to `0x` + 40 lowercase hex chars.
+  final String recipient;
+  final BigInt amountWei;
+
+  /// The `bytes` argument.
+  final Uint8List callData;
+
+  const DecodedErc677TransferAndCall({
+    required this.recipient,
+    required this.amountWei,
+    required this.callData,
+  });
+}
+
+/// Decodes ERC-677 `transferAndCall(address,uint256,bytes)` calldata in the
+/// standard ABI layout: data offset 96, length word, then the zero-padded
+/// bytes. Anything else is rejected.
+abstract final class Erc677TransferAndCallCalldataDecoder {
+  static const _selector = [0x40, 0x00, 0xae, 0xa0]; // transferAndCall(address,uint256,bytes)
+  static const _headLength =
+      132; // 4 (selector) + 32 (address) + 32 (amount) + 32 (offset) + 32 (length)
+  static const _dataOffset = 96;
+
+  static DecodedErc677TransferAndCall decode(Uint8List data) {
+    if (data.length < _headLength) {
+      throw PayUnsignedTxMismatchException(
+        'unsigned tx calldata is ${data.length} bytes, expected at least $_headLength '
+        '(ERC-677 transferAndCall)',
+      );
+    }
+    for (var i = 0; i < _selector.length; i++) {
+      if (data[i] != _selector[i]) {
+        throw const PayUnsignedTxMismatchException(
+          'unsigned tx calldata is not an ERC-677 transferAndCall(address,uint256,bytes) call',
+        );
+      }
+    }
+
+    final recipient = _address(data.sublist(4, 36));
+    final amountWei = _uint(data.sublist(36, 68));
+    if (_uint(data.sublist(68, 100)) != BigInt.from(_dataOffset)) {
+      throw const PayUnsignedTxMismatchException(
+        'unsigned tx calldata bytes offset is not $_dataOffset',
+      );
+    }
+    final length = _uint(data.sublist(100, _headLength));
+    final available = data.length - _headLength;
+    if (length > BigInt.from(available)) {
+      throw const PayUnsignedTxMismatchException(
+        'unsigned tx calldata bytes length exceeds the calldata',
+      );
+    }
+    final callLength = length.toInt();
+    final paddedLength = (callLength + 31) ~/ 32 * 32;
+    if (available != paddedLength) {
+      throw const PayUnsignedTxMismatchException(
+        'unsigned tx calldata has bytes after the padded bytes argument',
+      );
+    }
+    for (var i = _headLength + callLength; i < data.length; i++) {
+      if (data[i] != 0) {
+        throw const PayUnsignedTxMismatchException(
+          'unsigned tx calldata bytes argument is not zero-padded',
+        );
+      }
+    }
+
+    return DecodedErc677TransferAndCall(
+      recipient: recipient,
+      amountWei: amountWei,
+      callData: data.sublist(_headLength, _headLength + callLength),
+    );
+  }
+
+  static String _address(Uint8List word) {
+    for (var i = 0; i < 12; i++) {
+      if (word[i] != 0) {
+        throw const PayUnsignedTxMismatchException(
+          'unsigned tx calldata recipient slot is not zero-padded',
+        );
+      }
+    }
+    return '0x${convert.hex.encode(word.sublist(12, 32))}';
+  }
+
+  static BigInt _uint(Uint8List word) => BigInt.parse(convert.hex.encode(word), radix: 16);
 }

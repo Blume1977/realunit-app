@@ -14,6 +14,7 @@ import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/sell_exc
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/broadcast_transaction_request_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/sell_payment_info.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_sell_payment_info_service.dart';
+import 'package:realunit_wallet/packages/service/dfx/sell_unsigned_tx_check.dart';
 
 part 'sell_bitbox_state.dart';
 
@@ -103,7 +104,19 @@ class SellBitboxCubit extends Cubit<SellBitboxState> {
     try {
       emit(SellBitboxPreparingSwap());
       final transactions = await _sellService.createUnsignedTransactions(_paymentInfo.id);
+      final apiConfig = _appStore.apiConfig;
+      checkSellUnsignedTransactions(
+        swap: transactions.swap,
+        deposit: transactions.deposit,
+        quote: _paymentInfo,
+        tokenAddress: apiConfig.asset.address,
+        tokenDecimals: apiConfig.asset.decimals,
+        chainId: apiConfig.asset.chainId,
+        testnet: apiConfig.networkMode.isTestnet,
+      );
       emit(SellBitboxAwaitingSwapConfirm(transactions.swap, transactions.deposit));
+    } on SellUnsignedTxMismatchException catch (e) {
+      emit(SellBitboxTransactionMismatch(e.reason));
     } catch (e) {
       emit(SellBitboxError(ApiException.userFacingMessage(e)));
     }

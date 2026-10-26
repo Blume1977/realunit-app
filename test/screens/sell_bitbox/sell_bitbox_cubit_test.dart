@@ -21,6 +21,7 @@ import 'package:realunit_wallet/styles/currency.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../helper/fake_bitbox_credentials.dart';
+import '../../helper/sell_bitbox_unsigned_txs.dart';
 
 class _MockFaucet extends Mock implements DfxFaucetService {}
 
@@ -52,11 +53,12 @@ SellPaymentInfo _info({
   beneficiary: const BeneficiaryDto(iban: 'CH...'),
   estimatedAmount: 100.0,
   currency: Currency.chf,
-  depositAddress: '0xdeposit',
-  tokenAddress: '0xtoken',
+  depositAddress: sellQuoteDepositAddress,
+  tokenAddress: sellQuoteRealuAddress,
   chainId: 1,
   ethBalance: ethBalance,
   requiredGasEth: requiredGasEth,
+  zchfAmount: sellQuoteZchfAmount,
 );
 
 Map<String, dynamic> _eip7702Json() => {
@@ -65,7 +67,7 @@ Map<String, dynamic> _eip7702Json() => {
   'delegatorAddress': '0xdr',
   'userNonce': 7,
   'domain': {
-    'name': 'RealUnit',
+    'name': 'DelegationManager',
     'version': '1',
     'chainId': 1,
     'verifyingContract': '0xverify',
@@ -190,9 +192,9 @@ void main() {
     test('success: emits Preparing → AwaitingSwapConfirm with both raw txs', () async {
       when(() => account.primaryAddress).thenReturn(_StubSoftwareCreds());
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
-          swap: '0xswap',
-          deposit: '0xdeposit',
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
+          swap: matchingSellSwapHex,
+          deposit: matchingSellDepositHex,
         ),
       );
 
@@ -201,8 +203,8 @@ void main() {
       await cubit.proceedToSwap();
 
       final state = cubit.state as SellBitboxAwaitingSwapConfirm;
-      expect(state.rawSwapTransaction, '0xswap');
-      expect(state.rawDepositTransaction, '0xdeposit');
+      expect(state.rawSwapTransaction, matchingSellSwapHex);
+      expect(state.rawDepositTransaction, matchingSellDepositHex);
       await cubit.close();
     });
 
@@ -237,9 +239,9 @@ void main() {
     test('non-Bitbox credentials in AwaitingSwapConfirm → Error', () async {
       when(() => account.primaryAddress).thenReturn(_StubSoftwareCreds());
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
-          swap: '0xswap',
-          deposit: '0xdeposit',
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
+          swap: matchingSellSwapHex,
+          deposit: matchingSellDepositHex,
         ),
       );
 
@@ -464,9 +466,9 @@ void main() {
         final creds = FakeBitboxCredentials();
         when(() => account.primaryAddress).thenReturn(creds);
         when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-          (_) async => const RealUnitUnsignedTransactionsRequestDto(
-            swap: '0xdeadbeef',
-            deposit: '0xcafebabe',
+          (_) async => RealUnitUnsignedTransactionsRequestDto(
+            swap: matchingSellSwapHex,
+            deposit: matchingSellDepositHex,
           ),
         );
 
@@ -487,9 +489,9 @@ void main() {
       final creds = FakeBitboxCredentials();
       when(() => account.primaryAddress).thenReturn(creds);
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
-          swap: '0xdeadbeef',
-          deposit: '0xcafebabe',
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
+          swap: matchingSellSwapHex,
+          deposit: matchingSellDepositHex,
         ),
       );
 
@@ -514,9 +516,9 @@ void main() {
       final creds = FakeBitboxCredentials();
       when(() => account.primaryAddress).thenReturn(creds);
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
-          swap: '0xdeadbeef',
-          deposit: '0xcafebabe',
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
+          swap: matchingSellSwapHex,
+          deposit: matchingSellDepositHex,
         ),
       );
 
@@ -540,9 +542,9 @@ void main() {
         final creds = FakeBitboxCredentials();
         when(() => account.primaryAddress).thenReturn(creds);
         when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-          (_) async => const RealUnitUnsignedTransactionsRequestDto(
-            swap: '0xdeadbeef',
-            deposit: '0xcafebabe',
+          (_) async => RealUnitUnsignedTransactionsRequestDto(
+            swap: matchingSellSwapHex,
+            deposit: matchingSellDepositHex,
           ),
         );
 
@@ -564,9 +566,9 @@ void main() {
       final creds = FakeBitboxCredentials();
       when(() => account.primaryAddress).thenReturn(creds);
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
-          swap: '0xdeadbeef',
-          deposit: '0xcafebabe',
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
+          swap: matchingSellSwapHex,
+          deposit: matchingSellDepositHex,
         ),
       );
 
@@ -591,9 +593,9 @@ void main() {
   Future<SellBitboxCubit> driveToDepositConfirm() async {
     when(() => account.primaryAddress).thenReturn(FakeBitboxCredentials());
     when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-      (_) async => const RealUnitUnsignedTransactionsRequestDto(
-        swap: '0xdeadbeef',
-        deposit: '0xcafebabe',
+      (_) async => RealUnitUnsignedTransactionsRequestDto(
+        swap: matchingSellSwapHex,
+        deposit: matchingSellDepositHex,
       ),
     );
     final cubit = build();

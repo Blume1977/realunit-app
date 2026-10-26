@@ -9,6 +9,7 @@ import 'package:realunit_wallet/packages/hardware_wallet/bitbox.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_country_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_kyc_service.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_date_unavailable_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_rejected_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/country/country.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/registration/kyc/kyc_personal_data.dart';
@@ -271,6 +272,31 @@ void main() {
             const KycRegistrationSubmitFailure(
               'registration rejected',
               cause: SigningCancelledException(),
+            ),
+          ]),
+          initialState: KycRegistrationSubmitInitial(),
+        );
+        return buildView(const KycRegistrationView());
+      },
+    );
+
+    goldenTest(
+      'submit failure SnackBar — registration date unavailable (red)',
+      fileName: 'kyc_registration_page_registration_date_unavailable_snackbar',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.pump(); // deliver the whenListen emission to the listener
+        await tester.pumpAndSettle(); // run the SnackBar entrance to completion
+      },
+      builder: () {
+        whenListen(
+          registrationSubmitCubit,
+          Stream.fromIterable([
+            const KycRegistrationSubmitFailure(
+              'Missing registration date in API response',
+              cause: RegistrationDateUnavailableException(
+                message: 'Missing registration date in API response',
+              ),
             ),
           ]),
           initialState: KycRegistrationSubmitInitial(),

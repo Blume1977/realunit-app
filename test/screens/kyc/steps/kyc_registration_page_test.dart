@@ -16,6 +16,7 @@ import 'package:realunit_wallet/packages/service/app_store.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_country_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_kyc_service.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_date_unavailable_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_rejected_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/country/country.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/registration/dto/real_unit_registration_request_dto.dart';
@@ -584,6 +585,32 @@ void main() {
       // A failed submit must not re-arm the wallet services — the re-arm is
       // gated behind KycRegistrationSubmitSuccess.
       verifyNever(() => homeBloc.add(any(that: isA<SyncWalletServicesEvent>())));
+    });
+
+    testWidgets('an unavailable registration date shows the localized message', (tester) async {
+      whenListen(
+        registrationSubmitCubit,
+        Stream.fromIterable([
+          const KycRegistrationSubmitFailure(
+            'Missing registration date in API response',
+            cause: RegistrationDateUnavailableException(
+              message: 'Missing registration date in API response',
+            ),
+          ),
+        ]),
+        initialState: KycRegistrationSubmitInitial(),
+      );
+
+      await tester.pumpApp(buildSubject(const KycRegistrationView()));
+      await tester.pump();
+
+      expect(
+        find.text(
+          'The registration date could not be loaded. Nothing was signed. Please try again.',
+        ),
+        findsOne,
+      );
+      expect(find.textContaining('API response'), findsNothing);
     });
 
     testWidgets(

@@ -38,6 +38,13 @@ final Uint8List _sepoliaBrokerbot = _pinnedAddress(_sepoliaBrokerbotHex);
 final Uint8List _mainnetZchf = _pinnedAddress(_mainnetZchfHex);
 final Uint8List _sepoliaZchf = _pinnedAddress(_sepoliaZchfHex);
 
+/// The brokerbot a RealUnit sell transfers the shares to.
+String pinnedBrokerbotAddress({required bool testnet}) =>
+    testnet ? _sepoliaBrokerbotHex : _mainnetBrokerbotHex;
+
+/// The ZCHF token a RealUnit sell pays out in.
+String pinnedZchfAddress({required bool testnet}) => testnet ? _sepoliaZchfHex : _mainnetZchfHex;
+
 final Uint8List _erc20TransferSelector = _pinnedBytes(_erc20TransferSelectorHex);
 final Uint8List _transferAndCallSelector = _pinnedBytes(_transferAndCallSelectorHex);
 
@@ -98,6 +105,49 @@ void checkDelegationCaveats({
         testnet: testnet,
         nowSeconds: nowSeconds,
       );
+  }
+}
+
+/// The EIP-712 domain of the DelegationManager contract.
+const delegationDomainName = 'DelegationManager';
+const delegationDomainVersion = '1';
+
+/// The delegation framework's root authority: the delegator grants the
+/// delegation directly, not through a parent delegation.
+const rootDelegationAuthority = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+
+/// A delegation outside the DelegationManager EIP-712 domain or one that is
+/// not a root delegation. Thrown before anything is signed.
+class DelegationEnvelopeMismatchException implements Exception {
+  final String reason;
+
+  const DelegationEnvelopeMismatchException(this.reason);
+
+  @override
+  String toString() => 'DelegationEnvelopeMismatchException: $reason';
+}
+
+/// Rejects a delegation outside the DelegationManager EIP-712 domain or one
+/// that is not a root delegation. Hex case does not matter.
+void checkDelegationEnvelope({
+  required String domainName,
+  required String domainVersion,
+  required String authority,
+}) {
+  if (domainName != delegationDomainName) {
+    throw const DelegationEnvelopeMismatchException(
+      'EIP-7702 domain name is not $delegationDomainName',
+    );
+  }
+  if (domainVersion != delegationDomainVersion) {
+    throw const DelegationEnvelopeMismatchException(
+      'EIP-7702 domain version is not $delegationDomainVersion',
+    );
+  }
+  if (authority.toLowerCase() != rootDelegationAuthority) {
+    throw const DelegationEnvelopeMismatchException(
+      'EIP-7702 authority is not the root authority',
+    );
   }
 }
 

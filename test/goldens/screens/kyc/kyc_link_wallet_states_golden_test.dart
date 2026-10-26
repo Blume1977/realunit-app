@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_date_unavailable_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/registration/kyc/kyc_personal_data.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/user/dto/real_unit_user_data_dto.dart';
 import 'package:realunit_wallet/packages/wallet/wallet.dart';
@@ -36,7 +37,7 @@ const _userData = RealUnitUserDataDto(
   phoneNumber: '+41790000000',
   birthday: '1815-12-10',
   nationality: 'CH',
-  addressStreet: 'S',
+  addressStreet: 'Bahnhofstrasse 1',
   addressPostalCode: '8000',
   addressCity: 'Zurich',
   addressCountry: 'CH',
@@ -127,6 +128,31 @@ void main() {
           linkCubit,
           Stream<KycLinkWalletState>.value(
             const KycLinkWalletFailure('network error'),
+          ),
+          initialState: const KycLinkWalletSubmitting(_userData),
+        );
+        return buildView();
+      },
+    );
+
+    goldenTest(
+      'failure — registration date unavailable, localized red snackbar',
+      fileName: 'kyc_link_wallet_page_registration_date_unavailable',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+      },
+      builder: () {
+        whenListen(
+          linkCubit,
+          Stream<KycLinkWalletState>.value(
+            const KycLinkWalletFailure(
+              'Invalid registration date in API response',
+              cause: RegistrationDateUnavailableException(
+                message: 'Invalid registration date in API response',
+              ),
+            ),
           ),
           initialState: const KycLinkWalletSubmitting(_userData),
         );

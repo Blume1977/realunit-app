@@ -51,7 +51,7 @@ Map<String, dynamic> _validEip7702Json() => {
       'delegatorAddress': _metaMaskDelegator,
       'userNonce': 7,
       'domain': {
-        'name': 'RealUnit',
+        'name': 'DelegationManager',
         'version': '1',
         'chainId': 1, // mainnet
         'verifyingContract': _delegationManager,
@@ -63,7 +63,7 @@ Map<String, dynamic> _validEip7702Json() => {
       'message': {
         'delegate': '0xrelay',
         'delegator': _walletAddress,
-        'authority': '0xauth',
+        'authority': '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         'caveats': <Map<String, dynamic>>[],
         'salt': 0,
       },

@@ -478,6 +478,10 @@ MAPPING=(
   "426-pay-flow-sheet=screens/pay/goldens/macos/pay_flow_sheet.png"
   "427-sell-confirm-caveat-snackbar=screens/sell/goldens/macos/sell_confirm_caveat_snackbar.png"
   "428-sell-share-count-mismatch=screens/sell/goldens/macos/sell_share_count_mismatch.png"
+  "429-sell-bitbox-transaction-mismatch=screens/sell_bitbox/goldens/macos/sell_bitbox_transaction_mismatch.png"
+  "430-kyc-link-wallet-page-registration-date-unavailable=screens/kyc/goldens/macos/kyc_link_wallet_page_registration_date_unavailable.png"
+  "431-kyc-registration-page-registration-date-unavailable-snackbar=screens/kyc/goldens/macos/kyc_registration_page_registration_date_unavailable_snackbar.png"
+  "432-sell-confirm-envelope-notice=screens/sell/goldens/macos/sell_confirm_envelope_notice.png"
 )
 
 missing=()

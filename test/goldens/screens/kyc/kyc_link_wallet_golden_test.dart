@@ -34,7 +34,7 @@ const _userData = RealUnitUserDataDto(
   phoneNumber: '+41790000000',
   birthday: '1815-12-10',
   nationality: 'CH',
-  addressStreet: 'S',
+  addressStreet: 'Bahnhofstrasse 1',
   addressPostalCode: '8000',
   addressCity: 'Zurich',
   addressCountry: 'CH',

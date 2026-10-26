@@ -172,6 +172,78 @@ void main() {
     verify(() => walletService.lockCurrentWallet()).called(1);
   });
 
+  group('rejects a delegation that differs from the pinned values before signing', () {
+    Future<void> expectRejected(
+      void Function(Map<String, dynamic> json) mutate,
+      String reason,
+    ) async {
+      var requests = 0;
+      final client = MockClient((_) async {
+        requests++;
+        return http.Response(jsonEncode({'txHash': '0xrelayed'}), 200);
+      });
+      final json = _delegationJson();
+      mutate(json);
+
+      await expectLater(
+        build(client).confirmOcpPay(
+          swap: _swap(eip7702: Eip7702Data.fromJson(json)),
+          paymentLinkId: 'pl_abc',
+          quoteId: 'quote_xyz',
+        ),
+        throwsA(
+          isA<PayConfirmNotSubmittedException>().having((e) => e.message, 'message', contains(reason)),
+        ),
+      );
+      expect(requests, 0, reason: 'no confirm request may be sent');
+    }
+
+    test('delegatorAddress other than the MetaMask delegator', () async {
+      await expectRejected(
+        (json) => json['delegatorAddress'] = '0x1111111111111111111111111111111111111111',
+        'MetaMask Delegator',
+      );
+    });
+
+    test('delegationManagerAddress other than the pinned manager', () async {
+      await expectRejected(
+        (json) => json['delegationManagerAddress'] = '0x1111111111111111111111111111111111111111',
+        'delegation manager',
+      );
+    });
+
+    test('domain verifyingContract other than the pinned manager', () async {
+      await expectRejected(
+        (json) => (json['domain'] as Map<String, dynamic>)['verifyingContract'] =
+            '0x1111111111111111111111111111111111111111',
+        'verifying contract',
+      );
+    });
+
+    test('message delegator other than the wallet', () async {
+      await expectRejected(
+        (json) => (json['message'] as Map<String, dynamic>)['delegator'] =
+            '0x0000000000000000000000000000000000000002',
+        'delegator does not match wallet address',
+      );
+    });
+
+    test('message delegate other than the relayer', () async {
+      await expectRejected(
+        (json) => (json['message'] as Map<String, dynamic>)['delegate'] =
+            '0x0000000000000000000000000000000000000002',
+        'delegate does not match relayer',
+      );
+    });
+
+    test('tokenAddress other than the RealUnit asset', () async {
+      await expectRejected(
+        (json) => json['tokenAddress'] = '0xB58E61C3098d85632Df34EecfB899A1Ed80921cB',
+        'token address does not match RealUnit',
+      );
+    });
+  });
+
   test('missing delegation never calls the network', () async {
     final client = MockClient((_) async => fail('network'));
     expect(

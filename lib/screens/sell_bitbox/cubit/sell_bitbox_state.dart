@@ -85,3 +85,9 @@ class SellBitboxError extends SellBitboxState {
   @override
   List<Object?> get props => [message];
 }
+
+/// The unsigned transactions do not match the confirmed quote. Nothing was
+/// signed. [message] keeps the reason for diagnostics.
+class SellBitboxTransactionMismatch extends SellBitboxError {
+  SellBitboxTransactionMismatch(super.message);
+}

@@ -48,6 +48,7 @@ class _StubWalletAccount extends AWalletAccount {
   final String _signature;
   final String? _addressOverride;
   int signCallCount = 0;
+  final List<String> signedMessages = [];
 
   @override
   CredentialsWithKnownAddress get primaryAddress {
@@ -60,6 +61,7 @@ class _StubWalletAccount extends AWalletAccount {
   @override
   Future<String> signMessage(String message, {int addressIndex = 0}) async {
     signCallCount++;
+    signedMessages.add(message);
     return _signature;
   }
 }
@@ -901,6 +903,104 @@ void main() {
         // in the `finally` even when the sign hangs out.
         verify(() => walletService.lockCurrentWallet()).called(1);
       });
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // The auth message is derived locally from the address and never fetched.
+  // -------------------------------------------------------------------------
+
+  group('$DFXAuthService signs only the locally built auth message', () {
+    late _MockAppStore appStore;
+    late _MockWalletService walletService;
+    late _StubWalletAccount account;
+    late List<http.Request> requests;
+
+    const address = '0xdddddddddddddddddddddddddddddddddddddddd';
+    final addressEip55 = EthereumAddress.fromHex(address).hexEip55;
+    const signature = '0xfeedface';
+    const mainnetMessagePrefix =
+        'By_signing_this_message,_you_confirm_that_you_are_the_sole_owner_'
+        'of_the_provided_Blockchain_address._Your_ID:_';
+
+    setUp(() {
+      appStore = _MockAppStore();
+      walletService = _MockWalletService();
+      account = _StubWalletAccount(signature, address: address);
+      requests = [];
+      final cacheRepo = _MockCacheRepository();
+      when(() => cacheRepo.read(any())).thenAnswer((_) async => null);
+      when(() => cacheRepo.write(any(), any())).thenAnswer((_) async => 1);
+      when(() => cacheRepo.delete(any())).thenAnswer((_) async {});
+
+      when(() => appStore.sessionCache).thenReturn(SessionCache(cacheRepo));
+      when(() => appStore.httpClient).thenReturn(
+        RealUnitApiClient(
+          MockClient((request) async {
+            requests.add(request);
+            return http.Response(jsonEncode({'accessToken': 'jwt'}), 201);
+          }),
+        ),
+      );
+      when(() => walletService.ensureCurrentWalletUnlocked()).thenAnswer((_) async {});
+      when(() => walletService.lockCurrentWallet()).thenAnswer((_) async {});
+    });
+
+    _SignatureTestAuthService buildService(NetworkMode networkMode) {
+      when(() => appStore.apiConfig).thenReturn(ApiConfig(networkMode: networkMode));
+      return _SignatureTestAuthService(appStore, walletService, account, address);
+    }
+
+    void expectNoSignMessageRequest() {
+      expect(
+        requests.where((r) => r.url.path.endsWith('/v1/auth/signMessage')),
+        isEmpty,
+        reason: 'the sign message must not be requested from the API',
+      );
+    }
+
+    test('ensureSignatureFor on mainnet signs exactly buildSignMessage(address)', () async {
+      final service = buildService(NetworkMode.mainnet);
+
+      await service.ensureSignatureFor(account);
+
+      expect(account.signedMessages, ['$mainnetMessagePrefix$addressEip55']);
+      expect(account.signedMessages.single, service.buildSignMessage(addressEip55));
+      expectNoSignMessageRequest();
+      expect(requests, isEmpty);
+    });
+
+    test('ensureSignatureFor on testnet signs the [dev]_ prefixed message', () async {
+      final service = buildService(NetworkMode.testnet);
+
+      await service.ensureSignatureFor(account);
+
+      expect(account.signedMessages, ['[dev]_$mainnetMessagePrefix$addressEip55']);
+      expect(account.signedMessages.single, service.buildSignMessage(addressEip55));
+      expectNoSignMessageRequest();
+      expect(requests, isEmpty);
+    });
+
+    test('getAuthResponse on mainnet signs exactly buildSignMessage(address)', () async {
+      final service = buildService(NetworkMode.mainnet);
+
+      await service.getAuthResponse();
+
+      expect(account.signedMessages, ['$mainnetMessagePrefix$address']);
+      expect(account.signedMessages.single, service.buildSignMessage(address));
+      expectNoSignMessageRequest();
+      expect(requests.map((r) => '${r.method} ${r.url.path}'), ['POST /v1/auth']);
+    });
+
+    test('getAuthResponse on testnet signs the [dev]_ prefixed message', () async {
+      final service = buildService(NetworkMode.testnet);
+
+      await service.getAuthResponse();
+
+      expect(account.signedMessages, ['[dev]_$mainnetMessagePrefix$address']);
+      expect(account.signedMessages.single, service.buildSignMessage(address));
+      expectNoSignMessageRequest();
+      expect(requests.map((r) => '${r.method} ${r.url.path}'), ['POST /v1/auth']);
     });
   });
 }

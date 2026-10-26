@@ -11,8 +11,7 @@ import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/eip
 import 'package:realunit_wallet/packages/service/dfx/models/payment/transfer/dto/real_unit_transfer_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/transfer/dto/real_unit_transfer_eip7702_data_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/transfer/dto/real_unit_transfer_payment_info_dto.dart';
-import 'package:realunit_wallet/packages/wallet/eip712_signer.dart';
-import 'package:realunit_wallet/packages/wallet/eip7702_signer.dart';
+import 'package:realunit_wallet/packages/wallet/delegation_signer.dart';
 
 /// Consumes the gasless wallet-to-wallet RealUnit transfer endpoints
 /// (`PUT /v1/realunit/transfer`, `PUT /v1/realunit/transfer/:id/confirm` —
@@ -30,7 +29,13 @@ class RealUnitTransferService extends DFXAuthService {
   static const _metaMaskDelegatorAddress = '0x63c0c19a282a1b52b07dd5a65b58948a07dae32b';
   static const _delegationManagerAddress = '0xdb9b1e94b5b69df7e401ddbede43491141047db3';
 
-  RealUnitTransferService(super.appStore, super.walletService);
+  final DelegationSigner _signer;
+
+  RealUnitTransferService(
+    super.appStore,
+    super.walletService, {
+    DelegationSigner signer = const DelegationSigner(),
+  }) : _signer = signer;
 
   /// `PUT /transfer` — persists the transfer intent and returns the EIP-7702
   /// delegation data to sign. A 503 means DFX cannot currently fund gas; it is
@@ -95,11 +100,11 @@ class RealUnitTransferService extends DFXAuthService {
       final String delegationSignature;
       final eip7702.EIP7702MsgSignature authorizationSignature;
       try {
-        delegationSignature = await Eip712Signer.signDelegation(
+        delegationSignature = await _signer.signDelegation(
           credentials: credentials,
           eip7702Data: eip7702Data,
         );
-        authorizationSignature = Eip7702Signer.signAuthorization(
+        authorizationSignature = _signer.signAuthorization(
           credentials: credentials,
           eip7702Data: eip7702Data,
         );
@@ -224,6 +229,11 @@ class RealUnitTransferService extends DFXAuthService {
     if (data.domain.verifyingContract.toLowerCase() != _delegationManagerAddress) {
       throw Exception('EIP-7702 verifying contract does not match expected DelegationManager');
     }
+    checkDelegationEnvelope(
+      domainName: data.domain.name,
+      domainVersion: data.domain.version,
+      authority: data.message.authority,
+    );
     if (data.message.delegator.toLowerCase() != walletAddress.toLowerCase()) {
       throw Exception('EIP-7702 message delegator does not match wallet address');
     }

@@ -352,6 +352,17 @@ void main() {
         SellConfirmFailure('Exception: EIP-7702 caveats: rejected'),
       ),
     );
+
+    goldenTest(
+      'envelope rejection shows why the sale was not sent',
+      fileName: 'sell_confirm_envelope_notice',
+      constraints: phoneConstraints,
+      builder: () => sheetFor(
+        SellConfirmEnvelopeRejected(
+          'DelegationEnvelopeMismatchException: EIP-7702 authority is not the root authority',
+        ),
+      ),
+    );
   });
 
   // ---- SellExecutedSheet (success sheet after a confirmed sell) ----

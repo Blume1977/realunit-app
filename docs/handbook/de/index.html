@@ -5400,7 +5400,7 @@
                 <div class="file">test/goldens/screens/sell/</div>
               </div>
               <div class="rhs">
-                <b>5 Screens</b>
+                <b>7 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/sell"
@@ -5497,6 +5497,24 @@
                 Auf dem Sheet <b>Verkauf prüfen &amp; bestätigen</b> steht der Hinweis über dem Button.
                 Text: <b>Der Verkauf wurde nicht gesendet. Die Freigabe passt nicht zum bestätigten Betrag oder läuft nicht innerhalb von 30 Minuten ab.</b>
                 Der Verkauf wurde nicht abgeschickt. Bestätigen bleibt sichtbar.
+              </div>
+            </div>
+            <div class="test" id="432-sell-confirm-envelope-notice">
+              <div class="head">
+                <a class="name permalink" href="#432-sell-confirm-envelope-notice">432-sell-confirm-envelope-notice</a>
+                <button class="copy-link" type="button" data-target="432-sell-confirm-envelope-notice" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/sell/goldens/macos/sell_confirm_envelope_notice.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/432-sell-confirm-envelope-notice.png"
+                  alt="Hinweis auf der Verkaufsbestätigung über Bestätigen, Freigabe im falschen Format"
+                />
+              </div>
+              <div class="desc">
+                Auf dem Sheet <b>Verkauf prüfen &amp; bestätigen</b> steht der Hinweis über dem Button, wenn die Freigabe nicht das erwartete Format hat.
+                Text: <b>Der Verkauf wurde nicht gesendet. Die Freigabe hat nicht das Format, das diese App akzeptiert.</b>
+                Es wurde nichts signiert. Bestätigen bleibt sichtbar.
               </div>
             </div>
             <div class="test" id="125-sell-executed-sheet">
@@ -5604,7 +5622,7 @@
                 <div class="file">test/goldens/screens/sell_bitbox/</div>
               </div>
               <div class="rhs">
-                <b>5 Screens</b>
+                <b>6 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/sell_bitbox"
@@ -5699,6 +5717,23 @@
               </div>
               <div class="desc">
                 Während der Tausch signiert und übertragen wird, zeigt Schritt 2 einen Ladeindikator mit dem Text <b>Tausch on-chain. Bestätigen Sie auf der Bitbox.</b> Der Nutzer muss die Transaktion jetzt auf dem Gerät freigeben.
+              </div>
+            </div>
+            <div class="test" id="429-sell-bitbox-transaction-mismatch">
+              <div class="head">
+                <a class="name permalink" href="#429-sell-bitbox-transaction-mismatch">429-sell-bitbox-transaction-mismatch</a>
+                <button class="copy-link" type="button" data-target="429-sell-bitbox-transaction-mismatch" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/sell_bitbox/goldens/macos/sell_bitbox_transaction_mismatch.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/429-sell-bitbox-transaction-mismatch.png"
+                  alt="Transaktionen passen nicht zum bestätigten Verkauf"
+                />
+              </div>
+              <div class="desc">
+                Schritt Tausch, wenn die vorbereiteten Transaktionen nicht zum bestätigten Verkauf passen. Die App signiert nichts, und unten erscheint die rote Meldung.
+                Text: <b>Diese Transaktionen entsprechen nicht dem bestätigten Verkauf. Es wurde nichts signiert. Bitte starten Sie den Verkauf erneut.</b>
               </div>
             </div>
           </div>
@@ -6436,7 +6471,7 @@
                 <div class="file">test/goldens/screens/kyc/</div>
               </div>
               <div class="rhs">
-                <b>14 Screens</b>
+                <b>15 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/kyc"
@@ -6628,6 +6663,23 @@
               </div>
               <div class="desc">
                 Rote SnackBar, wenn die Übermittlung fehlschlägt: bei abgebrochener BitBox-Signatur (hier) <b>Signatur abgebrochen — bitte BitBox erneut bestätigen</b>, sonst die generische bzw. Server-Meldung. Die Formulareingaben bleiben erhalten.
+              </div>
+            </div>
+            <div class="test" id="431-kyc-registration-page-registration-date-unavailable-snackbar">
+              <div class="head">
+                <a class="name permalink" href="#431-kyc-registration-page-registration-date-unavailable-snackbar">431-kyc-registration-page-registration-date-unavailable-snackbar</a>
+                <button class="copy-link" type="button" data-target="431-kyc-registration-page-registration-date-unavailable-snackbar" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/kyc/goldens/macos/kyc_registration_page_registration_date_unavailable_snackbar.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/431-kyc-registration-page-registration-date-unavailable-snackbar.png"
+                  alt="Registrierung — Registrierungsdatum nicht verfügbar"
+                />
+              </div>
+              <div class="desc">
+                Fehlt das Registrierungsdatum in der Antwort oder ist es kein gültiges Datum, signiert die App nichts und zeigt eine rote SnackBar. Die Formulareingaben bleiben erhalten.
+                Text: <b>Das Registrierungsdatum konnte nicht geladen werden. Es wurde nichts signiert. Bitte versuchen Sie es erneut.</b>
               </div>
             </div>
             <div class="test" id="326-kyc-registration-page-submit-rejected-snackbar">
@@ -7067,7 +7119,7 @@
                 <div class="file">test/goldens/screens/kyc/</div>
               </div>
               <div class="rhs">
-                <b>12 Screens</b>
+                <b>13 Screens</b>
                 <div class="links">
                   <a
                     href="https://github.com/RealUnitCH/app/tree/develop/test/goldens/screens/kyc"
@@ -7160,6 +7212,7 @@
               </div>
               <div class="desc">
                 Die Seite <b>Wallet hinzufügen</b> im bereitstehenden Zustand: der als Aktionär eingetragene Nutzer bestätigt hier die aktuelle Wallet, um sie seinem Konto hinzuzufügen.
+                Über dem Button stehen die Profilangaben, die beim Hinzufügen signiert werden: Kontotyp, Name, Geburtstag, Staatsangehörigkeit, E-Mail, Telefonnummer, Residenz, Steuerwohnsitz Schweiz und Wallet-Adresse. Das Registrierungsdatum ergänzt die App erst beim Signieren.
               </div>
             </div>
             <div class="test" id="198-kyc-link-wallet-page-bitbox-required">
@@ -7224,6 +7277,23 @@
               </div>
               <div class="desc">
                 Beim Fehlschlag der Verknüpfung erscheint eine rote SnackBar mit der Fehlermeldung (im Golden <b>network error</b>) über einem zentrierten Spinner.
+              </div>
+            </div>
+            <div class="test" id="430-kyc-link-wallet-page-registration-date-unavailable">
+              <div class="head">
+                <a class="name permalink" href="#430-kyc-link-wallet-page-registration-date-unavailable">430-kyc-link-wallet-page-registration-date-unavailable</a>
+                <button class="copy-link" type="button" data-target="430-kyc-link-wallet-page-registration-date-unavailable" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">screens/kyc/goldens/macos/kyc_link_wallet_page_registration_date_unavailable.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/430-kyc-link-wallet-page-registration-date-unavailable.png"
+                  alt="Wallet verknüpfen — Registrierungsdatum nicht verfügbar"
+                />
+              </div>
+              <div class="desc">
+                Fehlt das Registrierungsdatum in der Antwort oder ist es kein gültiges Datum, signiert die App nichts und zeigt eine rote SnackBar.
+                Text: <b>Das Registrierungsdatum konnte nicht geladen werden. Es wurde nichts signiert. Bitte versuchen Sie es erneut.</b>
               </div>
             </div>
             <div class="test" id="202-kyc-link-wallet-page-missing-user-data">

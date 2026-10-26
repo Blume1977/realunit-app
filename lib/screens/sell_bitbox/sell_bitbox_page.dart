@@ -63,7 +63,11 @@ class SellBitboxView extends StatelessWidget {
         if (state is SellBitboxError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(
+                state is SellBitboxTransactionMismatch
+                    ? S.of(context).sellBitboxTransactionMismatch
+                    : state.message,
+              ),
               backgroundColor: RealUnitColors.status.red600,
             ),
           );

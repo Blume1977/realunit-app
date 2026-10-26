@@ -17,6 +17,7 @@ import 'package:realunit_wallet/screens/sell_bitbox/cubit/sell_bitbox_cubit.dart
 import 'package:realunit_wallet/styles/currency.dart';
 
 import '../../helper/fake_bitbox_credentials.dart';
+import '../../helper/sell_bitbox_unsigned_txs.dart';
 
 class _MockFaucet extends Mock implements DfxFaucetService {}
 
@@ -39,11 +40,12 @@ SellPaymentInfo _info({double ethBalance = 1.0}) => SellPaymentInfo(
       beneficiary: const BeneficiaryDto(iban: 'CH...'),
       estimatedAmount: 100.0,
       currency: Currency.chf,
-      depositAddress: '0xdeposit',
-      tokenAddress: '0xtoken',
+      depositAddress: sellQuoteDepositAddress,
+      tokenAddress: sellQuoteRealuAddress,
       chainId: 1,
       ethBalance: ethBalance,
       requiredGasEth: 0.001,
+      zchfAmount: sellQuoteZchfAmount,
     );
 
 Map<String, dynamic> _eip7702Json() => {
@@ -52,7 +54,7 @@ Map<String, dynamic> _eip7702Json() => {
       'delegatorAddress': '0xdr',
       'userNonce': 7,
       'domain': {
-        'name': 'RealUnit',
+        'name': 'DelegationManager',
         'version': '1',
         'chainId': 1,
         'verifyingContract': '0xverify',
@@ -118,18 +120,18 @@ void main() {
   Future<SellBitboxState> settleToEthReady(SellBitboxCubit cubit) =>
       cubit.stream.firstWhere((s) => s is SellBitboxEthReady);
 
-  // The raw transaction bytes are arbitrary hex — the test private key inside
+  // A swap and deposit that match the quote — the test private key inside
   // FakeBitboxCredentials produces a deterministic signature over them, so we
   // only need to assert that the cubit reached the post-sign state.
-  const rawSwap = '0xdeadbeef';
-  const rawDeposit = '0xcafebabe';
+  final rawSwap = matchingSellSwapHex;
+  final rawDeposit = matchingSellDepositHex;
 
   group('confirmSwap (BitBox sign success)', () {
     test(
       'signs the swap tx and emits AwaitingDepositConfirm with the signature',
       () async {
         when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-          (_) async => const RealUnitUnsignedTransactionsRequestDto(
+          (_) async => RealUnitUnsignedTransactionsRequestDto(
             swap: rawSwap,
             deposit: rawDeposit,
           ),
@@ -159,10 +161,10 @@ void main() {
 
     test('strips an optional 0x prefix before hex-decoding the raw tx', () async {
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
           // Mix one prefixed with 0x and one without — both must sign.
-          swap: '0xdeadbeef',
-          deposit: 'cafebabe',
+          swap: matchingSellSwapHex,
+          deposit: matchingSellDepositHex.substring(2),
         ),
       );
 
@@ -182,7 +184,7 @@ void main() {
       'signs deposit, broadcasts swap then deposit, confirms with the deposit txHash',
       () async {
         when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-          (_) async => const RealUnitUnsignedTransactionsRequestDto(
+          (_) async => RealUnitUnsignedTransactionsRequestDto(
             swap: rawSwap,
             deposit: rawDeposit,
           ),
@@ -228,7 +230,7 @@ void main() {
     test('broadcast failure during deposit → SellBitboxDepositRetry with both signed txs',
         () async {
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
           swap: rawSwap,
           deposit: rawDeposit,
         ),
@@ -264,7 +266,7 @@ void main() {
   group('retryDeposit (after DepositRetry)', () {
     test('re-runs the deposit broadcast and emits Success on the retry', () async {
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
           swap: rawSwap,
           deposit: rawDeposit,
         ),
@@ -302,7 +304,7 @@ void main() {
     test('retry that throws again → stays in DepositRetry with the new error',
         () async {
       when(() => sellService.createUnsignedTransactions(any())).thenAnswer(
-        (_) async => const RealUnitUnsignedTransactionsRequestDto(
+        (_) async => RealUnitUnsignedTransactionsRequestDto(
           swap: rawSwap,
           deposit: rawDeposit,
         ),

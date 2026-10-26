@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:realunit_wallet/packages/service/dfx/delegation_caveat_check.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/api_exception.dart';
 import 'package:realunit_wallet/packages/service/dfx/exceptions/payment/sell_exceptions.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/payment/sell/dto/eip7702/eip7702_data_dto.dart';
@@ -104,6 +105,19 @@ void main() {
         (cubit.state as SellConfirmFailure).error,
         contains('signing cancelled'),
       );
+    });
+
+    test('confirmPayment emits EnvelopeRejected for a delegation envelope refusal', () async {
+      when(() => service.confirmPayment(any())).thenAnswer(
+        (_) async => throw const DelegationEnvelopeMismatchException(
+          'EIP-7702 authority is not the root authority',
+        ),
+      );
+      final cubit = SellConfirmCubit(service);
+
+      await cubit.confirmPayment(_stubPaymentInfo());
+
+      expect(cubit.state, isA<SellConfirmEnvelopeRejected>());
     });
 
     test('confirmPayment emits the API message 1:1 on ApiException', () async {

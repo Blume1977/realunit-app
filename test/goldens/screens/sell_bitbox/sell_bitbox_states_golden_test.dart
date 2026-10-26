@@ -304,5 +304,29 @@ void main() {
         ),
       ),
     );
+
+    // Step 2 (Swap) — the unsigned transactions do not match the quote:
+    // nothing is signed and the red snackbar asks to start the sale again.
+    // The snackbar cannot pumpAndSettle, so deliver the emission and advance
+    // a fixed 500ms past its entrance.
+    goldenTest(
+      'transaction mismatch — red snackbar, nothing signed',
+      fileName: 'sell_bitbox_transaction_mismatch',
+      constraints: phoneConstraints,
+      pumpBeforeTest: (tester) async {
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+      },
+      builder: () {
+        whenListen(
+          cubit,
+          Stream<SellBitboxState>.value(
+            SellBitboxTransactionMismatch('swap recipient is not the brokerbot'),
+          ),
+          initialState: SellBitboxPreparingSwap(),
+        );
+        return wrapForGolden(buildSubject());
+      },
+    );
   });
 }

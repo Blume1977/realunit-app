@@ -53,6 +53,7 @@ class SellConfirmSheetView extends StatelessWidget {
     return BlocListener<SellConfirmCubit, SellConfirmState>(
       listener: (context, state) async {
         if (state is SellConfirmFailure &&
+            state is! SellConfirmEnvelopeRejected &&
             !state.error.contains('EIP-7702 caveats')) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -163,16 +164,20 @@ class SellConfirmSheetView extends StatelessWidget {
                             final failure = state is SellConfirmFailure
                                 ? state
                                 : null;
-                            final caveatNotice =
-                                failure != null &&
-                                    failure.error.contains('EIP-7702 caveats')
-                                ? visibleSellConfirmError(
-                                    error: failure.error,
-                                    caveatFallback: S
-                                        .of(context)
-                                        .sellConfirmAuthorizationRejected,
-                                  )
-                                : null;
+                            final caveatNotice = switch (failure) {
+                              SellConfirmEnvelopeRejected() => S
+                                  .of(context)
+                                  .sellConfirmAuthorizationEnvelopeRejected,
+                              SellConfirmFailure(:final error)
+                                  when error.contains('EIP-7702 caveats') =>
+                                visibleSellConfirmError(
+                                  error: error,
+                                  caveatFallback: S
+                                      .of(context)
+                                      .sellConfirmAuthorizationRejected,
+                                ),
+                              _ => null,
+                            };
                             return Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [

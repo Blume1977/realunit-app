@@ -69,6 +69,10 @@ class FakeBitboxCredentials extends BitboxCredentials {
   /// asserting that a cancelled sign was retried exactly once.
   int signCallCount = 0;
 
+  /// Raw payloads handed to [signToSignature], in call order. Lets a test
+  /// assert exactly which transaction bytes reached the device.
+  final List<Uint8List> signedPayloads = [];
+
   @override
   bool get isConnected => behavior != FakeBitboxBehavior.disconnect;
 
@@ -122,6 +126,7 @@ class FakeBitboxCredentials extends BitboxCredentials {
     bool isEIP1559 = false,
   }) async {
     signCallCount++;
+    signedPayloads.add(Uint8List.fromList(payload));
     await Future<void>.delayed(signDelay);
     switch (behavior) {
       case FakeBitboxBehavior.success:

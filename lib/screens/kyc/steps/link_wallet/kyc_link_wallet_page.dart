@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:realunit_wallet/generated/i18n.dart';
 import 'package:realunit_wallet/packages/service/app_store.dart';
+import 'package:realunit_wallet/packages/service/dfx/exceptions/registration_date_unavailable_exception.dart';
+import 'package:realunit_wallet/packages/service/dfx/models/registration/registration_user_type.dart';
 import 'package:realunit_wallet/packages/service/dfx/models/user/dto/real_unit_user_data_dto.dart';
 import 'package:realunit_wallet/packages/service/dfx/real_unit_registration_service.dart';
 import 'package:realunit_wallet/screens/hardware_connect_bitbox/connect_bitbox_page.dart';
@@ -60,7 +62,11 @@ class KycLinkWalletView extends StatelessWidget {
           if (state is KycLinkWalletFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(
+                  state.cause is RegistrationDateUnavailableException
+                      ? S.of(context).registrationDateUnavailable
+                      : state.message,
+                ),
                 backgroundColor: RealUnitColors.status.red600,
               ),
             );
@@ -128,6 +134,7 @@ class _LinkWalletBody extends StatelessWidget {
         child: ScrollableActionsLayout(
           centerBody: false,
           body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 16.0,
             children: [
               const SizedBox(height: 16.0),
@@ -136,7 +143,27 @@ class _LinkWalletBody extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
+              _LinkWalletInfoRow(
+                label: S.of(context).registerAccountType,
+                value: _accountTypeLabel(context, userData.type),
+              ),
               _LinkWalletInfoRow(label: S.of(context).name, value: userData.name),
+              _LinkWalletInfoRow(label: S.of(context).birthday, value: userData.birthday),
+              _LinkWalletInfoRow(
+                label: S.of(context).registerCitizenship,
+                value: userData.nationality,
+              ),
+              _LinkWalletInfoRow(label: S.of(context).email, value: userData.email),
+              _LinkWalletInfoRow(label: S.of(context).phoneNumber, value: userData.phoneNumber),
+              _LinkWalletInfoRow(
+                label: S.of(context).residence,
+                value:
+                    '${userData.addressStreet}\n${userData.addressPostalCode} ${userData.addressCity}\n${userData.addressCountry}',
+              ),
+              _LinkWalletInfoRow(
+                label: S.of(context).kycLinkWalletSwissTaxResidence,
+                value: userData.swissTaxResidence ? S.of(context).yes : S.of(context).no,
+              ),
               _LinkWalletInfoRow(label: S.of(context).walletAddress, value: walletAddress),
             ],
           ),
@@ -154,6 +181,15 @@ class _LinkWalletBody extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The localized account type, or the signed value itself when it is not a
+/// known type.
+String _accountTypeLabel(BuildContext context, String type) {
+  for (final known in RegistrationUserType.values) {
+    if (known.jsonName == type) return known.name(context);
+  }
+  return type;
 }
 
 class _LinkWalletInfoRow extends StatelessWidget {

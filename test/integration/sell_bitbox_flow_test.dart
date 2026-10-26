@@ -47,6 +47,7 @@ import 'package:realunit_wallet/screens/sell_bitbox/cubit/sell_bitbox_cubit.dart
 import 'package:realunit_wallet/styles/currency.dart';
 
 import '../helper/fake_bitbox_credentials.dart';
+import '../helper/sell_bitbox_unsigned_txs.dart';
 
 class _MockFaucet extends Mock implements DfxFaucetService {}
 
@@ -73,7 +74,7 @@ Map<String, dynamic> _eip7702Json() => {
   'delegatorAddress': '0xdr',
   'userNonce': 7,
   'domain': {
-    'name': 'RealUnit',
+    'name': 'DelegationManager',
     'version': '1',
     'chainId': 1,
     'verifyingContract': '0xverify',
@@ -103,18 +104,18 @@ SellPaymentInfo _info({double ethBalance = 1.0}) => SellPaymentInfo(
   beneficiary: const BeneficiaryDto(iban: 'CH...'),
   estimatedAmount: 100.0,
   currency: Currency.chf,
-  depositAddress: '0xdeposit',
-  tokenAddress: '0xtoken',
+  depositAddress: sellQuoteDepositAddress,
+  tokenAddress: sellQuoteRealuAddress,
   chainId: 1,
   ethBalance: ethBalance,
   requiredGasEth: 0.001,
+  zchfAmount: sellQuoteZchfAmount,
 );
 
-// Arbitrary EIP-1559 raw bytes. The deterministic test private key inside
-// FakeBitboxCredentials signs them, so we don't need a real RLP-encoded tx —
-// the cubit just hex-decodes, calls signToSignature, repacks (r, s, v).
-const _rawSwap = '0xdeadbeef';
-const _rawDeposit = '0xcafebabe';
+// A swap and deposit that match the quote. The deterministic test private key
+// inside FakeBitboxCredentials signs them.
+final _rawSwap = matchingSellSwapHex;
+final _rawDeposit = matchingSellDepositHex;
 
 void main() {
   late _MockFaucet faucet;
