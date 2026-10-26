@@ -186,7 +186,7 @@ void main() {
         }
 
         // Tap a different type — must not reach the cubit.
-        await tester.tap(find.text('KYC issue'));
+        await tester.tap(find.text('Account opening process'));
         await tester.pump();
 
         verifyNever(() => supportCreateTicketCubit.selectType(any()));
