@@ -20,6 +20,12 @@ class RealUnitColors {
   static const neutral200 = Color.fromARGB(255, 226, 232, 240);
   static const neutral100 = Color.fromARGB(255, 242, 245, 248);
   static const neutral50 = Color(0xFFF8FAFC);
+
+  static const payActivityDaily = Color(0xFFFF4D00);
+  static const payActivityWeekly = Color(0xFFFF7A29);
+  static const payActivityMonthly = Color(0xFFFFA05C);
+  static const payActivityIdle = Color(0xFFFFC48F);
+  static const payActivityNone = Color(0xFFFFE3CC);
 }
 
 class _Basic {

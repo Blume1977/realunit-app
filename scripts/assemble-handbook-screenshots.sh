@@ -482,6 +482,17 @@ MAPPING=(
   "430-kyc-link-wallet-page-registration-date-unavailable=screens/kyc/goldens/macos/kyc_link_wallet_page_registration_date_unavailable.png"
   "431-kyc-registration-page-registration-date-unavailable-snackbar=screens/kyc/goldens/macos/kyc_registration_page_registration_date_unavailable_snackbar.png"
   "432-sell-confirm-envelope-notice=screens/sell/goldens/macos/sell_confirm_envelope_notice.png"
+  "433-pay-locations-activity-daily=screens/pay/goldens/macos/pay_locations_page_activity_daily.png"
+  "434-pay-locations-activity-weekly=screens/pay/goldens/macos/pay_locations_page_activity_weekly.png"
+  "435-pay-locations-activity-monthly=screens/pay/goldens/macos/pay_locations_page_activity_monthly.png"
+  "436-pay-locations-activity-idle=screens/pay/goldens/macos/pay_locations_page_activity_idle.png"
+  "437-pay-locations-detail-daily=screens/pay/goldens/macos/pay_locations_detail_daily.png"
+  "438-pay-locations-detail-weekly=screens/pay/goldens/macos/pay_locations_detail_weekly.png"
+  "439-pay-locations-detail-monthly=screens/pay/goldens/macos/pay_locations_detail_monthly.png"
+  "440-pay-locations-detail-idle=screens/pay/goldens/macos/pay_locations_detail_idle.png"
+  "441-pay-locations-detail-none=screens/pay/goldens/macos/pay_locations_detail_none.png"
+  "442-pay-locations-detail-others=screens/pay/goldens/macos/pay_locations_detail_others.png"
+  "443-pay-locations-detail-photo=screens/pay/goldens/macos/pay_locations_detail_photo.png"
 )
 
 missing=()
