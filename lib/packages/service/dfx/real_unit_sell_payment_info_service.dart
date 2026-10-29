@@ -68,7 +68,7 @@ class RealUnitSellPaymentInfoService extends DFXAuthService {
         decimals: appStore.apiConfig.asset.decimals,
       );
       final depositAddress = responseDto.depositAddress;
-      if (responseDto.isValid && depositAddress == null) {
+      if (responseDto.isValid && (depositAddress == null || depositAddress.isEmpty)) {
         throw const FormatException('A tradable sell quote has no deposit address');
       }
 

@@ -197,6 +197,16 @@ void main() {
       );
     });
 
+    test('200 marked valid with an empty deposit address is refused', () async {
+      final json = _sellPaymentInfoJson()..['depositAddress'] = '';
+      final client = MockClient((_) async => http.Response(jsonEncode(json), 200));
+
+      expect(
+        () => build(client).getPaymentInfo(100, 'CH...'),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('403 → ApiException', () async {
       final client = MockClient((_) async => http.Response(
             jsonEncode({'statusCode': 403, 'code': 'X', 'message': 'no'}),
