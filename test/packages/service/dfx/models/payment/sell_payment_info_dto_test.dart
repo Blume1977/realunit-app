@@ -106,6 +106,21 @@ void main() {
       expect(dto.ethereumTransactionFeeRealu, 1);
     });
 
+    test('parses an invalid quote that carries no deposit address', () {
+      final json = base()
+        ..remove('depositAddress')
+        ..['isValid'] = false
+        ..['error'] = 'AmountTooLow';
+      (json['eip7702'] as Map<String, dynamic>).remove('depositAddress');
+
+      final dto = RealUnitSellPaymentInfoDto.fromJson(json);
+
+      expect(dto.isValid, isFalse);
+      expect(dto.error, 'AmountTooLow');
+      expect(dto.depositAddress, isNull);
+      expect(dto.eip7702.depositAddress, isNull);
+    });
+
     test('integer wire values for floating-point fields widen to double', () {
       final json = base()
         ..['amount'] = 100

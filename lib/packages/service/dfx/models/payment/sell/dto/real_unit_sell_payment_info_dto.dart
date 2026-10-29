@@ -8,7 +8,10 @@ class RealUnitSellPaymentInfoDto {
   final int routeId;
   final DateTime timestamp;
   final Eip7702Data eip7702;
-  final String depositAddress;
+
+  /// Absent when [isValid] is false: the API opens no deposit for a quote
+  /// that cannot be traded.
+  final String? depositAddress;
   final double amount;
   final String tokenAddress;
   final int chainId;
@@ -38,7 +41,7 @@ class RealUnitSellPaymentInfoDto {
     required this.routeId,
     required this.timestamp,
     required this.eip7702,
-    required this.depositAddress,
+    this.depositAddress,
     required this.amount,
     required this.tokenAddress,
     required this.chainId,
@@ -70,7 +73,7 @@ class RealUnitSellPaymentInfoDto {
       routeId: json['routeId'] as int,
       timestamp: DateTime.parse(json['timestamp'] as String),
       eip7702: Eip7702Data.fromJson(json['eip7702'] as Map<String, dynamic>),
-      depositAddress: json['depositAddress'] as String,
+      depositAddress: json['depositAddress'] as String?,
       amount: (json['amount'] as num).toDouble(),
       tokenAddress: json['tokenAddress'] as String,
       chainId: json['chainId'] as int,

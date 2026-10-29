@@ -51,10 +51,14 @@ class SellButton extends StatelessWidget {
             }
             return;
           }
-          if (context.mounted && state.message.isNotEmpty) {
+          // The builder shows this failure in place.
+          if (state.error == .shareCountMismatch) return;
+          if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(
+                  state.message.isNotEmpty ? state.message : S.of(context).sellFailureGeneric,
+                ),
                 backgroundColor: RealUnitColors.status.red600,
               ),
             );

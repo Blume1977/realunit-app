@@ -273,4 +273,35 @@ void main() {
       },
     );
   });
+
+  group('$SellButton failure text', () {
+    Future<void> pumpFailure(WidgetTester tester, SellPaymentInfoFailure failure) async {
+      whenListen(
+        sellPaymentInfoCubit,
+        Stream<SellPaymentInfoState>.value(failure),
+        initialState: const SellPaymentInfoInitial(),
+      );
+      await pumpSellButton(tester);
+    }
+
+    testWidgets('shows the API message when the API sent one', (tester) async {
+      await pumpFailure(tester, const SellPaymentInfoFailure(.unknown, message: 'bad'));
+
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.text('bad'), findsOneWidget);
+    });
+
+    testWidgets('shows the app text when there is no API message', (tester) async {
+      await pumpFailure(tester, const SellPaymentInfoFailure(.unknown));
+
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.text(S.current.sellFailureGeneric), findsOneWidget);
+    });
+
+    testWidgets('a share count mismatch stays in place without a snackbar', (tester) async {
+      await pumpFailure(tester, const SellPaymentInfoFailure(.shareCountMismatch));
+
+      expect(find.byType(SnackBar), findsNothing);
+    });
+  });
 }

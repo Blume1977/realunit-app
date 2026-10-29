@@ -167,6 +167,36 @@ void main() {
       );
     });
 
+    test('200 below the minimum without a deposit address → invalid SellPaymentInfo', () async {
+      // The API opens no deposit for a quote it marks invalid, so both
+      // deposit addresses are absent from the response.
+      final json = _sellPaymentInfoJson()
+        ..remove('depositAddress')
+        ..['isValid'] = false
+        ..['error'] = 'AmountTooLow'
+        ..['minVolume'] = 10.0;
+      (json['eip7702'] as Map<String, dynamic>).remove('depositAddress');
+      final client = MockClient((_) async => http.Response(jsonEncode(json), 200));
+
+      final info = await build(client).getPaymentInfo(100, 'CH...');
+
+      expect(info.isValid, isFalse);
+      expect(info.error, 'AmountTooLow');
+      expect(info.minVolume, 10.0);
+      expect(info.currency, Currency.chf);
+      expect(info.depositAddress, isEmpty);
+    });
+
+    test('200 marked valid without a deposit address is refused', () async {
+      final json = _sellPaymentInfoJson()..remove('depositAddress');
+      final client = MockClient((_) async => http.Response(jsonEncode(json), 200));
+
+      expect(
+        () => build(client).getPaymentInfo(100, 'CH...'),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('403 → ApiException', () async {
       final client = MockClient((_) async => http.Response(
             jsonEncode({'statusCode': 403, 'code': 'X', 'message': 'no'}),

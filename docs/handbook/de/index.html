@@ -3111,7 +3111,27 @@
               <div class="desc">
                 Generischer Fehler-State, wenn das Backend keinen spezifischen Statuscode
                 liefert. Die Backend-Meldung erscheint als rote Snackbar, einen eigenen
-                Retry-Button gibt es nicht; der Golden hält nur die Maske fest.
+                Retry-Button gibt es nicht; der Golden hält nur die Maske fest. Ohne
+                Backend-Meldung zeigt die Snackbar den Text der App, siehe
+                <a href="#445-sell-failure-generic">445-sell-failure-generic</a>.
+              </div>
+            </div>
+            <div class="test" id="445-sell-failure-generic">
+              <div class="head">
+                <a class="name permalink" href="#445-sell-failure-generic">445-sell-failure-generic</a>
+                <button class="copy-link" type="button" data-target="445-sell-failure-generic" title="Direkt-Link kopieren" aria-label="Direkt-Link kopieren">🔗 Link</button>
+                <span class="src">sell_failure_generic.png</span>
+              </div>
+              <div class="img">
+                <img
+                  src="../screenshots/445-sell-failure-generic.png"
+                  alt="Verkaufen — Fehler ohne Backend-Meldung"
+                />
+              </div>
+              <div class="desc">
+                Fehler ohne Meldung des Backends, zum Beispiel wenn die Antwort nicht gelesen
+                werden kann. Die rote Snackbar zeigt <b>Beim Verkauf ist ein Fehler aufgetreten.
+                Bitte versuchen Sie es erneut.</b> Ein technischer Fehlertext erscheint nie.
               </div>
             </div>
             <div class="test" id="428-sell-share-count-mismatch">

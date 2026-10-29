@@ -95,7 +95,9 @@ class Eip7702Data {
   final Eip7702Message message;
   final String tokenAddress;
   final String amountWei;
-  final String depositAddress;
+
+  /// Absent on a sell quote the API marks invalid. The signers never read it.
+  final String? depositAddress;
 
   const Eip7702Data({
     required this.relayerAddress,
@@ -107,7 +109,7 @@ class Eip7702Data {
     required this.message,
     required this.tokenAddress,
     required this.amountWei,
-    required this.depositAddress,
+    this.depositAddress,
   });
 
   factory Eip7702Data.fromJson(Map<String, dynamic> json) {
@@ -121,7 +123,7 @@ class Eip7702Data {
       message: Eip7702Message.fromJson(json['message'] as Map<String, dynamic>),
       tokenAddress: json['tokenAddress'] as String,
       amountWei: json['amountWei'] as String,
-      depositAddress: json['depositAddress'] as String,
+      depositAddress: json['depositAddress'] as String?,
     );
   }
 }

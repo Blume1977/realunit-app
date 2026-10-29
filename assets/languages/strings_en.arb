@@ -427,6 +427,7 @@
   "sellBitboxWaitingForEthDescription": "A small amount of ETH is being sent to your wallet to cover transaction fees. This may take a few minutes.",
   "sellConfirmAuthorizationEnvelopeRejected": "The sale was not sent. The authorization is not in the format this app accepts.",
   "sellConfirmAuthorizationRejected": "The sale was not sent. The authorization does not match the confirmed amount or does not expire within 30 minutes.",
+  "sellFailureGeneric": "Something went wrong with the sale. Please try again.",
   "sellMinAmount": "Minimum amount: ${amount} ${currency}",
   "sellRealu": "Sell REALU",
   "sellReviewAndConfirm": "Review & confirm sale",

@@ -122,12 +122,7 @@ class SellPaymentInfoCubit extends Cubit<SellPaymentInfoState> {
     } catch (e) {
       developer.log(e.toString());
       if (isClosed) return;
-      emit(
-        SellPaymentInfoFailure(
-          PaymentInfoError.unknown,
-          message: e.toString(),
-        ),
-      );
+      emit(const SellPaymentInfoFailure(PaymentInfoError.unknown));
     }
   }
 }

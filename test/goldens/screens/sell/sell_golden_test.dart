@@ -295,6 +295,38 @@ void main() {
       },
     );
 
+    // Without an API message the red snackbar carries the app's own text, never
+    // a technical one. The snackbar cannot pumpAndSettle, so deliver the
+    // emission and advance a fixed 500ms past its entrance.
+    goldenTest(
+      'unknown error without an API message shows the app text',
+      fileName: 'sell_failure_generic',
+      constraints: const BoxConstraints.tightFor(width: 390, height: 844),
+      pumpBeforeTest: (tester) async {
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+      },
+      builder: () {
+        when(() => balanceCubit.state).thenReturn(
+          Balance(
+            chainId: 1,
+            contractAddress: '0x0',
+            walletAddress: '0x0',
+            balance: BigInt.from(1000000000000000000),
+            asset: realUnitAsset,
+          ),
+        );
+        whenListen(
+          paymentInfoCubit,
+          Stream<SellPaymentInfoState>.value(
+            const SellPaymentInfoFailure(PaymentInfoError.unknown),
+          ),
+          initialState: const SellPaymentInfoInitial(),
+        );
+        return wrapForGolden(buildSubject());
+      },
+    );
+
     goldenTest(
       'share count in the quote does not match the request',
       fileName: 'sell_share_count_mismatch',

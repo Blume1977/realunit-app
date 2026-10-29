@@ -294,7 +294,7 @@ void main() {
       expect(f.context, 'RealunitSell');
     });
 
-    test('generic exception → Failure(unknown) carrying the message', () async {
+    test('generic exception → Failure(unknown) without the technical text', () async {
       when(
         () => service.getPaymentInfo(any(), any(), currency: any(named: 'currency')),
       ).thenAnswer((_) async => throw Exception('network'));
@@ -304,7 +304,18 @@ void main() {
 
       final f = cubit.state as SellPaymentInfoFailure;
       expect(f.error, PaymentInfoError.unknown);
-      expect(f.message, contains('network'));
+      expect(f.message, isEmpty);
+    });
+
+    test('a parse error is not passed on to the customer', () async {
+      when(
+        () => service.getPaymentInfo(any(), any(), currency: any(named: 'currency')),
+      ).thenAnswer((_) async => throw TypeError());
+
+      final cubit = build();
+      await cubit.getPaymentInfo(amount: '5', iban: 'CH56');
+
+      expect(cubit.state, const SellPaymentInfoFailure(PaymentInfoError.unknown));
     });
 
     test('ApiException 503 → Failure(priceSourceUnavailable)', () async {
