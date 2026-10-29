@@ -22,6 +22,8 @@ class SellPaymentInfo {
   final BeneficiaryDto beneficiary;
   final double estimatedAmount;
   final Currency currency;
+
+  /// Empty when [isValid] is false: the API opens no deposit for that quote.
   final String depositAddress;
   final String tokenAddress;
   final int chainId;

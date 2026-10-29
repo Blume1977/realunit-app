@@ -296,8 +296,8 @@ void main() {
     );
 
     // Without an API message the red snackbar carries the app's own text, never
-    // a technical one. The snackbar cannot pumpAndSettle, so deliver the
-    // emission and advance a fixed 500ms past its entrance.
+    // a technical one. Fixed pumps deliver the emission and capture the
+    // snackbar 500ms after its entrance.
     goldenTest(
       'unknown error without an API message shows the app text',
       fileName: 'sell_failure_generic',

@@ -81,7 +81,6 @@ class RealUnitSellPaymentInfoService extends DFXAuthService {
         estimatedAmount: responseDto.estimatedAmount,
         exchangeRate: responseDto.exchangeRate,
         rate: responseDto.rate,
-        // An invalid quote carries no deposit address and never reaches signing.
         depositAddress: depositAddress ?? '',
         tokenAddress: responseDto.tokenAddress,
         chainId: responseDto.chainId,
