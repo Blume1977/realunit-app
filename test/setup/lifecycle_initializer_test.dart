@@ -8,6 +8,7 @@ import 'package:realunit_wallet/packages/service/wallet_service.dart';
 import 'package:realunit_wallet/screens/pin/bloc/auth/pin_auth_cubit.dart';
 import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/screens/update_required/bloc/client_policy_cubit.dart';
+import 'package:realunit_wallet/setup/account_sync.dart';
 import 'package:realunit_wallet/setup/lifecycle_initializer.dart';
 
 import '../helper/helper.dart';
@@ -22,6 +23,8 @@ class _MockPinAuthCubit extends Mock implements PinAuthCubit {}
 
 class _MockWalletService extends Mock implements WalletService {}
 
+class _MockAccountSync extends Mock implements AccountSync {}
+
 void main() {
   setUpAll(() {
     registerFallbackValue(const RefreshWalletFeaturesEvent());
@@ -33,6 +36,7 @@ void main() {
   late _MockPinAuthCubit pinAuthCubit;
   late _MockWalletService walletService;
   late MockSettingsBloc settingsBloc;
+  late _MockAccountSync accountSync;
 
   setUp(() {
     appStore = _MockAppStore();
@@ -41,6 +45,7 @@ void main() {
     pinAuthCubit = _MockPinAuthCubit();
     walletService = _MockWalletService();
     settingsBloc = MockSettingsBloc();
+    accountSync = _MockAccountSync();
 
     final getIt = GetIt.instance;
     getIt.registerSingleton<AppStore>(appStore);
@@ -49,6 +54,7 @@ void main() {
     getIt.registerSingleton<PinAuthCubit>(pinAuthCubit);
     getIt.registerSingleton<WalletService>(walletService);
     getIt.registerSingleton<SettingsBloc>(settingsBloc);
+    getIt.registerSingleton<AccountSync>(accountSync);
 
     when(() => walletService.lockCurrentWallet()).thenAnswer((_) async {});
     when(() => clientPolicyCubit.refresh()).thenAnswer((_) => Future.value());
@@ -252,6 +258,19 @@ void main() {
 
       verify(() => settingsBloc.add(const RefreshWalletFeaturesEvent())).called(greaterThan(0));
       verifyNever(() => balanceService.updateBalance(any()));
+    },
+  );
+
+  testWidgets(
+    'resume asks the account sync to fetch an unknown pay access again',
+    (tester) async {
+      when(() => pinAuthCubit.onAppResumed()).thenAnswer((_) {});
+
+      await pumpLifecycle(tester);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+
+      verify(() => accountSync.onResumed()).called(greaterThan(0));
     },
   );
 }

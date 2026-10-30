@@ -9129,7 +9129,9 @@
           <p class="spec-intro">
             <b>Bezahlen</b>, <b>Senden</b>, <b>Promo-Code</b> und <b>Empfehlungen</b>
             bleiben ausgeblendet, bis sie zentral freigeschaltet werden oder ein Tester
-            sie unter Insider Funktionen einschaltet. Hat ein Gerät eine zentrale
+            sie unter Insider Funktionen einschaltet. <b>Bezahlen</b> erscheint in beiden
+            Fällen nur, wenn die API das Bezahlen für das Wohnsitzland des Kontos erlaubt.
+            Hat ein Gerät eine zentrale
             Freischaltung einmal gesehen, bleibt sie auf diesem Gerät an, auch wenn eine
             spätere Abfrage sie nicht mehr liefert oder fehlschlägt. Solange eine Funktion
             nicht zentral freigeschaltet ist, lässt sie sich unter Insider Funktionen
@@ -9222,7 +9224,8 @@
               </div>
               <div class="desc">
                 Dashboard mit freigeschalteter Insider-Ansicht: neben <b>Kaufen</b> und
-                <b>Verkaufen</b> erscheint zusätzlich <b>Bezahlen</b>.
+                <b>Verkaufen</b> erscheint zusätzlich <b>Bezahlen</b>, weil die API das Bezahlen
+                für das Wohnsitzland des Kontos erlaubt.
                 Golden-Quelle: <code>dashboard_insider_unlocked.png</code> aus
                 <code>dashboard_golden_test.dart</code>.
               </div>

@@ -218,7 +218,7 @@ void main() {
     );
 
     blocTest<KycCubit, KycState>(
-      'applies account currency from GET /v2/user when a wallet is open',
+      'applies the account defaults from GET /v2/user when a wallet is open',
       setUp: () {
         final settings = _MockSettingsBloc();
         GetIt.instance.registerSingleton<SettingsBloc>(settings);
@@ -255,9 +255,17 @@ void main() {
     );
 
     blocTest<KycCubit, KycState>(
-      'does not dispatch ApplyAccountCurrencyEvent when GET /v2/user has no currency',
+      'applies only the pay access when GET /v2/user has no currency',
       setUp: () {
-        GetIt.instance.registerSingleton<SettingsBloc>(_MockSettingsBloc());
+        final settings = _MockSettingsBloc();
+        GetIt.instance.registerSingleton<SettingsBloc>(settings);
+        GetIt.instance.registerSingleton(
+          AccountSync(
+            settings: settings,
+            kyc: kycService,
+            currentWallet: () => wallet,
+          ),
+        );
         when(() => kycService.getKycStatus()).thenAnswer(
           (_) async => _kycStatus(level: KycLevel.level0),
         );
@@ -270,13 +278,18 @@ void main() {
         const KycSuccess(currentStep: KycStep.email),
       ],
       verify: (_) {
-        verifyNever(() => GetIt.instance<SettingsBloc>().add(any()));
+        verifyNever(
+          () => GetIt.instance<SettingsBloc>().add(any(that: isA<ApplyAccountCurrencyEvent>())),
+        );
+        verify(
+          () => GetIt.instance<SettingsBloc>().add(const ApplyAccountPayAccessEvent(true)),
+        ).called(1);
       },
       tearDown: () async => GetIt.instance.reset(),
     );
 
     blocTest<KycCubit, KycState>(
-      'does not dispatch ApplyAccountCurrencyEvent when the wallet is closed',
+      'does not dispatch account defaults when the wallet is closed',
       setUp: () {
         final settings = _MockSettingsBloc();
         GetIt.instance.registerSingleton<SettingsBloc>(settings);
@@ -306,7 +319,7 @@ void main() {
       tearDown: () async => GetIt.instance.reset(),
     );
 
-    test('does not dispatch ApplyAccountCurrencyEvent after a different wallet opens', () async {
+    test('does not dispatch account defaults after a different wallet opens', () async {
       final settings = _MockSettingsBloc();
       GetIt.instance.registerSingleton<SettingsBloc>(settings);
       AWallet? current = wallet;
@@ -336,7 +349,7 @@ void main() {
     });
 
     blocTest<KycCubit, KycState>(
-      'does not dispatch ApplyAccountCurrencyEvent when AccountSync is unregistered',
+      'does not dispatch account defaults when AccountSync is unregistered',
       setUp: () {
         GetIt.instance.registerSingleton<SettingsBloc>(_MockSettingsBloc());
         when(() => kycService.getKycStatus()).thenAnswer(
@@ -744,8 +757,7 @@ void main() {
           (_) async => _walletStatus(
             RealUnitRegistrationState.alreadyRegistered,
             manualReview: true,
-            rejectionMessage:
-                'Please enter your full name (first and last name).',
+            rejectionMessage: 'Please enter your full name (first and last name).',
           ),
         );
       },
@@ -754,8 +766,7 @@ void main() {
       expect: () => [
         const KycLoading(),
         const KycManualReview(
-          rejectionMessage:
-              'Please enter your full name (first and last name).',
+          rejectionMessage: 'Please enter your full name (first and last name).',
         ),
       ],
     );

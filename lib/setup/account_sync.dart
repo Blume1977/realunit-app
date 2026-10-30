@@ -16,11 +16,9 @@ class AccountSync {
     required SettingsBloc settings,
     required DfxKycService kyc,
     required AWallet? Function() currentWallet,
-    List<Duration> retryDelays = const [Duration(seconds: 2), Duration(seconds: 5)],
   }) : _settings = settings,
        _kyc = kyc,
-       _currentWallet = currentWallet,
-       _retryDelays = retryDelays;
+       _currentWallet = currentWallet;
 
   final SettingsBloc _settings;
   final DfxKycService _kyc;
@@ -28,8 +26,10 @@ class AccountSync {
 
   /// Waits before each retry of a failed GET /v2/user. Without a retry one
   /// failed fetch at open would keep the pay action hidden until the next open.
-  final List<Duration> _retryDelays;
+  static const _retryDelays = [Duration(seconds: 2), Duration(seconds: 5)];
+
   int _generation = 0;
+  int? _fetchingGeneration;
 
   AWallet? get currentWallet => _currentWallet();
 
@@ -53,6 +53,16 @@ class AccountSync {
     _settings.add(const ClearAccountPayAccessEvent());
   }
 
+  /// Fetches the account again when the app returns to the foreground while
+  /// the pay access is still unknown, so an outage longer than the retries at
+  /// open does not hide the pay action for the whole session.
+  void onResumed() {
+    final open = _currentWallet();
+    if (open == null || _fetchingGeneration == _generation) return;
+    if (_settings.state.payAccess != AccountPayAccess.unknown) return;
+    onOpened(open);
+  }
+
   void onSwitched(AWallet? wallet) {
     _settings.add(const ClearAccountCurrencyEvent());
     _settings.add(const ClearAccountPayAccessEvent());
@@ -60,6 +70,15 @@ class AccountSync {
   }
 
   Future<void> _apply(int generation, AWallet? captured) async {
+    _fetchingGeneration = generation;
+    try {
+      await _fetch(generation, captured);
+    } finally {
+      if (_fetchingGeneration == generation) _fetchingGeneration = null;
+    }
+  }
+
+  Future<void> _fetch(int generation, AWallet? captured) async {
     for (var attempt = 0; ; attempt++) {
       try {
         final user = await _kyc.getUser();

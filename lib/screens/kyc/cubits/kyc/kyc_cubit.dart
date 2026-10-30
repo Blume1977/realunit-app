@@ -92,7 +92,7 @@ class KycCubit extends Cubit<KycState> {
     }
   }
 
-  void _applyAccountCurrency(UserDto user) {
+  void _applyAccountDefaults(UserDto user) {
     if (!getIt.isRegistered<AccountSync>()) return;
     getIt<AccountSync>().applyFromUser(user, captured: _walletAtCheckStart);
   }
@@ -111,7 +111,7 @@ class KycCubit extends Cubit<KycState> {
 
       final kycStatus = results.elementAt(0) as KycLevelDto;
       final user = results.elementAt(1) as UserDto;
-      _applyAccountCurrency(user);
+      _applyAccountDefaults(user);
       final level = kycStatus.kycLevel.value;
 
       if (user.mail == null) {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:realunit_wallet/packages/service/dfx/dfx_kyc_service.dart';
@@ -41,12 +42,7 @@ void main() {
     current = wallet;
   });
 
-  AccountSync build() => AccountSync(
-    settings: settings,
-    kyc: kyc,
-    currentWallet: () => current,
-    retryDelays: const [Duration.zero, Duration.zero],
-  );
+  AccountSync build() => AccountSync(settings: settings, kyc: kyc, currentWallet: () => current);
 
   test(
     'onOpened applies GET /v2/user.currency when the wallet is still open',
@@ -85,62 +81,93 @@ void main() {
     },
   );
 
-  test(
-    'onOpened swallows GET /v2/user failures and leaves pay access unknown',
-    () async {
-      when(
-        () => kyc.getUser(),
-      ).thenAnswer((_) async => throw Exception('offline'));
+  group('retry', () {
+    test('a failed GET /v2/user is retried after 2 s and 5 s, then given up', () {
+      fakeAsync((async) {
+        when(
+          () => kyc.getUser(),
+        ).thenAnswer((_) async => throw Exception('offline'));
 
-      final sync = build();
-      sync.onOpened(wallet);
-      await Future<void>.delayed(const Duration(milliseconds: 10));
+        build().onOpened(wallet);
+        async.flushMicrotasks();
+        verify(() => kyc.getUser()).called(1);
 
-      verify(() => kyc.getUser()).called(3);
-      verifyNever(() => settings.add(any()));
-    },
-  );
+        async.elapse(const Duration(milliseconds: 1999));
+        verifyNever(() => kyc.getUser());
+        async.elapse(const Duration(milliseconds: 1));
+        verify(() => kyc.getUser()).called(1);
 
-  test('onOpened retries a failed GET /v2/user and applies the answer', () async {
-    var calls = 0;
-    when(() => kyc.getUser()).thenAnswer((_) async {
-      if (++calls == 1) throw Exception('offline');
-      return _user(currency: Currency.chf, canPayWithRealUnit: true);
+        async.elapse(const Duration(seconds: 5));
+        verify(() => kyc.getUser()).called(1);
+
+        async.elapse(const Duration(minutes: 1));
+        verifyNever(() => kyc.getUser());
+        verifyNever(() => settings.add(any()));
+      });
     });
 
-    build().onOpened(wallet);
-    await untilCalled(
-      () => settings.add(any(that: isA<ApplyAccountPayAccessEvent>())),
-    );
+    test('a successful retry applies the account', () {
+      fakeAsync((async) {
+        var calls = 0;
+        when(() => kyc.getUser()).thenAnswer((_) async {
+          if (++calls == 1) throw Exception('offline');
+          return _user(currency: Currency.chf, canPayWithRealUnit: true);
+        });
 
-    verify(() => kyc.getUser()).called(2);
-    verify(
-      () => settings.add(const ApplyAccountCurrencyEvent(Currency.chf)),
-    ).called(1);
-    verify(
-      () => settings.add(const ApplyAccountPayAccessEvent(true)),
-    ).called(1);
-  });
+        build().onOpened(wallet);
+        async.elapse(const Duration(seconds: 2));
 
-  test('a retry after onClosed is dropped', () async {
-    final held = Completer<UserDto>();
-    var calls = 0;
-    when(() => kyc.getUser()).thenAnswer((_) {
-      if (++calls == 1) return held.future;
-      return Future.value(_user(canPayWithRealUnit: true));
+        verify(
+          () => settings.add(const ApplyAccountCurrencyEvent(Currency.chf)),
+        ).called(1);
+        verify(
+          () => settings.add(const ApplyAccountPayAccessEvent(true)),
+        ).called(1);
+      });
     });
 
-    final sync = build();
-    sync.onOpened(wallet);
-    sync.onClosed();
-    current = null;
-    held.completeError(Exception('offline'));
-    await Future<void>.delayed(const Duration(milliseconds: 10));
+    test('onClosed during the retry wait drops the retry', () {
+      fakeAsync((async) {
+        when(
+          () => kyc.getUser(),
+        ).thenAnswer((_) async => throw Exception('offline'));
 
-    verify(() => kyc.getUser()).called(1);
-    verifyNever(
-      () => settings.add(any(that: isA<ApplyAccountPayAccessEvent>())),
-    );
+        final sync = build();
+        sync.onOpened(wallet);
+        async.elapse(const Duration(seconds: 1));
+        sync.onClosed();
+        current = null;
+        async.elapse(const Duration(minutes: 1));
+
+        verify(() => kyc.getUser()).called(1);
+        verifyNever(
+          () => settings.add(any(that: isA<ApplyAccountPayAccessEvent>())),
+        );
+      });
+    });
+
+    test('onSwitched during the retry wait fetches only the new wallet', () {
+      fakeAsync((async) {
+        final other = _MockWallet();
+        var calls = 0;
+        when(() => kyc.getUser()).thenAnswer((_) async {
+          if (++calls == 1) throw Exception('offline');
+          return _user(currency: Currency.eur, canPayWithRealUnit: false);
+        });
+
+        final sync = build();
+        sync.onOpened(wallet);
+        async.elapse(const Duration(seconds: 1));
+        current = other;
+        sync.onSwitched(other);
+        async.elapse(const Duration(minutes: 1));
+
+        verify(() => kyc.getUser()).called(2);
+        verify(
+          () => settings.add(const ApplyAccountPayAccessEvent(false)),
+        ).called(1);
+      });
+    });
   });
 
   group('pay access', () {
@@ -322,5 +349,59 @@ void main() {
     verifyNever(
       () => settings.add(const ApplyAccountCurrencyEvent(Currency.eur)),
     );
+  });
+
+  group('onResumed', () {
+    test('fetches again while the pay access is unknown', () async {
+      when(() => settings.state).thenReturn(const SettingsState());
+      when(
+        () => kyc.getUser(),
+      ).thenAnswer((_) async => _user(canPayWithRealUnit: true));
+
+      build().onResumed();
+      await untilCalled(
+        () => settings.add(any(that: isA<ApplyAccountPayAccessEvent>())),
+      );
+
+      verify(
+        () => settings.add(const ApplyAccountPayAccessEvent(true)),
+      ).called(1);
+      verifyNever(() => settings.add(const ClearAccountPayAccessEvent()));
+    });
+
+    test('does nothing once the pay access is known', () {
+      when(
+        () => settings.state,
+      ).thenReturn(const SettingsState(payAccess: AccountPayAccess.allowed));
+
+      build().onResumed();
+
+      verifyNever(() => kyc.getUser());
+    });
+
+    test('does nothing without an open wallet', () {
+      when(() => settings.state).thenReturn(const SettingsState());
+      current = null;
+
+      build().onResumed();
+
+      verifyNever(() => kyc.getUser());
+    });
+
+    test('does not start a second fetch while one is running', () async {
+      when(() => settings.state).thenReturn(const SettingsState());
+      final held = Completer<UserDto>();
+      when(() => kyc.getUser()).thenAnswer((_) => held.future);
+
+      final sync = build();
+      sync.onOpened(wallet);
+      sync.onResumed();
+      held.complete(_user(canPayWithRealUnit: false));
+      await untilCalled(
+        () => settings.add(any(that: isA<ApplyAccountPayAccessEvent>())),
+      );
+
+      verify(() => kyc.getUser()).called(1);
+    });
   });
 }
