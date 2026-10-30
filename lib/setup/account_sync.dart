@@ -16,13 +16,19 @@ class AccountSync {
     required SettingsBloc settings,
     required DfxKycService kyc,
     required AWallet? Function() currentWallet,
+    List<Duration> retryDelays = const [Duration(seconds: 2), Duration(seconds: 5)],
   }) : _settings = settings,
        _kyc = kyc,
-       _currentWallet = currentWallet;
+       _currentWallet = currentWallet,
+       _retryDelays = retryDelays;
 
   final SettingsBloc _settings;
   final DfxKycService _kyc;
   final AWallet? Function() _currentWallet;
+
+  /// Waits before each retry of a failed GET /v2/user. Without a retry one
+  /// failed fetch at open would keep the pay action hidden until the next open.
+  final List<Duration> _retryDelays;
   int _generation = 0;
 
   AWallet? get currentWallet => _currentWallet();
@@ -54,16 +60,25 @@ class AccountSync {
   }
 
   Future<void> _apply(int generation, AWallet? captured) async {
-    try {
-      final user = await _kyc.getUser();
-      if (generation != _generation) return;
-      if (!identical(_currentWallet(), captured)) return;
-      _dispatch(user);
-    } catch (_) {
-      // Account defaults are display state; boot must not fail if /v2/user is
-      // unavailable. Pay access then stays unknown and the pay action hidden.
+    for (var attempt = 0; ; attempt++) {
+      try {
+        final user = await _kyc.getUser();
+        if (!_isCurrent(generation, captured)) return;
+        _dispatch(user);
+        return;
+      } catch (_) {
+        // Account defaults are display state; boot must not fail if /v2/user is
+        // unavailable. After the last retry pay access stays unknown and the pay
+        // action hidden.
+        if (attempt >= _retryDelays.length) return;
+      }
+      await Future<void>.delayed(_retryDelays[attempt]);
+      if (!_isCurrent(generation, captured)) return;
     }
   }
+
+  bool _isCurrent(int generation, AWallet? captured) =>
+      generation == _generation && identical(_currentWallet(), captured);
 
   void _dispatch(UserDto user) {
     final currency = user.currency;

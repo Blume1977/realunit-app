@@ -55,7 +55,7 @@ class WalletApp extends StatefulWidget {
 }
 
 class _WalletAppState extends State<WalletApp> {
-  late final AccountSync _accountCurrency = getIt<AccountSync>();
+  late final AccountSync _accountSync = getIt<AccountSync>();
 
   @override
   void initState() {
@@ -91,7 +91,7 @@ class _WalletAppState extends State<WalletApp> {
                 listenWhen: (previous, current) =>
                     previous.openWallet == null && current.openWallet != null,
                 listener: (context, homeState) {
-                  _accountCurrency.onOpened(homeState.openWallet);
+                  _accountSync.onOpened(homeState.openWallet);
                 },
               ),
               BlocListener<HomeBloc, HomeState>(
@@ -100,14 +100,14 @@ class _WalletAppState extends State<WalletApp> {
                     current.openWallet != null &&
                     !identical(previous.openWallet, current.openWallet),
                 listener: (context, homeState) {
-                  _accountCurrency.onSwitched(homeState.openWallet);
+                  _accountSync.onSwitched(homeState.openWallet);
                 },
               ),
               BlocListener<HomeBloc, HomeState>(
                 listenWhen: (previous, current) =>
                     previous.openWallet != null && current.openWallet == null,
                 listener: (context, homeState) {
-                  _accountCurrency.onClosed();
+                  _accountSync.onClosed();
                 },
               ),
               BlocListener<HomeBloc, HomeState>(

@@ -11,8 +11,7 @@ import 'package:realunit_wallet/screens/settings/bloc/settings_bloc.dart';
 import 'package:realunit_wallet/setup/account_sync.dart';
 import 'package:realunit_wallet/styles/currency.dart';
 
-class _MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState>
-    implements SettingsBloc {}
+class _MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState> implements SettingsBloc {}
 
 class _MockKycService extends Mock implements DfxKycService {}
 
@@ -42,8 +41,12 @@ void main() {
     current = wallet;
   });
 
-  AccountSync build() =>
-      AccountSync(settings: settings, kyc: kyc, currentWallet: () => current);
+  AccountSync build() => AccountSync(
+    settings: settings,
+    kyc: kyc,
+    currentWallet: () => current,
+    retryDelays: const [Duration.zero, Duration.zero],
+  );
 
   test(
     'onOpened applies GET /v2/user.currency when the wallet is still open',
@@ -91,11 +94,54 @@ void main() {
 
       final sync = build();
       sync.onOpened(wallet);
-      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
+      verify(() => kyc.getUser()).called(3);
       verifyNever(() => settings.add(any()));
     },
   );
+
+  test('onOpened retries a failed GET /v2/user and applies the answer', () async {
+    var calls = 0;
+    when(() => kyc.getUser()).thenAnswer((_) async {
+      if (++calls == 1) throw Exception('offline');
+      return _user(currency: Currency.chf, canPayWithRealUnit: true);
+    });
+
+    build().onOpened(wallet);
+    await untilCalled(
+      () => settings.add(any(that: isA<ApplyAccountPayAccessEvent>())),
+    );
+
+    verify(() => kyc.getUser()).called(2);
+    verify(
+      () => settings.add(const ApplyAccountCurrencyEvent(Currency.chf)),
+    ).called(1);
+    verify(
+      () => settings.add(const ApplyAccountPayAccessEvent(true)),
+    ).called(1);
+  });
+
+  test('a retry after onClosed is dropped', () async {
+    final held = Completer<UserDto>();
+    var calls = 0;
+    when(() => kyc.getUser()).thenAnswer((_) {
+      if (++calls == 1) return held.future;
+      return Future.value(_user(canPayWithRealUnit: true));
+    });
+
+    final sync = build();
+    sync.onOpened(wallet);
+    sync.onClosed();
+    current = null;
+    held.completeError(Exception('offline'));
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+
+    verify(() => kyc.getUser()).called(1);
+    verifyNever(
+      () => settings.add(any(that: isA<ApplyAccountPayAccessEvent>())),
+    );
+  });
 
   group('pay access', () {
     test('onOpened applies canPayWithRealUnit true', () async {
