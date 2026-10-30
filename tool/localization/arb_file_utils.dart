@@ -13,13 +13,7 @@ void appendStringToArbFile(String fileName, String name, String text, {bool forc
 
   arbObj.addAll({name: text});
 
-  final outputContent = json
-      .encode(arbObj)
-      .replaceAll('","', '",\n  "')
-      .replaceAll('{"', '{\n  "')
-      .replaceAll('"}', '"\n}')
-      .replaceAll('":"', '": "')
-      .replaceAll('\$ {', '\${');
+  final outputContent = _encodeArbContent(arbObj);
 
   file.writeAsStringSync(outputContent);
 }
@@ -30,13 +24,7 @@ void appendStringsToArbFile(String fileName, Map<String, String> strings) {
 
   arbObj.addAll(strings);
 
-  final outputContent = json
-      .encode(arbObj)
-      .replaceAll('","', '",\n  "')
-      .replaceAll('{"', '{\n  "')
-      .replaceAll('"}', '"\n}')
-      .replaceAll('":"', '": "')
-      .replaceAll('\$ {', '\${');
+  final outputContent = _encodeArbContent(arbObj);
 
   file.writeAsStringSync(outputContent);
 }
@@ -76,13 +64,20 @@ void alphabetizeArbFile(String fileName) {
     sortedArbObj[key] = arbObj[key];
   }
 
+  final outputContent = _encodeArbContent(sortedArbObj);
+
+  file.writeAsStringSync(outputContent);
+}
+
+// Committed ARB files end with a newline, so regeneration stays byte-identical.
+String _encodeArbContent(Map<String, dynamic> arbObj) {
   final outputContent = json
-      .encode(sortedArbObj)
+      .encode(arbObj)
       .replaceAll('","', '",\n  "')
       .replaceAll('{"', '{\n  "')
       .replaceAll('"}', '"\n}')
       .replaceAll('":"', '": "')
       .replaceAll('\$ {', '\${');
 
-  file.writeAsStringSync(outputContent);
+  return '$outputContent\n';
 }
